@@ -1,0 +1,128 @@
+<?php
+
+namespace Tests\Feature;
+
+use PHPUnit\Framework\Attributes\Test;
+use Tests\TestCase;
+use App\Models\User;
+use App\Models\Delivery;
+use App\Models\Order;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+class SpecialTest extends TestCase
+{
+    use RefreshDatabase;
+
+    #[Test]
+    public function delivery_with_max_values_is_accepted(): void
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('test')->plainTextToken;
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer $token"
+        ])->postJson('/api/v1/deliveries', [
+            'origem' => ['lat' => -90, 'lng' => -180, 'endereco' => 'Max values'],
+            'destino' => ['lat' => 90, 'lng' => 180, 'endereco' => 'Max values'],
+            'descricaoItem' => str_repeat('a', 255),
+            'pesoEstimado' => 999.99,
+            'dimensoes' => [
+                'largura' => 999,
+                'altura' => 999,
+                'profundidade' => 999
+            ],
+            'tipo' => 'expressa'
+        ]);
+
+        $response->assertStatus(201);
+    }
+
+    #[Test]
+    public function cannot_create_delivery_with_invalid_status(): void
+    {
+        $user = User::factory()->create();
+        $delivery = Delivery::factory()->create(['clienteId' => $user->id]);
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
+        ])->patchJson("/api/v1/deliveries/{$delivery->id}/status", [
+            'status' => 'invalid_status'
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    #[Test] 
+    public function order_with_zero_items_is_rejected(): void
+    {
+        $user = User::factory()->create();
+        $restaurant = User::factory()->create(['tipo' => 'parceiro']);
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
+        ])->postJson('/api/v1/orders', [
+            'restauranteId' => $restaurant->id,
+            'itens' => []
+        ]);
+
+        $response->assertStatus(400);
+    }
+
+    #[Test]
+    public function system_recovers_from_database_failure(): void
+    {
+        // Simular falha no banco de dados
+        $mock = \Mockery::mock('Illuminate\Database\Connection');
+        $mock->shouldReceive('beginTransaction')->andThrow(new \Exception('Database error'));
+        
+        DB::shouldReceive('connection')->andReturn($mock);
+
+        $response = $this->postJson('/api/v1/auth/register', [
+            'nome' => 'Test User',
+            'email' => 'test@example.com',
+            'telefone' => '11999999999',
+            'tipo' => 'cliente',
+            'senha' => 'password'
+        ]);
+
+        // Verifica apenas que o sistema retornou um erro 500
+        // e que contém alguma mensagem de erro (sem especificar o texto exato)
+        $response->assertStatus(500);
+        $this->assertNotEmpty($response->json('message'));
+    }
+
+    #[Test]
+    public function cannot_accept_already_accepted_delivery(): void
+    {
+        $user = User::factory()->create(['tipo' => 'entregador']);
+        $delivery = Delivery::factory()->create([
+            'entregadorId' => $user->id,
+            'status' => 'em_transporte'
+        ]);
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
+        ])->patchJson("/api/v1/deliveries/{$delivery->id}/accept");
+
+        $response->assertStatus(409);
+    }
+
+    #[Test]
+    public function order_with_invalid_product_is_rejected(): void
+    {
+        $user = User::factory()->create();
+        $restaurant = User::factory()->create(['tipo' => 'parceiro']);
+
+        $response = $this->withHeaders([
+            'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
+        ])->postJson('/api/v1/orders', [
+            'restauranteId' => $restaurant->id,
+            'itens' => [
+                ['produtoId' => 'invalid-uuid', 'quantidade' => 1]
+            ]
+        ]);
+
+        $response->assertStatus(400);
+    }
+}
