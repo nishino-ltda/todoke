@@ -23,7 +23,8 @@ class Delivery extends Model
         'valor',
         'tempoEstimado',
         'codigoConfirmacao',
-        'nodeId'
+        'nodeId',
+        'posicaoAtual'
     ];
 
     protected $casts = [
@@ -32,7 +33,8 @@ class Delivery extends Model
         'dimensoes' => 'array',
         'valor' => 'decimal:2',
         'tempoEstimado' => 'integer',
-        'pesoEstimado' => 'decimal:2'
+        'pesoEstimado' => 'decimal:2',
+        'posicaoAtual' => 'array'
     ];
 
     public function cliente()

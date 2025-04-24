@@ -2,7 +2,7 @@
 
 ## Atores
 
-*   **Aurora, a Motoboy Independente:** Uma motoboy experiente que busca mais autonomia e melhores ganhos. Utiliza o app Ionic.
+*   **Aurora, a entregador Independente:** Uma entregador experiente que busca mais autonomia e melhores ganhos. Utiliza o app Ionic.
 *   **BistroTech, a Rede de Restaurantes:** Uma rede de restaurantes que deseja otimizar suas entregas e reduzir custos. Utiliza o painel administrativo web (Laravel).
 *   **DroneExpress, a Startup de Entregas com Drones:** Uma empresa inovadora que utiliza drones integrados à plataforma TODOKE. Utiliza a API e possivelmente um painel administrativo.
 *   **E-ComShop, a Loja Online de Artesanato:** Uma loja online que busca integrar um sistema de entregas eficiente e personalizado. Utiliza a API.

@@ -22,8 +22,11 @@ use App\Http\Controllers\API\OrderController;
 Route::prefix('v1')->group(function () {
     // 1. Autenticação e Usuário
     Route::prefix('auth')->group(function () {
-        Route::post('/register', [AuthController::class, 'register']);
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/register', [AuthController::class, 'register'])
+            ->middleware('throttle:10,1'); // 10 tentativas por minuto
+        
+        Route::post('/login', [AuthController::class, 'login'])
+            ->middleware('throttle:10,1'); // 10 tentativas por minuto
     });
 
     // Rotas protegidas por autenticação
@@ -36,7 +39,9 @@ Route::prefix('v1')->group(function () {
 
         // Rotas de entregas
         Route::prefix('deliveries')->group(function () {
+            Route::get('/', [DeliveryController::class, 'index']);
             Route::post('/', [DeliveryController::class, 'store']);
+            Route::get('/{id}', [DeliveryController::class, 'show']);
             Route::patch('/{id}/accept', [DeliveryController::class, 'accept']);
             Route::patch('/{id}/status', [DeliveryController::class, 'updateStatus']);
         });
@@ -52,5 +57,6 @@ Route::prefix('v1')->group(function () {
             Route::patch('/users/{id}/status', [UserController::class, 'updateStatus']);
             Route::get('/stats', [UserController::class, 'stats']);
         });
+        
     });
 });

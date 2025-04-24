@@ -16,7 +16,7 @@ class UsabilityTest extends TestCase
     {
         $response = $this->postJson('/api/v1/auth/login', [
             'email' => 'invalid-email',
-            'senha' => 'short'
+            'password' => 'short'
         ]);
 
         $response->assertStatus(422)
@@ -24,7 +24,7 @@ class UsabilityTest extends TestCase
                 'message',
                 'errors' => [
                     'email',
-                    'senha'
+                    'password'
                 ]
             ]);
     }
@@ -95,7 +95,7 @@ class UsabilityTest extends TestCase
             'tipo' => 'cliente'
         ]);
 
-        $this->assertContains($user->tipo, ['cliente', 'motoboy', 'parceiro', 'admin']);
+        $this->assertContains($user->tipo, ['cliente', 'entregador', 'parceiro', 'admin']);
     }
 
     /** @test */

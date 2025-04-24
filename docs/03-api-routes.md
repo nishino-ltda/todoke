@@ -23,7 +23,7 @@ POST /api/v1/auth/register
   "nome": "string",
   "email": "string",
   "telefone": "string",
-  "tipo": "motoboy|cliente|parceiro",
+  "tipo": "entregador|cliente|parceiro",
   "senha": "string"
 }
 ```
@@ -203,7 +203,7 @@ POST /api/v1/nodes
 **Body:**
 ```json
 {
-  "tipo": "motoboy|drone|veiculo",
+  "tipo": "entregador|drone|veiculo",
   "identificador": "string",
   "capacidade": "number",
   "regiaoId": "string"

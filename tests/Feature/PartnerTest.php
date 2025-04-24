@@ -13,13 +13,13 @@ class PartnerTest extends TestCase
         $parceiro = \App\Models\User::factory()->create([
             'tipo' => 'parceiro',
             'email' => 'bistrotech@example.com',
-            'senha' => bcrypt('Parceiro123')
+            'password' => bcrypt('Parceiro123')
         ]);
 
         // Fazer login
         $token = $this->postJson('/api/v1/auth/login', [
             'email' => 'bistrotech@example.com',
-            'senha' => 'Parceiro123'
+            'password' => 'Parceiro123'
         ])->json('token');
 
         // 1. Testar criação de entrega
@@ -61,7 +61,7 @@ class PartnerTest extends TestCase
 
         // 2. Testar alocação automática vs manual
         // Criar entregador
-        $entregador = \App\Models\User::factory()->create(['tipo' => 'motoboy']);
+        $entregador = \App\Models\User::factory()->create(['tipo' => 'entregador']);
         
         // Alocação manual
         $response = $this->withHeaders([
@@ -116,13 +116,13 @@ class PartnerTest extends TestCase
         $parceiro = \App\Models\User::factory()->create([
             'tipo' => 'parceiro',
             'email' => 'logismaster@example.com',
-            'senha' => bcrypt('Logistica123')
+            'password' => bcrypt('Logistica123')
         ]);
 
         // Fazer login
         $token = $this->postJson('/api/v1/auth/login', [
             'email' => 'logismaster@example.com',
-            'senha' => 'Logistica123'
+            'password' => 'Logistica123'
         ])->json('token');
 
         // 1. Testar criação de região
@@ -165,7 +165,7 @@ class PartnerTest extends TestCase
 
         // 3. Testar criação de node
         $nodeData = [
-            'tipo' => 'motoboy',
+            'tipo' => 'entregador',
             'identificador' => 'MOTO-001',
             'capacidade' => 5,
             'regiaoId' => $regiaoId

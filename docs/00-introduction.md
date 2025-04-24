@@ -3,11 +3,11 @@
 
 ## Revolucionando o Sistema de Delivery
 
-TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada especificamente para motoboys e operações com drones. Nosso sistema foi desenvolvido para otimizar rotas, reduzir custos operacionais e melhorar a experiência tanto para entregadores quanto para clientes finais.
+TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada especificamente para entregadors e operações com drones. Nosso sistema foi desenvolvido para otimizar rotas, reduzir custos operacionais e melhorar a experiência tanto para entregadores quanto para clientes finais.
 
 ### Visão Geral
 
-O TODOKE nasceu da necessidade de modernizar o setor de entregas, combinando tecnologia de ponta com uma abordagem centrada no usuário. Nossa plataforma integra perfeitamente entregadores tradicionais (motoboys) com a crescente tecnologia de drones, criando um ecossistema de delivery flexível e eficiente para o mercado brasileiro.
+O TODOKE nasceu da necessidade de modernizar o setor de entregas, combinando tecnologia de ponta com uma abordagem centrada no usuário. Nossa plataforma integra perfeitamente entregadores tradicionais (entregadors) com a crescente tecnologia de drones, criando um ecossistema de delivery flexível e eficiente para o mercado brasileiro.
 
 ### Modelo de Negócio Acessível
 

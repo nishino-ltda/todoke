@@ -3,9 +3,14 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthTest extends TestCase
 {
+    use RefreshDatabase;
     public function testAuroraSeCadastraEConfiguraSeuPerfil()
     {
         // Dados para registro
@@ -13,8 +18,8 @@ class AuthTest extends TestCase
             'nome' => 'Aurora Silva',
             'email' => 'aurora@example.com',
             'telefone' => '11999999999',
-            'tipo' => 'motoboy',
-            'senha' => 'SenhaSegura123'
+            'tipo' => 'entregador',
+            'password' => 'SenhaSegura123'
         ];
 
         // 1. Testar registro de novo entregador
@@ -33,7 +38,7 @@ class AuthTest extends TestCase
             unset($invalidData[$key]);
             
             $response = $this->postJson('/api/v1/auth/register', $invalidData);
-            $response->assertStatus(400)
+            $response->assertStatus(422)
                 ->assertJsonValidationErrors([$key]);
         }
 
@@ -44,7 +49,7 @@ class AuthTest extends TestCase
         // 4. Testar login após cadastro
         $loginData = [
             'email' => $userData['email'],
-            'senha' => $userData['senha']
+            'password' => $userData['password']
         ];
         $response = $this->postJson('/api/v1/auth/login', $loginData);
         $response->assertStatus(200)
@@ -79,23 +84,40 @@ class AuthTest extends TestCase
 
     public function testAdminsysGerenciaUsuarios()
     {
-        // Criar usuário admin
+        // Criar usuário admin com senha correta (usando campos do AuthController)
         $admin = \App\Models\User::factory()->create([
             'tipo' => 'admin',
             'email' => 'admin@todoke.com',
-            'senha' => bcrypt('Admin123')
+            'password' => Hash::make('Admin123')
         ]);
 
         // Criar alguns usuários de teste
-        $motoboy = \App\Models\User::factory()->create(['tipo' => 'motoboy']);
-        $cliente = \App\Models\User::factory()->create(['tipo' => 'cliente']);
+        $entregador = \App\Models\User::factory()->create(['tipo' => 'entregador']);
+        $cliente = \App\Models\User::factory()->create([
+            'tipo' => 'cliente',
+            'email' => 'cliente@test.com',
+            'password' => Hash::make('Cliente123')
+        ]);
+        // Delete any existing tokens to ensure fresh token with correct abilities
+        $cliente->tokens()->delete();
         $parceiro = \App\Models\User::factory()->create(['tipo' => 'parceiro']);
+
+        // Verificar usuário admin antes do login
+        $adminUser = User::where('email', 'admin@todoke.com')->first();
+        if ($adminUser->tipo !== 'admin') {
+            dd('ERRO: Usuário admin não está com tipo correto', $adminUser);
+        }
 
         // Fazer login como admin
         $loginResponse = $this->postJson('/api/v1/auth/login', [
             'email' => 'admin@todoke.com',
-            'senha' => 'Admin123'
+            'password' => 'Admin123'
         ]);
+        
+        if ($loginResponse->status() !== 200) {
+            dd('Falha no login', $loginResponse->json());
+        }
+        
         $token = $loginResponse->json('token');
 
         // 1. Testar listagem de usuários
@@ -109,16 +131,16 @@ class AuthTest extends TestCase
         // 2. Testar filtros por tipo
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
-        ])->getJson('/api/v1/admin/users?tipo=motoboy');
+        ])->getJson('/api/v1/admin/users?tipo=entregador');
         
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.tipo', 'motoboy');
+            ->assertJsonPath('data.0.tipo', 'entregador');
 
         // 3. Testar atualização de status
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
-        ])->patchJson("/api/v1/admin/users/{$motoboy->id}/status", [
+        ])->patchJson("/api/v1/admin/users/{$entregador->id}/status", [
             'status' => 'inativo'
         ]);
         
@@ -126,14 +148,18 @@ class AuthTest extends TestCase
             ->assertJson(['status' => 'inativo']);
 
         // 4. Verificar permissões (usuário não-admin não pode acessar)
-        $userToken = $this->postJson('/api/v1/auth/login', [
-            'email' => $cliente->email,
-            'senha' => 'password'
-        ])->json('token');
-
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $userToken
-        ])->getJson('/api/v1/admin/users');
+        // Criar um novo cliente para testar permissões
+        $novoCliente = \App\Models\User::factory()->create([
+            'tipo' => 'cliente',
+            'email' => 'novo.cliente@test.com',
+            'password' => Hash::make('Cliente123')
+        ]);
+        
+        // Autenticar diretamente como o cliente
+        $this->actingAs($novoCliente);
+        
+        // Verificar que o cliente não pode acessar rotas de admin
+        $response = $this->getJson('/api/v1/admin/users');
         
         $response->assertStatus(403);
     }

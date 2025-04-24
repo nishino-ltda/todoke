@@ -13,7 +13,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 - nome: string
 - email: string (único)
 - telefone: string
-- tipo: enum ['motoboy', 'cliente', 'admin', 'parceiro']
+- tipo: enum ['entregador', 'cliente', 'admin', 'parceiro']
 - fotoUrl: string (opcional)
 - status: enum ['ativo', 'inativo', 'pendente']
 - createdAt: DateTime
@@ -30,7 +30,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
   nome: "Aurora Silva",
   email: "aurora@email.com",
   telefone: "+5511999999999",
-  tipo: "motoboy",
+  tipo: "entregador",
   fotoUrl: "https://...",
   status: "ativo",
   createdAt: "2025-04-22T10:00:00Z",
@@ -88,12 +88,12 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 
 ## 3. Node (Node)
 
-**Descrição:** Representa um recurso de entrega (motoboy, drone, veículo) associado a um parceiro.
+**Descrição:** Representa um recurso de entrega (entregador, drone, veículo) associado a um parceiro.
 
 **Atributos:**
 - id: string (UUID)
 - parceiroId: string (ref: User)
-- tipo: enum ['motoboy', 'drone', 'veiculo']
+- tipo: enum ['entregador', 'drone', 'veiculo']
 - identificador: string (placa, número de série)
 - capacidade: number (kg)
 - status: enum ['disponivel', 'ocupado', 'manutencao', 'offline']

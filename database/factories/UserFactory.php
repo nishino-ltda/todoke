@@ -23,14 +23,16 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $password = 'Password123';
+        
         return [
-            'name' => fake()->name(),
+            'nome' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make($password),
             'remember_token' => Str::random(10),
-            'tipo' => fake()->randomElement(['cliente', 'motoboy', 'parceiro']),
-            'senha' => 'password' // Senha em texto puro para testes
+            'tipo' => fake()->randomElement(['cliente', 'entregador', 'parceiro']),
+            'status' => 'ativo'
         ];
     }
 
@@ -41,6 +43,24 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'tipo' => 'admin',
+            'email' => 'admin@todoke.com',
+            'password' => Hash::make('Admin123')
+        ]);
+    }
+
+    public function entregador(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'tipo' => 'entregador',
+            'email' => 'entregador@example.com',
+            'password' => Hash::make('Senha123')
         ]);
     }
 }

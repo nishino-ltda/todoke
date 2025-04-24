@@ -21,7 +21,7 @@ class MenuTest extends TestCase
         $this->restaurante = User::factory()->create([
             'tipo' => 'parceiro',
             'email' => 'bistrotech@example.com',
-            'senha' => bcrypt('Bistro123')
+            'password' => bcrypt('Bistro123')
         ]);
 
         // Criar cliente
@@ -30,12 +30,12 @@ class MenuTest extends TestCase
         // Obter tokens
         $this->restauranteToken = $this->postJson('/api/v1/auth/login', [
             'email' => 'bistrotech@example.com',
-            'senha' => 'Bistro123'
+            'password' => 'Bistro123'
         ])->json('token');
 
         $this->clienteToken = $this->postJson('/api/v1/auth/login', [
             'email' => $this->cliente->email,
-            'senha' => 'password'
+            'password' => 'password'
         ])->json('token');
     }
 
@@ -137,7 +137,7 @@ class MenuTest extends TestCase
         $outroRestaurante = User::factory()->create(['tipo' => 'parceiro']);
         $outroToken = $this->postJson('/api/v1/auth/login', [
             'email' => $outroRestaurante->email,
-            'senha' => 'password'
+            'password' => 'password'
         ])->json('token');
 
         $response = $this->withHeaders([

@@ -61,13 +61,15 @@ class ModelTest extends TestCase
     /** @test */
     public function delivery_model_has_expected_attributes()
     {
-        $delivery = Delivery::factory()->create([
-            'status' => 'pendente',
-            'tipo' => 'documento'
-        ]);
+        $delivery = Delivery::factory()
+            ->state([
+                'status' => 'pendente',
+                'tipo' => 'normal'
+            ])
+            ->create();
 
         $this->assertEquals('pendente', $delivery->status);
-        $this->assertEquals('documento', $delivery->tipo);
+        $this->assertEquals('normal', $delivery->tipo);
     }
 
     /** @test */

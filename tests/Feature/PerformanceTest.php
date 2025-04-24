@@ -89,7 +89,7 @@ class PerformanceTest extends TestCase
     public function complex_query_performance_with_relations()
     {
         $user = User::factory()->create(['tipo' => 'cliente']);
-        Delivery::factory()->count(50)->create(['cliente_id' => $user->id]);
+        Delivery::factory()->count(50)->create(['clienteId' => $user->id]);
 
         $start = microtime(true);
         $deliveries = $user->deliveriesAsClient()

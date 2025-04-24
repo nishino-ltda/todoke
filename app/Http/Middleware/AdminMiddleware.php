@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
@@ -17,10 +18,43 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user() && $request->user()->tipo === 'admin') {
-            return $next($request);
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['message' => 'Não autenticado'], 401);
         }
 
-        return response()->json(['message' => 'Acesso não autorizado. Apenas administradores podem acessar este recurso.'], 403);
+        // Verificar se o usuário é realmente um admin no banco de dados
+        if ($user->tipo !== 'admin') {
+            Log::error('Non-admin user trying to access admin route', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'tipo' => $user->tipo
+            ]);
+            
+            return response()->json([
+                'message' => 'Acesso não autorizado. Apenas administradores podem acessar este recurso.',
+                'user_type' => $user->tipo
+            ], 403);
+        }
+
+        $token = $request->user()->currentAccessToken();
+        
+        Log::debug('AdminMiddleware - Token abilities check', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'token_abilities' => $token ? $token->abilities : 'No token',
+            'expected' => ['admin']
+        ]);
+
+        if (!$token || !in_array('admin', $token->abilities)) {
+            return response()->json([
+                'message' => 'Acesso não autorizado. Apenas administradores podem acessar este recurso.',
+                'user_type' => $user->tipo,
+                'token_abilities' => $token ? $token->abilities : 'No token'
+            ], 403);
+        }
+
+        return $next($request);
     }
 }
