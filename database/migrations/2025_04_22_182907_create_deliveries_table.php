@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('clienteId')->constrained('users');
             $table->foreignUuid('entregadorId')->nullable()->constrained('users');
+            $table->json('posicaoAtual')->nullable();
+            $table->json('historicoStatus')->nullable();
             $table->json('origem');
             $table->json('destino');
             $table->enum('status', [
