@@ -6,6 +6,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DeliveryController;
 use App\Http\Controllers\API\OrderController;
+use App\Http\Controllers\API\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,12 +45,17 @@ Route::prefix('v1')->group(function () {
             Route::get('/{id}', [DeliveryController::class, 'show']);
             Route::patch('/{id}/accept', [DeliveryController::class, 'accept']);
             Route::patch('/{id}/status', [DeliveryController::class, 'updateStatus']);
+            Route::post('/{id}/messages', [DeliveryController::class, 'storeMessage']);
+            Route::get('/{id}/messages', [DeliveryController::class, 'indexMessages']);
         });
 
         // Rotas de pedidos
         Route::prefix('orders')->group(function () {
             Route::post('/', [OrderController::class, 'store']);
         });
+
+        // Rotas de notificações
+        Route::get('/notifications', [NotificationController::class, 'index']);
 
         // Rotas de admin
         Route::prefix('admin')->middleware('admin')->group(function () {

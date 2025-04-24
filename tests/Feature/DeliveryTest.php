@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
-use App\Models\Delivery;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -17,11 +16,12 @@ class DeliveryTest extends TestCase
     private User $entregador; 
     private string $entregadorToken;
 
+    // Set up the test environment
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Criar usuários de teste com IDs explícitos para evitar conflitos
+        // Create a client user
         $this->cliente = User::factory()->create([
             'id' => 1,
             'tipo' => 'cliente',
@@ -29,47 +29,30 @@ class DeliveryTest extends TestCase
             'password' => Hash::make('Senha123')
         ]);
 
+        // Create a delivery person user
         $this->entregador = User::factory()->entregador()->create([
             'id' => 2,
             'name' => 'Entregador Teste'
         ]);
-        
-        echo "\n--- Dados do entregador após criação ---";
-        echo "\nID: " . $this->entregador->id;
-        echo "\nname: " . $this->entregador->name;
-        echo "\nTipo: " . $this->entregador->tipo;
-        echo "\nEmail: " . $this->entregador->email;
-        
-        echo "\nTipo do entregador após criação: " . $this->entregador->tipo;
-        echo "\nTipo do entregador após refresh: " . $this->entregador->fresh()->tipo;
 
-        // Obter tokens
+        // Authenticate the client and retrieve the token
         $clienteLogin = $this->postJson('/api/v1/auth/login', [
             'email' => 'cliente@example.com',
             'password' => 'Senha123'
         ]);
         $this->clienteToken = $clienteLogin->json('token');
-        echo "\nCliente ID: " . $this->cliente->id;
-        echo "\nCliente Token: " . $this->clienteToken;
 
-        echo "\n--- Tentando login do entregador ---";
+        // Authenticate the delivery person and retrieve the token
         $entregadorLogin = $this->postJson('/api/v1/auth/login', [
             'email' => $this->entregador->email,
             'password' => 'Senha123'
         ]);
-        
-        echo "\nStatus do login: " . $entregadorLogin->status();
-        echo "\nResposta do login: " . $entregadorLogin->content();
         $this->entregadorToken = $entregadorLogin->json('token');
-        $userFromToken = \Laravel\Sanctum\PersonalAccessToken::findToken($this->entregadorToken)->tokenable;
-        
-        echo "\nEntregador ID: " . $this->entregador->id;
-        echo "\nEntregador Token: " . $this->entregadorToken;
-        echo "\nTipo do usuário do token: " . $userFromToken->tipo;
     }
+
+    // Test the creation of a delivery
     public function testCriacaoDeEntrega()
     {
-        // Dados básicos da entrega
         $baseData = [
             'origem' => [
                 'lat' => -23.5505,
@@ -90,7 +73,7 @@ class DeliveryTest extends TestCase
             ]
         ];
 
-        // 1. Testar criação de entrega normal
+        // Test normal delivery creation
         $normalData = array_merge($baseData, ['tipo' => 'normal']);
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
@@ -104,18 +87,17 @@ class DeliveryTest extends TestCase
             ->assertJsonPath('clienteId', $this->cliente->id)
             ->assertJsonPath('codigoConfirmacao', function ($code) {
                 return preg_match('/^[A-Z0-9]{6}$/', $code) === 1;
-            }); // Verifica se o código tem 6 caracteres alfanuméricos
+            });
             
         $this->assertDatabaseHas('deliveries', [
             'clienteId' => $this->cliente->id,
             'status' => 'pendente'
         ]);
 
-        // 2. Verificar cálculo automático
         $normalValue = $response->json('valor');
         $normalTime = $response->json('tempoEstimado');
 
-        // 3. Testar tipos de entrega
+        // Test express delivery creation
         $expressData = array_merge($baseData, ['tipo' => 'expressa']);
         $expressResponse = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
@@ -125,9 +107,7 @@ class DeliveryTest extends TestCase
         $this->assertGreaterThan($normalValue, $expressResponse->json('valor'));
         $this->assertLessThan($normalTime, $expressResponse->json('tempoEstimado'));
 
-        // 4. Testar validações
-        // Test invalid pesoEstimado value instead of missing field
-        // Test invalid pesoEstimado value (negative)
+        // Test invalid delivery data
         $invalidData = $baseData;
         $invalidData['pesoEstimado'] = -1;
         $response = $this->withHeaders([
@@ -139,9 +119,9 @@ class DeliveryTest extends TestCase
                 'pesoEstimado' => ['The peso estimado field must be at least 0.']
             ]);
 
-        // 5. Testar área fora de cobertura
+        // Test out-of-coverage delivery
         $outOfCoverageData = $baseData;
-        $outOfCoverageData['destino']['lat'] = -22.0000; // Local distante
+        $outOfCoverageData['destino']['lat'] = -22.0000;
         $outOfCoverageData['destino']['lng'] = -43.0000;
         
         $response = $this->withHeaders([
@@ -150,9 +130,10 @@ class DeliveryTest extends TestCase
         $response->assertStatus(400);
     }
 
+    // Test acceptance and completion of a delivery
     public function testAceitacaoEConclusaoDeEntrega()
     {
-        // Cliente cria uma entrega
+        // Create a delivery
         $entrega = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
         ])->postJson('/api/v1/deliveries', [
@@ -164,43 +145,17 @@ class DeliveryTest extends TestCase
             'tipo' => 'normal'
         ])->json();
 
-        // Verificar se a entrega foi criada corretamente
         $this->assertDatabaseHas('deliveries', [
             'id' => $entrega['id'],
             'status' => 'pendente',
             'clienteId' => $this->cliente->id
         ]);
 
-        // 1. Testar aceite de entrega
-        echo "\n--- Teste de aceitação ---";
-        echo "\nID do entregador: " . $this->entregador->id;
-        echo "\nToken do entregador: " . $this->entregadorToken;
-        echo "\nID da entrega: " . $entrega['id'];
-        
-        // Debug antes da requisição
-        echo "\nVerificando usuário do token:";
-        $userFromToken = \Laravel\Sanctum\PersonalAccessToken::findToken($this->entregadorToken)->tokenable;
-        echo "\nID: " . $userFromToken->id;
-        echo "\nTipo: " . $userFromToken->tipo;
-        echo "\nname: " . $userFromToken->name;
-
-        // Debug adicional para verificar o token
-        echo "\nVerificando token antes da requisição:";
-        $tokenParts = explode('|', $this->entregadorToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        echo "\nToken ID: " . $tokenId;
-        echo "\nToken User ID: " . $token->tokenable_id;
-        echo "\nToken Abilities: " . json_encode($token->abilities);
-
+        // Accept the delivery
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
         ])->patchJson("/api/v1/deliveries/{$entrega['id']}/accept");
 
-        // Debug após a requisição
-        echo "\nStatus code: " . $response->status();
-        echo "\nResponse: " . $response->content();
-        
         $response->assertStatus(200)
             ->assertJsonStructure(['id', 'status', 'entregador'])
             ->assertJsonPath('entregador.id', (string)$this->entregador->id);
@@ -211,7 +166,7 @@ class DeliveryTest extends TestCase
             'status' => 'aceito'
         ]);
 
-        // 2. Testar atualização de status
+        // Update delivery status to 'em_transporte' and 'entregue'
         $statuses = ['em_transporte', 'entregue'];
         foreach ($statuses as $status) {
             $response = $this->withHeaders([
@@ -234,7 +189,7 @@ class DeliveryTest extends TestCase
             ]);
         }
 
-        // 3. Testar confirmação com código
+        // Complete the delivery with the correct confirmation code
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
         ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
@@ -246,7 +201,7 @@ class DeliveryTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonPath('status', 'entregue');
 
-        // 4. Testar código incorreto (deve falhar)
+        // Attempt to complete the delivery with an incorrect confirmation code
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
         ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
@@ -257,9 +212,10 @@ class DeliveryTest extends TestCase
         $response->assertStatus(400);
     }
 
+    // Test tracking of a delivery
     public function testAcompanhamentoDeEntrega()
     {
-        // Cliente cria uma entrega
+        // Create a delivery
         $entrega = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
         ])->postJson('/api/v1/deliveries', [
@@ -271,12 +227,12 @@ class DeliveryTest extends TestCase
             'tipo' => 'normal'
         ])->json();
 
-        // Entregador aceita a entrega
+        // Accept the delivery
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
         ])->patchJson("/api/v1/deliveries/{$entrega['id']}/accept");
 
-        // 1. Testar endpoint de acompanhamento
+        // Check delivery details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
         ])->getJson("/api/v1/deliveries/{$entrega['id']}");
@@ -289,7 +245,7 @@ class DeliveryTest extends TestCase
             ->assertJsonPath('entregador.id', (string)$this->entregador->id)
             ->assertJsonPath('entregador.name', $this->entregador->name);
 
-        // 2. Verificar atualização em tempo real
+        // Update delivery position
         $novaPosicao = ['lat' => -23.5555, 'lng' => -46.6444];
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
@@ -298,6 +254,7 @@ class DeliveryTest extends TestCase
             'posicaoAtual' => $novaPosicao
         ]);
 
+        // Verify updated position
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
         ])->getJson("/api/v1/deliveries/{$entrega['id']}");
@@ -305,7 +262,7 @@ class DeliveryTest extends TestCase
         $response->assertJsonPath('posicaoAtual', $novaPosicao)
             ->assertJsonPath('status', 'em_transporte');
 
-        // 3. Testar notificações (simulado)
+        // Complete the delivery
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
         ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
@@ -313,6 +270,7 @@ class DeliveryTest extends TestCase
             'codigoConfirmacao' => $entrega['codigoConfirmacao']
         ]);
 
+        // Check notifications for the client
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
         ])->getJson("/api/v1/notifications");
@@ -324,7 +282,7 @@ class DeliveryTest extends TestCase
                 'status' => 'entregue'
             ]);
 
-        // 4. Testar chat (simulado)
+        // Send a message from the client
         $mensagem = ['texto' => 'Onde você está?'];
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->clienteToken
@@ -333,6 +291,7 @@ class DeliveryTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure(['id', 'texto', 'autor']);
 
+        // Retrieve messages as the delivery person
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->entregadorToken
         ])->getJson("/api/v1/deliveries/{$entrega['id']}/messages");
