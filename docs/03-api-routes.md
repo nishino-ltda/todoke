@@ -20,7 +20,7 @@ POST /api/v1/auth/register
 **Body:**
 ```json
 {
-  "nome": "string",
+  "name": "string",
   "email": "string",
   "telefone": "string",
   "tipo": "entregador|cliente|parceiro",
@@ -49,7 +49,7 @@ POST /api/v1/auth/login
   "token": "string",
   "usuario": {
     "id": "string",
-    "nome": "string",
+    "name": "string",
     "email": "string",
     "tipo": "string"
   }
@@ -64,7 +64,7 @@ GET /api/v1/users/me
 ```json
 {
   "id": "string",
-  "nome": "string",
+  "name": "string",
   "email": "string",
   "telefone": "string",
   "tipo": "string",
@@ -80,7 +80,7 @@ PATCH /api/v1/users/me
 **Body (parâmetros opcionais):**
 ```json
 {
-  "nome": "string",
+  "name": "string",
   "telefone": "string",
   "fotoUrl": "string"
 }
@@ -189,7 +189,7 @@ GET /api/v1/nodes
       "status": "string",
       "regiao": {
         "id": "string",
-        "nome": "string"
+        "name": "string"
       }
     }
   ]
@@ -220,7 +220,7 @@ GET /api/v1/regions
   "regioes": [
     {
       "id": "string",
-      "nome": "string",
+      "name": "string",
       "status": "string",
       "nodesCount": "number"
     }
@@ -236,7 +236,7 @@ PUT /api/v1/regions/{id}
 **Body:**
 ```json
 {
-  "nome": "string",
+  "name": "string",
   "poligono": [
     { "lat": "number", "lng": "number" }
   ]
@@ -255,7 +255,7 @@ GET /api/v1/products
   "produtos": [
     {
       "id": "string",
-      "nome": "string",
+      "name": "string",
       "descricao": "string",
       "preco": "number",
       "categoria": "string",
@@ -356,7 +356,7 @@ POST /webhooks/delivery-updated
     "status": "string",
     "entregador": {
       "id": "string",
-      "nome": "string"
+      "name": "string"
     }
   }
 }
@@ -408,7 +408,7 @@ Authorization: Bearer <cliente_token>
   "id": "660e8400-e29b-41d4-a716-446655441111",
   "status": "em_transito",
   "entregador": {
-    "nome": "Aurora Silva",
+    "name": "Aurora Silva",
     "fotoUrl": "https://...",
     "telefone": "+5511999999999"
   },

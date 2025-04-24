@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         try {
             $request->validate([
-                'nome' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'telefone' => 'required|string|max:20',
                 'tipo' => 'required|string|in:entregador,cliente,parceiro',
@@ -40,7 +40,7 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'nome' => $request->nome,
+            'name' => $request->name,
             'email' => $request->email,
             'telefone' => $request->telefone,
             'tipo' => $request->tipo,
@@ -61,7 +61,7 @@ class AuthController extends Controller
             'token' => $token,
             'usuario' => [
                 'id' => $user->id,
-                'nome' => $user->nome,
+                'name' => $user->name,
                 'email' => $user->email,
                 'tipo' => $user->tipo,
             ]
@@ -146,7 +146,7 @@ class AuthController extends Controller
             'token' => $token,
             'usuario' => [
                 'id' => $user->id,
-                'nome' => $user->nome,
+                'name' => $user->name,
                 'email' => $user->email,
                 'tipo' => $user->tipo,
             ]

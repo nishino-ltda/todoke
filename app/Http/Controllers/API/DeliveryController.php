@@ -179,7 +179,7 @@ class DeliveryController extends Controller
             'status' => $delivery->status,
             'entregador' => [
                 'id' => (string)$user->id,
-                'nome' => $user->nome,
+                'name' => $user->name,
                 'fotoUrl' => $user->fotoUrl
             ]
         ], 200);
@@ -280,7 +280,7 @@ class DeliveryController extends Controller
             'status' => $delivery->status,
             'entregador' => $delivery->entregador ? [
                 'id' => (string)$delivery->entregador->id,
-                'nome' => $delivery->entregador->nome,
+                'name' => $delivery->entregador->name,
                 'fotoUrl' => $delivery->entregador->fotoUrl
             ] : null,
             'posicaoAtual' => $delivery->posicaoAtual,

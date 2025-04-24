@@ -47,7 +47,7 @@
     6.  EcoCliente visualiza as opções de entrega (Normal, Expressa, Sustentável) com preços e tempos.
     7.  EcoCliente seleciona uma opção e confirma o método de pagamento (pré-cadastrado ou novo).
     8.  Sistema (Central Node) busca o entregador mais adequado (Aurora) baseado em proximidade, disponibilidade e tipo de veículo.
-    9.  EcoCliente recebe a confirmação da solicitação e os dados do entregador (nome, foto, veículo, avaliação).
+    9.  EcoCliente recebe a confirmação da solicitação e os dados do entregador (name, foto, veículo, avaliação).
 *   **Fluxo Alternativo:**
     *   Se o endereço estiver fora da área de cobertura, o sistema informa e não permite prosseguir.
     *   Se o cálculo de preço/tempo falhar, o sistema exibe uma mensagem de erro.
@@ -95,7 +95,7 @@
     1.  Gerente faz login no painel web TODOKE (`/login`).
     2.  Gerente visualiza o Dashboard (`/dashboard`) com um resumo das entregas ativas (`TdkStatWidget`), um mapa com a localização dos entregadores (`TdkMapDisplay`) e uma lista/tabela das últimas entregas (`TdkDataTable`).
     3.  Gerente navega para a seção "Criar Entrega" (`/deliveries/create`).
-    4.  Gerente preenche o formulário com dados de coleta (endereço do restaurante, detalhes) e entrega (endereço do cliente, nome, telefone, instruções).
+    4.  Gerente preenche o formulário com dados de coleta (endereço do restaurante, detalhes) e entrega (endereço do cliente, name, telefone, instruções).
     5.  Gerente pode optar por:
         *   Deixar o sistema alocar o entregador mais próximo (padrão).
         *   Selecionar um entregador específico de sua frota (se aplicável).
@@ -159,8 +159,8 @@
     4.  Clica em "Editar Região" ou "Nova Região".
     5.  Utiliza um componente de mapa interativo (`TdkRegionEditor`) para desenhar ou ajustar o polígono que define a área geográfica de operação. Salva a região.
     6.  Admin da LogisMaster navega para "Gerenciamento de Nodes" (`/partner/nodes`).
-    7.  Visualiza seus nodes (entregadores, drones) em uma tabela (`TdkDataTable`) com informações como nome, tipo, status (`TdkStatusBadge`), capacidade e região associada.
-    8.  Clica em "Adicionar Node". Preenche um formulário com os detalhes do node (nome, tipo de veículo/drone, placa/identificador, capacidade de carga, habilidades especiais) e seleciona a região geográfica à qual ele pertence. Salva o node.
+    7.  Visualiza seus nodes (entregadores, drones) em uma tabela (`TdkDataTable`) com informações como name, tipo, status (`TdkStatusBadge`), capacidade e região associada.
+    8.  Clica em "Adicionar Node". Preenche um formulário com os detalhes do node (name, tipo de veículo/drone, placa/identificador, capacidade de carga, habilidades especiais) e seleciona a região geográfica à qual ele pertence. Salva o node.
     9.  Admin da LogisMaster pode editar ou desativar nodes existentes.
     10. Sistema (Web Laravel -> Central Node API) valida e armazena as informações. O Central Node usa esses dados para roteamento geográfico.
     11. AdminSys (em seu painel `/admin/nodes` e `/admin/regions`) pode visualizar as regiões e nodes de todos os parceiros, e tem a capacidade de aprovar/rejeitar novos parceiros ou intervir se necessário.

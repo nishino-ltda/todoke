@@ -20,7 +20,6 @@ return new class extends Migration
             $table->rememberToken();
             $table->string('tipo')->default('cliente');
             $table->string('senha')->nullable(); // Senha em texto puro para testes
-            $table->string('nome')->nullable();
             $table->string('status')->default('ativo');
             $table->timestamps();
         });

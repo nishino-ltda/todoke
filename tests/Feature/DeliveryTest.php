@@ -31,9 +31,14 @@ class DeliveryTest extends TestCase
 
         $this->entregador = User::factory()->entregador()->create([
             'id' => 2,
-            'nome' => 'Entregador Teste',
-            'tipo' => 'entregador' // Forçar tipo explicitamente
+            'name' => 'Entregador Teste'
         ]);
+        
+        echo "\n--- Dados do entregador após criação ---";
+        echo "\nID: " . $this->entregador->id;
+        echo "\nname: " . $this->entregador->name;
+        echo "\nTipo: " . $this->entregador->tipo;
+        echo "\nEmail: " . $this->entregador->email;
         
         echo "\nTipo do entregador após criação: " . $this->entregador->tipo;
         echo "\nTipo do entregador após refresh: " . $this->entregador->fresh()->tipo;
@@ -47,10 +52,14 @@ class DeliveryTest extends TestCase
         echo "\nCliente ID: " . $this->cliente->id;
         echo "\nCliente Token: " . $this->clienteToken;
 
+        echo "\n--- Tentando login do entregador ---";
         $entregadorLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => 'entregador@example.com',
+            'email' => $this->entregador->email,
             'password' => 'Senha123'
         ]);
+        
+        echo "\nStatus do login: " . $entregadorLogin->status();
+        echo "\nResposta do login: " . $entregadorLogin->content();
         $this->entregadorToken = $entregadorLogin->json('token');
         $userFromToken = \Laravel\Sanctum\PersonalAccessToken::findToken($this->entregadorToken)->tokenable;
         
@@ -173,7 +182,7 @@ class DeliveryTest extends TestCase
         $userFromToken = \Laravel\Sanctum\PersonalAccessToken::findToken($this->entregadorToken)->tokenable;
         echo "\nID: " . $userFromToken->id;
         echo "\nTipo: " . $userFromToken->tipo;
-        echo "\nNome: " . $userFromToken->nome;
+        echo "\nname: " . $userFromToken->name;
 
         // Debug adicional para verificar o token
         echo "\nVerificando token antes da requisição:";
@@ -278,7 +287,7 @@ class DeliveryTest extends TestCase
             ])
             ->assertJsonPath('status', 'aceito')
             ->assertJsonPath('entregador.id', (string)$this->entregador->id)
-            ->assertJsonPath('entregador.nome', $this->entregador->nome);
+            ->assertJsonPath('entregador.name', $this->entregador->name);
 
         // 2. Verificar atualização em tempo real
         $novaPosicao = ['lat' => -23.5555, 'lng' => -46.6444];

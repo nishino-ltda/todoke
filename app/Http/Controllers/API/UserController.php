@@ -22,7 +22,7 @@ class UserController extends Controller
         
         return response()->json([
             'id' => $user->id,
-            'nome' => $user->nome,
+            'name' => $user->name,
             'email' => $user->email,
             'telefone' => $user->telefone,
             'tipo' => $user->tipo,
@@ -40,16 +40,16 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'nome' => 'sometimes|string|max:255',
+            'name' => 'sometimes|string|max:255',
             'telefone' => 'sometimes|string|max:20',
             'fotoUrl' => 'sometimes|nullable|string|max:255',
         ]);
 
         $user = $request->user();
         
-        $user->update($request->only(['nome', 'telefone', 'fotoUrl']));
+        $user->update($request->only(['name', 'telefone', 'fotoUrl']));
 
-        return response()->json($user->only(['nome', 'telefone', 'fotoUrl']));
+        return response()->json($user->only(['name', 'telefone', 'fotoUrl']));
     }
 
     /**

@@ -52,7 +52,7 @@ class MenuTest extends TestCase
             ->assertJsonCount(3, 'produtos')
             ->assertJsonStructure([
                 'produtos' => [
-                    '*' => ['id', 'nome', 'descricao', 'preco', 'categoria', 'status']
+                    '*' => ['id', 'name', 'descricao', 'preco', 'categoria', 'status']
                 ]
             ]);
     }
@@ -80,7 +80,7 @@ class MenuTest extends TestCase
     public function testCriacaoDeProduto()
     {
         $produtoData = [
-            'nome' => 'Novo Produto',
+            'name' => 'Novo Produto',
             'descricao' => 'Descrição do novo produto',
             'preco' => 29.90,
             'categoria' => 'Teste'
@@ -91,12 +91,12 @@ class MenuTest extends TestCase
         ])->postJson('/api/v1/products', $produtoData);
 
         $response->assertStatus(201)
-            ->assertJsonPath('nome', 'Novo Produto')
+            ->assertJsonPath('name', 'Novo Produto')
             ->assertJsonPath('restauranteId', $this->restaurante->id)
             ->assertJsonPath('status', 'disponivel');
 
         $this->assertDatabaseHas('products', [
-            'nome' => 'Novo Produto',
+            'name' => 'Novo Produto',
             'restauranteId' => $this->restaurante->id
         ]);
     }
@@ -108,7 +108,7 @@ class MenuTest extends TestCase
         ]);
 
         $updateData = [
-            'nome' => 'Nome Atualizado',
+            'name' => 'name Atualizado',
             'preco' => 39.90,
             'status' => 'indisponivel'
         ];
@@ -118,13 +118,13 @@ class MenuTest extends TestCase
         ])->putJson("/api/v1/products/{$produto->id}", $updateData);
 
         $response->assertStatus(200)
-            ->assertJsonPath('nome', 'Nome Atualizado')
+            ->assertJsonPath('name', 'name Atualizado')
             ->assertJsonPath('preco', 39.90)
             ->assertJsonPath('status', 'indisponivel');
 
         $this->assertDatabaseHas('products', [
             'id' => $produto->id,
-            'nome' => 'Nome Atualizado'
+            'name' => 'name Atualizado'
         ]);
     }
 
@@ -143,7 +143,7 @@ class MenuTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $outroToken
         ])->putJson("/api/v1/products/{$produto->id}", [
-            'nome' => 'Tentativa de Alteração'
+            'name' => 'Tentativa de Alteração'
         ]);
 
         $response->assertStatus(403);

@@ -10,7 +10,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 
 **Atributos:**
 - id: string (UUID)
-- nome: string
+- name: string
 - email: string (único)
 - telefone: string
 - tipo: enum ['entregador', 'cliente', 'admin', 'parceiro']
@@ -27,7 +27,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 ```typescript
 {
   id: "550e8400-e29b-41d4-a716-446655440000",
-  nome: "Aurora Silva",
+  name: "Aurora Silva",
   email: "aurora@email.com",
   telefone: "+5511999999999",
   tipo: "entregador",
@@ -130,7 +130,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 **Atributos:**
 - id: string (UUID)
 - parceiroId: string (ref: User)
-- nome: string
+- name: string
 - poligono: GeoPolygon (array de GeoPoints)
 - status: enum ['ativo', 'inativo', 'pendente']
 - createdAt: DateTime
@@ -145,7 +145,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 {
   id: "880e8400-e29b-41d4-a716-446655443333",
   parceiroId: "330e8400-e29b-41d4-a716-446655440002",
-  nome: "Zona Sul - SP",
+  name: "Zona Sul - SP",
   poligono: [
     { lat: -23.5505, lng: -46.6333 },
     { lat: -23.5614, lng: -46.6559 },
@@ -194,7 +194,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 **Atributos:**
 - id: string (UUID)
 - restauranteId: string (ref: User)
-- nome: string
+- name: string
 - descricao: string
 - preco: number
 - categoria: string
@@ -212,7 +212,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 {
   id: "110e8400-e29b-41d4-a716-446655445555",
   restauranteId: "220e8400-e29b-41d4-a716-446655440003",
-  nome: "Sushi Combinado",
+  name: "Sushi Combinado",
   descricao: "20 peças variadas de sushi",
   preco: 59.90,
   categoria: "Japonês",

@@ -18,7 +18,7 @@ class ProductFactory extends Factory
     {
         return [
             'restauranteId' => \App\Models\User::factory()->create(['tipo' => 'parceiro'])->id,
-            'nome' => fake()->words(3, true),
+            'name' => fake()->words(3, true),
             'descricao' => fake()->sentence(),
             'preco' => fake()->randomFloat(2, 1, 100),
             'categoria' => fake()->word(),

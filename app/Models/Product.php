@@ -12,7 +12,7 @@ class Product extends Model
 
     protected $fillable = [
         'restauranteId',
-        'nome',
+        'name',
         'descricao',
         'preco',
         'categoria',

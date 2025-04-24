@@ -20,13 +20,13 @@ class ModelTest extends TestCase
     public function user_model_has_expected_attributes()
     {
         $user = User::factory()->create([
-            'nome' => 'Test User',
+            'name' => 'Test User',
             'email' => 'test@example.com',
             'tipo' => 'cliente',
             'status' => 'ativo'
         ]);
 
-        $this->assertEquals('Test User', $user->nome);
+        $this->assertEquals('Test User', $user->name);
         $this->assertEquals('test@example.com', $user->email);
         $this->assertEquals('cliente', $user->tipo);
         $this->assertEquals('ativo', $user->status);
@@ -36,12 +36,12 @@ class ModelTest extends TestCase
     public function product_model_has_expected_attributes()
     {
         $product = Product::factory()->create([
-            'nome' => 'Test Product',
+            'name' => 'Test Product',
             'preco' => 19.99,
             'status' => 'disponivel'
         ]);
 
-        $this->assertEquals('Test Product', $product->nome);
+        $this->assertEquals('Test Product', $product->name);
         $this->assertEquals(19.99, $product->preco);
         $this->assertEquals('disponivel', $product->status);
     }
@@ -88,11 +88,11 @@ class ModelTest extends TestCase
     public function region_model_has_expected_attributes()
     {
         $region = Region::factory()->create([
-            'nome' => 'Zona Norte',
+            'name' => 'Zona Norte',
             'status' => 'ativo'
         ]);
 
-        $this->assertEquals('Zona Norte', $region->nome);
+        $this->assertEquals('Zona Norte', $region->name);
         $this->assertEquals('ativo', $region->status);
     }
 

@@ -12,7 +12,7 @@ class Region extends Model
 
     protected $fillable = [
         'parceiroId',
-        'nome',
+        'name',
         'poligono',
         'status'
     ];

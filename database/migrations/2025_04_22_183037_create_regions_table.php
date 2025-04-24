@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('regions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('parceiroId')->constrained('users');
-            $table->string('nome');
+            $table->string('name');
             $table->json('poligono');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');
             $table->timestamps();

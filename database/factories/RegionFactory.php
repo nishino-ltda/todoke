@@ -19,7 +19,7 @@ class RegionFactory extends Factory
     {
         return [
             'parceiroId' => User::factory()->create(['tipo' => 'parceiro'])->id,
-            'nome' => fake()->city() . ' Region',
+            'name' => fake()->city() . ' Region',
             'poligono' => [
                 [
                     'latitude' => fake()->latitude(),

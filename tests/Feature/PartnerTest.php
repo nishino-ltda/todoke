@@ -43,7 +43,7 @@ class PartnerTest extends TestCase
             ],
             'tipo' => 'normal',
             'cliente' => [
-                'nome' => 'Cliente Teste',
+                'name' => 'Cliente Teste',
                 'telefone' => '11999999999'
             ]
         ];
@@ -81,11 +81,11 @@ class PartnerTest extends TestCase
             'entregas' => [
                 [
                     'destino' => ['lat' => -23.5632, 'lng' => -46.6543, 'endereco' => 'Rua Augusta, 300'],
-                    'cliente' => ['nome' => 'Cliente 1', 'telefone' => '11999999991']
+                    'cliente' => ['name' => 'Cliente 1', 'telefone' => '11999999991']
                 ],
                 [
                     'destino' => ['lat' => -23.5643, 'lng' => -46.6532, 'endereco' => 'Rua Augusta, 400'],
-                    'cliente' => ['nome' => 'Cliente 2', 'telefone' => '11999999992']
+                    'cliente' => ['name' => 'Cliente 2', 'telefone' => '11999999992']
                 ]
             ]
         ];
@@ -134,7 +134,7 @@ class PartnerTest extends TestCase
         ];
 
         $regiaoData = [
-            'nome' => 'Centro de São Paulo',
+            'name' => 'Centro de São Paulo',
             'poligono' => $poligono
         ];
 
@@ -143,7 +143,7 @@ class PartnerTest extends TestCase
         ])->postJson('/api/v1/regions', $regiaoData);
         
         $response->assertStatus(201)
-            ->assertJsonStructure(['id', 'nome', 'status']);
+            ->assertJsonStructure(['id', 'name', 'status']);
         
         $regiaoId = $response->json('id');
 
@@ -156,7 +156,7 @@ class PartnerTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
         ])->postJson('/api/v1/regions', [
-            'nome' => 'Região Inválida',
+            'name' => 'Região Inválida',
             'poligono' => $invalidPoligono
         ]);
         

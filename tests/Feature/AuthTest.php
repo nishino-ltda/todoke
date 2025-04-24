@@ -15,7 +15,7 @@ class AuthTest extends TestCase
     {
         // Dados para registro
         $userData = [
-            'nome' => 'Aurora Silva',
+            'name' => 'Aurora Silva',
             'email' => 'aurora@example.com',
             'telefone' => '11999999999',
             'tipo' => 'entregador',
@@ -28,7 +28,7 @@ class AuthTest extends TestCase
             ->assertJsonStructure([
                 'token',
                 'usuario' => [
-                    'id', 'nome', 'email', 'tipo'
+                    'id', 'name', 'email', 'tipo'
                 ]
             ]);
 
@@ -65,13 +65,13 @@ class AuthTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'email' => $userData['email'],
-                'nome' => $userData['nome'],
+                'name' => $userData['name'],
                 'tipo' => $userData['tipo']
             ]);
 
         // 6. Testar atualização de perfil
         $updateData = [
-            'nome' => 'Aurora Silva Updated',
+            'name' => 'Aurora Silva Updated',
             'telefone' => '11988888888'
         ];
         $response = $this->withHeaders([

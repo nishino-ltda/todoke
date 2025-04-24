@@ -79,7 +79,7 @@ class SpecialTest extends TestCase
         DB::shouldReceive('connection')->andReturn($mock);
 
         $response = $this->postJson('/api/v1/auth/register', [
-            'nome' => 'Test User',
+            'name' => 'Test User',
             'email' => 'test@example.com',
             'telefone' => '11999999999',
             'tipo' => 'cliente',

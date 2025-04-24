@@ -72,7 +72,7 @@ class UsabilityTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'id',
-                'nome',
+                'name',
                 'email',
                 'telefone',
                 'tipo',

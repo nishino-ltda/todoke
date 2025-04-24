@@ -14,7 +14,7 @@ $response->assertStatus(500);
 $this->assertNotEmpty($response->json('message'));
 ```
 
-2. **Classes de teste**: Devem corresponder ao nome do arquivo
+2. **Classes de teste**: Devem corresponder ao name do arquivo
    - Exemplo: `class UserTest extends TestCase`
 
 3. **Métodos de teste**: Podem ser definidos de duas formas:
