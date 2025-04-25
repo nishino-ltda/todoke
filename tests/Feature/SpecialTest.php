@@ -23,16 +23,16 @@ class SpecialTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => "Bearer $token"
         ])->postJson('/api/v1/deliveries', [
-            'origem' => ['lat' => -90, 'lng' => -180, 'endereco' => 'Max values'],
-            'destino' => ['lat' => 90, 'lng' => 180, 'endereco' => 'Max values'],
+            'origin' => ['lat' => -90, 'lng' => -180, 'address' => 'Max values'],
+            'destination' => ['lat' => 90, 'lng' => 180, 'address' => 'Max values'],
             'item_description' => str_repeat('a', 255),
             'estimated_weight' => 999.99,
             'dimensions' => [
-                'largura' => 999,
-                'altura' => 999,
-                'profundidade' => 999
+                'width' => 999,
+                'height' => 999,
+                'depth' => 999
             ],
-            'type' => 'expressa'
+            'type' => 'express'
         ]);
 
         $response->assertStatus(201);
