@@ -15,12 +15,12 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'restaurantId' => 'required|exists:users,id',
+            'restaurant_id' => 'required|exists:users,id',
             'items' => 'required|array|min:1',
-            'items.*.productId' => [
+            'items.*.product_id' => [
                 'required',
                 Rule::exists('products', 'id')->where(function ($query) use ($request) {
-                    $query->where('restaurantId', $request->restaurantId);
+                    $query->where('restaurant_id', $request->restaurantId);
                 })
             ],
             'items.*.quantity' => 'required|integer|min:1',
@@ -34,32 +34,32 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
-            'clientId' => $request->user()->id,
-            'restaurantId' => $request->restaurantId,
+            'customer_id' => $request->user()->id,
+            'restaurant_id' => $request->restaurantId,
             'status' => 'pending',
-            'totalValue' => 0
+            'total_value' => 0
         ]);
 
         $total = 0;
         foreach ($request->items as $item) {
-            $product = Product::find($item['productId']);
+            $product = Product::find($item['product_id']);
             $itemTotal = $product->price * $item['quantity'];
             $total += $itemTotal;
             
             OrderItem::create([
                 'order_id' => $order->id,
-                'product_id' => $item['productId'],
+                'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
-                'unitPrice' => $product->price
+                'unit_price' => $product->price
             ]);
         }
 
-        $order->update(['totalValue' => $total]);
+        $order->update(['total_value' => $total]);
 
         return response()->json([
             'id' => $order->id,
             'status' => $order->status,
-            'totalValue' => number_format($order->totalValue, 2, '.', '')
+            'total_value' => number_format($order->totalValue, 2, '.', '')
         ], 201);
     }
 }

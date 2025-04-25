@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('regions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parceiroId')->constrained('users');
+            $table->foreignId('partner_id')->constrained('users');
             $table->string('name');
-            $table->json('poligono');
-            $table->enum('status', ['ativo', 'inativo'])->default('ativo');
+            $table->json('polygon');
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('parceiroId');
+            $table->index('partner_id');
         });
     }
 

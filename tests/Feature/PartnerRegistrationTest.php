@@ -26,9 +26,9 @@ class PartnerRegistrationTest extends TestCase
             'name' => 'BistroTech',
             'email' => 'contato@bistrotech.com.br',
             'password' => 'senhaSegura123',
-            'tipo' => 'parceiro',
-            'telefone' => '67999999999',
-            'status' => 'ativo'
+            'type' => 'partner',
+            'phone' => '67999999999',
+            'status' => 'active'
         ];
 
         // 1. Enviar dados de cadastro
@@ -41,7 +41,7 @@ class PartnerRegistrationTest extends TestCase
                     'id',
                     'name',
                     'email',
-                    'tipo',
+                    'type',
                     'status'
                 ]
             ]);
@@ -49,7 +49,7 @@ class PartnerRegistrationTest extends TestCase
         // 3. Verificar se o parceiro foi criado no banco
         $this->assertDatabaseHas('users', [
             'email' => 'contato@bistrotech.com.br',
-            'tipo' => 'parceiro'
+            'type' => 'partner'
         ]);
 
         // 4. Verificar se o email de confirmação foi enviado
@@ -72,7 +72,7 @@ class PartnerRegistrationTest extends TestCase
     {
         // 1. Criar parceiro logística (LogisMaster)
         $partner = \App\Models\User::factory()->create([
-            'tipo' => 'parceiro',
+            'type' => 'partner',
             'name' => 'LogisMaster'
         ]);
 
@@ -82,7 +82,7 @@ class PartnerRegistrationTest extends TestCase
         // 3. Dados da região (geojson simples)
         $regionData = [
             'name' => 'Zona Sul - Campo Grande',
-            'poligono' => [
+            'polygon' => [
                 'type' => 'Polygon',
                 'coordinates' => [
                     [
@@ -105,15 +105,15 @@ class PartnerRegistrationTest extends TestCase
                 'data' => [
                     'id',
                     'name',
-                    'poligono',
-                    'parceiroId'
+                    'polygon',
+                    'partner_id'
                 ]
             ]);
 
         // 6. Verificar se região foi criada no banco
         $this->assertDatabaseHas('regions', [
             'name' => 'Zona Sul - Campo Grande',
-            'parceiroId' => $partner->id
+            'partner_id' => $partner->id
         ]);
 
         // 7. Verificar se o polígono foi salvo corretamente
@@ -138,12 +138,12 @@ class PartnerRegistrationTest extends TestCase
     {
         // 1. Criar parceiro e região
         $partner = \App\Models\User::factory()->create([
-            'tipo' => 'parceiro',
+            'type' => 'partner',
             'name' => 'LogisMaster'
         ]);
         
         $region = \App\Models\Region::factory()->create([
-            'parceiroId' => $partner->id
+            'partner_id' => $partner->id
         ]);
 
         // 2. Autenticar o parceiro
@@ -151,11 +151,11 @@ class PartnerRegistrationTest extends TestCase
 
         // 3. Dados do node (entregador)
         $nodeData = [
-            'tipo' => 'entregador',
-            'identificador' => 'MOTO-001',
-            'capacidade' => 5.5,
-            'regiaoId' => $region->id,
-            'posicaoAtual' => [
+            'type' => 'courrier',
+            'identifier' => 'MOTO-001',
+            'capacity' => 5.5,
+            'region_id' => $region->id,
+            'current_position' => [
                 'lat' => -20.4697,
                 'lng' => -54.6468
             ]
@@ -169,25 +169,25 @@ class PartnerRegistrationTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     'id',
-                    'tipo',
-                    'identificador',
+                    'type',
+                    'identifier',
                     'status',
-                    'parceiroId',
-                    'regiaoId'
+                    'partner_id',
+                    'region_id'
                 ]
             ]);
 
         // 6. Verificar se node foi criado no banco
         $this->assertDatabaseHas('nodes', [
-            'identificador' => 'MOTO-001',
-            'parceiroId' => $partner->id,
-            'regiaoId' => $region->id,
+            'identifier' => 'MOTO-001',
+            'partner_id' => $partner->id,
+            'region_id' => $region->id,
             'status' => 'pending_approval'
         ]);
 
         // 7. Verificar se a posição foi salva corretamente
         $node = \App\Models\Node::first();
-        $this->assertIsArray($node->posicaoAtual);
-        $this->assertEquals(-20.4697, $node->posicaoAtual['lat']);
+        $this->assertIsArray($node->currentPosition);
+        $this->assertEquals(-20.4697, $node->currentPosition['lat']);
     }
 }

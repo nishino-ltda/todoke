@@ -19,11 +19,11 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'clientId' => User::factory()->create(['tipo' => 'cliente'])->id,
-            'restaurantId' => User::factory()->create(['tipo' => 'parceiro'])->id,
+            'customer_id' => User::factory()->create(['type' => 'customer'])->id,
+            'restaurant_id' => User::factory()->create(['type' => 'partner'])->id,
             'status' => fake()->randomElement(['pending', 'accepted', 'preparing', 'awaiting_delivery', 'delivery_picked_up', 'delivered', 'canceled']),
-            'totalValue' => fake()->randomFloat(2, 10, 200),
-            'deliveryId' => Delivery::factory()->create()->id,
+            'total_value' => fake()->randomFloat(2, 10, 200),
+            'delivery_id' => Delivery::factory()->create()->id,
         ];
     }
 }

@@ -2,9 +2,9 @@
 
 Para manter consistência no banco de dados, todos os nomes de campos devem seguir o padrão em inglês:
 
-- clientId (não usar clienteId)
-- restaurantId (não usar restauranteId)
-- productId (não usar produtoId)
+- client_id (não usar clienteId)
+- restaurant_id (não usar restauranteId)
+- product_id (não usar produtoId)
 
 Essa convenção deve ser seguida em:
 - Migrações do banco de dados

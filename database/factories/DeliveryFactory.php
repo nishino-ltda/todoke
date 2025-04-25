@@ -19,8 +19,8 @@ class DeliveryFactory extends Factory
     public function definition(): array
     {
         return [
-            'clienteId' => User::factory()->create(['tipo' => 'cliente'])->id,
-            'entregadorId' => User::factory()->create(['tipo' => 'entregador'])->id,
+            'customer_id' => User::factory()->create(['type' => 'customer'])->id,
+            'courrier_id' => User::factory()->create(['type' => 'courrier'])->id,
             'origem' => [
                 'latitude' => fake()->latitude(),
                 'longitude' => fake()->longitude(),
@@ -31,19 +31,19 @@ class DeliveryFactory extends Factory
                 'longitude' => fake()->longitude(),
                 'endereco' => fake()->address()
             ],
-            'status' => fake()->randomElement(['pendente', 'aceito', 'em_transporte', 'entregue', 'cancelado']),
-            'tipo' => fake()->randomElement(['normal', 'expressa', 'sustentavel']),
-            'descricaoItem' => fake()->sentence(),
-            'pesoEstimado' => fake()->randomFloat(2, 0.1, 10),
-            'dimensoes' => [
+            'status' => fake()->randomElement(['pending', 'accepted', 'in_transit', 'delivered', 'canceled']),
+            'type' => fake()->randomElement(['normal', 'expressa', 'sustentavel']),
+            'item_description' => fake()->sentence(),
+            'estimated_weight' => fake()->randomFloat(2, 0.1, 10),
+            'dimensions' => [
                 'altura' => fake()->randomFloat(2, 5, 50),
                 'largura' => fake()->randomFloat(2, 5, 50),
                 'profundidade' => fake()->randomFloat(2, 5, 50)
             ],
-            'valor' => fake()->randomFloat(2, 5, 50),
-            'tempoEstimado' => fake()->numberBetween(10, 120),
-            'codigoConfirmacao' => fake()->bothify('????-####'),
-            'nodeId' => Node::factory()->create()->id
+            'value' => fake()->randomFloat(2, 5, 50),
+            'estimated_time' => fake()->numberBetween(10, 120),
+            'confirmation_code' => fake()->bothify('????-####'),
+            'node_id' => Node::factory()->create()->id
         ];
     }
 }

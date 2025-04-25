@@ -13,33 +13,33 @@ return new class extends Migration
     {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('clienteId')->constrained('users');
-            $table->foreignId('entregadorId')->nullable()->constrained('users');
-            $table->json('posicaoAtual')->nullable();
-            $table->json('historicoStatus')->nullable();
+            $table->foreignId('customer_id')->constrained('users');
+            $table->foreignId('courrier_id')->nullable()->constrained('users');
+            $table->json('current_position')->nullable();
+            $table->json('status_history')->nullable();
             $table->json('origem');
             $table->json('destino');
             $table->enum('status', [
-                'pendente',
-                'aceito',
-                'em_transporte',
-                'entregue',
-                'cancelado'
-            ])->default('pendente');
-            $table->enum('tipo', ['normal', 'expressa', 'sustentavel']);
-            $table->string('descricaoItem');
-            $table->decimal('pesoEstimado', 10, 2)->nullable();
-            $table->json('dimensoes')->nullable();
-            $table->decimal('valor', 10, 2);
-            $table->integer('tempoEstimado')->nullable();
-            $table->string('codigoConfirmacao')->nullable();
-            $table->foreignId('nodeId')->nullable()->constrained('nodes');
+                'pending',
+                'accepted',
+                'in_transit',
+                'delivered',
+                'canceled'
+            ])->default('pending');
+            $table->enum('type', ['normal', 'expressa', 'sustentavel']);
+            $table->string('item_description');
+            $table->decimal('estimated_weight', 10, 2)->nullable();
+            $table->json('dimensions')->nullable();
+            $table->decimal('value', 10, 2);
+            $table->integer('estimated_time')->nullable();
+            $table->string('confirmation_code')->nullable();
+            $table->foreignId('node_id')->nullable()->constrained('nodes');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['clienteId', 'status']);
-            $table->index(['entregadorId', 'status']);
-            $table->index('nodeId');
+            $table->index(['customer_id', 'status']);
+            $table->index(['courrier_id', 'status']);
+            $table->index('node_id');
         });
     }
 

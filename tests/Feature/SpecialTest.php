@@ -25,14 +25,14 @@ class SpecialTest extends TestCase
         ])->postJson('/api/v1/deliveries', [
             'origem' => ['lat' => -90, 'lng' => -180, 'endereco' => 'Max values'],
             'destino' => ['lat' => 90, 'lng' => 180, 'endereco' => 'Max values'],
-            'descricaoItem' => str_repeat('a', 255),
-            'pesoEstimado' => 999.99,
-            'dimensoes' => [
+            'item_description' => str_repeat('a', 255),
+            'estimated_weight' => 999.99,
+            'dimensions' => [
                 'largura' => 999,
                 'altura' => 999,
                 'profundidade' => 999
             ],
-            'tipo' => 'expressa'
+            'type' => 'expressa'
         ]);
 
         $response->assertStatus(201);
@@ -42,7 +42,7 @@ class SpecialTest extends TestCase
     public function cannot_create_delivery_with_invalid_status(): void
     {
         $user = User::factory()->create();
-        $delivery = Delivery::factory()->create(['clienteId' => $user->id]);
+        $delivery = Delivery::factory()->create(['customer_id' => $user->id]);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
@@ -57,7 +57,7 @@ class SpecialTest extends TestCase
     public function order_with_zero_items_is_rejected(): void
     {
         $user = User::factory()->create();
-        $restaurant = User::factory()->create(['tipo' => 'parceiro']);
+        $restaurant = User::factory()->create(['type' => 'partner']);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
@@ -81,8 +81,8 @@ class SpecialTest extends TestCase
         $response = $this->postJson('/api/v1/auth/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'telefone' => '11999999999',
-            'tipo' => 'cliente',
+            'phone' => '11999999999',
+            'type' => 'customer',
             'senha' => 'password'
         ]);
 
@@ -95,10 +95,10 @@ class SpecialTest extends TestCase
     #[Test]
     public function cannot_accept_already_accepted_delivery(): void
     {
-        $user = User::factory()->create(['tipo' => 'entregador']);
+        $user = User::factory()->create(['type' => 'courrier']);
         $delivery = Delivery::factory()->create([
-            'entregadorId' => $user->id,
-            'status' => 'em_transporte'
+            'courrier_id' => $user->id,
+            'status' => 'in_transit'
         ]);
 
         $response = $this->withHeaders([
@@ -112,7 +112,7 @@ class SpecialTest extends TestCase
     public function order_with_invalid_product_is_rejected(): void
     {
         $user = User::factory()->create();
-        $restaurant = User::factory()->create(['tipo' => 'parceiro']);
+        $restaurant = User::factory()->create(['type' => 'partner']);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken

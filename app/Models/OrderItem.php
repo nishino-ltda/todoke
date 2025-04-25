@@ -13,12 +13,12 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'quantity',
-        'unitPrice'
+        'unit_price'
     ];
 
     protected $casts = [
         'quantity' => 'integer',
-        'unitPrice' => 'decimal:2'
+        'unit_price' => 'decimal:2'
     ];
 
     public function order()

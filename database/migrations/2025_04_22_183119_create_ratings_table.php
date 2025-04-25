@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('entregaId')->constrained('deliveries');
-            $table->foreignId('avaliadorId')->constrained('users');
-            $table->foreignId('avaliadoId')->constrained('users');
-            $table->tinyInteger('nota')->unsigned();
-            $table->text('comentario')->nullable();
+            $table->foreignId('delivery_id')->constrained('deliveries');
+            $table->foreignId('rater_id')->constrained('users');
+            $table->foreignId('rated_id')->constrained('users');
+            $table->tinyInteger('rating')->unsigned();
+            $table->text('comment')->nullable();
             $table->timestamps();
 
-            $table->index('entregaId');
-            $table->index(['avaliadorId', 'avaliadoId']);
+            $table->index('delivery_id');
+            $table->index(['rater_id', 'rated_id']);
         });
     }
 

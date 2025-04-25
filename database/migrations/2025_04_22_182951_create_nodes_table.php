@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('nodes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parceiroId')->constrained('users');
-            $table->enum('tipo', ['restaurante', 'centro_distribuicao', 'ponto_entrega']);
+            $table->foreignId('partner_id')->constrained('users');
+            $table->enum('type', ['restaurante', 'centro_distribuicao', 'ponto_entrega']);
             $table->string('identificador')->unique();
-            $table->decimal('capacidade', 10, 2)->nullable();
-            $table->enum('status', ['ativo', 'inativo', 'manutencao'])->default('ativo');
-            $table->foreignId('regiaoId')->constrained('regions');
-            $table->json('posicaoAtual');
+            $table->decimal('capacity', 10, 2)->nullable();
+            $table->enum('status', ['active', 'inactive', 'maintenance'])->default('active');
+            $table->foreignId('region_id')->constrained('regions');
+            $table->json('current_position');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['regiaoId', 'tipo']);
-            $table->index('parceiroId');
+            $table->index(['region_id', 'type']);
+            $table->index('partner_id');
         });
     }
 

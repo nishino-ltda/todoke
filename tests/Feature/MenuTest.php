@@ -13,8 +13,8 @@ class MenuTest extends TestCase
     // use DatabaseTransactions;
     private User $restaurant;
     private string $restaurantToken;
-    private User $cliente;
-    private string $clienteToken;
+    private User $customer;
+    private string $customerToken;
 
     protected function setUp(): void
     {
@@ -23,42 +23,42 @@ class MenuTest extends TestCase
         // Run migrations
         $this->artisan('migrate:fresh');
 
-        // Criar restaurante parceiro apenas uma vez
+        // Create partner restaurant only once
         if (!isset($this->restaurant)) {
             $this->restaurant = new User([
                 'id' => 1, // ID fixo para o restaurante
-                'tipo' => 'parceiro',
+                'type' => 'partner',
                 'email' => 'bistrotech@example.com',
                 'name' => 'Bistro Tech',
                 'password' => bcrypt('Bistro123'),
-                'status' => 'ativo'
+                'status' => 'active'
             ]);
             $this->restaurant->save();
 
-            // Criar cliente apenas uma vez
-            $this->cliente = User::factory()->create(['tipo' => 'cliente']);
+            // Create client only once
+            $this->client = User::factory()->create(['type' => 'client']);
             
-            // Obter tokens
+            // Get tokens
             $this->restaurantToken = $this->postJson('/api/v1/auth/login', [
                 'email' => 'bistrotech@example.com',
                 'password' => 'Bistro123'
             ])->json('token');
 
-            $this->clienteToken = $this->postJson('/api/v1/auth/login', [
-                'email' => $this->cliente->email,
+            $this->clientToken = $this->postJson('/api/v1/auth/login', [
+                'email' => $this->client->email,
                 'password' => 'Password123'
             ])->json('token');
         }
     }
 
-    public function testListagemDeProdutos()
+    public function testProductListing()
     {
-        // Criar produtos de teste
-        $produtos = Product::factory()
+        // Create test products
+        $products = Product::factory()
             ->count(3)
             ->forRestaurant($this->restaurant->id)
             ->create([
-                'status' => 'disponivel'
+                'status' => 'available'
             ]);
 
         $response = $this->getJson('/api/v1/products');
@@ -71,79 +71,79 @@ class MenuTest extends TestCase
             ]);
     }
 
-    public function testFiltroPorCategoria()
+    public function testCategoryFilter()
     {
         Product::factory()->forRestaurant($this->restaurant->id)->create([
-            'category' => 'Japonês',
-            'status' => 'disponivel'
+            'category' => 'Japanese',
+            'status' => 'available'
         ]);
 
         Product::factory()->forRestaurant($this->restaurant->id)->create([
-            'category' => 'Brasileira',
-            'status' => 'disponivel'
+            'category' => 'Brazilian',
+            'status' => 'available'
         ]);
 
-        $response = $this->getJson('/api/v1/products?category=Japonês');
+        $response = $this->getJson('/api/v1/products?category=Japanese');
         $response->assertStatus(200)
             ->assertJsonCount(1, 'products')
-            ->assertJsonPath('products.0.category', 'Japonês');
+            ->assertJsonPath('products.0.category', 'Japanese');
     }
 
-    public function testCriacaoDeProduto()
+    public function testProductCreation()
     {
-        $produtoData = [
+        $productData = [
             'name' => 'Novo Produto',
             'description' => 'Descrição do novo produto',
             'price' => 29.90,
             'category' => 'Teste'
         ];
-
+, 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->restaurantToken
-        ])->postJson('/api/v1/products', $produtoData);
+        ])->postJson('/api/v1/products', $productData);
 
         $response->assertStatus(201)
             ->assertJsonPath('name', 'Novo Produto')
-            ->assertJsonPath('restaurantId', $this->restaurant->id)
-            ->assertJsonPath('status', 'disponivel');
+            ->assertJsonPath('restaurant_id', $this->restaurant->id)
+            ->assertJsonPath('status', 'available');
 
         $this->assertDatabaseHas('products', [
             'name' => 'Novo Produto',
-            'restaurantId' => $this->restaurant->id
+            'restaurant_id' => $this->restaurant->id
         ]);
     }
 
-    public function testAtualizacaoDeProduto()
+    public function testProductUpdate()
     {
-        $produto = Product::factory()->forRestaurant($this->restaurant->id)->create();
+        $product = Product::factory()->forRestaurant($this->restaurant->id)->create();
 
         $updateData = [
             'name' => 'name Atualizado',
             'price' => 39.90,
-            'status' => 'indisponivel'
+            'status' => 'unavailable'
         ];
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->restaurantToken
-        ])->putJson("/api/v1/products/{$produto->id}", $updateData);
+        ])->putJson("/api/v1/products/{$product->id}", $updateData);
 
         $response->assertStatus(200)
             ->assertJsonPath('name', 'name Atualizado')
             ->assertJsonPath('price', '39.90')
-            ->assertJsonPath('status', 'indisponivel');
+            ->assertJsonPath('status', 'unavailable');
 
         $this->assertDatabaseHas('products', [
-            'id' => $produto->id,
+            'id' => $product->id,
             'name' => 'name Atualizado',
-            'restaurantId' => $this->restaurant->id
+            'restaurant_id' => $this->restaurant->id
         ]);
     }
 
-    public function testApenasProprietarioPodeAtualizarProduto()
+    public function testOnlyOwnerCanUpdateProduct()
     {
-        $produto = Product::factory()->forRestaurant($this->restaurant->id)->create();
+        $product = Product::factory()->forRestaurant($this->restaurant->id)->create();
 
-        $outroRestaurante = User::factory()->create(['tipo' => 'parceiro']);
+        $outroRestaurante = User::factory()->create(['type' => 'parceiro']);
         $outroToken = $this->postJson('/api/v1/auth/login', [
             'email' => $outroRestaurante->email,
             'password' => 'Password123'
@@ -151,33 +151,33 @@ class MenuTest extends TestCase
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $outroToken
-        ])->putJson("/api/v1/products/{$produto->id}", [
-            'name' => 'Tentativa de Alteração'
+        ])->putJson("/api/v1/products/{$product->id}", [
+            'name' => 'Update Attempt'
         ]);
 
         $response->assertStatus(403);
     }
 
-    public function testCriacaoDePedidoComProdutos()
+    public function testOrderCreationWithProducts()
     {
-        $produto1 = Product::factory()->forRestaurant($this->restaurant->id)->create([
+        $product1 = Product::factory()->forRestaurant($this->restaurant->id)->create([
             'price' => 10.00
         ]);
 
-        $produto2 = Product::factory()->forRestaurant($this->restaurant->id)->create([
+        $product2 = Product::factory()->forRestaurant($this->restaurant->id)->create([
             'price' => 20.00
         ]);
 
-        // Garantir que os produtos estão disponíveis
-        $produto1->update(['status' => 'disponivel']);
-        $produto2->update(['status' => 'disponivel']);
+        // Ensure products are available
+        $product1->update(['status' => 'available']);
+        $product2->update(['status' => 'available']);
 
-        $pedidoData = [
-            'restaurantId' => (string)$this->restaurant->id,
-            'totalValue' => 40.00, // (2 * 10) + 20
+        $orderData = [
+            'restaurant_id' => (string)$this->restaurant->id,
+            'total_value' => 40.00, // (2 * 10) + 20
             'items' => [
-                ['productId' => $produto1->id, 'quantity' => 2],
-                ['productId' => $produto2->id, 'quantity' => 1]
+                ['product_id' => $product1->id, 'quantity' => 2],
+                ['product_id' => $product2->id, 'quantity' => 1]
             ],
             'delivery' => [
                 'destination' => [
@@ -188,22 +188,22 @@ class MenuTest extends TestCase
             ]
         ];
 
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
-        ])->postJson('/api/v1/orders', $pedidoData);
+            $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->clientToken
+        ])->postJson('/api/v1/orders', $orderData);
         
         if ($response->status() !== 201) {
-            dd($response->json()); // Mostrar erros de validação
+            dd($response->json()); // Show validation errors
         }
 
         $response->assertStatus(201)
-            ->assertJsonPath('totalValue', '40.00') // (2 * 10) + 20
+            ->assertJsonPath('total_value', '40.00') // (2 * 10) + 20
             ->assertJsonPath('status', 'pending');
 
         $this->assertDatabaseHas('order_items', [
-            'product_id' => $produto1->id,
+            'product_id' => $product1->id,
             'quantity' => 2,
-            'unitPrice' => 10.00
+            'unit_price' => 10.00
         ]);
     }
 }

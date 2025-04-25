@@ -11,28 +11,28 @@ use Illuminate\Support\Facades\Log;
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
-    public function testAuroraSeCadastraEConfiguraSeuPerfil()
+    public function testAuroraRegistersAndConfiguresProfile()
     {
-        // Dados para registro
+        // Registration data
         $userData = [
             'name' => 'Aurora Silva',
             'email' => 'aurora@example.com',
-            'telefone' => '11999999999',
-            'tipo' => 'entregador',
+            'phone' => '11999999999',
+            'type' => 'courrier',
             'password' => 'SenhaSegura123'
         ];
 
-        // 1. Testar registro de novo entregador
+        // 1. Test new courier registration
         $response = $this->postJson('/api/v1/auth/register', $userData);
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'token',
-                'usuario' => [
-                    'id', 'name', 'email', 'tipo'
+                'user' => [
+                    'id', 'name', 'email', 'type'
                 ]
             ]);
 
-        // 2. Verificar validação de campos obrigatórios
+        // 2. Verify required field validation
         foreach ($userData as $key => $value) {
             $invalidData = $userData;
             unset($invalidData[$key]);
@@ -42,22 +42,22 @@ class AuthTest extends TestCase
                 ->assertJsonValidationErrors([$key]);
         }
 
-        // 3. Testar email duplicado
+        // 3. Test duplicate email
         $response = $this->postJson('/api/v1/auth/register', $userData);
         $response->assertStatus(409);
 
-        // 4. Testar login após cadastro
+        // 4. Test login after registration
         $loginData = [
             'email' => $userData['email'],
             'password' => $userData['password']
         ];
         $response = $this->postJson('/api/v1/auth/login', $loginData);
         $response->assertStatus(200)
-            ->assertJsonStructure(['token', 'usuario']);
+            ->assertJsonStructure(['token', 'user']);
 
         $token = $response->json('token');
 
-        // 5. Testar obtenção de perfil
+        // 5. Test profile retrieval
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
         ])->getJson('/api/v1/users/me');
@@ -66,13 +66,13 @@ class AuthTest extends TestCase
             ->assertJson([
                 'email' => $userData['email'],
                 'name' => $userData['name'],
-                'tipo' => $userData['tipo']
+                'type' => $userData['type']
             ]);
 
-        // 6. Testar atualização de perfil
+        // 6. Test profile update
         $updateData = [
             'name' => 'Aurora Silva Updated',
-            'telefone' => '11988888888'
+            'phone' => '11988888888'
         ];
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
@@ -82,83 +82,83 @@ class AuthTest extends TestCase
             ->assertJson($updateData);
     }
 
-    public function testAdminsysGerenciaUsuarios()
+    public function testAdminManagesUsers()
     {
-        // Criar usuário admin com senha correta (usando campos do AuthController)
+        // Create admin user with correct password (using AuthController fields)
         $admin = \App\Models\User::factory()->create([
-            'tipo' => 'admin',
+            'type' => 'admin',
             'email' => 'admin@todoke.com',
             'password' => Hash::make('Admin123')
         ]);
 
-        // Criar alguns usuários de teste
-        $entregador = \App\Models\User::factory()->create(['tipo' => 'entregador']);
-        $cliente = \App\Models\User::factory()->create([
-            'tipo' => 'cliente',
-            'email' => 'cliente@test.com',
-            'password' => Hash::make('Cliente123')
+        // Create test users
+        $entregador = \App\Models\User::factory()->create(['type' => 'courrier']);
+        $customer = \App\Models\User::factory()->create([
+            'type' => 'customer',
+            'email' => 'customere@test.com',
+            'password' => Hash::make('customere123')
         ]);
         // Delete any existing tokens to ensure fresh token with correct abilities
-        $cliente->tokens()->delete();
-        $parceiro = \App\Models\User::factory()->create(['tipo' => 'parceiro']);
+        $customer->tokens()->delete();
+        $partner = \App\Models\User::factory()->create(['type' => 'partner']);
 
-        // Verificar usuário admin antes do login
+        // Verify admin user before login
         $adminUser = User::where('email', 'admin@todoke.com')->first();
-        if ($adminUser->tipo !== 'admin') {
-            dd('ERRO: Usuário admin não está com tipo correto', $adminUser);
+        if ($adminUser->type !== 'admin') {
+            dd('ERROR: Admin user has incorrect type', $adminUser);
         }
 
-        // Fazer login como admin
+        // Login as admin
         $loginResponse = $this->postJson('/api/v1/auth/login', [
             'email' => 'admin@todoke.com',
             'password' => 'Admin123'
         ]);
         
         if ($loginResponse->status() !== 200) {
-            dd('Falha no login', $loginResponse->json());
+            dd('Login failed', $loginResponse->json());
         }
         
         $token = $loginResponse->json('token');
 
-        // 1. Testar listagem de usuários
+        // 1. Test user listing
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
         ])->getJson('/api/v1/admin/users');
         
         $response->assertStatus(200)
-            ->assertJsonCount(4, 'data'); // admin + 3 usuários criados
+            ->assertJsonCount(4, 'data'); // admin + 3 created users
 
-        // 2. Testar filtros por tipo
+        // 2. Test type filters
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
-        ])->getJson('/api/v1/admin/users?tipo=entregador');
+        ])->getJson('/api/v1/admin/users?type=courrier');
         
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.tipo', 'entregador');
+            ->assertJsonPath('data.0.type', 'courrier');
 
-        // 3. Testar atualização de status
+        // 3. Test status update
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
         ])->patchJson("/api/v1/admin/users/{$entregador->id}/status", [
-            'status' => 'inativo'
+            'status' => 'inactive'
         ]);
         
         $response->assertStatus(200)
-            ->assertJson(['status' => 'inativo']);
+            ->assertJson(['status' => 'inactive']);
 
-        // 4. Verificar permissões (usuário não-admin não pode acessar)
-        // Criar um novo cliente para testar permissões
+        // 4. Verify permissions (non-admin user cannot access)
+        // Create new client to test permissions
         $novoCliente = \App\Models\User::factory()->create([
-            'tipo' => 'cliente',
+            'type' => 'customer',
             'email' => 'novo.cliente@test.com',
-            'password' => Hash::make('Cliente123')
+            'password' => Hash::make('customere123')
         ]);
         
-        // Autenticar diretamente como o cliente
+        // Authenticate directly as client
         $this->actingAs($novoCliente);
         
-        // Verificar que o cliente não pode acessar rotas de admin
+        // Verify client cannot access admin routes
         $response = $this->getJson('/api/v1/admin/users');
         
         $response->assertStatus(403);

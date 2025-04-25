@@ -20,7 +20,7 @@ class SecurityTest extends TestCase
     /** @test */
     public function users_cannot_access_admin_routes()
     {
-        $user = User::factory()->create(['tipo' => 'cliente']);
+        $user = User::factory()->create(['type' => 'customer']);
         $token = $user->createToken('test')->plainTextToken;
 
         $response = $this->withHeaders([
@@ -33,7 +33,7 @@ class SecurityTest extends TestCase
     /** @test */
     public function admin_can_access_admin_routes()
     {
-        $admin = User::factory()->create(['tipo' => 'admin']);
+        $admin = User::factory()->create(['type' => 'admin']);
         $token = $admin->createToken('test', ['admin'])->plainTextToken;
 
         $response = $this->withHeaders([
@@ -55,9 +55,9 @@ class SecurityTest extends TestCase
         ])->postJson('/api/v1/deliveries', [
             'origem' => ["lat" => "invalid", "lng" => "invalid"], // Tipos inválidos
             'destino' => null, // Valor nulo não permitido
-            'descricaoItem' => 123, // Tipo numérico inválido
-            'pesoEstimado' => "heavy", // String inválida
-            'dimensoes' => "invalid" // Formato inválido
+            'item_description' => 123, // Tipo numérico inválido
+            'estimated_weight' => "heavy", // String inválida
+            'dimensions' => "invalid" // Formato inválido
         ]);
 
         $response->assertStatus(422);

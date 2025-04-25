@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('delivery_id')->constrained('deliveries');
             $table->foreignId('user_id')->constrained('users');
-            $table->text('texto');
+            $table->text('text');
             $table->timestamps();
         });
     }

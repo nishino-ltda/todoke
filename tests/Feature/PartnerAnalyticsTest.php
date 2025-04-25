@@ -23,31 +23,31 @@ class PartnerAnalyticsTest extends TestCase
     {
         // 1. Criar parceiro e cliente
         $partner = \App\Models\User::factory()->create([
-            'tipo' => 'parceiro',
+            'type' => 'partner',
             'name' => 'BistroTech'
         ]);
 
         $customer = \App\Models\User::factory()->create([
-            'tipo' => 'cliente'
+            'type' => 'customer'
         ]);
 
         // 2. Criar entregas históricas
         \App\Models\Delivery::factory()->create([
-            'clienteId' => $customer->id,
-            'parceiroLogisticaId' => $partner->id,
+            'customer_id' => $customer->id,
+            'logisticsPartnerId' => $partner->id,
             'status' => 'completed',
             'created_at' => now()->subDays(3),
-            'tempoEntrega' => 30,
-            'avaliacao' => 5
+            'deliveryTime' => 30,
+            'rating' => 5
         ]);
 
         \App\Models\Delivery::factory()->create([
-            'clienteId' => $customer->id,
-            'parceiroLogisticaId' => $partner->id,
+            'customer_id' => $customer->id,
+            'logisticsPartnerId' => $partner->id,
             'status' => 'completed',
             'created_at' => now()->subDays(1),
-            'tempoEntrega' => 45,
-            'avaliacao' => 4
+            'deliveryTime' => 45,
+            'rating' => 4
         ]);
 
         // 3. Autenticar como parceiro
@@ -60,19 +60,19 @@ class PartnerAnalyticsTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
-                    'totalEntregas',
-                    'tempoMedioEntrega',
-                    'avaliacaoMedia',
-                    'entregasPorDia'
+                    'totalDeliveries',
+                    'averageDeliveryTime',
+                    'averageRating',
+                    'deliveriesPerDay'
                 ]
             ]);
 
         // 6. Verificar valores calculados
         $response->assertJson([
             'data' => [
-                'totalEntregas' => 2,
-                'tempoMedioEntrega' => 37.5,
-                'avaliacaoMedia' => 4.5
+                'totalDeliveries' => 2,
+                'averageDeliveryTime' => 37.5,
+                'averageRating' => 4.5
             ]
         ]);
     }

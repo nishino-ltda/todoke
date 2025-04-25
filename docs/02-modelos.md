@@ -234,7 +234,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 - clienteId: string (ref: User)
 - restauranteId: string (ref: User)
 - status: enum ['pending', 'accepted', 'preparing', 'awaiting_delivery', 'delivery_in_progress', 'delivered', 'canceled']
-- itens: Array<{ productId: string, quantity: number, unitPrice: number }>
+- itens: Array<{ product_id: string, quantity: number, unitPrice: number }>
 - valorTotal: number
 - entregaId: string (ref: Delivery, opcional)
 - createdAt: DateTime
@@ -253,7 +253,7 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
   restauranteId: "220e8400-e29b-41d4-a716-446655440003",
   status: "preparing",
   itens: [
-    { productId: "110e8400-e29b-41d4-a716-446655445555", quantity: 1, unitPrice: 59.90 }
+    { product_id: "110e8400-e29b-41d4-a716-446655445555", quantity: 1, unitPrice: 59.90 }
   ],
   valorTotal: 59.90,
   entregaId: "660e8400-e29b-41d4-a716-446655441111",

@@ -23,8 +23,8 @@ class AuthController extends Controller
             $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
-                'telefone' => 'required|string|max:20',
-                'tipo' => 'required|string|in:entregador,cliente,parceiro',
+                'phone' => 'required|string|max:20',
+                'type' => 'required|string|in:courrier,client,partner',
                 'password' => 'required|string|min:8',
             ]);
         } catch (ValidationException $e) {
@@ -42,18 +42,18 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'telefone' => $request->telefone,
-            'tipo' => $request->tipo,
+            'phone' => $request->phone,
+            'type' => $request->type,
             'password' => Hash::make($request->password),
-            'status' => 'ativo',
+            'status' => 'active',
         ]);
 
-        $token = $user->createToken('auth_token', [$user->tipo])->plainTextToken;
+        $token = $user->createToken('auth_token', [$user->type])->plainTextToken;
 
         Log::debug('Token generated for user', [
             'user_id' => $user->id,
             'email' => $user->email,
-            'tipo' => $user->tipo,
+            'type' => $user->type,
             'abilities' => $user->tokens()->latest()->first()->abilities
         ]);
 
@@ -63,7 +63,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'tipo' => $user->tipo,
+                'type' => $user->type,
             ]
         ], 201);
     }
@@ -93,13 +93,13 @@ class AuthController extends Controller
         $user->tokens()->delete();
         
         // Verify user type before creating token
-        $abilities = [$user->tipo];
+        $abilities = [$user->type];
 
         // Debug antes de criar o token
         Log::debug('Creating token for user', [
             'user_id' => $user->id,
             'email' => $user->email,
-            'tipo' => $user->tipo,
+            'type' => $user->type,
             'expected_abilities' => $abilities
         ]);
 
@@ -126,14 +126,14 @@ class AuthController extends Controller
         
         Log::debug('Login token generated', [
             'user_id' => $user->id,
-            'tipo' => $user->tipo,
+            'type' => $user->type,
             'requested_abilities' => $abilities,
             'token_abilities' => $createdToken->abilities,
             'token_id' => $createdToken->id
         ]);
 
         // Additional verification
-        if ($user->tipo !== 'admin' && in_array('admin', $createdToken->abilities)) {
+        if ($user->type !== 'admin' && in_array('admin', $createdToken->abilities)) {
             Log::error('Invalid abilities assigned to non-admin user', [
                 'user_id' => $user->id,
                 'expected_abilities' => $abilities,
@@ -148,7 +148,7 @@ class AuthController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'tipo' => $user->tipo,
+                'type' => $user->type,
             ]
         ]);
     }

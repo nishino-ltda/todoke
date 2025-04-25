@@ -10,19 +10,19 @@ class DeliveryAssignment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'deliveryId',
-        'parceiroId',
-        'etapa',
+        'delivery_id',
+        'partner_id',
+        'stage',
         'status'
     ];
 
     public function delivery()
     {
-        return $this->belongsTo(Delivery::class, 'deliveryId');
+        return $this->belongsTo(Delivery::class, 'delivery_id');
     }
 
     public function partner()
     {
-        return $this->belongsTo(User::class, 'parceiroId');
+        return $this->belongsTo(User::class, 'partner_id');
     }
 }

@@ -10,54 +10,54 @@ class Delivery extends Model
     use HasFactory;
 
     protected $fillable = [
-        'clienteId',
-        'entregadorId',
+        'customer_id',
+        'courrier_id',
         'origem',
         'destino',
         'status',
-        'tipo',
-        'descricaoItem',
-        'pesoEstimado',
-        'dimensoes',
-        'valor',
-        'tempoEstimado',
-        'codigoConfirmacao',
-        'nodeId',
-        'posicaoAtual'
+        'type',
+        'item_description',
+        'estimated_weight',
+        'dimensions',
+        'value',
+        'estimated_time',
+        'confirmation_code',
+        'node_id',
+        'current_position'
     ];
 
     protected $casts = [
         'origem' => 'array',
         'destino' => 'array',
-        'dimensoes' => 'array',
-        'valor' => 'decimal:2',
-        'tempoEstimado' => 'integer',
-        'pesoEstimado' => 'decimal:2',
-        'posicaoAtual' => 'array'
+        'dimensions' => 'array',
+        'value' => 'decimal:2',
+        'estimated_time' => 'integer',
+        'estimated_weight' => 'decimal:2',
+        'current_position' => 'array'
     ];
 
     public function cliente()
     {
-        return $this->belongsTo(User::class, 'clienteId');
+        return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function entregador()
+    public function courrier()
     {
-        return $this->belongsTo(User::class, 'entregadorId');
+        return $this->belongsTo(User::class, 'courrier_id');
     }
 
     public function node()
     {
-        return $this->belongsTo(Node::class, 'nodeId');
+        return $this->belongsTo(Node::class, 'node_id');
     }
 
     public function order()
     {
-        return $this->hasOne(Order::class, 'entregaId');
+        return $this->hasOne(Order::class, 'delivery_id');
     }
 
     public function ratings()
     {
-        return $this->hasMany(Rating::class, 'entregaId');
+        return $this->hasMany(Rating::class, 'delivery_id');
     }
 }

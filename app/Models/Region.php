@@ -10,23 +10,23 @@ class Region extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parceiroId',
+        'partner_id',
         'name',
-        'poligono',
+        'polygon',
         'status'
     ];
 
     protected $casts = [
-        'poligono' => 'array'
+        'polygon' => 'array'
     ];
 
     public function parceiro()
     {
-        return $this->belongsTo(User::class, 'parceiroId');
+        return $this->belongsTo(User::class, 'partner_id');
     }
 
     public function nodes()
     {
-        return $this->hasMany(Node::class, 'regiaoId');
+        return $this->hasMany(Node::class, 'region_id');
     }
 }

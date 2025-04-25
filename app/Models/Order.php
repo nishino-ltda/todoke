@@ -10,37 +10,37 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'clientId',
-        'restaurantId', 
+        'customer_id',
+        'restaurant_id', 
         'status',
-        'totalValue',
-        'deliveryId'
+        'total_value',
+        'delivery_id'
     ];
 
     protected $casts = [
-        'totalValue' => 'decimal:2',
+        'total_value' => 'decimal:2',
         'status' => 'string'
     ];
 
     public function client()
     {
-        return $this->belongsTo(User::class, 'clientId');
+        return $this->belongsTo(User::class, 'customer_id');
     }
 
     public function restaurant()
     {
-        return $this->belongsTo(User::class, 'restaurantId');
+        return $this->belongsTo(User::class, 'restaurant_id');
     }
 
     public function delivery()
     {
-        return $this->belongsTo(Delivery::class, 'deliveryId');
+        return $this->belongsTo(Delivery::class, 'delivery_id');
     }
 
     public function products()
     {
         return $this->belongsToMany(Product::class, 'order_items')
-            ->withPivot('quantity', 'unitPrice');
+            ->withPivot('quantity', 'unit_price');
     }
     
     public function items()

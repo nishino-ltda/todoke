@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('clientId')->constrained('users');
-            $table->foreignId('restaurantId')->constrained('users');
+            $table->foreignId('customer_id')->constrained('users');
+            $table->foreignId('restaurant_id')->constrained('users');
             $table->enum('status', [
                 'pending',
                 'accepted', 
@@ -24,13 +24,13 @@ return new class extends Migration
                 'delivered',
                 'canceled'
             ])->default('pending');
-            $table->decimal('totalValue', 10, 2);
-            $table->foreignId('deliveryId')->nullable()->constrained('deliveries');
+            $table->decimal('total_value', 10, 2);
+            $table->foreignId('delivery_id')->nullable()->constrained('deliveries');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['restaurantId', 'status']);
-            $table->index(['clientId', 'created_at']);
+            $table->index(['restaurant_id', 'status']);
+            $table->index(['customer_id', 'created_at']);
         });
     }
 

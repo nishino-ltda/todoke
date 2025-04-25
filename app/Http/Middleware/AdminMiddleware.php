@@ -25,16 +25,16 @@ class AdminMiddleware
         }
 
         // Verificar se o usuário é realmente um admin no banco de dados
-        if ($user->tipo !== 'admin') {
+        if ($user->type !== 'admin') {
             Log::error('Non-admin user trying to access admin route', [
                 'user_id' => $user->id,
                 'email' => $user->email,
-                'tipo' => $user->tipo
+                'type' => $user->type
             ]);
             
             return response()->json([
                 'message' => 'Acesso não autorizado. Apenas administradores podem acessar este recurso.',
-                'user_type' => $user->tipo
+                'user_type' => $user->type
             ], 403);
         }
 
@@ -50,7 +50,7 @@ class AdminMiddleware
         if (!$token || !in_array('admin', $token->abilities)) {
             return response()->json([
                 'message' => 'Acesso não autorizado. Apenas administradores podem acessar este recurso.',
-                'user_type' => $user->tipo,
+                'user_type' => $user->type,
                 'token_abilities' => $token ? $token->abilities : 'No token'
             ], 403);
         }

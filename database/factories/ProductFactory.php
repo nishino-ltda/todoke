@@ -17,13 +17,13 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'restaurantId' => null,
+            'restaurant_id' => null,
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 1, 100),
             'category' => fake()->word(),
-            'imagemUrl' => fake()->imageUrl(),
-            'status' => fake()->randomElement(['disponivel', 'indisponivel']),
+            'imageUrl' => fake()->imageUrl(),
+            'status' => fake()->randomElement(['available', 'unavailable']),
         ];
     }
 
@@ -37,7 +37,7 @@ class ProductFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($restaurantId) {
             return [
-                'restaurantId' => $restaurantId
+                'restaurant_id' => $restaurantId
             ];
         });
     }

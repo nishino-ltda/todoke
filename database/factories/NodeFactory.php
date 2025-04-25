@@ -19,13 +19,13 @@ class NodeFactory extends Factory
     public function definition(): array
     {
         return [
-            'parceiroId' => User::factory()->create(['tipo' => 'parceiro'])->id,
-            'tipo' => fake()->randomElement(['restaurante', 'centro_distribuicao', 'ponto_entrega']),
+            'partner_id' => User::factory()->create(['type' => 'partner'])->id,
+            'type' => fake()->randomElement(['restaurante', 'centro_distribuicao', 'ponto_entrega']),
             'identificador' => fake()->bothify('NODE-####'),
-            'capacidade' => fake()->randomFloat(2, 10, 100),
-            'status' => fake()->randomElement(['ativo', 'inativo', 'manutencao']),
-            'regiaoId' => Region::factory()->create()->id,
-            'posicaoAtual' => [
+            'capacity' => fake()->randomFloat(2, 10, 100),
+            'status' => fake()->randomElement(['active', 'inactive', 'maintenance']),
+            'region_id' => Region::factory()->create()->id,
+            'current_position' => [
                 'latitude' => fake()->latitude(),
                 'longitude' => fake()->longitude(),
                 'endereco' => fake()->address()

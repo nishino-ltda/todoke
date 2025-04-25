@@ -11,10 +11,10 @@ class DeliveryTest extends TestCase
 {
     use RefreshDatabase;
 
-    private User $cliente;
-    private string $clienteToken;
-    private User $entregador; 
-    private string $entregadorToken;
+    private User $customer;
+    private string $customerToken;
+    private User $courrier; 
+    private string $courrierToken;
 
     // Set up the test environment
     protected function setUp(): void
@@ -22,101 +22,101 @@ class DeliveryTest extends TestCase
         parent::setUp();
 
         // Create a client user
-        $this->cliente = User::factory()->create([
+        $this->client = User::factory()->create([
             'id' => 1,
-            'tipo' => 'cliente',
-            'email' => 'cliente@example.com',
+            'type' => 'customer',
+            'email' => 'customere@example.com',
             'password' => Hash::make('Senha123')
         ]);
 
         // Create a delivery person user
-        $this->entregador = User::factory()->entregador()->create([
+        $this->courrier = User::factory()->entregador()->create([
             'id' => 2,
-            'name' => 'Entregador Teste'
+            'name' => 'courrier Teste'
         ]);
 
         // Authenticate the client and retrieve the token
-        $clienteLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => 'cliente@example.com',
+        $customerLogin = $this->postJson('/api/v1/auth/login', [
+            'email' => 'customere@example.com',
             'password' => 'Senha123'
         ]);
-        $this->clienteToken = $clienteLogin->json('token');
+        $this->clientToken = $customerLogin->json('token');
 
         // Authenticate the delivery person and retrieve the token
-        $entregadorLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => $this->entregador->email,
+        $courrierLogin = $this->postJson('/api/v1/auth/login', [
+            'email' => $this->courrier->email,
             'password' => 'Senha123'
         ]);
-        $this->entregadorToken = $entregadorLogin->json('token');
+        $this->courrierToken = $courrierLogin->json('token');
     }
 
     // Test the creation of a delivery
-    public function testCriacaoDeEntrega()
+    public function testDeliveryCreation()
     {
         $baseData = [
-            'origem' => [
+            'origin' => [
                 'lat' => -23.5505,
                 'lng' => -46.6333,
-                'endereco' => 'Av. Paulista, 1000'
+                'address' => 'Av. Paulista, 1000'
             ],
-            'destino' => [
+            'destination' => [
                 'lat' => -23.5614,
                 'lng' => -46.6559, 
-                'endereco' => 'Rua Augusta, 500'
+                'address' => 'Rua Augusta, 500'
             ],
-            'descricaoItem' => 'Documentos importantes',
-            'pesoEstimado' => 0.5,
-            'dimensoes' => [
-                'largura' => 25,
-                'altura' => 5,
-                'profundidade' => 15
+            'item_description' => 'Documentos importantes',
+            'estimated_weight' => 0.5,
+            'dimensions' => [
+                'width' => 25,
+                'height' => 5,
+                'depth' => 15
             ]
         ];
 
         // Test normal delivery creation
-        $normalData = array_merge($baseData, ['tipo' => 'normal']);
+        $normalData = array_merge($baseData, ['delivery_type' => 'normal']);
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->postJson('/api/v1/deliveries', $normalData);
         
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'id', 'valor', 'tempoEstimado', 'codigoConfirmacao', 'status'
+                'id', 'value', 'estimated_time', 'confirmation_code', 'status'
             ])
-            ->assertJsonPath('status', 'pendente')
-            ->assertJsonPath('clienteId', $this->cliente->id)
-            ->assertJsonPath('codigoConfirmacao', function ($code) {
+            ->assertJsonPath('status', 'pending')
+            ->assertJsonPath('customer_id', $this->client->id)
+            ->assertJsonPath('confirmation_code', function ($code) {
                 return preg_match('/^[A-Z0-9]{6}$/', $code) === 1;
             });
             
         $this->assertDatabaseHas('deliveries', [
-            'clienteId' => $this->cliente->id,
-            'status' => 'pendente'
+            'customer_id' => $this->client->id,
+            'status' => 'pending'
         ]);
 
-        $normalValue = $response->json('valor');
-        $normalTime = $response->json('tempoEstimado');
+        $normalValue = $response->json('value');
+        $normalTime = $response->json('estimated_time');
 
         // Test express delivery creation
-        $expressData = array_merge($baseData, ['tipo' => 'expressa']);
+        $expressData = array_merge($baseData, ['delivery_type' => 'express']);
         $expressResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->postJson('/api/v1/deliveries', $expressData);
         
         $expressResponse->assertStatus(201);
-        $this->assertGreaterThan($normalValue, $expressResponse->json('valor'));
-        $this->assertLessThan($normalTime, $expressResponse->json('tempoEstimado'));
+        $this->assertGreaterThan($normalValue, $expressResponse->json('value'));
+        $this->assertLessThan($normalTime, $expressResponse->json('estimated_time'));
 
         // Test invalid delivery data
         $invalidData = $baseData;
-        $invalidData['pesoEstimado'] = -1;
+        $invalidData['estimated_weight'] = -1;
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->postJson('/api/v1/deliveries', $invalidData);
         
         $response->assertStatus(400)
             ->assertJson([
-                'pesoEstimado' => ['The peso estimado field must be at least 0.']
+                'estimated_weight' => ['The peso estimado field must be at least 0.']
             ]);
 
         // Test out-of-coverage delivery
@@ -125,55 +125,55 @@ class DeliveryTest extends TestCase
         $outOfCoverageData['destino']['lng'] = -43.0000;
         
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->postJson('/api/v1/deliveries', $outOfCoverageData);
         $response->assertStatus(400);
     }
 
     // Test acceptance and completion of a delivery
-    public function testAceitacaoEConclusaoDeEntrega()
+    public function testDeliveryAcceptanceAndCompletion()
     {
         // Create a delivery
-        $entrega = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+        $delivery = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->postJson('/api/v1/deliveries', [
-            'origem' => ['lat' => -23.5505, 'lng' => -46.6333, 'endereco' => 'Av. Paulista, 1000'],
-            'destino' => ['lat' => -23.5614, 'lng' => -46.6559, 'endereco' => 'Rua Augusta, 500'],
-            'descricaoItem' => 'Documentos importantes',
-            'pesoEstimado' => 0.5,
-            'dimensoes' => ['largura' => 25, 'altura' => 5, 'profundidade' => 15],
-            'tipo' => 'normal'
+            'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
+            'destination' => ['lat' => -23.5614, 'lng' => -46.6559, 'address' => 'Rua Augusta, 500'],
+            'item_description' => 'Documentos importantes',
+            'estimated_weight' => 0.5,
+            'dimensions' => ['width' => 25, 'height' => 5, 'depth' => 15],
+            'delivery_type' => 'normal'
         ])->json();
 
         $this->assertDatabaseHas('deliveries', [
-            'id' => $entrega['id'],
-            'status' => 'pendente',
-            'clienteId' => $this->cliente->id
+            'id' => $delivery['id'],
+            'status' => 'pending',
+            'customer_id' => $this->client->id
         ]);
 
         // Accept the delivery
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->patchJson("/api/v1/deliveries/{$entrega['id']}/accept");
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->patchJson("/api/v1/deliveries/{$delivery['id']}/accept");
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['id', 'status', 'entregador'])
-            ->assertJsonPath('entregador.id', (string)$this->entregador->id);
+            ->assertJsonStructure(['id', 'status', 'courrier'])
+            ->assertJsonPath('courrier.id', (string)$this->courrier->id);
             
         $this->assertDatabaseHas('deliveries', [
-            'id' => $entrega['id'],
-            'entregadorId' => (string)$this->entregador->id,
-            'status' => 'aceito'
+            'id' => $delivery['id'],
+            'courrier_id' => (string)$this->courrier->id,
+            'status' => 'accepted'
         ]);
 
-        // Update delivery status to 'em_transporte' and 'entregue'
-        $statuses = ['em_transporte', 'entregue'];
+        // Update delivery status to 'in_transit' and 'delivered'
+        $statuses = ['in_transit', 'delivered'];
         foreach ($statuses as $status) {
             $response = $this->withHeaders([
-                'Authorization' => 'Bearer ' . $this->entregadorToken
-            ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
+                'Authorization' => 'Bearer ' . $this->courrierToken
+            ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
                 'status' => $status,
-                'posicaoAtual' => [
+                'current_position' => [
                     'lat' => -23.5500 + (rand(0, 100)/1000),
                     'lng' => -46.6300 + (rand(0, 100)/1000)
                 ]
@@ -183,121 +183,121 @@ class DeliveryTest extends TestCase
                 ->assertJsonPath('status', $status);
                 
             $this->assertDatabaseHas('deliveries', [
-                'id' => $entrega['id'],
+                'id' => $delivery['id'],
                 'status' => $status,
-                'entregadorId' => (string)$this->entregador->id
+                'courrier_id' => (string)$this->courrier->id
             ]);
         }
 
         // Complete the delivery with the correct confirmation code
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
-            'status' => 'entregue',
-            'codigoConfirmacao' => $entrega['codigoConfirmacao'],
-            'posicaoAtual' => ['lat' => -23.5614, 'lng' => -46.6559]
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
+            'status' => 'delivered',
+            'confirmation_code' => $delivery['confirmation_code'],
+            'current_position' => ['lat' => -23.5614, 'lng' => -46.6559]
         ]);
         
         $response->assertStatus(200)
-            ->assertJsonPath('status', 'entregue');
+            ->assertJsonPath('status', 'delivered');
 
         // Attempt to complete the delivery with an incorrect confirmation code
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
-            'status' => 'entregue',
-            'codigoConfirmacao' => 'CODIGO_INCORRETO'
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
+            'status' => 'delivered',
+            'confirmation_code' => 'CODIGO_INCORRETO'
         ]);
         
         $response->assertStatus(400);
     }
 
     // Test tracking of a delivery
-    public function testAcompanhamentoDeEntrega()
+    public function testDeliveryTracking()
     {
         // Create a delivery
-        $entrega = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+        $delivery = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->postJson('/api/v1/deliveries', [
-            'origem' => ['lat' => -23.5505, 'lng' => -46.6333, 'endereco' => 'Av. Paulista, 1000'],
-            'destino' => ['lat' => -23.5614, 'lng' => -46.6559, 'endereco' => 'Rua Augusta, 500'],
-            'descricaoItem' => 'Documentos importantes',
-            'pesoEstimado' => 0.5,
-            'dimensoes' => ['largura' => 25, 'altura' => 5, 'profundidade' => 15],
-            'tipo' => 'normal'
+            'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
+            'destination' => ['lat' => -23.5614, 'lng' => -46.6559, 'address' => 'Rua Augusta, 500'],
+            'item_description' => 'Documentos importantes',
+            'estimated_weight' => 0.5,
+            'dimensions' => ['width' => 25, 'height' => 5, 'depth' => 15],
+            'delivery_type' => 'normal'
         ])->json();
 
         // Accept the delivery
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->patchJson("/api/v1/deliveries/{$entrega['id']}/accept");
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->patchJson("/api/v1/deliveries/{$delivery['id']}/accept");
 
         // Check delivery details
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
-        ])->getJson("/api/v1/deliveries/{$entrega['id']}");
+            'Authorization' => 'Bearer ' . $this->clientToken
+        ])->getJson("/api/v1/deliveries/{$delivery['id']}");
         
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id', 'status', 'entregador', 'posicaoAtual', 'historicoStatus'
+                'id', 'status', 'courrier', 'current_position', 'status_history'
             ])
-            ->assertJsonPath('status', 'aceito')
-            ->assertJsonPath('entregador.id', (string)$this->entregador->id)
-            ->assertJsonPath('entregador.name', $this->entregador->name);
+            ->assertJsonPath('status', 'accepted')
+            ->assertJsonPath('courrier.id', (string)$this->courrier->id)
+            ->assertJsonPath('courrier.name', $this->courrier->name);
 
         // Update delivery position
-        $novaPosicao = ['lat' => -23.5555, 'lng' => -46.6444];
+        $newPosition = ['lat' => -23.5555, 'lng' => -46.6444];
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
-            'status' => 'em_transporte',
-            'posicaoAtual' => $novaPosicao
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
+            'status' => 'in_transit',
+            'current_position' => $newPosition
         ]);
 
         // Verify updated position
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
-        ])->getJson("/api/v1/deliveries/{$entrega['id']}");
+            'Authorization' => 'Bearer ' . $this->clientToken
+        ])->getJson("/api/v1/deliveries/{$delivery['id']}");
         
-        $response->assertJsonPath('posicaoAtual', $novaPosicao)
-            ->assertJsonPath('status', 'em_transporte');
+        $response->assertJsonPath('current_position', $newPosition)
+            ->assertJsonPath('status', 'in_transit');
 
         // Complete the delivery
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->patchJson("/api/v1/deliveries/{$entrega['id']}/status", [
-            'status' => 'entregue',
-            'codigoConfirmacao' => $entrega['codigoConfirmacao']
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
+            'status' => 'delivered',
+            'confirmation_code' => $delivery['confirmation_code']
         ]);
 
         // Check notifications for the client
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
+            'Authorization' => 'Bearer ' . $this->clientToken
         ])->getJson("/api/v1/notifications");
         
         $response->assertStatus(200)
             ->assertJsonFragment([
-                'tipo' => 'entrega_atualizada',
-                'entrega_id' => $entrega['id'],
-                'status' => 'entregue'
+                'type' => 'delivery_updated',
+                'delivery_id' => $delivery['id'],
+                'status' => 'delivered'
             ]);
 
         // Send a message from the client
-        $mensagem = ['texto' => 'Onde você está?'];
+        $message = ['text' => 'Where are you?'];
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clienteToken
-        ])->postJson("/api/v1/deliveries/{$entrega['id']}/messages", $mensagem);
+            'Authorization' => 'Bearer ' . $this->clientToken
+        ])->postJson("/api/v1/deliveries/{$delivery['id']}/messages", $message);
         
         $response->assertStatus(201)
-            ->assertJsonStructure(['id', 'texto', 'autor']);
+            ->assertJsonStructure(['id', 'text', 'author']);
 
         // Retrieve messages as the delivery person
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->entregadorToken
-        ])->getJson("/api/v1/deliveries/{$entrega['id']}/messages");
+            'Authorization' => 'Bearer ' . $this->courrierToken
+        ])->getJson("/api/v1/deliveries/{$delivery['id']}/messages");
         
         $response->assertStatus(200)
             ->assertJsonCount(1)
-            ->assertJsonFragment($mensagem);
+            ->assertJsonFragment($message);
     }
 }

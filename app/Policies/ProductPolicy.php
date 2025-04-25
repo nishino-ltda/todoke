@@ -29,7 +29,7 @@ class ProductPolicy
      */
     public function create(User $user): bool
     {
-        return $user->tipo === 'parceiro'; // Apenas parceiros podem criar produtos
+        return $user->type === 'partner'; // Apenas parceiros podem criar produtos
     }
 
     /**

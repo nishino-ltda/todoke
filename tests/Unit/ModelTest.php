@@ -22,33 +22,33 @@ class ModelTest extends TestCase
         $user = User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
-            'tipo' => 'cliente',
-            'status' => 'ativo'
+            'type' => 'customer',
+            'status' => 'active'
         ]);
 
         $this->assertEquals('Test User', $user->name);
         $this->assertEquals('test@example.com', $user->email);
-        $this->assertEquals('cliente', $user->tipo);
-        $this->assertEquals('ativo', $user->status);
+        $this->assertEquals('customer', $user->type);
+        $this->assertEquals('active', $user->status);
     }
 
     /** @test */
     public function product_model_has_expected_attributes()
     {
-        $restaurante = User::factory()->create(['tipo' => 'parceiro']);
+        $restaurante = User::factory()->create(['type' => 'partner']);
         
         $product = Product::factory()
             ->forRestaurant($restaurante->id)
             ->create([
                 'name' => 'Test Product',
                 'price' => 19.99,
-                'status' => 'disponivel'
+                'status' => 'available'
             ]);
 
         $this->assertEquals('Test Product', $product->name);
         $this->assertEquals(19.99, $product->price);
-        $this->assertEquals('disponivel', $product->status);
-        $this->assertEquals($restaurante->id, $product->restaurantId);
+        $this->assertEquals('available', $product->status);
+        $this->assertEquals($restaurante->id, $product->restaurant_id);
     }
 
     /** @test */
@@ -56,11 +56,11 @@ class ModelTest extends TestCase
     {
         $order = Order::factory()->create([
             'status' => 'preparing',
-            'totalValue' => 59.90
+            'total_value' => 59.90
         ]);
 
         $this->assertEquals('preparing', $order->status);
-        $this->assertEquals(59.90, $order->totalValue);
+        $this->assertEquals(59.90, $order->total_value);
     }
 
     /** @test */
@@ -68,25 +68,25 @@ class ModelTest extends TestCase
     {
         $delivery = Delivery::factory()
             ->state([
-                'status' => 'pendente',
-                'tipo' => 'normal'
+                'status' => 'pending',
+                'type' => 'normal'
             ])
             ->create();
 
-        $this->assertEquals('pendente', $delivery->status);
-        $this->assertEquals('normal', $delivery->tipo);
+        $this->assertEquals('pending', $delivery->status);
+        $this->assertEquals('normal', $delivery->type);
     }
 
     /** @test */
     public function node_model_has_expected_attributes()
     {
         $node = Node::factory()->create([
-            'tipo' => 'restaurante',
-            'status' => 'ativo'
+            'type' => 'restaurante',
+            'status' => 'active'
         ]);
 
-        $this->assertEquals('restaurante', $node->tipo);
-        $this->assertEquals('ativo', $node->status);
+        $this->assertEquals('restaurante', $node->type);
+        $this->assertEquals('active', $node->status);
     }
 
     /** @test */
@@ -94,30 +94,30 @@ class ModelTest extends TestCase
     {
         $region = Region::factory()->create([
             'name' => 'Zona Norte',
-            'status' => 'ativo'
+            'status' => 'active'
         ]);
 
         $this->assertEquals('Zona Norte', $region->name);
-        $this->assertEquals('ativo', $region->status);
+        $this->assertEquals('active', $region->status);
     }
 
     /** @test */
     public function rating_model_has_expected_attributes()
     {
         $rating = Rating::factory()->create([
-            'nota' => 5,
-            'comentario' => 'Excelente serviço!'
+            'rating' => 5,
+            'comment' => 'Excelente serviço!'
         ]);
 
-        $this->assertEquals(5, $rating->nota);
-        $this->assertEquals('Excelente serviço!', $rating->comentario);
+        $this->assertEquals(5, $rating->rating);
+        $this->assertEquals('Excelente serviço!', $rating->comment);
     }
 
     /** @test */
     public function user_has_many_deliveries()
     {
         $user = User::factory()->create();
-        $deliveries = Delivery::factory()->count(3)->create(['clienteId' => $user->id]);
+        $deliveries = Delivery::factory()->count(3)->create(['customer_id' => $user->id]);
 
         $this->assertCount(3, $user->deliveriesAsClient);
     }
@@ -125,8 +125,8 @@ class ModelTest extends TestCase
     /** @test */
     public function order_has_many_products()
     {
-        $restaurant = User::factory()->create(['tipo' => 'parceiro']);
-        $order = Order::factory()->create(['restaurantId' => $restaurant->id]);
+        $restaurant = User::factory()->create(['type' => 'partner']);
+        $order = Order::factory()->create(['restaurant_id' => $restaurant->id]);
         $product = Product::factory()
             ->forRestaurant($restaurant->id)
             ->create();
@@ -134,7 +134,7 @@ class ModelTest extends TestCase
         $order->items()->create([
             'product_id' => $product->id,
             'quantity' => 2,
-            'unitPrice' => $product->price
+            'unit_price' => $product->price
         ]);
 
         $this->assertCount(1, $order->items);

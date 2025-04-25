@@ -26,10 +26,10 @@ class DeliveryController extends Controller
 
         // Filter deliveries based on user type
         $query = Delivery::query();
-        if ($user->tipo === 'cliente') {
-            $query->where('clienteId', $user->id);
-        } elseif ($user->tipo === 'entregador') {
-            $query->where('entregadorId', $user->id);
+        if ($user->type === 'customer') {
+            $query->where('customer_id', $user->id);
+        } elseif ($user->type === 'courrier') {
+            $query->where('courrier_id', $user->id);
         }
 
         // Paginate and return the deliveries
@@ -53,12 +53,12 @@ class DeliveryController extends Controller
             'destino.lat' => 'required|numeric|between:-90,90',
             'destino.lng' => 'required|numeric|between:-180,180',
             'destino.endereco' => 'required|string|max:255',
-            'descricaoItem' => 'required|string|max:255',
-            'pesoEstimado' => 'required|numeric|min:0|max:999.99',
+            'item_description' => 'required|string|max:255',
+            'estimated_weight' => 'required|numeric|min:0|max:999.99',
             'dimensoes.largura' => 'required|integer|min:1|max:999',
             'dimensoes.altura' => 'required|integer|min:1|max:999',
             'dimensoes.profundidade' => 'required|integer|min:1|max:999',
-            'tipo' => 'required|in:normal,expressa,sustentavel'
+            'type' => 'required|in:normal,expressa,sustentavel'
         ]);
 
         if ($validator->fails()) {
@@ -78,26 +78,26 @@ class DeliveryController extends Controller
 
         // Create a new delivery
         $delivery = Delivery::create([
-            'clienteId' => $user->id,
+            'customer_id' => $user->id,
             'origem' => $request->origem,
             'destino' => $request->destino,
-            'descricaoItem' => $request->descricaoItem,
-            'pesoEstimado' => $request->pesoEstimado,
-            'dimensoes' => $request->dimensoes,
-            'tipo' => $request->tipo,
-            'status' => 'pendente',
-            'valor' => $valor,
-            'tempoEstimado' => $tempoEstimado,
-            'codigoConfirmacao' => strtoupper(substr(md5(uniqid()), 0, 6))
+            'item_description' => $request->descricaoItem,
+            'estimated_weight' => $request->pesoEstimado,
+            'dimensions' => $request->dimensoes,
+            'type' => $request->type,
+            'status' => 'pending',
+            'value' => $valor,
+            'estimated_time' => $tempoEstimado,
+            'confirmation_code' => strtoupper(substr(md5(uniqid()), 0, 6))
         ]);
 
         return response()->json([
             'id' => $delivery->id,
-            'valor' => $valor,
-            'tempoEstimado' => $tempoEstimado,
-            'codigoConfirmacao' => $delivery->codigoConfirmacao,
-            'status' => 'pendente',
-            'clienteId' => $user->id
+            'value' => $valor,
+            'estimated_time' => $tempoEstimado,
+            'confirmation_code' => $delivery->codigoConfirmacao,
+            'status' => 'pending',
+            'customer_id' => $user->id
         ], 201);
     }
 
@@ -105,7 +105,7 @@ class DeliveryController extends Controller
     {
         $delivery = Delivery::findOrFail($id);
 
-        if ($delivery->status !== 'pendente') {
+        if ($delivery->status !== 'pending') {
             return response()->json(['message' => 'Esta entrega já foi aceita'], 409);
         }
 
@@ -117,14 +117,14 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure only delivery personnel can accept deliveries
-        if ($user->tipo !== 'entregador') {
-            return response()->json(['message' => 'Apenas entregadores podem aceitar entregas'], 403);
+        if ($user->type !== 'courrier') {
+            return response()->json(['message' => 'Apenas courrieres podem aceitar entregas'], 403);
         }
 
         // Update the delivery status
         $delivery->update([
-            'entregadorId' => (string)$user->id,
-            'status' => 'aceito'
+            'courrier_id' => (string)$user->id,
+            'status' => 'accepted'
         ]);
 
         // Create notification for client
@@ -133,30 +133,30 @@ class DeliveryController extends Controller
             'type' => 'entrega_atualizada',
             'data' => [
                 'delivery_id' => $delivery->id,
-                'status' => 'aceito',
-                'message' => 'Sua entrega foi aceita por um entregador'
+                'status' => 'accepted',
+                'message' => 'Sua entrega foi aceita por um courrier'
             ]
         ]);
 
         return response()->json([
             'id' => $delivery->id,
             'status' => $delivery->status,
-            'entregador' => [
+            'courrier' => [
                 'id' => (string)$user->id,
                 'name' => $user->name,
-                'fotoUrl' => $user->fotoUrl
+                'photoUrl' => $user->fotoUrl
             ]
         ], 200);
     }
 
     public function updateStatus(Request $request, string $id)
     {
-        $validStatuses = ['coletado', 'em_transito', 'em_transporte', 'entregue'];
+        $validStatuses = ['coletado', 'em_transito', 'in_transit', 'delivered'];
 
         // Validate the request data
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:' . implode(',', $validStatuses),
-            'codigoConfirmacao' => 'sometimes|string|size:6'
+            'confirmation_code' => 'sometimes|string|size:6'
         ]);
 
         if ($validator->fails()) {
@@ -173,14 +173,14 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure only the assigned delivery personnel can update the status
-        if ((string)$delivery->entregadorId !== (string)$user->id) {
-            return response()->json(['message' => 'Apenas o entregador designado pode atualizar o status'], 403);
+        if ((string)$delivery->courrierId !== (string)$user->id) {
+            return response()->json(['message' => 'Apenas o courrier designado pode atualizar o status'], 403);
         }
 
         // Update the delivery status and position if provided
         $updateData = ['status' => $request->status];
-        if ($request->has('posicaoAtual')) {
-            $updateData['posicaoAtual'] = $request->posicaoAtual;
+        if ($request->has('current_position')) {
+            $updateData['current_position'] = $request->posicaoAtual;
         }
 
         $delivery->update($updateData);
@@ -201,7 +201,7 @@ class DeliveryController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $delivery = Delivery::with(['cliente', 'entregador'])->findOrFail($id);
+        $delivery = Delivery::with(['customer', 'courrier'])->findOrFail($id);
 
         // Retrieve the bearer token and determine the user
         $bearerToken = $request->bearerToken();
@@ -211,20 +211,20 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure the user has permission to view the delivery
-        if ($user->id != $delivery->clienteId && $user->id != $delivery->entregadorId) {
+        if ($user->id != $delivery->clienteId && $user->id != $delivery->courrierId) {
             return response()->json(['message' => 'Não autorizado'], 403);
         }
 
         return response()->json([
             'id' => $delivery->id,
             'status' => $delivery->status,
-            'entregador' => $delivery->entregador ? [
-                'id' => (string)$delivery->entregador->id,
-                'name' => $delivery->entregador->name,
-                'fotoUrl' => $delivery->entregador->fotoUrl
+            'courrier' => $delivery->courrier ? [
+                'id' => (string)$delivery->courrier->id,
+                'name' => $delivery->courrier->name,
+                'photoUrl' => $delivery->courrier->fotoUrl
             ] : null,
-            'posicaoAtual' => $delivery->posicaoAtual,
-            'historicoStatus' => $delivery->historicoStatus
+            'current_position' => $delivery->posicaoAtual,
+            'status_history' => $delivery->historicoStatus
         ]);
     }
 
@@ -234,7 +234,7 @@ class DeliveryController extends Controller
         $baseValue = 10.0;
         $distanceFactor = 0.5;
         $weightFactor = $request->pesoEstimado * 0.1;
-        $typeFactor = match($request->tipo) {
+        $typeFactor = match($request->type) {
             'expressa' => 1.5,
             'sustentavel' => 1.2,
             default => 1.0
@@ -246,7 +246,7 @@ class DeliveryController extends Controller
     private function calculateEstimatedTime(Request $request): int
     {
         // Simplified logic for calculating estimated time (in minutes)
-        return match($request->tipo) {
+        return match($request->type) {
             'expressa' => 30,
             'sustentavel' => 90,
             default => 60
@@ -265,13 +265,13 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure the user is either the client or delivery person
-        if ($user->id != $delivery->clienteId && $user->id != $delivery->entregadorId) {
+        if ($user->id != $delivery->clienteId && $user->id != $delivery->courrierId) {
             return response()->json(['message' => 'Não autorizado'], 403);
         }
 
         // Validate the message
         $validator = Validator::make($request->all(), [
-            'texto' => 'required|string|max:500'
+            'text' => 'required|string|max:500'
         ]);
 
         if ($validator->fails()) {
@@ -282,12 +282,12 @@ class DeliveryController extends Controller
         $message = Message::create([
             'delivery_id' => $delivery->id,
             'user_id' => $user->id,
-            'texto' => $request->texto
+            'text' => $request->texto
         ]);
 
         return response()->json([
             'id' => $message->id,
-            'texto' => $message->texto,
+            'text' => $message->texto,
             'autor' => [
                 'id' => (string)$user->id,
                 'name' => $user->name
@@ -307,7 +307,7 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure the user is either the client or delivery person
-        if ($user->id != $delivery->clienteId && $user->id != $delivery->entregadorId) {
+        if ($user->id != $delivery->clienteId && $user->id != $delivery->courrierId) {
             return response()->json(['message' => 'Não autorizado'], 403);
         }
 
@@ -319,7 +319,7 @@ class DeliveryController extends Controller
             ->map(function ($message) {
                 return [
                     'id' => $message->id,
-                    'texto' => $message->texto,
+                    'text' => $message->texto,
                     'autor' => [
                         'id' => (string)$message->user->id,
                         'name' => $message->user->name

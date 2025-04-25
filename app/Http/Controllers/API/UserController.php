@@ -24,9 +24,9 @@ class UserController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
-            'telefone' => $user->telefone,
-            'tipo' => $user->tipo,
-            'fotoUrl' => $user->fotoUrl ?? null,
+            'phone' => $user->phone,
+            'type' => $user->type,
+            'photoUrl' => $user->fotoUrl ?? null,
             'status' => $user->status
         ]);
     }
@@ -41,15 +41,15 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'sometimes|string|max:255',
-            'telefone' => 'sometimes|string|max:20',
-            'fotoUrl' => 'sometimes|nullable|string|max:255',
+            'phone' => 'sometimes|string|max:20',
+            'photoUrl' => 'sometimes|nullable|string|max:255',
         ]);
 
         $user = $request->user();
         
-        $user->update($request->only(['name', 'telefone', 'fotoUrl']));
+        $user->update($request->only(['name', 'phone', 'photoUrl']));
 
-        return response()->json($user->only(['name', 'telefone', 'fotoUrl']));
+        return response()->json($user->only(['name', 'phone', 'photoUrl']));
     }
 
     /**
@@ -62,8 +62,8 @@ class UserController extends Controller
     {
         $query = User::query();
         
-        if ($request->has('tipo')) {
-            $query->where('tipo', $request->tipo);
+        if ($request->has('type')) {
+            $query->where('type', $request->type);
         }
         
         if ($request->has('status')) {
@@ -108,7 +108,7 @@ class UserController extends Controller
      */
     public function stats()
     {
-        $activeUsers = User::where('status', 'ativo')->count();
+        $activeUsers = User::where('status', 'active')->count();
         
         // Aqui você pode adicionar mais estatísticas conforme necessário
         // Por exemplo, contagem de entregas por status, etc.
@@ -117,7 +117,7 @@ class UserController extends Controller
             'usuariosAtivos' => $activeUsers,
             'entregasHoje' => 0, // Implementar contagem real
             'entregasStatus' => [
-                'pendente' => 0, // Implementar contagem real
+                'pending' => 0, // Implementar contagem real
                 'em_andamento' => 0, // Implementar contagem real
                 'concluida' => 0, // Implementar contagem real
             ]

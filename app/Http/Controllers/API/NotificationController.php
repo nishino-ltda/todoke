@@ -16,7 +16,7 @@ class NotificationController extends Controller
             ->get()
             ->map(function ($notification) {
                 return [
-                    'tipo' => $notification->type,
+                    'type' => $notification->type,
                     'entrega_id' => $notification->data['delivery_id'] ?? null,
                     'status' => $notification->data['status'] ?? null,
                     'created_at' => $notification->created_at->toDateTimeString()

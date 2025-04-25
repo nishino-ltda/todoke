@@ -31,8 +31,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make($password),
             'remember_token' => Str::random(10),
-            'tipo' => fake()->randomElement(['cliente', 'entregador', 'parceiro']),
-            'status' => 'ativo'
+            'type' => fake()->randomElement(['customer', 'courrier', 'partner']),
+            'status' => 'active'
         ];
     }
 
@@ -49,7 +49,7 @@ class UserFactory extends Factory
     public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
-            'tipo' => 'admin',
+            'type' => 'admin',
             'email' => 'admin@todoke.com',
             'password' => Hash::make('Admin123')
         ]);
@@ -58,8 +58,8 @@ class UserFactory extends Factory
     public function entregador(): static
     {
         return $this->state(fn (array $attributes) => [
-            'tipo' => 'entregador',
-            'email' => 'entregador@example.com',
+            'type' => 'courrier',
+            'email' => 'courrier@example.com',
             'password' => Hash::make('Senha123')
         ]);
     }

@@ -10,32 +10,32 @@ class Node extends Model
     use HasFactory;
 
     protected $fillable = [
-        'parceiroId',
-        'tipo',
+        'partner_id',
+        'type',
         'identificador',
-        'capacidade',
+        'capacity',
         'status',
-        'regiaoId',
-        'posicaoAtual'
+        'region_id',
+        'current_position'
     ];
 
     protected $casts = [
-        'posicaoAtual' => 'array',
-        'capacidade' => 'decimal:2'
+        'current_position' => 'array',
+        'capacity' => 'decimal:2'
     ];
 
     public function parceiro()
     {
-        return $this->belongsTo(User::class, 'parceiroId');
+        return $this->belongsTo(User::class, 'partner_id');
     }
 
     public function regiao()
     {
-        return $this->belongsTo(Region::class, 'regiaoId');
+        return $this->belongsTo(Region::class, 'region_id');
     }
 
     public function deliveries()
     {
-        return $this->hasMany(Delivery::class, 'nodeId');
+        return $this->hasMany(Delivery::class, 'node_id');
     }
 }

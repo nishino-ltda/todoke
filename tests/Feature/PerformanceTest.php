@@ -77,7 +77,7 @@ class PerformanceTest extends TestCase
         User::factory()->count(1000)->create();
 
         $start = microtime(true);
-        $users = User::where('tipo', 'cliente')->limit(10)->get();
+        $users = User::where('type', 'customer')->limit(10)->get();
         $duration = microtime(true) - $start;
 
         $this->assertCount(10, $users);
@@ -88,13 +88,13 @@ class PerformanceTest extends TestCase
     /** @test */
     public function complex_query_performance_with_relations()
     {
-        $user = User::factory()->create(['tipo' => 'cliente']);
-        Delivery::factory()->count(50)->create(['clienteId' => $user->id]);
+        $user = User::factory()->create(['type' => 'customer']);
+        Delivery::factory()->count(50)->create(['customer_id' => $user->id]);
 
         $start = microtime(true);
         $deliveries = $user->deliveriesAsClient()
-            ->with('entregador')
-            ->where('status', 'entregue')
+            ->with('courrier')
+            ->where('status', 'delivered')
             ->orderBy('createdAt', 'desc')
             ->limit(10)
             ->get();

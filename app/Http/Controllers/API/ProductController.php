@@ -17,7 +17,7 @@ class ProductController extends Controller
             $query->where('category', $request->category);
         }
 
-        $products = $query->where('status', 'disponivel')->get();
+        $products = $query->where('status', 'available')->get();
 
         return response()->json([
             'products' => $products->map(function ($product) {
@@ -48,8 +48,8 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category,
-            'restaurantId' => $request->user()->id,
-            'status' => 'disponivel'
+            'restaurant_id' => $request->user()->id,
+            'status' => 'available'
         ]);
 
         return response()->json($product, 201);

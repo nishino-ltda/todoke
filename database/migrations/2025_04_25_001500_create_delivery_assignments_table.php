@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('delivery_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('deliveryId')->constrained('deliveries');
-            $table->foreignId('parceiroId')->constrained('users');
-            $table->integer('etapa');
+            $table->foreignId('delivery_id')->constrained('deliveries');
+            $table->foreignId('partner_id')->constrained('users');
+            $table->integer('stage');
             $table->string('status');
             $table->timestamps();
         });

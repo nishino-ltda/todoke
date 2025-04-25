@@ -10,12 +10,12 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'restaurantId',
+        'restaurant_id',
         'name',
         'description',
         'price',
         'category',
-        'imagemUrl',
+        'imageUrl',
         'status'
     ];
 
@@ -26,12 +26,12 @@ class Product extends Model
 
     public function restaurant()
     {
-        return $this->belongsTo(User::class, 'restaurantId');
+        return $this->belongsTo(User::class, 'restaurant_id');
     }
 
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_items')
-            ->withPivot('quantity', 'unitPrice');
+            ->withPivot('quantity', 'unit_price');
     }
 }

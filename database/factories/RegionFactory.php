@@ -18,9 +18,9 @@ class RegionFactory extends Factory
     public function definition(): array
     {
         return [
-            'parceiroId' => User::factory()->create(['tipo' => 'parceiro'])->id,
+            'partner_id' => User::factory()->create(['type' => 'partner'])->id,
             'name' => fake()->city() . ' Region',
-            'poligono' => [
+            'polygon' => [
                 [
                     'latitude' => fake()->latitude(),
                     'longitude' => fake()->longitude()
@@ -34,7 +34,7 @@ class RegionFactory extends Factory
                     'longitude' => fake()->longitude()
                 ]
             ],
-            'status' => fake()->randomElement(['ativo', 'inativo'])
+            'status' => fake()->randomElement(['active', 'inactive'])
         ];
     }
 }

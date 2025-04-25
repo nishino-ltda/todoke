@@ -43,10 +43,10 @@ class UsabilityTest extends TestCase
             ->assertJsonValidationErrors([
                 'origem',
                 'destino',
-                'descricaoItem',
-                'pesoEstimado',
-                'dimensoes',
-                'tipo'
+                'item_description',
+                'estimated_weight',
+                'dimensions',
+                'type'
             ]);
     }
 
@@ -74,9 +74,9 @@ class UsabilityTest extends TestCase
                 'id',
                 'name',
                 'email',
-                'telefone',
-                'tipo',
-                'fotoUrl',
+                'phone',
+                'type',
+                'photoUrl',
                 'status'
             ]);
     }
@@ -84,7 +84,7 @@ class UsabilityTest extends TestCase
     /** @test */
     public function enum_values_are_properly_documented()
     {
-        $user = User::factory()->create(['tipo' => 'cliente']);
+        $user = User::factory()->create(['type' => 'customer']);
         $token = $user->createToken('test')->plainTextToken;
 
         $response = $this->withHeaders([
@@ -92,10 +92,10 @@ class UsabilityTest extends TestCase
         ])->getJson('/api/v1/users/me');
 
         $response->assertJson([
-            'tipo' => 'cliente'
+            'type' => 'customer'
         ]);
 
-        $this->assertContains($user->tipo, ['cliente', 'entregador', 'parceiro', 'admin']);
+        $this->assertContains($user->tipo, ['customer', 'courrier', 'partner', 'admin']);
     }
 
     /** @test */

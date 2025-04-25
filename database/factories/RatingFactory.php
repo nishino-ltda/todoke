@@ -19,11 +19,11 @@ class RatingFactory extends Factory
     public function definition(): array
     {
         return [
-            'entregaId' => Delivery::factory()->create()->id,
-            'avaliadorId' => User::factory()->create(['tipo' => 'cliente'])->id,
-            'avaliadoId' => User::factory()->create(['tipo' => 'entregador'])->id,
-            'nota' => fake()->numberBetween(1, 5),
-            'comentario' => fake()->sentence()
+            'delivery_id' => Delivery::factory()->create()->id,
+            'rater_id' => User::factory()->create(['type' => 'customer'])->id,
+            'rated_id' => User::factory()->create(['type' => 'courrier'])->id,
+            'rating' => fake()->numberBetween(1, 5),
+            'comment' => fake()->sentence()
         ];
     }
 }

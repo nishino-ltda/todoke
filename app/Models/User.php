@@ -21,9 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'tipo',
-        'telefone',
-        'fotoUrl',
+        'type',
+        'phone',
+        'photoUrl',
         'status'
     ];
 
@@ -52,12 +52,12 @@ class User extends Authenticatable
 
     public function deliveriesAsClient()
     {
-        return $this->hasMany(Delivery::class, 'clienteId');
+        return $this->hasMany(Delivery::class, 'customer_id');
     }
 
     public function deliveriesAsEntregador()
     {
-        return $this->hasMany(Delivery::class, 'entregadorId');
+        return $this->hasMany(Delivery::class, 'courrier_id');
     }
 
     public function notifications()
@@ -67,6 +67,6 @@ class User extends Authenticatable
 
     public function products()
     {
-        return $this->hasMany(Product::class, 'restaurantId');
+        return $this->hasMany(Product::class, 'restaurant_id');
     }
 }
