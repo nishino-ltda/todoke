@@ -35,27 +35,32 @@ class ModelTest extends TestCase
     /** @test */
     public function product_model_has_expected_attributes()
     {
-        $product = Product::factory()->create([
-            'name' => 'Test Product',
-            'preco' => 19.99,
-            'status' => 'disponivel'
-        ]);
+        $restaurante = User::factory()->create(['tipo' => 'parceiro']);
+        
+        $product = Product::factory()
+            ->forRestaurante($restaurante->id)
+            ->create([
+                'name' => 'Test Product',
+                'preco' => 19.99,
+                'status' => 'disponivel'
+            ]);
 
         $this->assertEquals('Test Product', $product->name);
         $this->assertEquals(19.99, $product->preco);
         $this->assertEquals('disponivel', $product->status);
+        $this->assertEquals($restaurante->id, $product->restauranteId);
     }
 
     /** @test */
     public function order_model_has_expected_attributes()
     {
         $order = Order::factory()->create([
-            'status' => 'em_preparo',
-            'valorTotal' => 59.90
+            'status' => 'preparing',
+            'totalValue' => 59.90
         ]);
 
-        $this->assertEquals('em_preparo', $order->status);
-        $this->assertEquals(59.90, $order->valorTotal);
+        $this->assertEquals('preparing', $order->status);
+        $this->assertEquals(59.90, $order->totalValue);
     }
 
     /** @test */
@@ -120,15 +125,18 @@ class ModelTest extends TestCase
     /** @test */
     public function order_has_many_products()
     {
-        $order = Order::factory()->create();
-        $product = Product::factory()->create();
+        $restaurant = User::factory()->create(['tipo' => 'parceiro']);
+        $order = Order::factory()->create(['restaurantId' => $restaurant->id]);
+        $product = Product::factory()
+            ->forRestaurante($restaurant->id)
+            ->create();
         
-        $order->itens()->create([
+        $order->items()->create([
             'product_id' => $product->id,
-            'quantidade' => 2,
-            'precoUnitario' => $product->preco
+            'quantity' => 2,
+            'unitPrice' => $product->preco
         ]);
 
-        $this->assertCount(1, $order->itens);
+        $this->assertCount(1, $order->items);
     }
 }

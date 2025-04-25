@@ -15,12 +15,12 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'restauranteId' => 'required|exists:users,id',
+            'restaurantId' => 'required|exists:users,id',
             'itens' => 'required|array|min:1',
             'itens.*.produtoId' => [
                 'required',
                 Rule::exists('products', 'id')->where(function ($query) use ($request) {
-                    $query->where('restauranteId', $request->restauranteId);
+                    $query->where('restaurantId', $request->restaurantId);
                 })
             ],
             'itens.*.quantidade' => 'required|integer|min:1',
@@ -34,9 +34,9 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
-            'clienteId' => $request->user()->id,
-            'restauranteId' => $request->restauranteId,
-            'status' => 'em_analise',
+            'clientId' => $request->user()->id,
+            'restaurantId' => $request->restaurantId,
+            'status' => 'pending',
             'valorTotal' => 0
         ]);
 

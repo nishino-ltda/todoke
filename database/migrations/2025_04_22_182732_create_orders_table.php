@@ -13,24 +13,24 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('clienteId')->constrained('users');
-            $table->foreignId('restauranteId')->constrained('users');
+            $table->foreignId('clientId')->constrained('users');
+            $table->foreignId('restaurantId')->constrained('users');
             $table->enum('status', [
-                'em_analise',
-                'aceito', 
-                'em_preparo',
-                'aguardando_entregador',
-                'entregador_retirou',
-                'entregue',
-                'cancelado'
-            ])->default('em_analise');
-            $table->decimal('valorTotal', 10, 2);
-            $table->foreignId('entregaId')->nullable()->constrained('deliveries');
+                'pending',
+                'accepted', 
+                'preparing',
+                'awaiting_delivery',
+                'delivery_picked_up',
+                'delivered',
+                'canceled'
+            ])->default('pending');
+            $table->decimal('totalValue', 10, 2);
+            $table->foreignId('deliveryId')->nullable()->constrained('deliveries');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['restauranteId', 'status']);
-            $table->index(['clienteId', 'created_at']);
+            $table->index(['restaurantId', 'status']);
+            $table->index(['clientId', 'created_at']);
         });
     }
 

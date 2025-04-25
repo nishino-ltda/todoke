@@ -12,13 +12,13 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_id',
-        'quantidade',
-        'precoUnitario'
+        'quantity',
+        'unitPrice'
     ];
 
     protected $casts = [
-        'quantidade' => 'integer',
-        'precoUnitario' => 'decimal:2'
+        'quantity' => 'integer',
+        'unitPrice' => 'decimal:2'
     ];
 
     public function order()
@@ -26,7 +26,7 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 
-    public function produto()
+    public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
     }

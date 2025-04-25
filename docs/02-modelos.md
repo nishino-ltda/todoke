@@ -1,5 +1,7 @@
 # TODOKE: Modelos de Dados
 
+**Nota sobre convenções:** Todos os nomes de campos e relacionamentos usam convenções em inglês para manter consistência com as melhores práticas de desenvolvimento.
+
 ## Visão Geral
 
 Este documento descreve os principais modelos de dados da plataforma TODOKE, identificados a partir dos casos de uso. Os modelos são representados como classes/entidades com seus atributos e relacionamentos.
@@ -231,8 +233,8 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
 - id: string (UUID)
 - clienteId: string (ref: User)
 - restauranteId: string (ref: User)
-- status: enum ['em_analise', 'aceito', 'em_preparo', 'aguardando_entregador', 'entregador_retirou', 'entregue', 'cancelado']
-- itens: Array<{ produtoId: string, quantidade: number, precoUnitario: number }>
+- status: enum ['pending', 'accepted', 'preparing', 'awaiting_delivery', 'delivery_in_progress', 'delivered', 'canceled']
+- itens: Array<{ productId: string, quantity: number, unitPrice: number }>
 - valorTotal: number
 - entregaId: string (ref: Delivery, opcional)
 - createdAt: DateTime
@@ -249,9 +251,9 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE, ide
   id: "120e8400-e29b-41d4-a716-446655446666",
   clienteId: "440e8400-e29b-41d4-a716-446655440001",
   restauranteId: "220e8400-e29b-41d4-a716-446655440003",
-  status: "em_preparo",
+  status: "preparing",
   itens: [
-    { produtoId: "110e8400-e29b-41d4-a716-446655445555", quantidade: 1, precoUnitario: 59.90 }
+    { productId: "110e8400-e29b-41d4-a716-446655445555", quantity: 1, unitPrice: 59.90 }
   ],
   valorTotal: 59.90,
   entregaId: "660e8400-e29b-41d4-a716-446655441111",

@@ -1,10 +1,14 @@
-## Status válidos para pedidos (tabela orders):
-- em_analise (padrão)
-- aceito
-- em_preparo
-- aguardando_entregador
-- entregador_retirou
-- entregue
-- cancelado
+## Convenção de Nomes de Campos
 
-Sempre usar esses valores exatos ao trabalhar com status de pedidos.
+Para manter consistência no banco de dados, todos os nomes de campos devem seguir o padrão em inglês:
+
+- clientId (não usar clienteId)
+- restaurantId (não usar restauranteId)
+- productId (não usar produtoId)
+
+Essa convenção deve ser seguida em:
+- Migrações do banco de dados
+- Modelos Eloquent
+- Controllers e validações
+
+Os parâmetros de API podem manter os nomes em português para compatibilidade com clientes existentes, mas devem ser mapeados corretamente para os campos em inglês no banco de dados.
