@@ -62,7 +62,7 @@ class DeliveryController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json($validator->errors(), 422);
         }
 
         // Retrieve the bearer token and determine the user
