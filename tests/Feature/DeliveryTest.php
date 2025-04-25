@@ -13,41 +13,41 @@ class DeliveryTest extends TestCase
 
     private User $customer;
     private string $customerToken;
-    private User $courrier; 
-    private string $courrierToken;
+    private User $courier; 
+    private string $courierToken;
 
     // Set up the test environment
     protected function setUp(): void
     {
         parent::setUp();
 
-        // Create a client user
-        $this->client = User::factory()->create([
+        // Create a customer user
+        $this->customer = User::factory()->create([
             'id' => 1,
             'type' => 'customer',
             'email' => 'customere@example.com',
-            'password' => Hash::make('Senha123')
+            'password' => Hash::make('Password123')
         ]);
 
         // Create a delivery person user
-        $this->courrier = User::factory()->entregador()->create([
+        $this->courier = User::factory()->courier()->create([
             'id' => 2,
-            'name' => 'courrier Teste'
+            'name' => 'Courier Test'
         ]);
 
-        // Authenticate the client and retrieve the token
+        // Authenticate the customer and retrieve the token
         $customerLogin = $this->postJson('/api/v1/auth/login', [
             'email' => 'customere@example.com',
-            'password' => 'Senha123'
+            'password' => 'Password123'
         ]);
-        $this->clientToken = $customerLogin->json('token');
+        $this->customerToken = $customerLogin->json('token');
 
         // Authenticate the delivery person and retrieve the token
-        $courrierLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => $this->courrier->email,
-            'password' => 'Senha123'
+        $courierLogin = $this->postJson('/api/v1/auth/login', [
+            'email' => $this->courier->email,
+            'password' => 'Password123'
         ]);
-        $this->courrierToken = $courrierLogin->json('token');
+        $this->courierToken = $courierLogin->json('token');
     }
 
     // Test the creation of a delivery
@@ -74,23 +74,27 @@ class DeliveryTest extends TestCase
         ];
 
         // Test normal delivery creation
-        $normalData = array_merge($baseData, ['delivery_type' => 'normal']);
+        $normalData = array_merge($baseData, ['type' => 'standard']);
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', $normalData);
+
+        if ($response->status() === 400) {
+            dump($response->json());
+        }
         
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'id', 'value', 'estimated_time', 'confirmation_code', 'status'
             ])
             ->assertJsonPath('status', 'pending')
-            ->assertJsonPath('customer_id', $this->client->id)
+            ->assertJsonPath('customer_id', $this->customer->id)
             ->assertJsonPath('confirmation_code', function ($code) {
                 return preg_match('/^[A-Z0-9]{6}$/', $code) === 1;
             });
             
         $this->assertDatabaseHas('deliveries', [
-            'customer_id' => $this->client->id,
+            'customer_id' => $this->customer->id,
             'status' => 'pending'
         ]);
 
@@ -98,9 +102,9 @@ class DeliveryTest extends TestCase
         $normalTime = $response->json('estimated_time');
 
         // Test express delivery creation
-        $expressData = array_merge($baseData, ['delivery_type' => 'express']);
+        $expressData = array_merge($baseData, ['type' => 'express']);
         $expressResponse = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', $expressData);
         
         $expressResponse->assertStatus(201);
@@ -111,21 +115,21 @@ class DeliveryTest extends TestCase
         $invalidData = $baseData;
         $invalidData['estimated_weight'] = -1;
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', $invalidData);
         
         $response->assertStatus(400)
             ->assertJson([
-                'estimated_weight' => ['The peso estimado field must be at least 0.']
+                'estimated_weight' => ['The estimated weight field must be at least 0.']
             ]);
 
         // Test out-of-coverage delivery
         $outOfCoverageData = $baseData;
-        $outOfCoverageData['destino']['lat'] = -22.0000;
-        $outOfCoverageData['destino']['lng'] = -43.0000;
+        $outOfCoverageData['destination']['lat'] = -22.0000;
+        $outOfCoverageData['destination']['lng'] = -43.0000;
         
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', $outOfCoverageData);
         $response->assertStatus(400);
     }
@@ -135,34 +139,34 @@ class DeliveryTest extends TestCase
     {
         // Create a delivery
         $delivery = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', [
             'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
             'destination' => ['lat' => -23.5614, 'lng' => -46.6559, 'address' => 'Rua Augusta, 500'],
             'item_description' => 'Documentos importantes',
             'estimated_weight' => 0.5,
             'dimensions' => ['width' => 25, 'height' => 5, 'depth' => 15],
-            'delivery_type' => 'normal'
+            'type' => 'standard'
         ])->json();
 
         $this->assertDatabaseHas('deliveries', [
             'id' => $delivery['id'],
             'status' => 'pending',
-            'customer_id' => $this->client->id
+            'customer_id' => $this->customer->id
         ]);
 
         // Accept the delivery
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/accept");
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['id', 'status', 'courrier'])
-            ->assertJsonPath('courrier.id', (string)$this->courrier->id);
+            ->assertJsonStructure(['id', 'status', 'courier'])
+            ->assertJsonPath('courier.id', (string)$this->courier->id);
             
         $this->assertDatabaseHas('deliveries', [
             'id' => $delivery['id'],
-            'courrier_id' => (string)$this->courrier->id,
+            'courier_id' => (string)$this->courier->id,
             'status' => 'accepted'
         ]);
 
@@ -170,7 +174,7 @@ class DeliveryTest extends TestCase
         $statuses = ['in_transit', 'delivered'];
         foreach ($statuses as $status) {
             $response = $this->withHeaders([
-                'Authorization' => 'Bearer ' . $this->courrierToken
+                'Authorization' => 'Bearer ' . $this->courierToken
             ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
                 'status' => $status,
                 'current_position' => [
@@ -185,13 +189,13 @@ class DeliveryTest extends TestCase
             $this->assertDatabaseHas('deliveries', [
                 'id' => $delivery['id'],
                 'status' => $status,
-                'courrier_id' => (string)$this->courrier->id
+                'courier_id' => (string)$this->courier->id
             ]);
         }
 
         // Complete the delivery with the correct confirmation code
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
             'status' => 'delivered',
             'confirmation_code' => $delivery['confirmation_code'],
@@ -203,7 +207,7 @@ class DeliveryTest extends TestCase
 
         // Attempt to complete the delivery with an incorrect confirmation code
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
             'status' => 'delivered',
             'confirmation_code' => 'CODIGO_INCORRETO'
@@ -217,38 +221,38 @@ class DeliveryTest extends TestCase
     {
         // Create a delivery
         $delivery = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', [
             'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
             'destination' => ['lat' => -23.5614, 'lng' => -46.6559, 'address' => 'Rua Augusta, 500'],
             'item_description' => 'Documentos importantes',
             'estimated_weight' => 0.5,
             'dimensions' => ['width' => 25, 'height' => 5, 'depth' => 15],
-            'delivery_type' => 'normal'
+            'type' => 'standard'
         ])->json();
 
         // Accept the delivery
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/accept");
 
         // Check delivery details
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->getJson("/api/v1/deliveries/{$delivery['id']}");
         
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id', 'status', 'courrier', 'current_position', 'status_history'
+                'id', 'status', 'courier', 'current_position', 'status_history'
             ])
             ->assertJsonPath('status', 'accepted')
-            ->assertJsonPath('courrier.id', (string)$this->courrier->id)
-            ->assertJsonPath('courrier.name', $this->courrier->name);
+            ->assertJsonPath('courier.id', (string)$this->courier->id)
+            ->assertJsonPath('courier.name', $this->courier->name);
 
         // Update delivery position
         $newPosition = ['lat' => -23.5555, 'lng' => -46.6444];
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
             'status' => 'in_transit',
             'current_position' => $newPosition
@@ -256,7 +260,7 @@ class DeliveryTest extends TestCase
 
         // Verify updated position
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->getJson("/api/v1/deliveries/{$delivery['id']}");
         
         $response->assertJsonPath('current_position', $newPosition)
@@ -264,15 +268,15 @@ class DeliveryTest extends TestCase
 
         // Complete the delivery
         $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/status", [
             'status' => 'delivered',
             'confirmation_code' => $delivery['confirmation_code']
         ]);
 
-        // Check notifications for the client
+        // Check notifications for the customer
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->getJson("/api/v1/notifications");
         
         $response->assertStatus(200)
@@ -282,10 +286,10 @@ class DeliveryTest extends TestCase
                 'status' => 'delivered'
             ]);
 
-        // Send a message from the client
+        // Send a message from the customer
         $message = ['text' => 'Where are you?'];
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->clientToken
+            'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson("/api/v1/deliveries/{$delivery['id']}/messages", $message);
         
         $response->assertStatus(201)
@@ -293,7 +297,7 @@ class DeliveryTest extends TestCase
 
         // Retrieve messages as the delivery person
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->courrierToken
+            'Authorization' => 'Bearer ' . $this->courierToken
         ])->getJson("/api/v1/deliveries/{$delivery['id']}/messages");
         
         $response->assertStatus(200)

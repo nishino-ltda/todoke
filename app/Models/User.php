@@ -47,7 +47,16 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'type' => 'string',
         ];
+    }
+
+    /**
+     * Get the possible user types
+     */
+    public static function getTypes(): array
+    {
+        return ['customer', 'courier', 'partner', 'admin'];
     }
 
     public function deliveriesAsClient()
@@ -55,9 +64,9 @@ class User extends Authenticatable
         return $this->hasMany(Delivery::class, 'customer_id');
     }
 
-    public function deliveriesAsEntregador()
+    public function deliveriesAsCourier()
     {
-        return $this->hasMany(Delivery::class, 'courrier_id');
+        return $this->hasMany(Delivery::class, 'courier_id');
     }
 
     public function notifications()

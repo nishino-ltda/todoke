@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('users');
-            $table->foreignId('courrier_id')->nullable()->constrained('users');
+            $table->foreignId('courier_id')->nullable()->constrained('users');
             $table->json('current_position')->nullable();
             $table->json('status_history')->nullable();
-            $table->json('origem');
-            $table->json('destino');
+            $table->json('origin');
+            $table->json('destination');
             $table->enum('status', [
                 'pending',
                 'accepted',
@@ -26,7 +26,7 @@ return new class extends Migration
                 'delivered',
                 'canceled'
             ])->default('pending');
-            $table->enum('type', ['normal', 'expressa', 'sustentavel']);
+            $table->enum('type', ['standard', 'express', 'sustainable']);
             $table->string('item_description');
             $table->decimal('estimated_weight', 10, 2)->nullable();
             $table->json('dimensions')->nullable();
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index(['customer_id', 'status']);
-            $table->index(['courrier_id', 'status']);
+            $table->index(['courier_id', 'status']);
             $table->index('node_id');
         });
     }

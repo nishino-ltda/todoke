@@ -1,14 +1,31 @@
-## Convenção de Nomes de Campos
+# Naming Convention Rules
+- All field names must be in English
+- All enum values must be in English
+- All API response keys must be in English
+- All relationships must use English names
+- Avoid mixing languages in the same model/API
 
-Para manter consistência no banco de dados, todos os nomes de campos devem seguir o padrão em inglês:
+# Known Issues to Fix
+1. Delivery model:
+   - Change 'origem' to 'origin'
+   - Change 'destino' to 'destination'
+   - Change 'cliente' relationship to 'customer'
+   - Change API response 'entregas' to 'deliveries'
 
-- client_id (não usar clienteId)
-- restaurant_id (não usar restauranteId)
-- product_id (não usar produtoId)
+2. User model:
+   - UsabilityTest incorrectly checks 'tipo' field - should use 'type'
+   - User model correctly uses 'type' field
 
-Essa convenção deve ser seguida em:
-- Migrações do banco de dados
-- Modelos Eloquent
-- Controllers e validações
-
-Os parâmetros de API podem manter os nomes em português para compatibilidade com clientes existentes, mas devem ser mapeados corretamente para os campos em inglês no banco de dados.
+3. DeliveryController:
+   - Change 'origem' to 'origin'
+   - Change 'destino' to 'destination'
+   - Change 'endereco' to 'address'
+   - Change 'posicaoAtual' to 'current_position'
+   - Change 'historicoStatus' to 'status_history'
+   - Change 'clienteId' to 'customer_id'
+   - Change 'courierId' to 'courier_id'
+   - Change 'entrega_atualizada' to 'delivery_updated'
+   - Change Portuguese response messages to English
+   - Change 'fotoUrl' to 'photoUrl'
+   - Change 'texto' to 'text'
+   - Change 'autor' to 'author'

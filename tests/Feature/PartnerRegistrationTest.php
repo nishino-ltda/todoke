@@ -151,7 +151,7 @@ class PartnerRegistrationTest extends TestCase
 
         // 3. Dados do node (entregador)
         $nodeData = [
-            'type' => 'courrier',
+            'type' => 'courier',
             'identifier' => 'MOTO-001',
             'capacity' => 5.5,
             'region_id' => $region->id,

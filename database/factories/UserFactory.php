@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make($password),
             'remember_token' => Str::random(10),
-            'type' => fake()->randomElement(['customer', 'courrier', 'partner']),
+            'type' => fake()->randomElement(['customer', 'courier', 'partner']),
             'status' => 'active'
         ];
     }
@@ -55,12 +55,12 @@ class UserFactory extends Factory
         ]);
     }
 
-    public function entregador(): static
+    public function courier(): static
     {
         return $this->state(fn (array $attributes) => [
-            'type' => 'courrier',
-            'email' => 'courrier@example.com',
-            'password' => Hash::make('Senha123')
+            'type' => 'courier',
+            'email' => 'courier@example.com',
+            'password' => Hash::make('Password123')
         ]);
     }
 }

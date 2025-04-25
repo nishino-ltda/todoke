@@ -20,7 +20,7 @@ class OrderController extends Controller
             'items.*.product_id' => [
                 'required',
                 Rule::exists('products', 'id')->where(function ($query) use ($request) {
-                    $query->where('restaurant_id', $request->restaurantId);
+                    $query->where('restaurant_id', $request->restaurant_id);
                 })
             ],
             'items.*.quantity' => 'required|integer|min:1',
@@ -35,7 +35,7 @@ class OrderController extends Controller
 
         $order = Order::create([
             'customer_id' => $request->user()->id,
-            'restaurant_id' => $request->restaurantId,
+            'restaurant_id' => $request->restaurant_id,
             'status' => 'pending',
             'total_value' => 0
         ]);
@@ -59,7 +59,7 @@ class OrderController extends Controller
         return response()->json([
             'id' => $order->id,
             'status' => $order->status,
-            'total_value' => number_format($order->totalValue, 2, '.', '')
+            'total_value' => number_format($order->total_value, 2, '.', '')
         ], 201);
     }
 }

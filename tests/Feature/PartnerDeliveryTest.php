@@ -67,7 +67,7 @@ class PartnerDeliveryTest extends TestCase
         $deliveryNode = \App\Models\Node::factory()->create([
             'partner_id' => $logistics->id,
             'region_id' => $logisticsRegion->id,
-            'type' => 'courrier',
+            'type' => 'courier',
             'status' => 'active'
         ]);
 
@@ -162,7 +162,7 @@ class PartnerDeliveryTest extends TestCase
         $motoboyNode = \App\Models\Node::factory()->create([
             'partner_id' => $motoboy->id,
             'region_id' => $motoboyRegion->id,
-            'type' => 'courrier',
+            'type' => 'courier',
             'status' => 'active'
         ]);
 

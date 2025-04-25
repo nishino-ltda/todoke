@@ -41,8 +41,8 @@ class UsabilityTest extends TestCase
 
         $response->assertStatus(400)
             ->assertJsonValidationErrors([
-                'origem',
-                'destino',
+                'origin',
+                'destination', 
                 'item_description',
                 'estimated_weight',
                 'dimensions',
@@ -95,7 +95,7 @@ class UsabilityTest extends TestCase
             'type' => 'customer'
         ]);
 
-        $this->assertContains($user->tipo, ['customer', 'courrier', 'partner', 'admin']);
+        $this->assertContains($user->type, ['customer', 'courier', 'partner', 'admin']);
     }
 
     /** @test */
@@ -111,11 +111,11 @@ class UsabilityTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'entregas',
+                'deliveries',
                 'total',
                 'per_page',
                 'current_page'
             ])
-            ->assertJsonCount(5, 'entregas');
+            ->assertJsonCount(5, 'deliveries');
     }
 }

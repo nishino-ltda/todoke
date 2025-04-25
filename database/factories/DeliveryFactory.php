@@ -20,25 +20,25 @@ class DeliveryFactory extends Factory
     {
         return [
             'customer_id' => User::factory()->create(['type' => 'customer'])->id,
-            'courrier_id' => User::factory()->create(['type' => 'courrier'])->id,
-            'origem' => [
+            'courier_id' => User::factory()->create(['type' => 'courier'])->id,
+            'origin' => [
                 'latitude' => fake()->latitude(),
                 'longitude' => fake()->longitude(),
-                'endereco' => fake()->address()
+                'address' => fake()->address()
             ],
-            'destino' => [
+            'destination' => [
                 'latitude' => fake()->latitude(),
                 'longitude' => fake()->longitude(),
-                'endereco' => fake()->address()
+                'address' => fake()->address()
             ],
             'status' => fake()->randomElement(['pending', 'accepted', 'in_transit', 'delivered', 'canceled']),
-            'type' => fake()->randomElement(['normal', 'expressa', 'sustentavel']),
+            'type' => fake()->randomElement(['normal', 'express', 'sustainable']),
             'item_description' => fake()->sentence(),
             'estimated_weight' => fake()->randomFloat(2, 0.1, 10),
             'dimensions' => [
-                'altura' => fake()->randomFloat(2, 5, 50),
-                'largura' => fake()->randomFloat(2, 5, 50),
-                'profundidade' => fake()->randomFloat(2, 5, 50)
+                'height' => fake()->randomFloat(2, 5, 50),
+                'width' => fake()->randomFloat(2, 5, 50),
+                'depth' => fake()->randomFloat(2, 5, 50)
             ],
             'value' => fake()->randomFloat(2, 5, 50),
             'estimated_time' => fake()->numberBetween(10, 120),

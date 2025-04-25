@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->enum('type', ['courrier', 'customer', 'partner'])->default('customer');
+            $table->enum('type', ['courier', 'customer', 'partner'])->default('customer');
             $table->string('status')->default('active');
             $table->timestamps();
         });

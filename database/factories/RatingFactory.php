@@ -21,7 +21,7 @@ class RatingFactory extends Factory
         return [
             'delivery_id' => Delivery::factory()->create()->id,
             'rater_id' => User::factory()->create(['type' => 'customer'])->id,
-            'rated_id' => User::factory()->create(['type' => 'courrier'])->id,
+            'rated_id' => User::factory()->create(['type' => 'courier'])->id,
             'rating' => fake()->numberBetween(1, 5),
             'comment' => fake()->sentence()
         ];

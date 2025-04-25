@@ -95,9 +95,9 @@ class SpecialTest extends TestCase
     #[Test]
     public function cannot_accept_already_accepted_delivery(): void
     {
-        $user = User::factory()->create(['type' => 'courrier']);
+        $user = User::factory()->create(['type' => 'courier']);
         $delivery = Delivery::factory()->create([
-            'courrier_id' => $user->id,
+            'courier_id' => $user->id,
             'status' => 'in_transit'
         ]);
 

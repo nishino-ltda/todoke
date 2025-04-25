@@ -11,9 +11,9 @@ class Delivery extends Model
 
     protected $fillable = [
         'customer_id',
-        'courrier_id',
-        'origem',
-        'destino',
+        'courier_id',
+        'origin',
+        'destination',
         'status',
         'type',
         'item_description',
@@ -27,8 +27,8 @@ class Delivery extends Model
     ];
 
     protected $casts = [
-        'origem' => 'array',
-        'destino' => 'array',
+        'origin' => 'array',
+        'destination' => 'array',
         'dimensions' => 'array',
         'value' => 'decimal:2',
         'estimated_time' => 'integer',
@@ -36,14 +36,14 @@ class Delivery extends Model
         'current_position' => 'array'
     ];
 
-    public function cliente()
+    public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function courrier()
+    public function courier()
     {
-        return $this->belongsTo(User::class, 'courrier_id');
+        return $this->belongsTo(User::class, 'courier_id');
     }
 
     public function node()

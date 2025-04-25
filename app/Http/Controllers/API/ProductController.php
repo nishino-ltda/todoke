@@ -63,7 +63,7 @@ class ProductController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
-            'status' => 'sometimes|in:disponivel,indisponivel'
+            'status' => 'sometimes|in:available,unavailable'
         ]);
 
         $product->update($request->all());

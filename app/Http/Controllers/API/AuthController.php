@@ -24,7 +24,7 @@ class AuthController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'phone' => 'required|string|max:20',
-                'type' => 'required|string|in:courrier,client,partner',
+                'type' => 'required|string|in:courier,customer,partner',
                 'password' => 'required|string|min:8',
             ]);
         } catch (ValidationException $e) {
@@ -77,8 +77,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'email' => 'required|email|regex:/^.+@.+\..+$/',
+            'password' => 'required|string|min:8',
+        ], [
+            'email.regex' => 'O email deve ser um endereço válido',
+            'password.min' => 'A senha deve ter pelo menos 8 caracteres'
         ]);
 
         $user = User::where('email', $request->email)->first();

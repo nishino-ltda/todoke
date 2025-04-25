@@ -18,7 +18,7 @@ class AuthTest extends TestCase
             'name' => 'Aurora Silva',
             'email' => 'aurora@example.com',
             'phone' => '11999999999',
-            'type' => 'courrier',
+            'type' => 'courier',
             'password' => 'SenhaSegura123'
         ];
 
@@ -92,7 +92,7 @@ class AuthTest extends TestCase
         ]);
 
         // Create test users
-        $entregador = \App\Models\User::factory()->create(['type' => 'courrier']);
+        $entregador = \App\Models\User::factory()->create(['type' => 'courier']);
         $customer = \App\Models\User::factory()->create([
             'type' => 'customer',
             'email' => 'customere@test.com',
@@ -131,11 +131,11 @@ class AuthTest extends TestCase
         // 2. Test type filters
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
-        ])->getJson('/api/v1/admin/users?type=courrier');
+        ])->getJson('/api/v1/admin/users?type=courier');
         
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.type', 'courrier');
+            ->assertJsonPath('data.0.type', 'courier');
 
         // 3. Test status update
         $response = $this->withHeaders([
