@@ -17,11 +17,11 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'restauranteId' => null,
+            'restaurantId' => null,
             'name' => fake()->words(3, true),
-            'descricao' => fake()->sentence(),
-            'preco' => fake()->randomFloat(2, 1, 100),
-            'categoria' => fake()->word(),
+            'description' => fake()->sentence(),
+            'price' => fake()->randomFloat(2, 1, 100),
+            'category' => fake()->word(),
             'imagemUrl' => fake()->imageUrl(),
             'status' => fake()->randomElement(['disponivel', 'indisponivel']),
         ];
@@ -33,11 +33,11 @@ class ProductFactory extends Factory
      * @param  string  $restauranteId
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function forRestaurante($restauranteId)
+    public function forRestaurant($restaurantId)
     {
-        return $this->state(function (array $attributes) use ($restauranteId) {
+        return $this->state(function (array $attributes) use ($restaurantId) {
             return [
-                'restauranteId' => $restauranteId,
+                'restaurantId' => $restaurantId
             ];
         });
     }

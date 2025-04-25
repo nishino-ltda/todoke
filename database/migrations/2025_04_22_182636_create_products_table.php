@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('restauranteId')->constrained('users');
+            $table->foreignId('restaurantId')->constrained('users');
             $table->string('name');
-            $table->text('descricao');
-            $table->decimal('preco', 10, 2);
-            $table->string('categoria');
+            $table->text('description');
+            $table->decimal('price', 10, 2);
+            $table->string('category');
             $table->string('imagemUrl')->nullable();
             $table->enum('status', ['disponivel', 'indisponivel'])->default('disponivel');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['restauranteId', 'status']);
-            $table->index('categoria');
+            $table->index(['restaurantId', 'status']);
+            $table->index('category');
         });
     }
 

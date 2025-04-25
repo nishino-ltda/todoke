@@ -10,28 +10,28 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'restauranteId',
+        'restaurantId',
         'name',
-        'descricao',
-        'preco',
-        'categoria',
+        'description',
+        'price',
+        'category',
         'imagemUrl',
         'status'
     ];
 
     protected $casts = [
-        'preco' => 'decimal:2',
+        'price' => 'decimal:2',
         'status' => 'string'
     ];
 
-    public function restaurante()
+    public function restaurant()
     {
-        return $this->belongsTo(User::class, 'restauranteId');
+        return $this->belongsTo(User::class, 'restaurantId');
     }
 
     public function orders()
     {
         return $this->belongsToMany(Order::class, 'order_items')
-            ->withPivot('quantidade', 'precoUnitario');
+            ->withPivot('quantity', 'unitPrice');
     }
 }

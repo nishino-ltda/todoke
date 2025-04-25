@@ -16,17 +16,17 @@ class OrderController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'restaurantId' => 'required|exists:users,id',
-            'itens' => 'required|array|min:1',
-            'itens.*.produtoId' => [
+            'items' => 'required|array|min:1',
+            'items.*.productId' => [
                 'required',
                 Rule::exists('products', 'id')->where(function ($query) use ($request) {
                     $query->where('restaurantId', $request->restaurantId);
                 })
             ],
-            'itens.*.quantidade' => 'required|integer|min:1',
-            'entrega.destino.lat' => 'required|numeric|between:-90,90',
-            'entrega.destino.lng' => 'required|numeric|between:-180,180',
-            'entrega.destino.endereco' => 'required|string|max:255'
+            'items.*.quantity' => 'required|integer|min:1',
+            'delivery.destination.lat' => 'required|numeric|between:-90,90',
+            'delivery.destination.lng' => 'required|numeric|between:-180,180',
+            'delivery.destination.address' => 'required|string|max:255'
         ]);
 
         if ($validator->fails()) {
@@ -37,29 +37,29 @@ class OrderController extends Controller
             'clientId' => $request->user()->id,
             'restaurantId' => $request->restaurantId,
             'status' => 'pending',
-            'valorTotal' => 0
+            'totalValue' => 0
         ]);
 
         $total = 0;
-        foreach ($request->itens as $item) {
-            $product = Product::find($item['produtoId']);
-            $itemTotal = $product->preco * $item['quantidade'];
+        foreach ($request->items as $item) {
+            $product = Product::find($item['productId']);
+            $itemTotal = $product->price * $item['quantity'];
             $total += $itemTotal;
             
             OrderItem::create([
                 'order_id' => $order->id,
-                'product_id' => $item['produtoId'],
-                'quantidade' => $item['quantidade'],
-                'precoUnitario' => $product->preco
+                'product_id' => $item['productId'],
+                'quantity' => $item['quantity'],
+                'unitPrice' => $product->price
             ]);
         }
 
-        $order->update(['valorTotal' => $total]);
+        $order->update(['totalValue' => $total]);
 
         return response()->json([
             'id' => $order->id,
             'status' => $order->status,
-            'valorTotal' => number_format($order->valorTotal, 2, '.', '')
+            'totalValue' => number_format($order->totalValue, 2, '.', '')
         ], 201);
     }
 }

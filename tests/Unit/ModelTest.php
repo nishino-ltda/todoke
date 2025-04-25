@@ -38,17 +38,17 @@ class ModelTest extends TestCase
         $restaurante = User::factory()->create(['tipo' => 'parceiro']);
         
         $product = Product::factory()
-            ->forRestaurante($restaurante->id)
+            ->forRestaurant($restaurante->id)
             ->create([
                 'name' => 'Test Product',
-                'preco' => 19.99,
+                'price' => 19.99,
                 'status' => 'disponivel'
             ]);
 
         $this->assertEquals('Test Product', $product->name);
-        $this->assertEquals(19.99, $product->preco);
+        $this->assertEquals(19.99, $product->price);
         $this->assertEquals('disponivel', $product->status);
-        $this->assertEquals($restaurante->id, $product->restauranteId);
+        $this->assertEquals($restaurante->id, $product->restaurantId);
     }
 
     /** @test */
@@ -128,13 +128,13 @@ class ModelTest extends TestCase
         $restaurant = User::factory()->create(['tipo' => 'parceiro']);
         $order = Order::factory()->create(['restaurantId' => $restaurant->id]);
         $product = Product::factory()
-            ->forRestaurante($restaurant->id)
+            ->forRestaurant($restaurant->id)
             ->create();
         
         $order->items()->create([
             'product_id' => $product->id,
             'quantity' => 2,
-            'unitPrice' => $product->preco
+            'unitPrice' => $product->price
         ]);
 
         $this->assertCount(1, $order->items);
