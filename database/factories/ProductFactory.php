@@ -17,7 +17,8 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'restauranteId' => \App\Models\User::factory()->create(['tipo' => 'parceiro'])->id,
+            'id' => \Illuminate\Support\Str::uuid(),
+            'restauranteId' => \App\Models\User::factory()->create(['tipo' => 'parceiro'])->uuid,
             'name' => fake()->words(3, true),
             'descricao' => fake()->sentence(),
             'preco' => fake()->randomFloat(2, 1, 100),

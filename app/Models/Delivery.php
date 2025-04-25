@@ -34,7 +34,10 @@ class Delivery extends Model
         'valor' => 'decimal:2',
         'tempoEstimado' => 'integer',
         'pesoEstimado' => 'decimal:2',
-        'posicaoAtual' => 'array'
+        'posicaoAtual' => 'array',
+        'clienteId' => 'string',
+        'entregadorId' => 'string',
+        'nodeId' => 'string'
     ];
 
     public function cliente()

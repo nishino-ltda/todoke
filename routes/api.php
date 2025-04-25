@@ -7,6 +7,7 @@ use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DeliveryController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\NotificationController;
+use App\Http\Controllers\API\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,11 @@ Route::prefix('v1')->group(function () {
             ->middleware('throttle:10,1'); // 10 tentativas por minuto
     });
 
+    // Rotas públicas de produtos
+    Route::prefix('products')->group(function () {
+        Route::get('/', [ProductController::class, 'index']);
+    });
+
     // Rotas protegidas por autenticação
     Route::middleware('auth:sanctum')->group(function () {
         // Rotas de usuário
@@ -47,6 +53,12 @@ Route::prefix('v1')->group(function () {
             Route::patch('/{id}/status', [DeliveryController::class, 'updateStatus']);
             Route::post('/{id}/messages', [DeliveryController::class, 'storeMessage']);
             Route::get('/{id}/messages', [DeliveryController::class, 'indexMessages']);
+        });
+
+        // Rotas de produtos
+        Route::prefix('products')->group(function () {
+            Route::post('/', [ProductController::class, 'store']);
+            Route::put('/{product}', [ProductController::class, 'update']);
         });
 
         // Rotas de pedidos

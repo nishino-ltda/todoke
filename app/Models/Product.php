@@ -22,7 +22,8 @@ class Product extends Model
 
     protected $casts = [
         'preco' => 'decimal:2',
-        'status' => 'string'
+        'status' => 'string',
+        'restauranteId' => 'string'
     ];
 
     public function restaurante()

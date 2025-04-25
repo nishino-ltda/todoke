@@ -5,11 +5,12 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
+use App\Traits\HasUuid;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    use HasUuid;
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory;
 
@@ -48,6 +49,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'id' => 'string',
         ];
     }
 
@@ -64,5 +66,10 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'restauranteId');
     }
 }
