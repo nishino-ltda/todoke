@@ -26,6 +26,7 @@ class UserFactory extends Factory
         $password = 'Password123';
         
         return [
+            'uuid' => Str::uuid(),
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
