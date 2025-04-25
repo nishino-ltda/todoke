@@ -72,7 +72,7 @@ class SecurityTest extends TestCase
             'password' => bcrypt('correctpassword')
         ]);
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 11; $i++) {
             $response = $this->postJson('/api/v1/auth/login', [
                 'email' => 'validuser@example.com',
                 'password' => 'wrongpassword'
