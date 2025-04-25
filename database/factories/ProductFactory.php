@@ -17,8 +17,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'id' => \Illuminate\Support\Str::uuid(),
-            'restauranteId' => \App\Models\User::factory()->create(['tipo' => 'parceiro'])->uuid,
+            'restauranteId' => null,
             'name' => fake()->words(3, true),
             'descricao' => fake()->sentence(),
             'preco' => fake()->randomFloat(2, 1, 100),
@@ -26,5 +25,20 @@ class ProductFactory extends Factory
             'imagemUrl' => fake()->imageUrl(),
             'status' => fake()->randomElement(['disponivel', 'indisponivel']),
         ];
+    }
+
+    /**
+     * Set the restaurante ID for the product.
+     *
+     * @param  string  $restauranteId
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function forRestaurante($restauranteId)
+    {
+        return $this->state(function (array $attributes) use ($restauranteId) {
+            return [
+                'restauranteId' => $restauranteId,
+            ];
+        });
     }
 }

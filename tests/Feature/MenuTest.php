@@ -5,11 +5,12 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MenuTest extends TestCase
 {
-    use RefreshDatabase;
+    // use DatabaseTransactions;
     private User $restaurante;
     private string $restauranteToken;
     private User $cliente;
@@ -18,15 +19,21 @@ class MenuTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Run migrations
+        $this->artisan('migrate:fresh');
 
         // Criar restaurante parceiro apenas uma vez
         if (!isset($this->restaurante)) {
-            $this->restaurante = User::factory()->create([
+            $this->restaurante = new User([
+                'id' => 1, // ID fixo para o restaurante
                 'tipo' => 'parceiro',
                 'email' => 'bistrotech@example.com',
+                'name' => 'Bistro Tech',
                 'password' => bcrypt('Bistro123'),
-                'uuid' => \Illuminate\Support\Str::uuid()
+                'status' => 'ativo'
             ]);
+            $this->restaurante->save();
 
             // Criar cliente apenas uma vez
             $this->cliente = User::factory()->create(['tipo' => 'cliente']);
@@ -47,8 +54,7 @@ class MenuTest extends TestCase
     public function testListagemDeProdutos()
     {
         // Criar produtos de teste
-        $produtos = Product::factory()->count(3)->create([
-            'restauranteId' => $this->restaurante->id,
+        $produtos = Product::factory()->count(3)->forRestaurante($this->restaurante->id)->create([
             'status' => 'disponivel'
         ]);
 
@@ -64,14 +70,12 @@ class MenuTest extends TestCase
 
     public function testFiltroPorCategoria()
     {
-        Product::factory()->create([
-            'restauranteId' => $this->restaurante->id,
+        Product::factory()->forRestaurante($this->restaurante->id)->create([
             'categoria' => 'Japonês',
             'status' => 'disponivel'
         ]);
 
-        Product::factory()->create([
-            'restauranteId' => $this->restaurante->id,
+        Product::factory()->forRestaurante($this->restaurante->id)->create([
             'categoria' => 'Brasileira',
             'status' => 'disponivel'
         ]);
@@ -108,9 +112,7 @@ class MenuTest extends TestCase
 
     public function testAtualizacaoDeProduto()
     {
-        $produto = Product::factory()->create([
-            'restauranteId' => $this->restaurante->id
-        ]);
+        $produto = Product::factory()->forRestaurante($this->restaurante->id)->create();
 
         $updateData = [
             'name' => 'name Atualizado',
@@ -124,7 +126,7 @@ class MenuTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('name', 'name Atualizado')
-            ->assertJsonPath('preco', 39.90)
+            ->assertJsonPath('preco', '39.90')
             ->assertJsonPath('status', 'indisponivel');
 
         $this->assertDatabaseHas('products', [
@@ -136,9 +138,7 @@ class MenuTest extends TestCase
 
     public function testApenasProprietarioPodeAtualizarProduto()
     {
-        $produto = Product::factory()->create([
-            'restauranteId' => $this->restaurante->id
-        ]);
+        $produto = Product::factory()->forRestaurante($this->restaurante->id)->create();
 
         $outroRestaurante = User::factory()->create(['tipo' => 'parceiro']);
         $outroToken = $this->postJson('/api/v1/auth/login', [
@@ -157,18 +157,16 @@ class MenuTest extends TestCase
 
     public function testCriacaoDePedidoComProdutos()
     {
-        $produto1 = Product::factory()->create([
-            'restauranteId' => $this->restaurante->uuid,
+        $produto1 = Product::factory()->forRestaurante($this->restaurante->id)->create([
             'preco' => 10.00
         ]);
 
-        $produto2 = Product::factory()->create([
-            'restauranteId' => $this->restaurante->uuid,
+        $produto2 = Product::factory()->forRestaurante($this->restaurante->id)->create([
             'preco' => 20.00
         ]);
 
         $pedidoData = [
-            'restauranteId' => $this->restaurante->uuid,
+            'restauranteId' => $this->restaurante->id,
             'itens' => [
                 ['produtoId' => $produto1->id, 'quantidade' => 2],
                 ['produtoId' => $produto2->id, 'quantidade' => 1]
@@ -191,7 +189,7 @@ class MenuTest extends TestCase
         }
 
         $response->assertStatus(201)
-            ->assertJsonPath('valorTotal', 40.00) // (2 * 10) + 20
+            ->assertJsonPath('valorTotal', '40.00') // (2 * 10) + 20
             ->assertJsonPath('status', 'em_analise');
 
         $this->assertDatabaseHas('order_items', [

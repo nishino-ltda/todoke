@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('ratings', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('entregaId')->constrained('deliveries');
-            $table->foreignUuid('avaliadorId')->constrained('users');
-            $table->foreignUuid('avaliadoId')->constrained('users');
+            $table->id();
+            $table->foreignId('entregaId')->constrained('deliveries');
+            $table->foreignId('avaliadorId')->constrained('users');
+            $table->foreignId('avaliadoId')->constrained('users');
             $table->tinyInteger('nota')->unsigned();
             $table->text('comentario')->nullable();
             $table->timestamps();

@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Order extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $fillable = [
         'clienteId',
@@ -44,7 +43,7 @@ class Order extends Model
             ->withPivot('quantidade', 'precoUnitario');
     }
     
-    public function itens()
+    public function items()
     {
         return $this->hasMany(OrderItem::class, 'order_id');
     }

@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('restauranteId')->constrained('users');
+            $table->id();
+            $table->foreignId('restauranteId')->constrained('users');
             $table->string('name');
             $table->text('descricao');
             $table->decimal('preco', 10, 2);

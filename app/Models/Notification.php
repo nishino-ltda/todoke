@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Notification extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -19,8 +18,7 @@ class Notification extends Model
 
     protected $casts = [
         'data' => 'array',
-        'read_at' => 'datetime',
-        'user_id' => 'string'
+        'read_at' => 'datetime'
     ];
 
     public function user()

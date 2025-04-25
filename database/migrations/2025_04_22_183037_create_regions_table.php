@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('regions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('parceiroId')->constrained('users');
+            $table->id();
+            $table->foreignId('parceiroId')->constrained('users');
             $table->string('name');
             $table->json('poligono');
             $table->enum('status', ['ativo', 'inativo'])->default('ativo');

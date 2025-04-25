@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Product extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $fillable = [
         'restauranteId',
@@ -22,8 +21,7 @@ class Product extends Model
 
     protected $casts = [
         'preco' => 'decimal:2',
-        'status' => 'string',
-        'restauranteId' => 'string'
+        'status' => 'string'
     ];
 
     public function restaurante()

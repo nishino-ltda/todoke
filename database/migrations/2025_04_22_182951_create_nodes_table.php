@@ -12,13 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('nodes', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('parceiroId')->constrained('users');
+            $table->id();
+            $table->foreignId('parceiroId')->constrained('users');
             $table->enum('tipo', ['restaurante', 'centro_distribuicao', 'ponto_entrega']);
             $table->string('identificador')->unique();
             $table->decimal('capacidade', 10, 2)->nullable();
             $table->enum('status', ['ativo', 'inativo', 'manutencao'])->default('ativo');
-            $table->foreignUuid('regiaoId')->constrained('regions');
+            $table->foreignId('regiaoId')->constrained('regions');
             $table->json('posicaoAtual');
             $table->timestamps();
             $table->softDeletes();

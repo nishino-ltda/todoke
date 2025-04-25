@@ -15,11 +15,10 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'restauranteId' => 'required|uuid|exists:users,id',
+            'restauranteId' => 'required|exists:users,id',
             'itens' => 'required|array|min:1',
             'itens.*.produtoId' => [
                 'required',
-                'uuid',
                 Rule::exists('products', 'id')->where(function ($query) use ($request) {
                     $query->where('restauranteId', $request->restauranteId);
                 })
@@ -37,25 +36,30 @@ class OrderController extends Controller
         $order = Order::create([
             'clienteId' => $request->user()->id,
             'restauranteId' => $request->restauranteId,
-            'status' => 'pendente',
-            'entrega' => $request->entrega
+            'status' => 'em_analise',
+            'valorTotal' => 0
         ]);
 
+        $total = 0;
         foreach ($request->itens as $item) {
             $product = Product::find($item['produtoId']);
+            $itemTotal = $product->preco * $item['quantidade'];
+            $total += $itemTotal;
             
             OrderItem::create([
-                'pedidoId' => $order->id,
-                'produtoId' => $item['produtoId'],
+                'order_id' => $order->id,
+                'product_id' => $item['produtoId'],
                 'quantidade' => $item['quantidade'],
                 'precoUnitario' => $product->preco
             ]);
         }
 
+        $order->update(['valorTotal' => $total]);
+
         return response()->json([
             'id' => $order->id,
             'status' => $order->status,
-            'total' => $order->items()->sum('precoUnitario')
+            'valorTotal' => number_format($order->valorTotal, 2, '.', '')
         ], 201);
     }
 }

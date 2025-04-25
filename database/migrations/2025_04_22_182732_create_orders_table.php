@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('clienteId')->constrained('users');
-            $table->foreignUuid('restauranteId')->constrained('users');
+            $table->id();
+            $table->foreignId('clienteId')->constrained('users');
+            $table->foreignId('restauranteId')->constrained('users');
             $table->enum('status', [
                 'em_analise',
                 'aceito', 
@@ -25,7 +25,7 @@ return new class extends Migration
                 'cancelado'
             ])->default('em_analise');
             $table->decimal('valorTotal', 10, 2);
-            $table->foreignUuid('entregaId')->nullable()->constrained('deliveries');
+            $table->foreignId('entregaId')->nullable()->constrained('deliveries');
             $table->timestamps();
             $table->softDeletes();
 

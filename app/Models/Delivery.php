@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Delivery extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $fillable = [
         'clienteId',
@@ -34,10 +33,7 @@ class Delivery extends Model
         'valor' => 'decimal:2',
         'tempoEstimado' => 'integer',
         'pesoEstimado' => 'decimal:2',
-        'posicaoAtual' => 'array',
-        'clienteId' => 'string',
-        'entregadorId' => 'string',
-        'nodeId' => 'string'
+        'posicaoAtual' => 'array'
     ];
 
     public function cliente()

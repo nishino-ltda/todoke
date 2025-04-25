@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('deliveries', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('clienteId')->constrained('users');
-            $table->foreignUuid('entregadorId')->nullable()->constrained('users');
+            $table->id();
+            $table->foreignId('clienteId')->constrained('users');
+            $table->foreignId('entregadorId')->nullable()->constrained('users');
             $table->json('posicaoAtual')->nullable();
             $table->json('historicoStatus')->nullable();
             $table->json('origem');
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->decimal('valor', 10, 2);
             $table->integer('tempoEstimado')->nullable();
             $table->string('codigoConfirmacao')->nullable();
-            $table->foreignUuid('nodeId')->nullable()->constrained('nodes');
+            $table->foreignId('nodeId')->nullable()->constrained('nodes');
             $table->timestamps();
             $table->softDeletes();
 
