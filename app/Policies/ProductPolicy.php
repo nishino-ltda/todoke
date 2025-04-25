@@ -37,7 +37,7 @@ class ProductPolicy
      */
     public function update(User $user, Product $product): bool
     {
-        return $user->id === $product->restauranteId; // Apenas o dono pode atualizar
+        return $user->id === $product->restaurantId; // Apenas o dono pode atualizar
     }
 
     /**

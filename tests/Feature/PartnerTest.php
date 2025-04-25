@@ -12,13 +12,13 @@ class PartnerTest extends TestCase
         // Criar usuário parceiro
         $parceiro = \App\Models\User::factory()->create([
             'tipo' => 'parceiro',
-            'email' => 'bistrotech@example.com',
+            'email' => 'bistrotech_'.uniqid().'@example.com',
             'password' => bcrypt('Parceiro123')
         ]);
 
         // Fazer login
         $token = $this->postJson('/api/v1/auth/login', [
-            'email' => 'bistrotech@example.com',
+            'email' => $parceiro->email,
             'password' => 'Parceiro123'
         ])->json('token');
 
@@ -115,13 +115,13 @@ class PartnerTest extends TestCase
         // Criar usuário parceiro logístico
         $parceiro = \App\Models\User::factory()->create([
             'tipo' => 'parceiro',
-            'email' => 'logismaster@example.com',
+            'email' => 'logismaster_'.uniqid().'@example.com',
             'password' => bcrypt('Logistica123')
         ]);
 
         // Fazer login
         $token = $this->postJson('/api/v1/auth/login', [
-            'email' => 'logismaster@example.com',
+            'email' => $parceiro->email,
             'password' => 'Logistica123'
         ])->json('token');
 
