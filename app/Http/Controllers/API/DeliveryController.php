@@ -61,7 +61,7 @@ class DeliveryController extends Controller
             'dimensions.width' => 'required|integer|min:1|max:999',
             'dimensions.height' => 'required|integer|min:1|max:999',
             'dimensions.depth' => 'required|integer|min:1|max:999',
-            'type' => 'required|in:standard,express,sustainable'
+            'type' => 'required|in:standard,express,priority'
         ], [
             'origin.required' => 'The origin field is required',
             'destination.required' => 'The destination field is required',
@@ -255,7 +255,7 @@ class DeliveryController extends Controller
         $weightFactor = $request->estimated_weight * 0.1;
         $typeFactor = match($request->type) {
             'express' => 1.5,
-            'sustainable' => 1.2,
+            'priority' => 1.8,
             default => 1.0
         };
 
@@ -267,7 +267,7 @@ class DeliveryController extends Controller
         // Simplified logic for calculating estimated time (in minutes)
         return match($request->type) {
             'express' => 30,
-            'sustainable' => 90,
+            'priority' => 20,
             default => 60
         };
     }

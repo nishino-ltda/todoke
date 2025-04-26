@@ -73,11 +73,11 @@ class DeliveryTest extends TestCase
             ]
         ];
 
-        // Test normal delivery creation
-        $normalData = array_merge($baseData, ['type' => 'standard']);
+        // Test standard delivery creation
+        $standardData = array_merge($baseData, ['type' => 'standard']);
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->customerToken
-        ])->postJson('/api/v1/deliveries', $normalData);
+        ])->postJson('/api/v1/deliveries', $standardData);
 
         if ($response->status() === 400) {
             dump($response->json());
@@ -98,8 +98,8 @@ class DeliveryTest extends TestCase
             'status' => 'pending'
         ]);
 
-        $normalValue = $response->json('value');
-        $normalTime = $response->json('estimated_time');
+        $standardValue = $response->json('value');
+        $standardTime = $response->json('estimated_time');
 
         // Test express delivery creation
         $expressData = array_merge($baseData, ['type' => 'express']);
@@ -108,8 +108,8 @@ class DeliveryTest extends TestCase
         ])->postJson('/api/v1/deliveries', $expressData);
         
         $expressResponse->assertStatus(201);
-        $this->assertGreaterThan($normalValue, $expressResponse->json('value'));
-        $this->assertLessThan($normalTime, $expressResponse->json('estimated_time'));
+        $this->assertGreaterThan($standardValue, $expressResponse->json('value'));
+        $this->assertLessThan($standardTime, $expressResponse->json('estimated_time'));
 
         // Test invalid delivery data
         $invalidData = $baseData;

@@ -32,7 +32,7 @@ class DeliveryFactory extends Factory
                 'address' => fake()->address()
             ],
             'status' => fake()->randomElement(['pending', 'accepted', 'in_transit', 'delivered', 'canceled']),
-            'type' => fake()->randomElement(['normal', 'express', 'sustainable']),
+            'type' => fake()->randomElement(['standard', 'express', 'priority']),
             'item_description' => fake()->sentence(),
             'estimated_weight' => fake()->randomFloat(2, 0.1, 10),
             'dimensions' => [

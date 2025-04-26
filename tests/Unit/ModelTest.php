@@ -69,23 +69,23 @@ class ModelTest extends TestCase
         $delivery = Delivery::factory()
             ->state([
                 'status' => 'pending',
-                'type' => 'normal'
+                'type' => 'standard'
             ])
             ->create();
 
         $this->assertEquals('pending', $delivery->status);
-        $this->assertEquals('normal', $delivery->type);
+        $this->assertEquals('standard', $delivery->type);
     }
 
     /** @test */
     public function node_model_has_expected_attributes()
     {
         $node = Node::factory()->create([
-            'type' => 'restaurante',
+            'type' => 'restaurant',
             'status' => 'active'
         ]);
 
-        $this->assertEquals('restaurante', $node->type);
+        $this->assertEquals('restaurant', $node->type);
         $this->assertEquals('active', $node->status);
     }
 

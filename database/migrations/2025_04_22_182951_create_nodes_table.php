@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('nodes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('partner_id')->constrained('users');
-            $table->enum('type', ['restaurante', 'centro_distribuicao', 'ponto_entrega']);
-            $table->string('identificador')->unique();
+            $table->enum('type', ['restaurant', 'distribution_center', 'delivery_point']);
+            $table->string('identifier')->unique();
             $table->decimal('capacity', 10, 2)->nullable();
-            $table->enum('status', ['active', 'inactive', 'maintenance'])->default('active');
+            $table->enum('status', ['active', 'inactive', 'maintenance', 'pending_approval'])->default('pending_approval');
             $table->foreignId('region_id')->constrained('regions');
             $table->json('current_position');
             $table->timestamps();

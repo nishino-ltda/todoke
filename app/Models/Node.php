@@ -12,7 +12,7 @@ class Node extends Model
     protected $fillable = [
         'partner_id',
         'type',
-        'identificador',
+        'identifier',
         'capacity',
         'status',
         'region_id',
@@ -24,12 +24,12 @@ class Node extends Model
         'capacity' => 'decimal:2'
     ];
 
-    public function parceiro()
+    public function partner()
     {
         return $this->belongsTo(User::class, 'partner_id');
     }
 
-    public function regiao()
+    public function region()
     {
         return $this->belongsTo(Region::class, 'region_id');
     }

@@ -67,7 +67,7 @@ class PartnerDeliveryTest extends TestCase
         $deliveryNode = \App\Models\Node::factory()->create([
             'partner_id' => $logistics->id,
             'region_id' => $logisticsRegion->id,
-            'type' => 'courier',
+            'type' => 'delivery_point',
             'status' => 'active'
         ]);
 
@@ -162,14 +162,14 @@ class PartnerDeliveryTest extends TestCase
         $motoboyNode = \App\Models\Node::factory()->create([
             'partner_id' => $motoboy->id,
             'region_id' => $motoboyRegion->id,
-            'type' => 'courier',
+            'type' => 'delivery_point',
             'status' => 'active'
         ]);
 
         $droneHub = \App\Models\Node::factory()->create([
             'partner_id' => $drone->id,
             'region_id' => $droneRegion->id,
-            'type' => 'drone_hub',
+            'type' => 'distribution_center',
             'status' => 'active'
         ]);
 
@@ -201,8 +201,8 @@ class PartnerDeliveryTest extends TestCase
         // 7. Verificar se a entrega foi dividida em duas etapas
         $delivery = \App\Models\Delivery::first();
         $this->assertCount(2, $delivery->stages);
-        $this->assertEquals('courier', $delivery->stages[0]['type']);
-        $this->assertEquals('drone', $delivery->stages[1]['type']);
+            $this->assertEquals('delivery_point', $delivery->stages[0]['type']);
+            $this->assertEquals('distribution_center', $delivery->stages[1]['type']);
 
         // 8. Verificar se os parceiros receberam suas partes
         $this->assertDatabaseHas('delivery_assignments', [
@@ -255,8 +255,8 @@ class PartnerDeliveryTest extends TestCase
             'logisticsPartnerId' => $drone->id,
             'status' => 'in_transit',
             'stages' => [
-                ['type' => 'courier', 'status' => 'completed'],
-                ['type' => 'drone', 'status' => 'pending']
+                ['type' => 'delivery_point', 'status' => 'completed'],
+                ['type' => 'distribution_center', 'status' => 'pending']
             ]
         ]);
 

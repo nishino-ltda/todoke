@@ -8,6 +8,8 @@ use App\Http\Controllers\API\DeliveryController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\API\RegionController;
+use App\Http\Controllers\API\NodeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +56,12 @@ Route::prefix('v1')->group(function () {
             Route::post('/{id}/messages', [DeliveryController::class, 'storeMessage']);
             Route::get('/{id}/messages', [DeliveryController::class, 'indexMessages']);
         });
+
+        // Rotas de regiões
+        Route::post('/regions', [RegionController::class, 'store']);
+
+        // Rotas de nodes
+        Route::post('/nodes', [NodeController::class, 'store']);
 
         // Rotas de produtos
         Route::prefix('products')->group(function () {

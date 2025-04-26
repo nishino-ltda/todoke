@@ -31,22 +31,22 @@ class PartnerRegistrationTest extends TestCase
             'status' => 'active'
         ];
 
-        // 1. Enviar dados de cadastro
-        $response = $this->postJson('/api/partners', $partnerData);
+        // 1. Register partner using auth endpoint
+        $response = $this->postJson('/api/v1/auth/register', $partnerData);
         
-        // 2. Verificar resposta
+        // 2. Verify response
         $response->assertStatus(201)
             ->assertJsonStructure([
-                'data' => [
+                'token',
+                'user' => [
                     'id',
                     'name',
                     'email',
-                    'type',
-                    'status'
+                    'type'
                 ]
             ]);
 
-        // 3. Verificar se o parceiro foi criado no banco
+        // 3. Verify partner was created in database
         $this->assertDatabaseHas('users', [
             'email' => 'contato@bistrotech.com.br',
             'type' => 'partner'
@@ -96,10 +96,10 @@ class PartnerRegistrationTest extends TestCase
             ]
         ];
 
-        // 4. Enviar requisição para criar região
-        $response = $this->postJson('/api/partner/regions', $regionData);
+        // 4. Send request to create region
+        $response = $this->postJson('/api/v1/regions', $regionData);
 
-        // 5. Verificar resposta
+        // 5. Verify response
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [
@@ -110,16 +110,16 @@ class PartnerRegistrationTest extends TestCase
                 ]
             ]);
 
-        // 6. Verificar se região foi criada no banco
+        // 6. Verify region was created in database
         $this->assertDatabaseHas('regions', [
             'name' => 'Zona Sul - Campo Grande',
             'partner_id' => $partner->id
         ]);
 
-        // 7. Verificar se o polígono foi salvo corretamente
+        // 7. Verify polygon was saved correctly
         $region = \App\Models\Region::first();
-        $this->assertIsArray($region->poligono);
-        $this->assertEquals('Polygon', $region->poligono['type']);
+        $this->assertIsArray($region->polygon);
+        $this->assertEquals('Polygon', $region->polygon['type']);
     }
 
     /**
@@ -151,33 +151,37 @@ class PartnerRegistrationTest extends TestCase
 
         // 3. Dados do node (entregador)
         $nodeData = [
-            'type' => 'courier',
+            'type' => 'delivery_point',
             'identifier' => 'MOTO-001',
             'capacity' => 5.5,
             'region_id' => $region->id,
+            'partner_id' => $partner->id,
+            'status' => 'pending_approval',
             'current_position' => [
                 'lat' => -20.4697,
                 'lng' => -54.6468
             ]
         ];
 
-        // 4. Enviar requisição para criar node
-        $response = $this->postJson('/api/partner/nodes', $nodeData);
+        // 4. Send request to create node
+        $response = $this->postJson('/api/v1/nodes', $nodeData);
 
-        // 5. Verificar resposta
+        // 5. Verify response
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'data' => [
                     'id',
                     'type',
                     'identifier',
-                    'status',
+                    'capacity',
+                    'region_id',
                     'partner_id',
-                    'region_id'
+                    'status',
+                    'current_position'
                 ]
             ]);
 
-        // 6. Verificar se node foi criado no banco
+        // 6. Verify node was created in database
         $this->assertDatabaseHas('nodes', [
             'identifier' => 'MOTO-001',
             'partner_id' => $partner->id,
@@ -185,9 +189,9 @@ class PartnerRegistrationTest extends TestCase
             'status' => 'pending_approval'
         ]);
 
-        // 7. Verificar se a posição foi salva corretamente
+        // 7. Verify position was saved correctly
         $node = \App\Models\Node::first();
-        $this->assertIsArray($node->currentPosition);
-        $this->assertEquals(-20.4697, $node->currentPosition['lat']);
+        $this->assertIsArray($node->current_position);
+        $this->assertEquals(-20.4697, $node->current_position['lat']);
     }
 }
