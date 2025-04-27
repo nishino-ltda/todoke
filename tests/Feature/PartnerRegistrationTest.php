@@ -81,7 +81,7 @@ class PartnerRegistrationTest extends TestCase
         // 2. Autenticar o parceiro
         $this->actingAs($partner);
 
-        // 3. Dados da região (formato simplificado esperado pelo controller)
+        // 3. Dados da região no formato esperado pelo controller
         $regionData = [
             'name' => 'Zona Sul - Campo Grande',
             'polygon' => [
@@ -121,8 +121,7 @@ class PartnerRegistrationTest extends TestCase
         // 7. Verify polygon was saved correctly
         $region = \App\Models\Region::first();
         $this->assertIsArray($region->polygon);
-        $this->assertEquals('Feature', $region->polygon['type']);
-        $this->assertEquals('Polygon', $region->polygon['geometry']['type']);
+        $this->assertEquals('Polygon', $region->polygon['type']);
     }
 
     /**
@@ -146,7 +145,19 @@ class PartnerRegistrationTest extends TestCase
         ]);
         
         $region = \App\Models\Region::factory()->create([
-            'partner_id' => $partner->id
+            'partner_id' => $partner->id,
+            'polygon' => [
+                'type' => 'Polygon',
+                'coordinates' => [
+                    [
+                        [-54.6468, -20.4697],
+                        [-54.5954, -20.4697], 
+                        [-54.5954, -20.4412],
+                        [-54.6468, -20.4412],
+                        [-54.6468, -20.4697]
+                    ]
+                ]
+            ]
         ]);
 
         // 2. Autenticar o parceiro

@@ -97,7 +97,7 @@ class PerformanceTest extends TestCase
         $deliveries = $user->deliveriesAsClient()
             ->with('courier')
             ->where('status', 'delivered')
-            ->orderBy('createdAt', 'desc')
+            ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
         $duration = microtime(true) - $start;
