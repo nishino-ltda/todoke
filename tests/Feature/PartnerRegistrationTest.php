@@ -204,7 +204,8 @@ class PartnerRegistrationTest extends TestCase
         ]);
 
         // 7. Verify position was saved correctly
-        $node = \App\Models\Node::first();
+        $nodeId = $response->json('data.id');
+        $node = \App\Models\Node::find($nodeId);
         $this->assertIsArray($node->current_position);
         $this->assertEqualsWithDelta(-20.4697, $node->current_position['lat'], 0.0001);
     }
