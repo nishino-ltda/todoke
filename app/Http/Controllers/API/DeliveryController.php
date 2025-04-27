@@ -67,7 +67,7 @@ class DeliveryController extends Controller
             'dimensions.height' => 'required|integer|min:1|max:999',
             'dimensions.depth' => 'required|integer|min:1|max:999',
             'type' => 'required|in:standard,express,priority',
-            'logistics_partner_id' => 'sometimes|string|exists:users,id',
+            'courier_id' => 'sometimes|string|exists:users,id',
             'isHybrid' => 'sometimes|boolean'
         ], [
             'origin.required' => 'The origin field is required',
@@ -126,10 +126,9 @@ class DeliveryController extends Controller
             $deliveryData['item_description'] = $request->item_description;
         }
 
-        // Set logistics partner if provided
-        if (isset($request->logistics_partner_id)) {
-            $deliveryData['logistics_partner_id'] = $user->id;
-            $deliveryData['status'] = 'awaiting_confirmation';
+        // Set courier if provided
+        if (isset($request->courier_id)) {
+            $deliveryData['courier_id'] = $request->courier_id;
         }
 
         // Set stages if hybrid delivery
@@ -168,14 +167,14 @@ class DeliveryController extends Controller
         $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
         $user = $token ? $token->tokenable : $request->user();
 
-        // Ensure only delivery personnel can accept deliveries
-        if ($user->type !== 'partner') {
-            return response()->json(['message' => 'Only logistics partners can accept deliveries'], 403);
+        // Ensure only couriers can accept deliveries
+        if ($user->type !== 'courier') {
+            return response()->json(['message' => 'Only couriers can accept deliveries'], 403);
         }
 
         // Update the delivery status
         $delivery->update([
-            'logistics_partner_id' => (string)$user->id,
+            'courier_id' => (string)$user->id,
             'status' => 'accepted'
         ]);
 
@@ -193,7 +192,7 @@ class DeliveryController extends Controller
         return response()->json([
             'id' => $delivery->id,
             'status' => $delivery->status,
-            'courier' => [
+            'logistics_partner' => [
                 'id' => (string)$user->id,
                 'name' => $user->name,
                 'photoUrl' => $user->photo_url
@@ -225,8 +224,8 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure only the assigned delivery personnel can update the status
-        if ((string)$delivery->logistics_partner_id !== (string)$user->id) {
-            return response()->json(['message' => 'Only the assigned logistics partner can update the status'], 403);
+        if ((string)$delivery->courier_id !== (string)$user->id) {
+            return response()->json(['message' => 'Only the assigned courier can update the status'], 403);
         }
 
         // Update the delivery status and position if provided
@@ -270,10 +269,10 @@ class DeliveryController extends Controller
         return response()->json([
             'id' => $delivery->id,
             'status' => $delivery->status,
-            'logistics_partner' => $delivery->logisticsPartner ? [
-                'id' => (string)$delivery->logisticsPartner->id,
-                'name' => $delivery->logisticsPartner->name,
-                'photoUrl' => $delivery->logisticsPartner->photo_url
+            'logistics_partner' => $delivery->courier ? [
+                'id' => (string)$delivery->courier->id,
+                'name' => $delivery->courier->name,
+                'photoUrl' => $delivery->courier->photo_url
             ] : null,
             'current_position' => $delivery->current_position,
             'status_history' => $delivery->status_history
@@ -316,8 +315,10 @@ class DeliveryController extends Controller
         $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
         $user = $token ? $token->tokenable : $request->user();
 
-        // Ensure the user is either the client or delivery person
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
+        // Ensure the user is either the client, courier or logistics partner
+        if ($user->id != $delivery->customer_id && 
+            $user->id != $delivery->courier_id && 
+            $user->id != $delivery->logistics_partner_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -358,8 +359,10 @@ class DeliveryController extends Controller
         $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
         $user = $token ? $token->tokenable : $request->user();
 
-        // Ensure the user is either the client or delivery person
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
+        // Ensure the user is either the client, courier or logistics partner
+        if ($user->id != $delivery->customer_id && 
+            $user->id != $delivery->courier_id && 
+            $user->id != $delivery->logistics_partner_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
