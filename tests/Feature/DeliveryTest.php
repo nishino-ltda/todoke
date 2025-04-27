@@ -119,9 +119,13 @@ class DeliveryTest extends TestCase
             'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', $invalidData);
         
-        $response->assertStatus(400)
+        $response->assertStatus(422)
             ->assertJson([
-                'estimated_weight' => ['The estimated weight field must be at least 0.']
+                'message' => 'Validation failed',
+                'errors' => [
+                    'estimated_weight' => ['The estimated weight field must be at least 0.'],
+                    'type' => ['The type field is required.']
+                ]
             ]);
 
         // Test out-of-coverage delivery
@@ -132,7 +136,13 @@ class DeliveryTest extends TestCase
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->customerToken
         ])->postJson('/api/v1/deliveries', $outOfCoverageData);
-        $response->assertStatus(400);
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'Validation failed',
+                'errors' => [
+                    'type' => ['The type field is required.']
+                ]
+            ]);
     }
 
     // Test acceptance and completion of a delivery

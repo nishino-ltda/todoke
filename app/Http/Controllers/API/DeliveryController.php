@@ -6,25 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\Delivery;
 use App\Models\Message;
 use App\Models\Notification;
+use App\Services\DeliveryStatusService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class DeliveryController extends Controller
 {
+    public function __construct(
+        private DeliveryStatusService $statusService
+    ) {}
+
+    // ===========================
+    // Delivery Management Methods
+    // ===========================
+
     public function index(Request $request)
     {
-        // Retrieve the bearer token from the request
         $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
 
-        // Manually verify the token
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-
-        // Determine the user based on the token
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Filter deliveries based on user type
         $query = Delivery::query();
         if ($user->type === 'customer') {
             $query->where('customer_id', $user->id);
@@ -34,7 +35,6 @@ class DeliveryController extends Controller
             $query->where('courier_id', $user->id);
         }
 
-        // Paginate and return the deliveries
         $deliveries = $query->orderBy('createdAt', 'desc')->paginate(15);
 
         return response()->json([
@@ -47,8 +47,227 @@ class DeliveryController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request data
+        $validator = $this->validateDeliveryRequest($request);
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        $value = $this->calculateDeliveryValue($request);
+        $estimatedTime = $this->calculateEstimatedTime($request);
+
+        $deliveryData = $this->prepareDeliveryData($request, $user, $value, $estimatedTime);
+        $delivery = Delivery::create($deliveryData);
+
+        if ($delivery->logistics_partner_id) {
+            Notification::create([
+                'user_id' => $delivery->logistics_partner_id,
+                'type' => 'delivery_request',
+                'data' => [
+                    'delivery_id' => $delivery->id,
+                    'message' => 'New delivery request from customer'
+                ]
+            ]);
+        }
+
+        return response()->json($this->prepareDeliveryResponse($delivery, $user, $value, $estimatedTime), 201);
+    }
+
+    public function show(Request $request, string $id)
+    {
+        $delivery = Delivery::with(['customer', 'logisticsPartner'])->findOrFail($id);
+
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json([
+            'id' => $delivery->id,
+            'status' => $delivery->status,
+            'logistics_partner' => $delivery->courier ? [
+                'id' => (string)$delivery->courier->id,
+                'name' => $delivery->courier->name,
+                'photoUrl' => $delivery->courier->photo_url
+            ] : null,
+            'current_position' => $delivery->current_position,
+            'status_history' => $delivery->status_history
+        ]);
+    }
+
+    // ===========================
+    // Delivery Status Methods
+    // ===========================
+
+    public function accept(Request $request, string $id)
+    {
+        $delivery = Delivery::findOrFail($id);
+
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        if ($user->type !== 'courier') {
+            return response()->json(['message' => 'Only couriers can accept deliveries'], 403);
+        }
+
+        try {
+            $delivery = $this->statusService->acceptDelivery($delivery, (string)$user->id);
+
+            return response()->json([
+                'id' => $delivery->id,
+                'status' => $delivery->status,
+                'logistics_partner' => [
+                    'id' => (string)$user->id,
+                    'name' => $user->name,
+                    'photoUrl' => $user->photo_url
+                ]
+            ], 200);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 409);
+        }
+    }
+
+    public function updateStatus(Request $request, string $id)
+    {
+        $validStatuses = ['collected', 'in_transit', 'delivered'];
+
         $validator = Validator::make($request->all(), [
+            'status' => 'required|in:' . implode(',', $validStatuses),
+            'confirmation_code' => 'sometimes|string|size:6',
+            'current_position' => 'sometimes|array',
+            'stage_type' => 'sometimes|string'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $delivery = Delivery::findOrFail($id);
+
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        $isAssignedCourier = (string)$delivery->courier_id === (string)$user->id;
+        $isLogisticsPartner = (string)$delivery->logistics_partner_id === (string)$user->id;
+
+        if (!$isAssignedCourier && !$isLogisticsPartner) {
+            return response()->json(['message' => 'Only the assigned courier or logistics partner can update the status'], 403);
+        }
+
+        try {
+            $delivery = $this->statusService->updateStatus($delivery, $request->all());
+            return response()->json($delivery, 200);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
+    // ===========================
+    // Messaging Methods
+    // ===========================
+
+    public function storeMessage(Request $request, string $id)
+    {
+        $delivery = Delivery::findOrFail($id);
+
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        if ($user->id != $delivery->customer_id && 
+            $user->id != $delivery->courier_id && 
+            $user->id != $delivery->logistics_partner_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'text' => 'required|string|max:500'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 400);
+        }
+
+        $message = Message::create([
+            'delivery_id' => $delivery->id,
+            'user_id' => $user->id,
+            'text' => $request->text
+        ]);
+
+        return response()->json([
+            'id' => $message->id,
+            'text' => $message->text,
+            'author' => [
+                'id' => (string)$user->id,
+                'name' => $user->name
+            ]
+        ], 201);
+    }
+
+    public function indexMessages(Request $request, string $id)
+    {
+        $delivery = Delivery::findOrFail($id);
+
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        if ($user->id != $delivery->customer_id && 
+            $user->id != $delivery->courier_id && 
+            $user->id != $delivery->logistics_partner_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $messages = Message::with('user')
+            ->where('delivery_id', $delivery->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($message) {
+                return [
+                    'id' => $message->id,
+                    'text' => $message->text,
+                    'author' => [
+                        'id' => (string)$message->user->id,
+                        'name' => $message->user->name
+                    ]
+                ];
+            });
+
+        return response()->json($messages);
+    }
+
+    // ===========================
+    // Helper Methods
+    // ===========================
+
+    private function getUserFromToken(?string $bearerToken, Request $request)
+    {
+        if ($bearerToken) {
+            $tokenParts = explode('|', $bearerToken);
+            $tokenId = $tokenParts[0] ?? null;
+            if ($tokenId) {
+                $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
+                if ($token) {
+                    return $token->tokenable;
+                }
+            }
+        }
+        
+        $user = $request->user();
+        if (!$user) {
+            throw new \RuntimeException('No authenticated user found');
+        }
+        return $user;
+    }
+
+    private function validateDeliveryRequest(Request $request)
+    {
+        return Validator::make($request->all(), [
             'origin' => 'required|array',
             'origin.lat' => 'required|numeric|between:-90,90',
             'origin.lng' => 'required|numeric|between:-180,180',
@@ -74,23 +293,10 @@ class DeliveryController extends Controller
             'destination.required' => 'The destination field is required',
             'dimensions.required' => 'The dimensions field is required'
         ]);
+    }
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        // Retrieve the bearer token and determine the user
-        $bearerToken = $request->bearerToken();
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Calculate delivery value and estimated time
-        $value = $this->calculateDeliveryValue($request);
-        $estimatedTime = $this->calculateEstimatedTime($request);
-
-        // Prepare delivery data
+    private function prepareDeliveryData(Request $request, $user, float $value, int $estimatedTime): array
+    {
         $deliveryData = [
             'customer_id' => $user->id,
             'origin' => [
@@ -116,7 +322,6 @@ class DeliveryController extends Controller
             'confirmation_code' => strtoupper(substr(md5(uniqid()), 0, 6))
         ];
 
-        // Set item description from products if available
         if (isset($request->products)) {
             $deliveryData['item_description'] = implode(', ', array_map(
                 fn($p) => "{$p['quantity']}x {$p['name']}", 
@@ -126,162 +331,54 @@ class DeliveryController extends Controller
             $deliveryData['item_description'] = $request->item_description;
         }
 
-        // Set courier if provided
+        if (isset($request->logistics_partner_id)) {
+            $deliveryData['logistics_partner_id'] = $request->logistics_partner_id;
+        }
+
         if (isset($request->courier_id)) {
             $deliveryData['courier_id'] = $request->courier_id;
         }
 
-        // Set stages if hybrid delivery
-        if ($request->isHybrid ?? false) {
+        if ($request->isHybrid) {
             $deliveryData['stages'] = [
                 ['type' => 'delivery_point', 'status' => 'pending'],
                 ['type' => 'distribution_center', 'status' => 'pending']
             ];
+            Log::info('Setting hybrid delivery stages', ['stages' => $deliveryData['stages']]);
+        } else {
+            $deliveryData['stages'] = null;
         }
 
-        // Create a new delivery
-        $delivery = Delivery::create($deliveryData);
+        return $deliveryData;
+    }
 
-        return response()->json([
+    private function prepareDeliveryResponse($delivery, $user, float $value, int $estimatedTime): array
+    {
+        $response = [
             'id' => $delivery->id,
+            'status' => $delivery->status,
+            'customer_id' => $user->id,
             'value' => $value,
             'estimated_time' => $estimatedTime,
-            'confirmation_code' => $delivery->confirmation_code,
-            'status' => 'pending',
-            'customer_id' => $user->id
-        ], 201);
-    }
+            'confirmation_code' => $delivery->confirmation_code
+        ];
 
-    public function accept(Request $request, string $id)
-    {
-        $delivery = Delivery::findOrFail($id);
-
-        if ($delivery->status !== 'pending') {
-            return response()->json(['message' => 'This delivery has already been accepted'], 409);
+        if ($delivery->logistics_partner_id) {
+            $response['logistics_partner'] = [
+                'id' => (string)$delivery->logistics_partner_id,
+                'name' => \App\Models\User::find($delivery->logistics_partner_id)->name
+            ];
         }
 
-        // Retrieve the bearer token and determine the user
-        $bearerToken = $request->bearerToken();
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Ensure only couriers can accept deliveries
-        if ($user->type !== 'courier') {
-            return response()->json(['message' => 'Only couriers can accept deliveries'], 403);
+        if ($delivery->stages) {
+            $response['stages'] = $delivery->stages;
         }
 
-        // Update the delivery status
-        $delivery->update([
-            'courier_id' => (string)$user->id,
-            'status' => 'accepted'
-        ]);
-
-        // Create notification for client
-        Notification::create([
-            'user_id' => $delivery->customer_id,
-            'type' => 'delivery_updated',
-            'data' => [
-                'delivery_id' => $delivery->id,
-                'status' => 'accepted',
-                'message' => 'Your delivery has been accepted by a courier'
-            ]
-        ]);
-
-        return response()->json([
-            'id' => $delivery->id,
-            'status' => $delivery->status,
-            'logistics_partner' => [
-                'id' => (string)$user->id,
-                'name' => $user->name,
-                'photoUrl' => $user->photo_url
-            ]
-        ], 200);
-    }
-
-    public function updateStatus(Request $request, string $id)
-    {
-        $validStatuses = ['collected', 'in_transit', 'delivered'];
-
-        // Validate the request data
-        $validator = Validator::make($request->all(), [
-            'status' => 'required|in:' . implode(',', $validStatuses),
-            'confirmation_code' => 'sometimes|string|size:6'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        $delivery = Delivery::findOrFail($id);
-
-        // Retrieve the bearer token and determine the user
-        $bearerToken = $request->bearerToken();
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Ensure only the assigned delivery personnel can update the status
-        if ((string)$delivery->courier_id !== (string)$user->id) {
-            return response()->json(['message' => 'Only the assigned courier can update the status'], 403);
-        }
-
-        // Update the delivery status and position if provided
-        $updateData = ['status' => $request->status];
-        if ($request->has('current_position')) {
-            $updateData['current_position'] = $request->current_position;
-        }
-
-        $delivery->update($updateData);
-
-        // Create notification for client when status changes
-        Notification::create([
-            'user_id' => $delivery->customer_id,
-            'type' => 'delivery_updated',
-            'data' => [
-                'delivery_id' => $delivery->id,
-                'status' => $request->status,
-                'message' => 'Your delivery status has been updated to: ' . $request->status
-            ]
-        ]);
-
-        return response()->json($delivery, 200);
-    }
-
-    public function show(Request $request, string $id)
-    {
-        $delivery = Delivery::with(['customer', 'logisticsPartner'])->findOrFail($id);
-
-        // Retrieve the bearer token and determine the user
-        $bearerToken = $request->bearerToken();
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Ensure the user has permission to view the delivery
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        return response()->json([
-            'id' => $delivery->id,
-            'status' => $delivery->status,
-            'logistics_partner' => $delivery->courier ? [
-                'id' => (string)$delivery->courier->id,
-                'name' => $delivery->courier->name,
-                'photoUrl' => $delivery->courier->photo_url
-            ] : null,
-            'current_position' => $delivery->current_position,
-            'status_history' => $delivery->status_history
-        ]);
+        return $response;
     }
 
     private function calculateDeliveryValue(Request $request): float
     {
-        // Simplified logic for calculating delivery value
         $baseValue = 10.0;
         $distanceFactor = 0.5;
         $weightFactor = $request->estimated_weight * 0.1;
@@ -296,92 +393,10 @@ class DeliveryController extends Controller
 
     private function calculateEstimatedTime(Request $request): int
     {
-        // Simplified logic for calculating estimated time (in minutes)
         return match($request->type) {
             'express' => 30,
             'priority' => 20,
             default => 60
         };
-    }
-
-    public function storeMessage(Request $request, string $id)
-    {
-        $delivery = Delivery::findOrFail($id);
-
-        // Retrieve the bearer token and determine the user
-        $bearerToken = $request->bearerToken();
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Ensure the user is either the client, courier or logistics partner
-        if ($user->id != $delivery->customer_id && 
-            $user->id != $delivery->courier_id && 
-            $user->id != $delivery->logistics_partner_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        // Validate the message
-        $validator = Validator::make($request->all(), [
-            'text' => 'required|string|max:500'
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        // Create and save the message
-        $message = Message::create([
-            'delivery_id' => $delivery->id,
-            'user_id' => $user->id,
-            'text' => $request->text
-        ]);
-
-        return response()->json([
-            'id' => $message->id,
-            'text' => $message->text,
-            'author' => [
-                'id' => (string)$user->id,
-                'name' => $user->name
-            ]
-        ], 201);
-    }
-
-    public function indexMessages(Request $request, string $id)
-    {
-        $delivery = Delivery::findOrFail($id);
-
-        // Retrieve the bearer token and determine the user
-        $bearerToken = $request->bearerToken();
-        $tokenParts = explode('|', $bearerToken);
-        $tokenId = $tokenParts[0];
-        $token = \Laravel\Sanctum\PersonalAccessToken::find($tokenId);
-        $user = $token ? $token->tokenable : $request->user();
-
-        // Ensure the user is either the client, courier or logistics partner
-        if ($user->id != $delivery->customer_id && 
-            $user->id != $delivery->courier_id && 
-            $user->id != $delivery->logistics_partner_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        // Retrieve messages with user data
-        $messages = Message::with('user')
-            ->where('delivery_id', $delivery->id)
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($message) {
-                return [
-                    'id' => $message->id,
-                    'text' => $message->text,
-                    'author' => [
-                        'id' => (string)$message->user->id,
-                        'name' => $message->user->name
-                    ]
-                ];
-            });
-
-        return response()->json($messages);
     }
 }

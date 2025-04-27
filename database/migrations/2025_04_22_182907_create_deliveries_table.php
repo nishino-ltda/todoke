@@ -29,6 +29,7 @@ return new class extends Migration
                 'pending',
                 'accepted',
                 'in_transit',
+                'collected',
                 'delivered',
                 'canceled'
             ])->default('pending');

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\DeliveryAssignment;
 
 class Delivery extends Model
 {
@@ -39,6 +40,19 @@ class Delivery extends Model
         'stages' => 'array'
     ];
 
+    public function setStagesAttribute($value)
+    {
+        $this->attributes['stages'] = is_array($value) ? json_encode($value) : $value;
+    }
+
+    public function getStagesAttribute($value)
+    {
+        if (is_null($value)) {
+            return null;
+        }
+        return is_array($value) ? $value : json_decode($value, true);
+    }
+
     public function customer()
     {
         return $this->belongsTo(User::class, 'customer_id');
@@ -67,5 +81,10 @@ class Delivery extends Model
     public function ratings()
     {
         return $this->hasMany(Rating::class, 'delivery_id');
+    }
+
+    public function assignments()
+    {
+        return $this->hasMany(DeliveryAssignment::class);
     }
 }
