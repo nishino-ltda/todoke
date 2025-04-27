@@ -288,7 +288,9 @@ class DeliveryController extends Controller
             'dimensions.depth' => 'required|integer|min:1|max:999',
             'type' => 'required|in:standard,express,priority',
             'courier_id' => 'sometimes|string|exists:users,id',
-            'isHybrid' => 'sometimes|boolean'
+            'isHybrid' => 'sometimes|boolean',
+            'special_instructions' => 'sometimes|string|max:500',
+            'payment_method' => 'required|in:credit_card,debit_card,pix,cash,voucher'
         ], [
             'origin.required' => 'The origin field is required',
             'destination.required' => 'The destination field is required',
@@ -320,7 +322,9 @@ class DeliveryController extends Controller
             'status' => 'pending',
             'value' => $value,
             'estimated_time' => $estimatedTime,
-            'confirmation_code' => strtoupper(substr(md5(uniqid()), 0, 6))
+            'confirmation_code' => strtoupper(substr(md5(uniqid()), 0, 6)),
+            'special_instructions' => $request->special_instructions,
+            'payment_method' => $request->payment_method
         ];
 
         if (isset($request->products)) {
@@ -361,7 +365,9 @@ class DeliveryController extends Controller
             'customer_id' => $user->id,
             'value' => $value,
             'estimated_time' => $estimatedTime,
-            'confirmation_code' => $delivery->confirmation_code
+            'confirmation_code' => $delivery->confirmation_code,
+            'special_instructions' => $delivery->special_instructions,
+            'payment_method' => $delivery->payment_method
         ];
 
         if ($delivery->logistics_partner_id) {

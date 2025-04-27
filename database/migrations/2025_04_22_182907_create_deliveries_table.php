@@ -49,6 +49,17 @@ return new class extends Migration
             $table->index(['courier_id', 'status']);
             $table->index('logistics_partner_id');
             $table->index('node_id');
+
+            $table->text('special_instructions')->nullable()
+                ->comment('Instruções especiais para a entrega');
+            $table->enum('payment_method', [
+                'credit_card',
+                'debit_card',
+                'pix',
+                'cash',
+                'voucher'
+            ])->nullable()
+                ->comment('Método de pagamento');
         });
     }
 

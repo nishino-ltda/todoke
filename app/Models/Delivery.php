@@ -26,7 +26,9 @@ class Delivery extends Model
         'confirmation_code',
         'node_id',
         'current_position',
-        'stages'
+        'stages',
+        'special_instructions',
+        'payment_method'
     ];
 
     protected $casts = [
@@ -37,7 +39,8 @@ class Delivery extends Model
         'estimated_time' => 'integer',
         'estimated_weight' => 'decimal:2',
         'current_position' => 'array',
-        'stages' => 'array'
+        'stages' => 'array',
+        'payment_method' => 'string'
     ];
 
     public function setStagesAttribute($value)

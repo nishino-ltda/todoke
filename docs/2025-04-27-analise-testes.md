@@ -16,10 +16,12 @@
 
 ### 2. DeliveryTest.php
 
-#### Teste: [❌] `testDeliveryCreation`
-- **Problema**: Não verifica todos os campos obrigatórios do caso de uso 1.2 (EcoCliente Solicita uma Entrega)
-- **Impacto**: Permite que entregas sejam criadas sem informações essenciais como instruções especiais
-- **Correção recomendada**: Adicionar validação para campos como 'special_instructions'
+#### Teste: [✅] `testDeliveryCreation`
+- **Correções implementadas**:
+  - Adicionada validação para special_instructions
+  - Adicionado payment_method como enum
+  - Testes para verificar campos obrigatórios do caso de uso 1.2
+  - Atualizado factory para gerar dados consistentes
 
 #### Teste: [❌] `testDeliveryTracking`
 - **Problema**: Não testa o fluxo offline descrito no caso de uso 1.7 (Aurora Utiliza o App em Modo Offline)

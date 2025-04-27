@@ -32,7 +32,8 @@ class SpecialTest extends TestCase
                 'height' => 999,
                 'depth' => 999
             ],
-            'type' => 'express'
+            'type' => 'express',
+            'payment_method' => 'credit_card'
         ]);
 
         $response->assertStatus(201);

@@ -100,7 +100,8 @@ class PartnerDeliveryTest extends TestCase
                 'height' => 20,
                 'depth' => 15
             ],
-            'type' => 'standard'
+            'type' => 'standard',
+            'payment_method' => 'credit_card'
         ];
 
         $response = $this->postJson('/api/v1/deliveries', $deliveryData);
@@ -221,7 +222,8 @@ class PartnerDeliveryTest extends TestCase
                 'depth' => 15
             ],
             'type' => 'standard',
-            'isHybrid' => true
+            'isHybrid' => true,
+            'payment_method' => 'credit_card'
         ];
 
         $response = $this->postJson('/api/v1/deliveries', $deliveryData);
