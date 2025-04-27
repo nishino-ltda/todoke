@@ -2,11 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\DeliveryAssignment;
 
 class PartnerRegistrationTest extends TestCase
 {
+    use RefreshDatabase;
     /**
      * Teste: Cadastro básico de parceiro (BistroTech)
      * - Deve verificar se um partner pode se cadastrar como parceiro
@@ -27,8 +29,7 @@ class PartnerRegistrationTest extends TestCase
             'email' => 'contato@bistrotech.com.br',
             'password' => 'senhaSegura123',
             'type' => 'partner',
-            'phone' => '67999999999',
-            'status' => 'active'
+            'phone' => '67999999999'
         ];
 
         // 1. Register partner using auth endpoint
@@ -70,29 +71,34 @@ class PartnerRegistrationTest extends TestCase
      */
     public function test_partner_can_add_operating_region() 
     {
-        // 1. Criar parceiro logística (LogisMaster)
-        $partner = \App\Models\User::factory()->create([
-            'type' => 'partner',
-            'name' => 'LogisMaster'
-        ]);
+        // 1. Criar parceiro logística (LogisMaster) usando a factory method partner()
+        $partner = \App\Models\User::factory()
+            ->partner()
+            ->create([
+                'name' => 'LogisMaster'
+            ]);
 
         // 2. Autenticar o parceiro
         $this->actingAs($partner);
 
-        // 3. Dados da região (geojson simples)
+        // 3. Dados da região (formato GeoJSON completo)
         $regionData = [
             'name' => 'Zona Sul - Campo Grande',
             'polygon' => [
-                'type' => 'Polygon',
-                'coordinates' => [
-                    [
-                        [-54.6468, -20.4697],
-                        [-54.5954, -20.4697], 
-                        [-54.5954, -20.4412],
-                        [-54.6468, -20.4412],
-                        [-54.6468, -20.4697]
+                'type' => 'Feature',
+                'geometry' => [
+                    'type' => 'Polygon',
+                    'coordinates' => [
+                        [
+                            [-54.6468, -20.4697],
+                            [-54.5954, -20.4697], 
+                            [-54.5954, -20.4412],
+                            [-54.6468, -20.4412],
+                            [-54.6468, -20.4697]
+                        ]
                     ]
-                ]
+                ],
+                'properties' => []
             ]
         ];
 
@@ -119,7 +125,8 @@ class PartnerRegistrationTest extends TestCase
         // 7. Verify polygon was saved correctly
         $region = \App\Models\Region::first();
         $this->assertIsArray($region->polygon);
-        $this->assertEquals('Polygon', $region->polygon['type']);
+        $this->assertEquals('Feature', $region->polygon['type']);
+        $this->assertEquals('Polygon', $region->polygon['geometry']['type']);
     }
 
     /**
@@ -152,7 +159,7 @@ class PartnerRegistrationTest extends TestCase
         // 3. Dados do node (entregador)
         $nodeData = [
             'type' => 'delivery_point',
-            'identifier' => 'MOTO-001',
+            'identifier' => 'MOTO-' . time(),
             'capacity' => 5.5,
             'region_id' => $region->id,
             'partner_id' => $partner->id,
@@ -192,6 +199,6 @@ class PartnerRegistrationTest extends TestCase
         // 7. Verify position was saved correctly
         $node = \App\Models\Node::first();
         $this->assertIsArray($node->current_position);
-        $this->assertEquals(-20.4697, $node->current_position['lat']);
+        $this->assertEqualsWithDelta(-20.4697, $node->current_position['lat'], 0.0001);
     }
 }

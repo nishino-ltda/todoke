@@ -6,12 +6,14 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Delivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+
 
 class PerformanceTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function api_response_time_is_acceptable()
     {
         $user = User::factory()->create();
@@ -27,7 +29,7 @@ class PerformanceTest extends TestCase
         $this->assertLessThan(0.5, $duration, 'Response time should be under 500ms');
     }
 
-    /** @test */
+    #[Test]
     public function can_handle_multiple_concurrent_requests()
     {
         $user = User::factory()->create();
@@ -50,7 +52,7 @@ class PerformanceTest extends TestCase
             "Should handle $iterations concurrent requests");
     }
 
-    /** @test */
+    #[Test]
     public function delivery_listing_performance_with_large_dataset()
     {
         $user = User::factory()->create();
@@ -70,7 +72,7 @@ class PerformanceTest extends TestCase
             'Listing 100 deliveries should be under 1 second');
     }
 
-    /** @test */
+    #[Test]
     public function database_query_performance()
     {
         // Criar 1000 usuários para testar
@@ -85,7 +87,7 @@ class PerformanceTest extends TestCase
             'Simple query with limit should be under 100ms');
     }
 
-    /** @test */
+    #[Test]
     public function complex_query_performance_with_relations()
     {
         $user = User::factory()->create(['type' => 'customer']);

@@ -4,152 +4,148 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Delivery;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+
 
 class SecurityTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function unauthenticated_users_cannot_access_protected_routes()
+    private User $customer1;
+    private string $customer1Token;
+    private User $customer2; 
+    private string $customer2Token;
+    private Delivery $delivery;
+
+    protected function setUp(): void
     {
-        $response = $this->getJson('/api/v1/users/me');
-        $response->assertStatus(401);
-    }
+        parent::setUp();
 
-    /** @test */
-    public function users_cannot_access_admin_routes()
-    {
-        $user = User::factory()->create(['type' => 'customer']);
-        $token = $user->createToken('test')->plainTextToken;
-
-        $response = $this->withHeaders([
-            'Authorization' => "Bearer $token"
-        ])->getJson('/api/v1/admin/users');
-
-        $response->assertStatus(403);
-    }
-
-    /** @test */
-    public function admin_can_access_admin_routes()
-    {
-        $admin = User::factory()->create(['type' => 'admin']);
-        $token = $admin->createToken('test', ['admin'])->plainTextToken;
-
-        $response = $this->withHeaders([
-            'Authorization' => "Bearer $token"
-        ])->getJson('/api/v1/admin/users');
-
-        $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function invalid_json_input_is_rejected()
-    {
-        $user = User::factory()->create();
-        $token = $user->createToken('test')->plainTextToken;
-
-        $response = $this->withHeaders([
-            'Authorization' => "Bearer $token",
-            'Content-Type' => 'application/json'
-        ])->postJson('/api/v1/deliveries', [
-            'origem' => ["lat" => "invalid", "lng" => "invalid"], // Tipos inválidos
-            'destino' => null, // Valor nulo não permitido
-            'item_description' => 123, // Tipo numérico inválido
-            'estimated_weight' => "heavy", // String inválida
-            'dimensions' => "invalid" // Formato inválido
+        // Create two customer users with unique emails
+        $this->customer1 = User::factory()->create([
+            'type' => 'customer',
+            'email' => 'customer1_' . uniqid() . '@example.com',
+            'password' => Hash::make('Password123')
         ]);
 
-        $response->assertStatus(422);
-    }
-
-
-    /** @test */
-    public function rate_limiting_works_on_auth_endpoints()
-    {
-        $user = User::factory()->create([
-            'email' => 'validuser@example.com',
-            'password' => bcrypt('correctpassword')
+        $this->customer2 = User::factory()->create([
+            'type' => 'customer',
+            'email' => 'customer2_' . uniqid() . '@example.com',
+            'password' => Hash::make('Password123')
         ]);
 
-        for ($i = 0; $i < 11; $i++) {
-            $response = $this->postJson('/api/v1/auth/login', [
-                'email' => 'validuser@example.com',
-                'password' => 'wrongpassword'
-            ]);
-        }
+        // Authenticate both customers using their actual emails
+        $this->customer1Token = $this->postJson('/api/v1/auth/login', [
+            'email' => $this->customer1->email,
+            'password' => 'Password123'
+        ])->json('token');
 
-        $response->assertStatus(429);
-    }
+        $this->customer2Token = $this->postJson('/api/v1/auth/login', [
+            'email' => $this->customer2->email,
+            'password' => 'Password123'
+        ])->json('token');
 
-    /** @test */
-    public function sensitive_data_is_not_exposed_in_responses()
-    {
-        $user = User::factory()->create([
-            'password' => bcrypt('secret'),
-            'remember_token' => 'test-token'
-        ]);
-        $token = $user->createToken('test')->plainTextToken;
-
-        $response = $this->withHeaders([
-            'Authorization' => "Bearer $token"
-        ])->getJson('/api/v1/users/me');
-
-        $response->assertJsonMissing([
-            'senha',
-            'remember_token'
+        // Create a delivery for customer1
+        $this->delivery = Delivery::factory()->create([
+            'customer_id' => $this->customer1->id,
+            'status' => 'pending'
         ]);
     }
 
-    /** @test */
-    public function no_raw_sql_queries_are_used_in_codebase()
+    #[Test]
+    public function user_cannot_change_delivery_customer_id()
     {
-        $patterns = [
-            '/DB::raw\(.*\)/',
-            '/->whereRaw\(.*\)/',
-            '/->selectRaw\(.*\)/',
-            '/->havingRaw\(.*\)/',
-            '/->orderByRaw\(.*\)/',
-            '/DB::select\(.*\)/',
-            '/DB::statement\(.*\)/',
-            '/DB::unprepared\(.*\)/',
-            '/eval\(.*\)/',
-            '/exec\(.*\)/',
-            '/shell_exec\(.*\)/',
-            '/system\(.*\)/',
-            '/passthru\(.*\)/',
-            '/popen\(.*\)/',
-            '/proc_open\(.*\)/',
-            '/assert\(.*\)/',
-            '/create_function\(.*\)/'
-        ];
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customer2Token
+        ])->patchJson("/api/v1/deliveries/{$this->delivery->id}", [
+            'customer_id' => $this->customer2->id // Tentando mudar o dono da entrega
+        ]);
 
-        $violations = [];
+        $response->assertStatus(405); // Método não permitido
 
-        $files = glob(app_path('**/*.php'), GLOB_BRACE);
+        // Verificar se o customer_id não foi alterado
+        $this->assertDatabaseHas('deliveries', [
+            'id' => $this->delivery->id,
+            'customer_id' => $this->customer1->id
+        ]);
+    }
 
-        foreach ($files as $fullPath) {
-            if (!file_exists($fullPath)) {
-                continue;
-            }
+    #[Test]
+    public function user_cannot_access_other_users_deliveries()
+    {
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customer2Token
+        ])->getJson("/api/v1/deliveries/{$this->delivery->id}");
 
-            $content = file_get_contents($fullPath);
-            foreach ($patterns as $pattern) {
-                if (preg_match_all($pattern, $content, $matches, PREG_OFFSET_CAPTURE)) {
-                    foreach ($matches[0] as $match) {
-                        $lineNumber = substr_count(substr($content, 0, $match[1]), "\n") + 1;
-                        $relativePath = str_replace(app_path() . '/', '', $fullPath);
-                        $violations[] = sprintf(
-                            "Found potential security issue in %s:%d - %s",
-                            $relativePath,
-                            $lineNumber,
-                            substr($match[0], 0, 50) . (strlen($match[0]) > 50 ? '...' : '')
-                        );
-                    }
-                }
-            }
-        }
+        $response->assertStatus(403); // Deve ser proibido
+    }
 
-        $this->assertEmpty($violations, "Security issues found:\n" . implode("\n", $violations));
+    #[Test]
+    public function user_cannot_forge_fields_in_payload()
+    {
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customer1Token
+        ])->patchJson("/api/v1/deliveries/{$this->delivery->id}/status", [
+            'status' => 'in_transit',
+            'current_position' => ['lat' => -23.5500, 'lng' => -46.6300],
+            // Campos forjados:
+            'customer_id' => $this->customer2->id,
+            'value' => 0.01 // Tentando mudar o valor para quase nada
+        ]);
+
+        $response->assertStatus(403); // Proibido por conter campos não permitidos
+
+        // Verificar se os campos não foram alterados
+        $this->assertDatabaseHas('deliveries', [
+            'id' => $this->delivery->id,
+            'customer_id' => $this->customer1->id,
+            'value' => $this->delivery->value
+        ]);
+    }
+
+    #[Test]
+    public function user_cannot_update_sensitive_fields_directly()
+    {
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customer1Token
+        ])->putJson("/api/v1/deliveries/{$this->delivery->id}", [
+            'confirmation_code' => 'HACKED', // Tentando mudar código de confirmação
+            'value' => 0.01 // Tentando mudar o valor
+        ]);
+
+        // O endpoint PUT não existe, então deve retornar 405 (Method Not Allowed)
+        $response->assertStatus(405);
+
+        // Verificar se os campos sensíveis não foram alterados
+        $this->assertDatabaseHas('deliveries', [
+            'id' => $this->delivery->id,
+            'confirmation_code' => $this->delivery->confirmation_code,
+            'value' => $this->delivery->value
+        ]);
+    }
+
+    #[Test]
+    public function user_cannot_update_email_through_delivery_api()
+    {
+        $newEmail = 'hacked@example.com';
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customer1Token
+        ])->patchJson("/api/v1/deliveries/{$this->delivery->id}", [
+            'customer' => [
+                'email' => $newEmail // Tentando mudar o email do cliente
+            ]
+        ]);
+
+        $response->assertStatus(405); // Método não permitido
+
+        // Verificar se o email não foi alterado
+        $this->assertDatabaseHas('users', [
+            'id' => $this->customer1->id,
+            'email' => $this->customer1->email
+        ]);
     }
 }

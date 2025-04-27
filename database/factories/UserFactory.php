@@ -63,4 +63,14 @@ class UserFactory extends Factory
             'password' => Hash::make('Password123')
         ]);
     }
+
+    public function partner(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'partner',
+            'email' => 'partner_' . uniqid() . '@example.com',
+            'password' => Hash::make('Password123'),
+            'status' => 'active'
+        ]);
+    }
 }

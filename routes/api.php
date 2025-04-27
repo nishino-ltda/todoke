@@ -22,6 +22,20 @@ use App\Http\Controllers\API\NodeController;
 |
 */
 
+// Rota de documentação
+Route::get('/documentation', function () {
+    return response()->json([
+        'message' => 'TODOKE API Documentation',
+        'version' => '1.0.0',
+        'endpoints' => [
+            '/api/v1/auth/register',
+            '/api/v1/auth/login',
+            '/api/v1/deliveries',
+            '/api/v1/users/me'
+        ]
+    ]);
+});
+
 // Prefixo base: /api/v1
 Route::prefix('v1')->group(function () {
     // 1. Autenticação e Usuário

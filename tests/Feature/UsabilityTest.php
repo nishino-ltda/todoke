@@ -6,12 +6,14 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Delivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
+
 
 class UsabilityTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function error_messages_are_clear_and_helpful()
     {
         $response = $this->postJson('/api/v1/auth/login', [
@@ -29,7 +31,7 @@ class UsabilityTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function required_fields_are_properly_validated()
     {
         $user = User::factory()->create();
@@ -39,7 +41,7 @@ class UsabilityTest extends TestCase
             'Authorization' => "Bearer $token"
         ])->postJson('/api/v1/deliveries', []);
 
-        $response->assertStatus(400)
+        $response->assertStatus(422)
             ->assertJsonValidationErrors([
                 'origin',
                 'destination', 
@@ -50,7 +52,7 @@ class UsabilityTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function api_documentation_is_available()
     {
         $response = $this->get('/api/documentation');
@@ -59,7 +61,7 @@ class UsabilityTest extends TestCase
             ->assertSee('TODOKE API Documentation');
     }
 
-    /** @test */
+    #[Test]
     public function responses_have_consistent_structure()
     {
         $user = User::factory()->create();
@@ -81,7 +83,7 @@ class UsabilityTest extends TestCase
             ]);
     }
 
-    /** @test */
+    #[Test]
     public function enum_values_are_properly_documented()
     {
         $user = User::factory()->create(['type' => 'customer']);
@@ -98,11 +100,13 @@ class UsabilityTest extends TestCase
         $this->assertContains($user->type, ['customer', 'courier', 'partner', 'admin']);
     }
 
-    /** @test */
+    #[Test]
     public function pagination_works_and_has_consistent_format()
     {
-        Delivery::factory()->count(15)->create();
-        $user = User::factory()->create();
+        $user = User::factory()->create(['type' => 'customer']);
+        // Criar entregas associadas a este usuário
+        Delivery::factory()->count(15)->create(['customer_id' => $user->id]);
+        
         $token = $user->createToken('test')->plainTextToken;
 
         $response = $this->withHeaders([

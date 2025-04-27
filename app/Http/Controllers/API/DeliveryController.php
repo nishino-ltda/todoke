@@ -35,7 +35,8 @@ class DeliveryController extends Controller
             $query->where('courier_id', $user->id);
         }
 
-        $deliveries = $query->orderBy('createdAt', 'desc')->paginate(15);
+        $limit = $request->input('limit', 15);
+        $deliveries = $query->orderBy('created_at', 'desc')->paginate($limit);
 
         return response()->json([
             'deliveries' => $deliveries->items(),

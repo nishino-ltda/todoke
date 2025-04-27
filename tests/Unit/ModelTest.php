@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
@@ -16,7 +17,7 @@ class ModelTest extends TestCase
 {
     use RefreshDatabase;
     
-    /** @test */
+    #[Test]
     public function user_model_has_expected_attributes()
     {
         $user = User::factory()->create([
@@ -32,7 +33,7 @@ class ModelTest extends TestCase
         $this->assertEquals('active', $user->status);
     }
 
-    /** @test */
+    #[Test]
     public function product_model_has_expected_attributes()
     {
         $partner = User::factory()->create(['type' => 'partner']);
@@ -51,7 +52,7 @@ class ModelTest extends TestCase
         $this->assertEquals($partner->id, $product->partner_id);
     }
 
-    /** @test */
+    #[Test]
     public function order_model_has_expected_attributes()
     {
         $order = Order::factory()->create([
@@ -63,7 +64,7 @@ class ModelTest extends TestCase
         $this->assertEquals(59.90, $order->total_value);
     }
 
-    /** @test */
+    #[Test]
     public function delivery_model_has_expected_attributes()
     {
         $delivery = Delivery::factory()
@@ -77,7 +78,7 @@ class ModelTest extends TestCase
         $this->assertEquals('standard', $delivery->type);
     }
 
-    /** @test */
+    #[Test]
     public function node_model_has_expected_attributes()
     {
         $node = Node::factory()->create([
@@ -89,7 +90,7 @@ class ModelTest extends TestCase
         $this->assertEquals('active', $node->status);
     }
 
-    /** @test */
+    #[Test]
     public function region_model_has_expected_attributes()
     {
         $region = Region::factory()->create([
@@ -101,7 +102,7 @@ class ModelTest extends TestCase
         $this->assertEquals('active', $region->status);
     }
 
-    /** @test */
+    #[Test]
     public function rating_model_has_expected_attributes()
     {
         $rating = Rating::factory()->create([
@@ -113,7 +114,7 @@ class ModelTest extends TestCase
         $this->assertEquals('Excelente serviço!', $rating->comment);
     }
 
-    /** @test */
+    #[Test]
     public function user_has_many_deliveries()
     {
         $user = User::factory()->create();
@@ -122,7 +123,7 @@ class ModelTest extends TestCase
         $this->assertCount(3, $user->deliveriesAsClient);
     }
 
-    /** @test */
+    #[Test]
     public function order_has_many_products()
     {
         $partner = User::factory()->create(['type' => 'partner']);

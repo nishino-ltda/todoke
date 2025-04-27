@@ -428,7 +428,7 @@ class PartnerDeliveryTest extends TestCase
             
             if (!$assignmentUpdated) {
                 $attempt++;
-                sleep(1);
+                sleep(0.1);
             }
         }
 

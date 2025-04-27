@@ -21,18 +21,20 @@ class RegionFactory extends Factory
             'partner_id' => User::factory()->create(['type' => 'partner'])->id,
             'name' => fake()->city() . ' Region',
             'polygon' => [
-                [
-                    'lat' => fake()->latitude(),
-                    'lng' => fake()->longitude()
+                'type' => 'Feature',
+                'geometry' => [
+                    'type' => 'Polygon',
+                    'coordinates' => [
+                        [
+                            [fake()->longitude(), fake()->latitude()],
+                            [fake()->longitude(), fake()->latitude()],
+                            [fake()->longitude(), fake()->latitude()],
+                            [fake()->longitude(), fake()->latitude()],
+                            [fake()->longitude(), fake()->latitude()]
+                        ]
+                    ]
                 ],
-                [
-                    'lat' => fake()->latitude(),
-                    'lng' => fake()->longitude()
-                ],
-                [
-                    'lat' => fake()->latitude(),
-                    'lng' => fake()->longitude()
-                ]
+                'properties' => []
             ],
             'status' => fake()->randomElement(['active', 'inactive'])
         ];
