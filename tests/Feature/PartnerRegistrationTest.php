@@ -81,24 +81,20 @@ class PartnerRegistrationTest extends TestCase
         // 2. Autenticar o parceiro
         $this->actingAs($partner);
 
-        // 3. Dados da região (formato GeoJSON completo)
+        // 3. Dados da região (formato simplificado esperado pelo controller)
         $regionData = [
             'name' => 'Zona Sul - Campo Grande',
             'polygon' => [
-                'type' => 'Feature',
-                'geometry' => [
-                    'type' => 'Polygon',
-                    'coordinates' => [
-                        [
-                            [-54.6468, -20.4697],
-                            [-54.5954, -20.4697], 
-                            [-54.5954, -20.4412],
-                            [-54.6468, -20.4412],
-                            [-54.6468, -20.4697]
-                        ]
+                'type' => 'Polygon',
+                'coordinates' => [
+                    [
+                        [-54.6468, -20.4697],
+                        [-54.5954, -20.4697], 
+                        [-54.5954, -20.4412],
+                        [-54.6468, -20.4412],
+                        [-54.6468, -20.4697]
                     ]
-                ],
-                'properties' => []
+                ]
             ]
         ];
 
