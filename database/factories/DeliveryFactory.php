@@ -23,13 +23,13 @@ class DeliveryFactory extends Factory
             'courier_id' => User::factory()->create(['type' => 'courier'])->id,
             'logistics_partner_id' => User::factory()->create(['type' => 'partner'])->id,
             'origin' => [
-                'latitude' => fake()->latitude(),
-                'longitude' => fake()->longitude(),
+                'lat' => fake()->latitude(),
+                'lng' => fake()->longitude(),
                 'address' => fake()->address()
             ],
             'destination' => [
-                'latitude' => fake()->latitude(),
-                'longitude' => fake()->longitude(),
+                'lat' => fake()->latitude(),
+                'lng' => fake()->longitude(),
                 'address' => fake()->address()
             ],
             'status' => fake()->randomElement(['pending', 'accepted', 'in_transit', 'delivered', 'canceled']),

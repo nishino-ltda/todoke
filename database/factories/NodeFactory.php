@@ -22,7 +22,7 @@ class NodeFactory extends Factory
             'partner_id' => User::factory()->create(['type' => 'partner'])->id,
             'type' => fake()->randomElement(['partner', 'distribution_center', 'delivery_point']),
             'status' => fake()->randomElement(['active', 'inactive', 'maintenance', 'pending_approval']),
-            'identifier' => fake()->bothify('NODE-####'),
+            'identifier' => 'NODE-' . fake()->unique()->numberBetween(1000, 9999),
             'capacity' => fake()->randomFloat(2, 10, 100),
             'region_id' => Region::factory()->create()->id,
             'current_position' => [

@@ -29,7 +29,7 @@ class NodeController extends Controller
                 'lat' => $validated['current_position']['lat'],
                 'lng' => $validated['current_position']['lng']
             ],
-            'partner_id' => $request->user()->id,
+            'partner_id' => $validated['partner_id'],
             'status' => 'pending_approval'
         ]);
 

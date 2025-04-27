@@ -22,16 +22,16 @@ class RegionFactory extends Factory
             'name' => fake()->city() . ' Region',
             'polygon' => [
                 [
-                    'latitude' => fake()->latitude(),
-                    'longitude' => fake()->longitude()
+                    'lat' => fake()->latitude(),
+                    'lng' => fake()->longitude()
                 ],
                 [
-                    'latitude' => fake()->latitude(),
-                    'longitude' => fake()->longitude()
+                    'lat' => fake()->latitude(),
+                    'lng' => fake()->longitude()
                 ],
                 [
-                    'latitude' => fake()->latitude(),
-                    'longitude' => fake()->longitude()
+                    'lat' => fake()->latitude(),
+                    'lng' => fake()->longitude()
                 ]
             ],
             'status' => fake()->randomElement(['active', 'inactive'])
