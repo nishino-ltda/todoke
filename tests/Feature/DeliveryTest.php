@@ -161,12 +161,12 @@ class DeliveryTest extends TestCase
         ])->patchJson("/api/v1/deliveries/{$delivery['id']}/accept");
 
         $response->assertStatus(200)
-            ->assertJsonStructure(['id', 'status', 'courier'])
-            ->assertJsonPath('courier.id', (string)$this->courier->id);
+            ->assertJsonStructure(['id', 'status', 'logistics_partner'])
+            ->assertJsonPath('logistics_partner.id', (string)$this->courier->id);
             
         $this->assertDatabaseHas('deliveries', [
             'id' => $delivery['id'],
-            'courier_id' => (string)$this->courier->id,
+            'logistics_partner_id' => (string)$this->courier->id,
             'status' => 'accepted'
         ]);
 
@@ -189,7 +189,7 @@ class DeliveryTest extends TestCase
             $this->assertDatabaseHas('deliveries', [
                 'id' => $delivery['id'],
                 'status' => $status,
-                'courier_id' => (string)$this->courier->id
+                'logistics_partner_id' => (string)$this->courier->id
             ]);
         }
 
@@ -243,11 +243,11 @@ class DeliveryTest extends TestCase
         
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id', 'status', 'courier', 'current_position', 'status_history'
+                'id', 'status', 'logistics_partner', 'current_position', 'status_history'
             ])
             ->assertJsonPath('status', 'accepted')
-            ->assertJsonPath('courier.id', (string)$this->courier->id)
-            ->assertJsonPath('courier.name', $this->courier->name);
+            ->assertJsonPath('logistics_partner.id', (string)$this->courier->id)
+            ->assertJsonPath('logistics_partner.name', $this->courier->name);
 
         // Update delivery position
         $newPosition = ['lat' => -23.5555, 'lng' => -46.6444];

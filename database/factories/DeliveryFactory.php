@@ -21,6 +21,7 @@ class DeliveryFactory extends Factory
         return [
             'customer_id' => User::factory()->create(['type' => 'customer'])->id,
             'courier_id' => User::factory()->create(['type' => 'courier'])->id,
+            'logistics_partner_id' => User::factory()->create(['type' => 'partner'])->id,
             'origin' => [
                 'latitude' => fake()->latitude(),
                 'longitude' => fake()->longitude(),

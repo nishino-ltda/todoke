@@ -28,6 +28,8 @@ class DeliveryController extends Controller
         $query = Delivery::query();
         if ($user->type === 'customer') {
             $query->where('customer_id', $user->id);
+        } elseif ($user->type === 'partner') {
+            $query->where('logistics_partner_id', $user->id);
         } elseif ($user->type === 'courier') {
             $query->where('courier_id', $user->id);
         }
@@ -55,13 +57,18 @@ class DeliveryController extends Controller
             'destination.lat' => 'required|numeric|between:-180,180',
             'destination.lng' => 'required|numeric|between:-180,180',
             'destination.address' => 'required|string|max:255',
-            'item_description' => 'required|string|max:255',
+            'products' => 'sometimes|array',
+            'products.*.name' => 'required_with:products|string|max:255',
+            'products.*.quantity' => 'required_with:products|integer|min:1',
+            'item_description' => 'required_without:products|string|max:255',
             'estimated_weight' => 'required|numeric|min:0|max:999.99',
             'dimensions' => 'required|array',
             'dimensions.width' => 'required|integer|min:1|max:999',
             'dimensions.height' => 'required|integer|min:1|max:999',
             'dimensions.depth' => 'required|integer|min:1|max:999',
-            'type' => 'required|in:standard,express,priority'
+            'type' => 'required|in:standard,express,priority',
+            'logistics_partner_id' => 'sometimes|string|exists:users,id',
+            'isHybrid' => 'sometimes|boolean'
         ], [
             'origin.required' => 'The origin field is required',
             'destination.required' => 'The destination field is required',
@@ -83,8 +90,8 @@ class DeliveryController extends Controller
         $value = $this->calculateDeliveryValue($request);
         $estimatedTime = $this->calculateEstimatedTime($request);
 
-        // Create a new delivery
-        $delivery = Delivery::create([
+        // Prepare delivery data
+        $deliveryData = [
             'customer_id' => $user->id,
             'origin' => [
                 'lat' => $request->origin['lat'],
@@ -96,7 +103,6 @@ class DeliveryController extends Controller
                 'lng' => $request->destination['lng'],
                 'address' => $request->destination['address']
             ],
-            'item_description' => $request->item_description,
             'estimated_weight' => $request->estimated_weight,
             'dimensions' => [
                 'width' => $request->dimensions['width'],
@@ -108,7 +114,34 @@ class DeliveryController extends Controller
             'value' => $value,
             'estimated_time' => $estimatedTime,
             'confirmation_code' => strtoupper(substr(md5(uniqid()), 0, 6))
-        ]);
+        ];
+
+        // Set item description from products if available
+        if (isset($request->products)) {
+            $deliveryData['item_description'] = implode(', ', array_map(
+                fn($p) => "{$p['quantity']}x {$p['name']}", 
+                $request->products
+            ));
+        } else {
+            $deliveryData['item_description'] = $request->item_description;
+        }
+
+        // Set logistics partner if provided
+        if (isset($request->logistics_partner_id)) {
+            $deliveryData['logistics_partner_id'] = $user->id;
+            $deliveryData['status'] = 'awaiting_confirmation';
+        }
+
+        // Set stages if hybrid delivery
+        if ($request->isHybrid ?? false) {
+            $deliveryData['stages'] = [
+                ['type' => 'delivery_point', 'status' => 'pending'],
+                ['type' => 'distribution_center', 'status' => 'pending']
+            ];
+        }
+
+        // Create a new delivery
+        $delivery = Delivery::create($deliveryData);
 
         return response()->json([
             'id' => $delivery->id,
@@ -136,13 +169,13 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure only delivery personnel can accept deliveries
-        if ($user->type !== 'courier') {
-            return response()->json(['message' => 'Only couriers can accept deliveries'], 403);
+        if ($user->type !== 'partner') {
+            return response()->json(['message' => 'Only logistics partners can accept deliveries'], 403);
         }
 
         // Update the delivery status
         $delivery->update([
-            'courier_id' => (string)$user->id,
+            'logistics_partner_id' => (string)$user->id,
             'status' => 'accepted'
         ]);
 
@@ -192,8 +225,8 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure only the assigned delivery personnel can update the status
-        if ((string)$delivery->courier_id !== (string)$user->id) {
-            return response()->json(['message' => 'Only the assigned courier can update the status'], 403);
+        if ((string)$delivery->logistics_partner_id !== (string)$user->id) {
+            return response()->json(['message' => 'Only the assigned logistics partner can update the status'], 403);
         }
 
         // Update the delivery status and position if provided
@@ -220,7 +253,7 @@ class DeliveryController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $delivery = Delivery::with(['customer', 'courier'])->findOrFail($id);
+        $delivery = Delivery::with(['customer', 'logisticsPartner'])->findOrFail($id);
 
         // Retrieve the bearer token and determine the user
         $bearerToken = $request->bearerToken();
@@ -230,17 +263,17 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure the user has permission to view the delivery
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->courier_id) {
+        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         return response()->json([
             'id' => $delivery->id,
             'status' => $delivery->status,
-            'courier' => $delivery->courier ? [
-                'id' => (string)$delivery->courier->id,
-                'name' => $delivery->courier->name,
-                'photoUrl' => $delivery->courier->photo_url
+            'logistics_partner' => $delivery->logisticsPartner ? [
+                'id' => (string)$delivery->logisticsPartner->id,
+                'name' => $delivery->logisticsPartner->name,
+                'photoUrl' => $delivery->logisticsPartner->photo_url
             ] : null,
             'current_position' => $delivery->current_position,
             'status_history' => $delivery->status_history
@@ -284,7 +317,7 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure the user is either the client or delivery person
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->courier_id) {
+        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -326,7 +359,7 @@ class DeliveryController extends Controller
         $user = $token ? $token->tokenable : $request->user();
 
         // Ensure the user is either the client or delivery person
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->courier_id) {
+        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 

@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('deliveries', function (Blueprint $table) {
             $table->id();
+
             $table->foreignId('customer_id')->constrained('users');
             $table->foreignId('courier_id')->nullable()->constrained('users');
+            $table->foreignId('logistics_partner_id')
+                ->nullable()
+                ->constrained('users')
+                ->comment('Parceiro logístico responsável pela entrega');
+
             $table->json('current_position')->nullable();
             $table->json('status_history')->nullable();
             $table->json('origin');
@@ -26,19 +32,21 @@ return new class extends Migration
                 'delivered',
                 'canceled'
             ])->default('pending');
-            $table->enum('type', ['standard', 'express', 'sustainable']);
+            $table->enum('type', ['standard', 'express', 'sustainable', 'priority']);
             $table->string('item_description');
             $table->decimal('estimated_weight', 10, 2)->nullable();
             $table->json('dimensions')->nullable();
             $table->decimal('value', 10, 2);
             $table->integer('estimated_time')->nullable();
             $table->string('confirmation_code')->nullable();
+            $table->json('stages')->nullable();
             $table->foreignId('node_id')->nullable()->constrained('nodes');
             $table->timestamps();
             $table->softDeletes();
 
             $table->index(['customer_id', 'status']);
             $table->index(['courier_id', 'status']);
+            $table->index('logistics_partner_id');
             $table->index('node_id');
         });
     }

@@ -57,12 +57,12 @@ class SpecialTest extends TestCase
     public function order_with_zero_items_is_rejected(): void
     {
         $user = User::factory()->create();
-        $restaurant = User::factory()->create(['type' => 'partner']);
+        $partner = User::factory()->create(['type' => 'partner']);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
         ])->postJson('/api/v1/orders', [
-            'restauranteId' => $restaurant->id,
+            'partnerId' => $partner->id,
             'itens' => []
         ]);
 
@@ -112,12 +112,12 @@ class SpecialTest extends TestCase
     public function order_with_invalid_product_is_rejected(): void
     {
         $user = User::factory()->create();
-        $restaurant = User::factory()->create(['type' => 'partner']);
+        $partner = User::factory()->create(['type' => 'partner']);
 
         $response = $this->withHeaders([
             'Authorization' => "Bearer " . $user->createToken('test')->plainTextToken
         ])->postJson('/api/v1/orders', [
-            'restauranteId' => $restaurant->id,
+            'partnerId' => $partner->id,
             'itens' => [
                 ['produtoId' => 'invalid-uuid', 'quantidade' => 1]
             ]

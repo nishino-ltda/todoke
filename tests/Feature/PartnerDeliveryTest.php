@@ -9,7 +9,7 @@ class PartnerDeliveryTest extends TestCase
 {
     /**
      * Teste: Integração entre parceiros (BistroTech -> LogisMaster)
-     * - Deve verificar se um restaurante pode solicitar entregas para uma logística
+     * - Deve verificar se um partnere pode solicitar entregas para uma logística
      * - Pré-condições: 
      *   - Ambos parceiros cadastrados
      *   - Regiões compatíveis
@@ -24,7 +24,7 @@ class PartnerDeliveryTest extends TestCase
     public function test_inter_partner_delivery_coordination()
     {
         // 1. Criar parceiros (BistroTech e LogisMaster)
-        $restaurant = \App\Models\User::factory()->create([
+        $partner = \App\Models\User::factory()->create([
             'type' => 'partner',
             'name' => 'BistroTech'
         ]);
@@ -35,8 +35,8 @@ class PartnerDeliveryTest extends TestCase
         ]);
 
         // 2. Criar regiões compatíveis
-        $restaurantRegion = \App\Models\Region::factory()->create([
-            'partner_id' => $restaurant->id,
+        $partnerRegion = \App\Models\Region::factory()->create([
+            'partner_id' => $partner->id,
             'polygon' => [
                 'type' => 'Polygon',
                 'coordinates' => [[
@@ -72,7 +72,7 @@ class PartnerDeliveryTest extends TestCase
         ]);
 
         // 4. Autenticar como BistroTech
-        $this->actingAs($restaurant);
+        $this->actingAs($partner);
 
         // 5. Criar solicitação de entrega
         $deliveryData = [
@@ -81,10 +81,10 @@ class PartnerDeliveryTest extends TestCase
             'products' => [
                 ['name' => 'Prato Especial', 'quantity' => 2]
             ],
-            'logisticsPartnerId' => $logistics->id
+            'logistics_partner_id' => $logistics->id
         ];
 
-        $response = $this->postJson('/api/deliveries', $deliveryData);
+        $response = $this->postJson('/api/v1/deliveries', $deliveryData);
 
         // 6. Verificar resposta
         $response->assertStatus(201)
@@ -93,14 +93,14 @@ class PartnerDeliveryTest extends TestCase
                     'id',
                     'status',
                     'customer_id',
-                    'logisticsPartnerId'
+                    'logistics_partner_id'
                 ]
             ]);
 
         // 7. Verificar se entrega foi criada com status correto
         $this->assertDatabaseHas('deliveries', [
-            'customer_id' => $restaurant->id,
-            'logisticsPartnerId' => $logistics->id,
+            'customer_id' => $partner->id,
+            'logistics_partner_id' => $logistics->id,
             'status' => 'awaiting_confirmation'
         ]);
 
@@ -129,8 +129,8 @@ class PartnerDeliveryTest extends TestCase
      */
     public function test_hybrid_delivery_flow()
     {
-        // 1. Criar parceiros (restaurante, motoboy e drone)
-        $restaurant = \App\Models\User::factory()->create([
+         // 1. Criar parceiros (partner, motoboy e drone)
+        $partner = \App\Models\User::factory()->create([
             'type' => 'partner',
             'name' => 'BistroTech'
         ]);
@@ -146,8 +146,8 @@ class PartnerDeliveryTest extends TestCase
         ]);
 
         // 2. Criar regiões
-        $restaurantRegion = \App\Models\Region::factory()->create([
-            'partner_id' => $restaurant->id
+        $partnerRegion = \App\Models\Region::factory()->create([
+            'partner_id' => $partner->id
         ]);
 
         $motoboyRegion = \App\Models\Region::factory()->create([
@@ -173,12 +173,12 @@ class PartnerDeliveryTest extends TestCase
             'status' => 'active'
         ]);
 
-        // 4. Autenticar como restaurante
-        $this->actingAs($restaurant);
+         // 4. Autenticar como partner
+        $this->actingAs($partner);
 
         // 5. Criar entrega com destino em área de drone
         $deliveryData = [
-            'origin' => [-54.6254, -20.4567],  // Restaurant coordinates
+            'origin' => [-54.6254, -20.4567],  // Partner coordinates
             'destination' => [-54.6150, -20.4500], // Drone area coordinates
             'products' => [
                 ['name' => 'Prato Especial', 'quantity' => 1]
@@ -186,7 +186,7 @@ class PartnerDeliveryTest extends TestCase
             'isHybrid' => true
         ];
 
-        $response = $this->postJson('/api/deliveries', $deliveryData);
+        $response = $this->postJson('/api/v1/deliveries', $deliveryData);
 
         // 6. Verificar resposta
         $response->assertStatus(201)
@@ -235,7 +235,7 @@ class PartnerDeliveryTest extends TestCase
     public function test_drone_partner_can_update_status()
     {
         // 1. Criar parceiros e entrega híbrida
-        $restaurant = \App\Models\User::factory()->create([
+        $partner = \App\Models\User::factory()->create([
             'type' => 'partner',
             'name' => 'BistroTech'
         ]);
@@ -252,7 +252,7 @@ class PartnerDeliveryTest extends TestCase
         // 2. Criar entrega híbrida na etapa do drone
         $delivery = \App\Models\Delivery::factory()->create([
             'customer_id' => $customer->id,
-            'logisticsPartnerId' => $drone->id,
+            'logistics_partner_id' => $drone->id,
             'status' => 'in_transit',
             'stages' => [
                 ['type' => 'delivery_point', 'status' => 'completed'],
@@ -272,7 +272,7 @@ class PartnerDeliveryTest extends TestCase
         $this->actingAs($drone);
 
         // 5. Simular coleta no hub
-        $response = $this->putJson("/api/deliveries/{$delivery->id}/status", [
+        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", [
             'stage' => 2,
             'status' => 'collected',
             'current_position' => [-54.6150, -20.4500]
@@ -289,7 +289,7 @@ class PartnerDeliveryTest extends TestCase
         ]);
 
         // 6. Simular drone em voo
-        $response = $this->putJson("/api/deliveries/{$delivery->id}/status", [
+        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", [
             'stage' => 2,
             'status' => 'in_flight',
             'current_position' => [-54.6140, -20.4490]
@@ -302,7 +302,7 @@ class PartnerDeliveryTest extends TestCase
         ]);
 
         // 7. Simular entrega concluída
-        $response = $this->putJson("/api/deliveries/{$delivery->id}/status", [
+        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", [
             'stage' => 2,
             'status' => 'delivered',
             'current_position' => [-54.6135, -20.4485]

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('restaurant_id')->constrained('users');
+            $table->foreignId('partner_id')->constrained('users');
             $table->string('name');
             $table->text('description');
             $table->decimal('price', 10, 2);
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['restaurant_id', 'status']);
+            $table->index(['partner_id', 'status']);
             $table->index('category');
         });
     }

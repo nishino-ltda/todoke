@@ -12,7 +12,7 @@ class NodeController extends Controller
     {
         $validated = $request->validate([
             'partner_id' => 'required|exists:users,id',
-            'type' => 'required|in:restaurant,distribution_center,delivery_point',
+            'type' => 'required|in:partner,distribution_center,delivery_point',
             'identifier' => 'required|string|unique:nodes',
             'capacity' => 'nullable|numeric',
             'status' => 'required|in:active,inactive,maintenance,pending_approval',

@@ -1,61 +1,88 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TODOKE - Plataforma de Delivery Colaborativo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Visão Geral
+O TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada para entregadores e operações com drones. Nosso sistema combina tecnologia de ponta com uma abordagem centrada no usuário, integrando entregadores tradicionais com tecnologia de drones para criar um ecossistema flexível e eficiente.
 
-## About Laravel
+**Modelo de Negócio:** Tarifa mensal fixa acessível, sem taxas ocultas ou comissões percentuais.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Principais Recursos
+- **Integração pioneira com drones** para áreas de difícil acesso
+- **Algoritmos de otimização de rotas** que reduzem tempo e consumo
+- **Sistema de reputação transparente** baseado em múltiplos fatores
+- **Funcionalidades offline** para áreas com conectividade limitada
+- **Precificação comunitária** com participação democrática dos entregadores
+- **Ecossistema completo:** API + App + Painel Administrativo
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Arquitetura do Sistema
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Modelos de Dados Principais
+```mermaid
+erDiagram
+    USER ||--o{ DELIVERY : "cliente/entregador"
+    USER ||--o{ NODE : "parceiro"
+    USER ||--o{ REGION : "parceiro"
+    USER ||--o{ PRODUCT : "restaurante"
+    DELIVERY ||--o{ RATING : "avaliações"
+    DELIVERY ||--|{ NODE : "node associado"
+    DELIVERY ||--|{ ORDER : "entrega"
+    REGION ||--o{ NODE : "nodes na região"
+    ORDER ||--o{ PRODUCT : "itens"
+    ORDER ||--|{ USER : "cliente/restaurante"
+```
 
-## Learning Laravel
+### Principais Entidades
+- **User**: Todos os tipos de usuários (entregadores, clientes, administradores)
+- **Delivery**: Solicitações de entrega com status, origem/destino, etc.
+- **Node**: Recursos de entrega (entregadores, drones, veículos)
+- **Region**: Áreas geográficas de operação
+- **Product**: Itens do cardápio de restaurantes
+- **Order**: Pedidos de produtos com status
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## API REST
+Todas as rotas requerem autenticação via Bearer Token (exceto registro/login).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Endpoints Principais
+- **Autenticação**: `/api/v1/auth/register`, `/api/v1/auth/login`
+- **Entregas**: 
+  - `POST /api/v1/deliveries` - Criar entrega
+  - `PATCH /api/v1/deliveries/{id}/accept` - Aceitar entrega
+- **Nodes/Regiões**: 
+  - `GET /api/v1/nodes` - Listar nodes
+  - `POST /api/v1/regions` - Criar região
+- **Pedidos**: 
+  - `POST /api/v1/orders` - Criar pedido
+  - `PATCH /api/v1/orders/{id}/status` - Atualizar status
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Exemplo Completo** de criação e acompanhamento de entrega disponível na documentação.
 
-## Laravel Sponsors
+## Precificação Comunitária
+Sistema democrático onde entregadores colaboram na definição de preços:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. **Votação por Faixa de Preço**: Mensal, com rankeamento de opções
+2. **Fórum Comunitário**: Espaço para troca de informações via áudio
+3. **Preço por Custo Real**: Baseado em dados reportados pelos entregadores
+4. **Dashboard Coletivo**: Visualização transparente de custos e demanda
 
-### Premium Partners
+## Testes
+A suíte de testes inclui:
+- Testes unitários para modelos
+- Testes de feature para endpoints da API
+- Testes de integração para fluxos complexos
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+**Execução:**
+```bash
+./vendor/bin/phpunit  # Todos os testes
+./vendor/bin/phpunit --testsuite=Unit  # Apenas unitários
+```
 
-## Contributing
+## Como Contribuir
+1. O projeto é open-source sob licença MIT
+2. Documentação abrangente disponível
+3. Roadmap público para acompanhamento
+4. Bug bounty program para vulnerabilidades
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Impacto Social
+- Melhora condições de trabalho dos entregadores
+- Reduz pegada de carbono das operações
+- Democratiza acesso a serviços de entrega
+- Fomenta empreendedorismo local

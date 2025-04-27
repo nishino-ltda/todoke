@@ -11,8 +11,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 class MenuTest extends TestCase
 {
     // use DatabaseTransactions;
-    private User $restaurant;
-    private string $restaurantToken;
+    private User $partner;
+    private string $partnerToken;
     private User $customer;
     private string $customerToken;
 
@@ -24,22 +24,22 @@ class MenuTest extends TestCase
         $this->artisan('migrate:fresh');
 
         // Create partner restaurant only once
-        if (!isset($this->restaurant)) {
-            $this->restaurant = new User([
-                'id' => 1, // ID fixo para o restaurante
+        if (!isset($this->partner)) {
+            $this->partner = new User([
+                 'id' => 1, // ID fixo para o partner
                 'type' => 'partner',
                 'email' => 'bistrotech@example.com',
                 'name' => 'Bistro Tech',
                 'password' => bcrypt('Bistro123'),
                 'status' => 'active'
             ]);
-            $this->restaurant->save();
+            $this->partner->save();
 
             // Create customer only once
             $this->customer = User::factory()->create(['type' => 'customer']);
             
             // Get tokens
-            $this->restaurantToken = $this->postJson('/api/v1/auth/login', [
+            $this->partnerToken = $this->postJson('/api/v1/auth/login', [
                 'email' => 'bistrotech@example.com',
                 'password' => 'Bistro123'
             ])->json('token');
@@ -56,7 +56,7 @@ class MenuTest extends TestCase
         // Create test products
         $products = Product::factory()
             ->count(3)
-            ->forRestaurant($this->restaurant->id)
+            ->forPartner($this->partner->id)
             ->create([
                 'status' => 'available'
             ]);
@@ -73,12 +73,12 @@ class MenuTest extends TestCase
 
     public function testCategoryFilter()
     {
-        Product::factory()->forRestaurant($this->restaurant->id)->create([
+        Product::factory()->forPartner($this->partner->id)->create([
             'category' => 'Japanese',
             'status' => 'available'
         ]);
 
-        Product::factory()->forRestaurant($this->restaurant->id)->create([
+        Product::factory()->forPartner($this->partner->id)->create([
             'category' => 'Brazilian',
             'status' => 'available'
         ]);
@@ -99,23 +99,23 @@ class MenuTest extends TestCase
         ];
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->restaurantToken
+            'Authorization' => 'Bearer ' . $this->partnerToken
         ])->postJson('/api/v1/products', $productData);
 
         $response->assertStatus(201)
             ->assertJsonPath('name', 'New Product')
-            ->assertJsonPath('restaurant_id', $this->restaurant->id)
+            ->assertJsonPath('partner_id', $this->partner->id)
             ->assertJsonPath('status', 'available');
 
         $this->assertDatabaseHas('products', [
             'name' => 'New Product',
-            'restaurant_id' => $this->restaurant->id
+            'partner_id' => $this->partner->id
         ]);
     }
 
     public function testProductUpdate()
     {
-        $product = Product::factory()->forRestaurant($this->restaurant->id)->create();
+        $product = Product::factory()->forPartner($this->partner->id)->create();
 
         $updateData = [
             'name' => 'Updated name',
@@ -124,7 +124,7 @@ class MenuTest extends TestCase
         ];
 
         $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $this->restaurantToken
+            'Authorization' => 'Bearer ' . $this->partnerToken
         ])->putJson("/api/v1/products/{$product->id}", $updateData);
 
         $response->assertStatus(200)
@@ -135,17 +135,17 @@ class MenuTest extends TestCase
         $this->assertDatabaseHas('products', [
             'id' => $product->id,
             'name' => 'Updated name',
-            'restaurant_id' => $this->restaurant->id
+            'partner_id' => $this->partner->id
         ]);
     }
 
     public function testOnlyOwnerCanUpdateProduct()
     {
-        $product = Product::factory()->forRestaurant($this->restaurant->id)->create();
+        $product = Product::factory()->forPartner($this->partner->id)->create();
 
-        $outroRestaurante = User::factory()->create(['type' => 'partner']);
+         $outroPartner = User::factory()->create(['type' => 'partner']);
         $outroToken = $this->postJson('/api/v1/auth/login', [
-            'email' => $outroRestaurante->email,
+             'email' => $outroPartner->email,
             'password' => 'Password123'
         ])->json('token');
 
@@ -160,11 +160,11 @@ class MenuTest extends TestCase
 
     public function testOrderCreationWithProducts()
     {
-        $product1 = Product::factory()->forRestaurant($this->restaurant->id)->create([
+        $product1 = Product::factory()->forPartner($this->partner->id)->create([
             'price' => 10.00
         ]);
 
-        $product2 = Product::factory()->forRestaurant($this->restaurant->id)->create([
+        $product2 = Product::factory()->forPartner($this->partner->id)->create([
             'price' => 20.00
         ]);
 
@@ -173,7 +173,7 @@ class MenuTest extends TestCase
         $product2->update(['status' => 'available']);
 
         $orderData = [
-            'restaurant_id' => (string)$this->restaurant->id,
+            'partner_id' => (string)$this->partner->id,
             'total_value' => 40.00, // (2 * 10) + 20
             'items' => [
                 ['product_id' => $product1->id, 'quantity' => 2],

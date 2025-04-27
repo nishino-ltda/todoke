@@ -12,6 +12,7 @@ class Delivery extends Model
     protected $fillable = [
         'customer_id',
         'courier_id',
+        'logistics_partner_id',
         'origin',
         'destination',
         'status',
@@ -23,7 +24,8 @@ class Delivery extends Model
         'estimated_time',
         'confirmation_code',
         'node_id',
-        'current_position'
+        'current_position',
+        'stages'
     ];
 
     protected $casts = [
@@ -33,7 +35,8 @@ class Delivery extends Model
         'value' => 'decimal:2',
         'estimated_time' => 'integer',
         'estimated_weight' => 'decimal:2',
-        'current_position' => 'array'
+        'current_position' => 'array',
+        'stages' => 'array'
     ];
 
     public function customer()
@@ -44,6 +47,11 @@ class Delivery extends Model
     public function courier()
     {
         return $this->belongsTo(User::class, 'courier_id');
+    }
+
+    public function logisticsPartner()
+    {
+        return $this->belongsTo(User::class, 'logistics_partner_id');
     }
 
     public function node()

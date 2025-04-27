@@ -20,7 +20,7 @@ class OrderFactory extends Factory
     {
         return [
             'customer_id' => User::factory()->create(['type' => 'customer'])->id,
-            'restaurant_id' => User::factory()->create(['type' => 'partner'])->id,
+            'partner_id' => User::factory()->create(['type' => 'partner'])->id,
             'status' => fake()->randomElement(['pending', 'accepted', 'preparing', 'awaiting_delivery', 'delivery_picked_up', 'delivered', 'canceled']),
             'total_value' => fake()->randomFloat(2, 10, 200),
             'delivery_id' => Delivery::factory()->create()->id,

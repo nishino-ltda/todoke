@@ -10,7 +10,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'restaurant_id',
+        'partner_id',
         'name',
         'description',
         'price',
@@ -24,9 +24,9 @@ class Product extends Model
         'status' => 'string'
     ];
 
-    public function restaurant()
+    public function partner()
     {
-        return $this->belongsTo(User::class, 'restaurant_id');
+        return $this->belongsTo(User::class, 'partner_id');
     }
 
     public function orders()

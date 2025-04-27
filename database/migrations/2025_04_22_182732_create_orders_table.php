@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('users');
-            $table->foreignId('restaurant_id')->constrained('users');
+            $table->foreignId('partner_id')->constrained('users');
             $table->enum('status', [
                 'pending',
                 'accepted', 
@@ -29,7 +29,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['restaurant_id', 'status']);
+            $table->index(['partner_id', 'status']);
             $table->index(['customer_id', 'created_at']);
         });
     }

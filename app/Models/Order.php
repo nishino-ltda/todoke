@@ -11,7 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'customer_id',
-        'restaurant_id', 
+        'partner_id', 
         'status',
         'total_value',
         'delivery_id'
@@ -27,9 +27,9 @@ class Order extends Model
         return $this->belongsTo(User::class, 'customer_id');
     }
 
-    public function restaurant()
+    public function partner()
     {
-        return $this->belongsTo(User::class, 'restaurant_id');
+        return $this->belongsTo(User::class, 'partner_id');
     }
 
     public function delivery()

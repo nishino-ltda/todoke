@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::query()->with('restaurant');
+        $query = Product::query()->with('partner');
 
         if ($request->has('category')) {
             $query->where('category', $request->category);
@@ -28,7 +28,7 @@ class ProductController extends Controller
                     'price' => $product->price,
                     'category' => $product->category,
                     'status' => $product->status,
-                    'restaurant' => $product->restaurant->name
+                    'partner' => $product->partner->name
                 ];
             })
         ]);
@@ -48,7 +48,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category,
-            'restaurant_id' => $request->user()->id,
+            'partner_id' => $request->user()->id,
             'status' => 'available'
         ]);
 

@@ -20,7 +20,7 @@ class NodeFactory extends Factory
     {
         return [
             'partner_id' => User::factory()->create(['type' => 'partner'])->id,
-            'type' => fake()->randomElement(['restaurant', 'distribution_center', 'delivery_point']),
+            'type' => fake()->randomElement(['partner', 'distribution_center', 'delivery_point']),
             'status' => fake()->randomElement(['active', 'inactive', 'maintenance', 'pending_approval']),
             'identifier' => fake()->bothify('NODE-####'),
             'capacity' => fake()->randomFloat(2, 10, 100),

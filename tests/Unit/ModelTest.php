@@ -35,10 +35,10 @@ class ModelTest extends TestCase
     /** @test */
     public function product_model_has_expected_attributes()
     {
-        $restaurante = User::factory()->create(['type' => 'partner']);
+        $partner = User::factory()->create(['type' => 'partner']);
         
         $product = Product::factory()
-            ->forRestaurant($restaurante->id)
+            ->forPartner($partner->id)
             ->create([
                 'name' => 'Test Product',
                 'price' => 19.99,
@@ -48,7 +48,7 @@ class ModelTest extends TestCase
         $this->assertEquals('Test Product', $product->name);
         $this->assertEquals(19.99, $product->price);
         $this->assertEquals('available', $product->status);
-        $this->assertEquals($restaurante->id, $product->restaurant_id);
+        $this->assertEquals($partner->id, $product->partner_id);
     }
 
     /** @test */
@@ -81,11 +81,11 @@ class ModelTest extends TestCase
     public function node_model_has_expected_attributes()
     {
         $node = Node::factory()->create([
-            'type' => 'restaurant',
+            'type' => 'partner',
             'status' => 'active'
         ]);
 
-        $this->assertEquals('restaurant', $node->type);
+        $this->assertEquals('partner', $node->type);
         $this->assertEquals('active', $node->status);
     }
 
@@ -125,10 +125,10 @@ class ModelTest extends TestCase
     /** @test */
     public function order_has_many_products()
     {
-        $restaurant = User::factory()->create(['type' => 'partner']);
-        $order = Order::factory()->create(['restaurant_id' => $restaurant->id]);
+        $partner = User::factory()->create(['type' => 'partner']);
+        $order = Order::factory()->create(['partner_id' => $partner->id]);
         $product = Product::factory()
-            ->forRestaurant($restaurant->id)
+            ->forPartner($partner->id)
             ->create();
         
         $order->items()->create([

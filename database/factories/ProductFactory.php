@@ -17,7 +17,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'restaurant_id' => null,
+            'partner_id' => null,
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 1, 100),
@@ -28,16 +28,16 @@ class ProductFactory extends Factory
     }
 
     /**
-     * Set the restaurante ID for the product.
+     * Set the partner ID for the product.
      *
-     * @param  string  $restauranteId
+     * @param  string  $partnerId
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
-    public function forRestaurant($restaurantId)
+    public function forPartner($partnerId)
     {
-        return $this->state(function (array $attributes) use ($restaurantId) {
+        return $this->state(function (array $attributes) use ($partnerId) {
             return [
-                'restaurant_id' => $restaurantId
+                'partner_id' => $partnerId
             ];
         });
     }

@@ -9,7 +9,7 @@ class PartnerAnalyticsTest extends TestCase
 {
     /**
      * Teste: Visualização de métricas pelo parceiro BistroTech
-     * - Deve verificar se um parceiro restaurante pode acessar suas métricas
+     * - Deve verificar se um parceiro partner pode acessar suas métricas
      * - Pré-condições: 
      *   - Parceiro com entregas históricas
      * - Ações:
@@ -34,7 +34,7 @@ class PartnerAnalyticsTest extends TestCase
         // 2. Criar entregas históricas
         \App\Models\Delivery::factory()->create([
             'customer_id' => $customer->id,
-            'logisticsPartnerId' => $partner->id,
+            'logistics_partner_id' => $partner->id,
             'status' => 'completed',
             'created_at' => now()->subDays(3),
             'deliveryTime' => 30,
@@ -43,7 +43,7 @@ class PartnerAnalyticsTest extends TestCase
 
         \App\Models\Delivery::factory()->create([
             'customer_id' => $customer->id,
-            'logisticsPartnerId' => $partner->id,
+            'logistics_partner_id' => $partner->id,
             'status' => 'completed',
             'created_at' => now()->subDays(1),
             'deliveryTime' => 45,

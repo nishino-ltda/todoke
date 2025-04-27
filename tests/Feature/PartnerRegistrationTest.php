@@ -9,7 +9,7 @@ class PartnerRegistrationTest extends TestCase
 {
     /**
      * Teste: Cadastro básico de parceiro (BistroTech)
-     * - Deve verificar se um restaurante pode se cadastrar como parceiro
+     * - Deve verificar se um partner pode se cadastrar como parceiro
      * - Pré-condições: Nenhum parceiro cadastrado
      * - Ações: 
      *   1. Enviar dados de cadastro (nome, CNPJ, endereço)
