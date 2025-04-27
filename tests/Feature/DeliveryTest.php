@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
+use App\Models\Delivery;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -164,11 +165,9 @@ class DeliveryTest extends TestCase
             ->assertJsonStructure(['id', 'status', 'logistics_partner'])
             ->assertJsonPath('logistics_partner.id', (string)$this->courier->id);
             
-        $this->assertDatabaseHas('deliveries', [
-            'id' => $delivery['id'],
-            'logistics_partner_id' => (string)$this->courier->id,
-            'status' => 'accepted'
-        ]);
+        $deliveryRecord = Delivery::find($delivery['id']);
+        $this->assertEquals('accepted', $deliveryRecord->status);
+        $this->assertEquals((string)$this->courier->id, $deliveryRecord->courier_id);
 
         // Update delivery status to 'in_transit' and 'delivered'
         $statuses = ['in_transit', 'delivered'];
@@ -186,11 +185,9 @@ class DeliveryTest extends TestCase
             $response->assertStatus(200)
                 ->assertJsonPath('status', $status);
                 
-            $this->assertDatabaseHas('deliveries', [
-                'id' => $delivery['id'],
-                'status' => $status,
-                'logistics_partner_id' => (string)$this->courier->id
-            ]);
+        $deliveryRecord = Delivery::find($delivery['id']);
+        $this->assertEquals($status, $deliveryRecord->status);
+        $this->assertEquals((string)$this->courier->id, $deliveryRecord->courier_id);
         }
 
         // Complete the delivery with the correct confirmation code
