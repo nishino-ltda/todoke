@@ -190,7 +190,7 @@ class PartnerRegistrationTest extends TestCase
 
         // 6. Verify node was created in database
         $this->assertDatabaseHas('nodes', [
-            'identifier' => 'MOTO-001',
+            'identifier' => $nodeData['identifier'],
             'partner_id' => $partner->id,
             'region_id' => $region->id,
             'status' => 'pending_approval'
