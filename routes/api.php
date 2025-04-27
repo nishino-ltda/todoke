@@ -83,6 +83,11 @@ Route::prefix('v1')->group(function () {
             Route::patch('/users/{id}/status', [UserController::class, 'updateStatus']);
             Route::get('/stats', [UserController::class, 'stats']);
         });
+
+        // Rotas de parceiro
+        Route::prefix('partner')->group(function () {
+            Route::get('/metrics', [\App\Http\Controllers\API\PartnerController::class, 'metrics']);
+        });
         
     });
 });

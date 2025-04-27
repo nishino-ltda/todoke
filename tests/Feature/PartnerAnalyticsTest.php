@@ -32,21 +32,33 @@ class PartnerAnalyticsTest extends TestCase
         ]);
 
         // 2. Criar entregas históricas
-        \App\Models\Delivery::factory()->create([
+        $delivery1 = \App\Models\Delivery::factory()->create([
             'customer_id' => $customer->id,
             'logistics_partner_id' => $partner->id,
-            'status' => 'completed',
+            'status' => 'delivered',
             'created_at' => now()->subDays(3),
-            'deliveryTime' => 30,
+            'estimated_time' => 30
+        ]);
+
+        \App\Models\Rating::factory()->create([
+            'delivery_id' => $delivery1->id,
+            'rater_id' => $customer->id,
+            'rated_id' => $partner->id,
             'rating' => 5
         ]);
 
-        \App\Models\Delivery::factory()->create([
+        $delivery2 = \App\Models\Delivery::factory()->create([
             'customer_id' => $customer->id,
             'logistics_partner_id' => $partner->id,
-            'status' => 'completed',
+            'status' => 'delivered',
             'created_at' => now()->subDays(1),
-            'deliveryTime' => 45,
+            'estimated_time' => 45
+        ]);
+
+        \App\Models\Rating::factory()->create([
+            'delivery_id' => $delivery2->id,
+            'rater_id' => $customer->id,
+            'rated_id' => $partner->id,
             'rating' => 4
         ]);
 
@@ -54,7 +66,7 @@ class PartnerAnalyticsTest extends TestCase
         $this->actingAs($partner);
 
         // 4. Acessar endpoint de métricas
-        $response = $this->getJson('/api/partner/metrics');
+        $response = $this->getJson('/api/v1/partner/metrics');
 
         // 5. Verificar resposta
         $response->assertStatus(200)
