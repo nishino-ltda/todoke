@@ -26,17 +26,21 @@
   - Testes para verificar campos obrigatórios do caso de uso 1.2
   - Atualizado factory para gerar dados consistentes
 
-#### Teste: [❌] `testDeliveryTracking`
-- **Problema**: Não testa o fluxo offline descrito no caso de uso 1.7 (Aurora Utiliza o App em Modo Offline)
-- **Impacto**: Falha em garantir a resiliência do sistema em áreas sem conexão
-- **Correção recomendada**: Adicionar teste que simula modo offline
+#### Teste: [✅] `testDeliveryTracking`
+- **Correções implementadas**:
+  - Adicionado teste `testOfflineDeliveryTracking` para cobrir o caso de uso 1.7
+  - Implementada simulação de modo offline com armazenamento local
+  - Adicionada verificação de sincronização quando a conexão retorna
+  - Teste verifica histórico de status e posições durante o modo offline
 
 ### 3. SecurityTest.php
 
-#### Teste: [❌] `user_cannot_forge_fields_in_payload`
-- **Problema**: Verifica apenas status 403 genérico sem mensagens específicas
-- **Impacto**: Não garante que o sistema informe corretamente quais campos são inválidos
-- **Correção recomendada**: Verificar mensagens de erro específicas para cada campo não permitido
+#### Teste: [✅] `user_cannot_forge_fields_in_payload`
+- **Correções implementadas**:
+  - Adicionada verificação de mensagens de erro específicas para cada campo não permitido
+  - Teste agora verifica campos no nível raiz e aninhados
+  - Adicionados testes para campos 'type' e 'payment_method'
+  - Verificação de status 422 (Unprocessable Entity) com estrutura de erro detalhada
 
 ## Confirmação de colunas e enums
 

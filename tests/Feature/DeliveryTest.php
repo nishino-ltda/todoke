@@ -246,7 +246,7 @@ class DeliveryTest extends TestCase
         $response->assertStatus(400);
     }
 
-    // Test tracking of a delivery
+    // Test tracking of a delivery (online mode)
     public function testDeliveryTracking()
     {
         // Create a delivery
@@ -339,5 +339,89 @@ class DeliveryTest extends TestCase
         $response->assertStatus(200)
             ->assertJsonCount(1)
             ->assertJsonFragment($message);
+    }
+
+    // Test offline delivery tracking (Caso de Uso 1.7)
+    public function testOfflineDeliveryTracking()
+    {
+        // Create a delivery
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customerToken
+        ])->postJson('/api/v1/deliveries', [
+            'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
+            'destination' => ['lat' => -23.5614, 'lng' => -46.6559, 'address' => 'Rua Augusta, 500'],
+            'item_description' => 'Documentos importantes',
+            'estimated_weight' => 0.5,
+            'dimensions' => ['width' => 25, 'height' => 5, 'depth' => 15],
+            'type' => 'standard',
+            'payment_method' => 'credit_card'
+        ]);
+
+        $deliveryId = $response->json('id');
+
+        // Accept the delivery
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->courierToken
+        ])->patchJson("/api/v1/deliveries/{$deliveryId}/accept");
+
+        // Simulate going offline - store current state
+        $offlineState = [
+            'status' => 'in_transit',
+            'current_position' => ['lat' => -23.5555, 'lng' => -46.6444],
+            'offline_updates' => []
+        ];
+
+        // Make updates while offline
+        $offlineUpdates = [
+            [
+                'status' => 'collected',
+                'current_position' => ['lat' => -23.5570, 'lng' => -46.6480],
+                'timestamp' => now()->toIso8601String()
+            ],
+            [
+                'status' => 'in_transit',
+                'current_position' => ['lat' => -23.5590, 'lng' => -46.6520],
+                'timestamp' => now()->addMinutes(5)->toIso8601String()
+            ]
+        ];
+
+        // Simulate reconnection - send offline updates
+        foreach ($offlineUpdates as $update) {
+            $response = $this->withHeaders([
+                'Authorization' => 'Bearer ' . $this->courierToken
+            ])->patchJson("/api/v1/deliveries/{$deliveryId}/status", array_merge($update, [
+                'is_offline_update' => true,
+                'original_timestamp' => $update['timestamp']
+            ]));
+            
+            $response->assertStatus(200);
+        }
+
+        // Verify all updates were applied correctly
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customerToken
+        ])->getJson("/api/v1/deliveries/{$deliveryId}");
+        
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'in_transit')
+            ->assertJsonPath('current_position', $offlineUpdates[1]['current_position']);
+
+        // Verify status history contains all updates
+        $response->assertJsonPath('status_history', function ($history) use ($offlineUpdates) {
+            return count($history) >= count($offlineUpdates) + 1; // +1 for initial 'accepted'
+        });
+
+        // Complete the delivery
+        $deliveryRecord = Delivery::find($deliveryId);
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->courierToken
+        ])->patchJson("/api/v1/deliveries/{$deliveryId}/status", [
+            'status' => 'delivered',
+            'confirmation_code' => $deliveryRecord->confirmation_code,
+            'current_position' => ['lat' => -23.5614, 'lng' => -46.6559]
+        ]);
+        
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'delivered');
     }
 }

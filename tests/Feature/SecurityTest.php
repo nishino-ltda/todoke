@@ -86,6 +86,7 @@ class SecurityTest extends TestCase
     #[Test]
     public function user_cannot_forge_fields_in_payload()
     {
+        // Teste 1: Campos protegidos no nível raiz
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->customer1Token
         ])->patchJson("/api/v1/deliveries/{$this->delivery->id}/status", [
@@ -93,16 +94,51 @@ class SecurityTest extends TestCase
             'current_position' => ['lat' => -23.5500, 'lng' => -46.6300],
             // Campos forjados:
             'customer_id' => $this->customer2->id,
-            'value' => 0.01 // Tentando mudar o valor para quase nada
+            'value' => 0.01, // Tentando mudar o valor
+            'type' => 'priority', // Tentando mudar o tipo
+            'payment_method' => 'pix' // Tentando mudar o método de pagamento
         ]);
 
-        $response->assertStatus(403); // Proibido por conter campos não permitidos
+        $response->assertStatus(422) // Unprocessable Entity
+            ->assertJson([
+                'message' => 'Validation failed',
+                'errors' => [
+                    'customer_id' => ['The customer id field is not allowed.'],
+                    'value' => ['The value field is not allowed.'],
+                    'type' => ['The type field is not allowed.'],
+                    'payment_method' => ['The payment method field is not allowed.']
+                ]
+            ]);
+
+        // Teste 2: Campos protegidos aninhados
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customer1Token
+        ])->patchJson("/api/v1/deliveries/{$this->delivery->id}/status", [
+            'status' => 'in_transit',
+            'current_position' => ['lat' => -23.5500, 'lng' => -46.6300],
+            'origin' => [
+                'lat' => -23.5505,
+                'lng' => -46.6333,
+                'address' => 'Av. Paulista, 1000',
+                'forged_field' => 'hacked' // Campo não permitido
+            ]
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'Validation failed',
+                'errors' => [
+                    'origin.forged_field' => ['The origin.forged_field field is not allowed.']
+                ]
+            ]);
 
         // Verificar se os campos não foram alterados
         $this->assertDatabaseHas('deliveries', [
             'id' => $this->delivery->id,
             'customer_id' => $this->customer1->id,
-            'value' => $this->delivery->value
+            'value' => $this->delivery->value,
+            'type' => $this->delivery->type,
+            'payment_method' => $this->delivery->payment_method
         ]);
     }
 
