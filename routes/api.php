@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DeliveryController;
+use App\Http\Controllers\API\DeliveryManagementController;
+use App\Http\Controllers\API\DeliveryStatusController;
+use App\Http\Controllers\API\DeliveryMessagingController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\ProductController;
@@ -63,13 +66,13 @@ Route::prefix('v1')->group(function () {
 
         // Rotas de entregas
         Route::prefix('deliveries')->group(function () {
-            Route::get('/', [DeliveryController::class, 'index']);
-            Route::post('/', [DeliveryController::class, 'store']);
-            Route::get('/{id}', [DeliveryController::class, 'show']);
-            Route::patch('/{id}/accept', [DeliveryController::class, 'accept']);
-            Route::patch('/{id}/status', [DeliveryController::class, 'updateStatus']);
-            Route::post('/{id}/messages', [DeliveryController::class, 'storeMessage']);
-            Route::get('/{id}/messages', [DeliveryController::class, 'indexMessages']);
+            Route::get('/', [DeliveryManagementController::class, 'index']);
+            Route::post('/', [DeliveryManagementController::class, 'store']);
+            Route::get('/{id}', [DeliveryManagementController::class, 'show']);
+            Route::patch('/{id}/accept', [DeliveryStatusController::class, 'accept']);
+            Route::patch('/{id}/status', [DeliveryStatusController::class, 'updateStatus']);
+            Route::post('/{id}/messages', [DeliveryMessagingController::class, 'storeMessage']);
+            Route::get('/{id}/messages', [DeliveryMessagingController::class, 'indexMessages']);
         });
 
         // Rotas de regiões
