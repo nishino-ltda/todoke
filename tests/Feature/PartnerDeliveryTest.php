@@ -316,7 +316,7 @@ class PartnerDeliveryTest extends TestCase
             'logistics_partner_id' => $drone->id,
             'status' => 'in_transit',
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'completed'],
+                ['type' => 'delivery_point', 'status' => 'delivered'],
                 ['type' => 'distribution_center', 'status' => 'pending']
             ]
         ]);

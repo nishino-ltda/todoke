@@ -161,7 +161,9 @@ class DeliveryStatusService
             
             // Update all other stages to canceled as well (cascading cancellation)
             foreach ($stages as $index => &$otherStage) {
-                if ($otherStage['type'] !== $stageType && $otherStage['status'] !== 'completed') {
+                if ($otherStage['type'] !== $stageType && 
+                    $otherStage['status'] !== 'delivered' && 
+                    $otherStage['status'] !== 'completed') {
                     $otherStage['status'] = 'canceled';
                     
                     // Also update the corresponding assignment

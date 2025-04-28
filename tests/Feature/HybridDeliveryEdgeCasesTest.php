@@ -117,7 +117,7 @@ class HybridDeliveryEdgeCasesTest extends TestCase
             'courier_id' => $courier->id, // Assign the authenticated courier
             'is_hybrid' => true,
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'completed', 'partner_id' => null, 'node_id' => $node1->id],
+                ['type' => 'delivery_point', 'status' => 'delivered', 'partner_id' => null, 'node_id' => $node1->id],
                 ['type' => 'distribution_center', 'status' => 'pending', 'partner_id' => null, 'node_id' => $node2->id],
             ],
         ]);
@@ -126,12 +126,12 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         $assignment1 = DeliveryAssignment::where('delivery_id', $delivery->id)->where('stage', 0)->first();
         $assignment2 = DeliveryAssignment::where('delivery_id', $delivery->id)->where('stage', 1)->first();
 
-        $assignment1->update(['status' => 'completed']);
+        $assignment1->update(['status' => 'delivered']);
         // $assignment2 remains pending
 
         $this->assertNotNull($assignment1);
         $this->assertNotNull($assignment2);
-        $this->assertEquals('completed', $assignment1->status);
+        $this->assertEquals('delivered', $assignment1->status);
         $this->assertEquals('pending', $assignment2->status);
         $this->assertEquals('pending', $delivery->status); // Status remains pending until first stage completes
 
@@ -148,9 +148,9 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         $assignment1->refresh();
         $assignment2->refresh();
 
-        // Assert that the first stage remains completed
-        $this->assertEquals('completed', $delivery->stages[0]['status']);
-        $this->assertEquals('completed', $assignment1->status);
+        // Assert that the first stage remains delivered
+        $this->assertEquals('delivered', $delivery->stages[0]['status']);
+        $this->assertEquals('delivered', $assignment1->status);
 
         // Assert that the second stage and its assignment are cancelled
         $this->assertEquals('canceled', $delivery->stages[1]['status']);
@@ -194,7 +194,7 @@ class HybridDeliveryEdgeCasesTest extends TestCase
             'courier_id' => $courier->id, // Assign the authenticated courier
             'is_hybrid' => true,
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'completed', 'partner_id' => null, 'node_id' => $node1->id], // First stage completed
+                ['type' => 'delivery_point', 'status' => 'delivered', 'partner_id' => null, 'node_id' => $node1->id], // First stage delivered
                 ['type' => 'distribution_center', 'status' => 'in_transit', 'partner_id' => null, 'node_id' => $node2->id], // Drone stage in transit
             ],
         ]);
@@ -203,10 +203,10 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         $assignment1 = DeliveryAssignment::where('delivery_id', $delivery->id)->where('stage', 0)->first();
         $assignment2 = DeliveryAssignment::where('delivery_id', $delivery->id)->where('stage', 1)->first();
 
-        $assignment1->update(['status' => 'completed']);
+        $assignment1->update(['status' => 'delivered']);
         $assignment2->update(['status' => 'in_transit']);
 
-        $this->assertEquals('completed', $assignment1->status);
+        $this->assertEquals('delivered', $assignment1->status);
         $this->assertEquals('in_transit', $assignment2->status);
         $this->assertEquals('pending', $delivery->status); // Status remains pending until first stage completes
 
