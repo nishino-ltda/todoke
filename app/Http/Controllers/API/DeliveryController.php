@@ -145,7 +145,7 @@ class DeliveryController extends Controller
 
     public function updateStatus(Request $request, string $id)
     {
-        $validStatuses = ['collected', 'in_transit', 'delivered'];
+        $validStatuses = ['collected', 'in_transit', 'delivered', 'canceled', 'drone_returned', 'failed'];
 
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:' . implode(',', $validStatuses),
@@ -172,7 +172,12 @@ class DeliveryController extends Controller
 
         try {
             $delivery = $this->statusService->updateStatus($delivery, $request->all());
-            return response()->json($delivery, 200);
+            
+            // Format the response to match the expected structure in tests
+            return response()->json([
+                'message' => 'Delivery status updated successfully',
+                'delivery' => $delivery
+            ], 200);
         } catch (\InvalidArgumentException $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }

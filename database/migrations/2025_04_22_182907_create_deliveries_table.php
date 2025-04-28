@@ -32,6 +32,7 @@ return new class extends Migration
                 'in_transit',
                 'delivered',
                 'canceled',
+                'failed',
                 'drone_launched',
                 'drone_in_route',
                 'drone_arrived',
@@ -64,6 +65,8 @@ return new class extends Migration
                 'voucher'
             ])->nullable()
                 ->comment('Método de pagamento');
+            $table->boolean('is_hybrid')->default(false)
+                ->comment('Indicates if this is a hybrid delivery with multiple stages');
         });
     }
 

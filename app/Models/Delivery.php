@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\DeliveryAssignment;
+use Illuminate\Support\Facades\Log;
 
 class Delivery extends Model
 {
@@ -28,7 +29,8 @@ class Delivery extends Model
         'current_position',
         'stages',
         'special_instructions',
-        'payment_method'
+        'payment_method',
+        'is_hybrid'
     ];
 
     protected $casts = [
@@ -40,7 +42,8 @@ class Delivery extends Model
         'estimated_weight' => 'decimal:2',
         'current_position' => 'array',
         'stages' => 'array',
-        'payment_method' => 'string'
+        'payment_method' => 'string',
+        'is_hybrid' => 'boolean'
     ];
 
     public function setStagesAttribute($value)
@@ -98,5 +101,21 @@ class Delivery extends Model
     public function assignments()
     {
         return $this->hasMany(DeliveryAssignment::class);
+    }
+
+    protected static function booted()
+    {
+        static::created(function (Delivery $delivery) {
+            if ($delivery->is_hybrid && $delivery->stages) {
+                foreach ($delivery->stages as $index => $stage) {
+                    DeliveryAssignment::create([
+                        'delivery_id' => $delivery->id,
+                        'partner_id' => $stage['partner_id'] ?? null,
+                        'stage' => $index,
+                        'status' => $stage['status'] ?? 'pending'
+                    ]);
+                }
+            }
+        });
     }
 }

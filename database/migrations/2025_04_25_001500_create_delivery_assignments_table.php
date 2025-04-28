@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('delivery_assignments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('delivery_id')->constrained('deliveries');
-            $table->foreignId('partner_id')->constrained('users');
+            $table->foreignId('partner_id')->nullable()->constrained('users');
             $table->integer('stage');
             $table->enum('status', [
                 'pending',
@@ -20,6 +20,7 @@ return new class extends Migration
                 'in_transit',
                 'delivered',
                 'canceled',
+                'failed',
                 'drone_launched',
                 'drone_in_route',
                 'drone_arrived',

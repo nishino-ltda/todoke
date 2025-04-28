@@ -10,6 +10,7 @@ use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\RegionController;
 use App\Http\Controllers\API\NodeController;
+use App\Http\Controllers\API\VotingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +91,13 @@ Route::prefix('v1')->group(function () {
 
         // Rotas de notificações
         Route::get('/notifications', [NotificationController::class, 'index']);
+
+        // Rotas de votação
+        Route::prefix('voting')->group(function () {
+            Route::post('/vote', [VotingController::class, 'vote']);
+            Route::get('/active', [VotingController::class, 'getActiveRounds']);
+            Route::get('/results/{roundId}', [VotingController::class, 'getResults']);
+        });
 
         // Rotas de admin
         Route::prefix('admin')->middleware('admin')->group(function () {

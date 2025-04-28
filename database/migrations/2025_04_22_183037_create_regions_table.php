@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->json('polygon');
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->decimal('community_min_fare_per_km', 8, 2)->default(0.00);
+            $table->decimal('community_avg_fare_per_km', 8, 2)->default(0.00);
+            $table->decimal('community_max_fare_per_km', 8, 2)->default(0.00);
             $table->timestamps();
             $table->softDeletes();
 

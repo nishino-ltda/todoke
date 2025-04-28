@@ -13,14 +13,20 @@ class Region extends Model
         'partner_id',
         'name',
         'polygon',
-        'status'
+        'status',
+        'community_min_fare_per_km',
+        'community_avg_fare_per_km',
+        'community_max_fare_per_km',
     ];
 
     protected $casts = [
-        'polygon' => 'array'
+        'polygon' => 'array',
+        'community_min_fare_per_km' => 'decimal:2',
+        'community_avg_fare_per_km' => 'decimal:2',
+        'community_max_fare_per_km' => 'decimal:2',
     ];
 
-    public function parceiro()
+    public function partner()
     {
         return $this->belongsTo(User::class, 'partner_id');
     }
@@ -28,5 +34,13 @@ class Region extends Model
     public function nodes()
     {
         return $this->hasMany(Node::class, 'region_id');
+    }
+
+    /**
+     * Get the voting rounds for the region.
+     */
+    public function votingRounds()
+    {
+        return $this->hasMany(VotingRound::class);
     }
 }

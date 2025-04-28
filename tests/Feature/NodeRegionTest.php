@@ -7,9 +7,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Node;
 use App\Models\Region;
+use Illuminate\Database\QueryException; // Import for catching database exceptions
 
 class NodeRegionTest extends TestCase
-{
+    {
     use RefreshDatabase;
 
     /**
@@ -25,6 +26,21 @@ class NodeRegionTest extends TestCase
         $this->assertEquals($region->id, $node->region_id);
         $this->assertTrue($node->region->is($region));
     }
+
+    /**
+     * Test that a node can be created without a region (if region_id is nullable).
+     * Based on the migration, region_id is NOT nullable, so this test will assert it cannot be created without a region.
+     *
+     * @return void
+     */
+    public function test_node_cannot_be_created_without_region()
+    {
+        $this->expectException(QueryException::class); // Expect a database query exception
+
+        // Attempt to create a node without a region_id
+        Node::factory()->create(['region_id' => null]);
+    }
+
 
     /**
      * Test that retrieving a region includes its associated nodes.
@@ -47,26 +63,41 @@ class NodeRegionTest extends TestCase
     }
 
     /**
-     * Test that deleting a region does not delete associated nodes (or handles it as per foreign key constraints).
+     * Test that deleting a region with associated nodes is restricted.
+     * Based on the foreign key constraint in the migration, deleting a region with nodes should be prevented.
      *
      * @return void
      */
-    public function test_deleting_region_handles_associated_nodes()
+    public function test_deleting_region_with_associated_nodes_is_restricted()
     {
         $region = Region::factory()->create();
         $node = Node::factory()->create(['region_id' => $region->id]);
 
-        // Assuming foreign key constraint is set to SET NULL or similar
-        // If it's RESTRICT or CASCADE, the test would need to be adjusted
+        // Expect a QueryException because of the RESTRICT foreign key constraint
+        $this->expectException(QueryException::class);
+
+        // Attempt to delete the region
         $region->delete();
 
+        // The following assertions should not be reached if the exception is thrown,
+        // but are included for clarity on what would be asserted if the constraint was different.
+        $this->assertDatabaseHas('regions', ['id' => $region->id]); // Region should still exist
+        $this->assertDatabaseHas('nodes', ['id' => $node->id, 'region_id' => $region->id]); // Node should still exist and be associated
+    }
+
+    /**
+     * Test that deleting a region without associated nodes is successful.
+     *
+     * @return void
+     */
+    public function test_deleting_region_without_associated_nodes_is_successful()
+    {
+        $region = Region::factory()->create();
+
+        // Delete the region
+        $region->delete();
+
+        // Assert that the region is deleted from the database
         $this->assertDatabaseMissing('regions', ['id' => $region->id]);
-        
-        // Check if the node's region_id is set to null or if the node was deleted (depending on constraint)
-        // For SET NULL:
-        $this->assertDatabaseHas('nodes', ['id' => $node->id, 'region_id' => null]);
-        
-        // For CASCADE:
-        // $this->assertDatabaseMissing('nodes', ['id' => $node->id]);
     }
 }

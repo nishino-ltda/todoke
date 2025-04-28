@@ -14,6 +14,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ResetCommand::class,
+        Commands\ScheduleVotingRoundsCommand::class,
+        Commands\ProcessExpiredVotingRoundsCommand::class,
     ];
 
     /**
@@ -24,7 +26,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Schedule monthly voting rounds on the 1st day of each month
+        $schedule->command('voting:schedule-rounds')
+            ->monthlyOn(1, '00:01')
+            ->appendOutputTo(storage_path('logs/voting-schedule.log'));
+        
+        // Process expired voting rounds daily
+        $schedule->command('voting:process-expired')
+            ->daily()
+            ->appendOutputTo(storage_path('logs/voting-process.log'));
     }
 
     /**

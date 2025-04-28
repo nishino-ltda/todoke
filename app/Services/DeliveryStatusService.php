@@ -155,9 +155,29 @@ class DeliveryStatusService
         // Update overall status based on stage status
         if ($allStagesComplete) {
             $updateData['status'] = 'delivered';
+        } else if ($status === 'canceled') {
+            // If any stage is canceled, the whole delivery is canceled
+            $updateData['status'] = 'canceled';
+            
+            // Update all other stages to canceled as well (cascading cancellation)
+            foreach ($stages as $index => &$otherStage) {
+                if ($otherStage['type'] !== $stageType && $otherStage['status'] !== 'completed') {
+                    $otherStage['status'] = 'canceled';
+                    
+                    // Also update the corresponding assignment
+                    $otherStageNumber = $index;
+                    DeliveryAssignment::where('delivery_id', $delivery->id)
+                        ->where('stage', $otherStageNumber)
+                        ->update(['status' => 'canceled']);
+                }
+            }
+            $updateData['stages'] = $stages;
+        } else if ($status === 'failed' || $status === 'drone_returned') {
+            // If drone fails or returns, mark the delivery as failed
+            $updateData['status'] = 'failed';
         } else {
-            // Se for um status de drone, mantenha o status geral como in_transit
-            if (in_array($status, ['drone_launched', 'drone_in_route', 'drone_arrived', 'drone_returned'])) {
+            // For drone statuses, maintain the overall status as in_transit
+            if (in_array($status, ['drone_launched', 'drone_in_route', 'drone_arrived'])) {
                 $updateData['status'] = 'in_transit';
             } else {
                 $updateData['status'] = $status;
@@ -167,7 +187,8 @@ class DeliveryStatusService
         $delivery->update($updateData);
 
         // Update the corresponding delivery assignment
-        $stageNumber = array_search($stageType, array_column($stages, 'type')) + 1;
+        $stageIndex = array_search($stageType, array_column($stages, 'type'));
+        $stageNumber = $stageIndex;
         Log::debug('Updating assignment status', [
             'delivery_id' => $delivery->id,
             'stage_type' => $stageType,
@@ -182,26 +203,38 @@ class DeliveryStatusService
             'collected' => 'collected',
             'in_transit' => 'in_transit',
             'delivered' => 'delivered',
+            'canceled' => 'canceled',
+            'failed' => 'failed',
             'drone_launched' => 'drone_launched',
             'drone_in_route' => 'drone_in_route',
             'drone_arrived' => 'drone_arrived',
-            'drone_returned' => 'delivered',
+            'drone_returned' => 'failed', // Map drone_returned to failed for assignments
             default => $status
         };
 
         // Always update assignment status based on both stage status and delivery status
         $finalStatus = ($status === 'delivered' || $updateData['status'] === 'delivered') 
             ? 'delivered' 
-            : $assignmentStatus;
+            : (($status === 'canceled' || $updateData['status'] === 'canceled')
+                ? 'canceled'
+                : (($status === 'failed' || $status === 'drone_returned' || $updateData['status'] === 'failed')
+                    ? 'failed'
+                    : $assignmentStatus));
 
-        // Force update to delivered status if that's what was requested
-        if ($status === 'delivered') {
-            $finalStatus = 'delivered';
+        // Force update to delivered/canceled/failed status if that's what was requested
+        if (in_array($status, ['delivered', 'canceled', 'failed', 'drone_returned'])) {
+            $finalStatus = match($status) {
+                'delivered' => 'delivered',
+                'canceled' => 'canceled',
+                'failed' => 'failed',
+                'drone_returned' => 'failed',
+                default => $finalStatus
+            };
             
-            // Directly update the assignment to ensure it's set to delivered
+            // Directly update the assignment to ensure it's set to the correct status
             $updated = DeliveryAssignment::where('delivery_id', $delivery->id)
                 ->where('stage', $stageNumber)
-                ->update(['status' => 'delivered']);
+                ->update(['status' => $finalStatus]);
         } else {
             $updated = $delivery->assignments()
                 ->where('delivery_id', $delivery->id)

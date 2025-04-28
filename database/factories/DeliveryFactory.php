@@ -32,7 +32,10 @@ class DeliveryFactory extends Factory
                 'lng' => fake()->longitude(),
                 'address' => fake()->address()
             ],
-            'status' => fake()->randomElement(['pending', 'accepted', 'in_transit', 'delivered', 'canceled']),
+            'status' => function (array $attributes) {
+                return $attributes['is_hybrid'] ?? false ? 'pending' : 
+                    fake()->randomElement(['pending', 'accepted', 'in_transit', 'delivered', 'canceled']);
+            },
             'type' => fake()->randomElement(['standard', 'express', 'priority']),
             'item_description' => fake()->sentence(),
             'estimated_weight' => fake()->randomFloat(2, 0.1, 10),
