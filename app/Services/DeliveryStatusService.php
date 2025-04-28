@@ -137,12 +137,12 @@ class DeliveryStatusService
                 $stage['status'] = $status;
             }
 
-            if (!in_array($stage['status'], ['completed', 'delivered'])) {
+            if ($stage['status'] !== 'delivered') {
                 $allStagesComplete = false;
             }
         }
 
-        // Force delivered status if all stages are complete
+        // Force delivered status if all stages are delivered
         if ($allStagesComplete) {
             $status = 'delivered';
         }

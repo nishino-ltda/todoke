@@ -29,7 +29,7 @@ class CommunityPricingTest extends TestCase
 
         // Create test user
         $this->user = User::factory()->create([
-            'role' => 'courier', // Ensure user is a courier
+            'type' => 'courier', // Ensure user is a courier
         ]);
 
         // Create test region
@@ -118,7 +118,7 @@ class CommunityPricingTest extends TestCase
     public function borda_count_calculation_works_correctly()
     {
         // Create multiple users and votes
-        $users = User::factory()->count(5)->create(['role' => 'courier']);
+        $users = User::factory()->count(5)->create(['type' => 'courier']);
         
         // User 1 votes: Option 1 > Option 2 > Option 3
         Vote::create([
@@ -205,7 +205,7 @@ class CommunityPricingTest extends TestCase
     public function voting_round_service_can_close_round_and_update_pricing()
     {
         // Create votes (simplified from previous test)
-        $user = User::factory()->create(['role' => 'courier']);
+        $user = User::factory()->create(['type' => 'courier']);
         Vote::create([
             'voting_round_id' => $this->votingRound->id,
             'user_id' => $user->id,
