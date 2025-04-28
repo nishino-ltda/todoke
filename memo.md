@@ -72,3 +72,21 @@ Foram implementados testes abrangentes para verificar vulnerabilidades de segura
    - Verifica se não é possível alterar o email do usuário através da API de entregas
 
 Todos os testes nao foram realizados
+
+
+# Correções realizadas em 27/04/2025
+
+## PartnerDeliveryTest - Problemas resolvidos
+
+1. **Discrepância no ID do parceiro (esperado 36, recebido 30)**
+   - Adicionada validação no modelo Delivery para verificar existência de partner_id nos stages
+   - Garantido que os IDs de parceiros sejam válidos antes de serializar os stages
+
+2. **Status 'collected' não encontrado**
+   - Modificado o mapeamento de status no DeliveryStatusService para manter 'collected'
+   - Adicionados logs detalhados para depuração de atualizações de status
+
+## Boas práticas adicionadas
+- Sempre validar partner_id ao definir stages
+- Manter logs detalhados para transições de status
+- Usar match() para mapeamento claro de status

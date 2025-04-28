@@ -45,7 +45,16 @@ class Delivery extends Model
 
     public function setStagesAttribute($value)
     {
-        $this->attributes['stages'] = is_array($value) ? json_encode($value) : $value;
+        if (is_array($value)) {
+            foreach ($value as &$stage) {
+                if (isset($stage['partner_id']) && !User::where('id', $stage['partner_id'])->exists()) {
+                    throw new \InvalidArgumentException("Partner ID {$stage['partner_id']} does not exist");
+                }
+            }
+            $this->attributes['stages'] = json_encode($value);
+        } else {
+            $this->attributes['stages'] = $value;
+        }
     }
 
     public function getStagesAttribute($value)

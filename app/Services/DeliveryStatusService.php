@@ -15,7 +15,12 @@ class DeliveryStatusService
         'collected',
         'in_transit',
         'delivered',
-        'canceled'
+        'canceled',
+        // Novos status específicos para drones
+        'drone_launched',
+        'drone_in_route',
+        'drone_arrived',
+        'drone_returned'
     ];
 
     private const VALID_STAGE_TYPES = [
@@ -60,16 +65,18 @@ class DeliveryStatusService
      */
     private function createAssignments(Delivery $delivery): void
     {
-        if (!$delivery->logistics_partner_id) {
-            return;
-        }
-
         foreach ($delivery->stages as $index => $stage) {
+            $partnerId = $stage['partner_id'] ?? $delivery->logistics_partner_id;
+            
+            if (!$partnerId) {
+                continue;
+            }
+            
             DeliveryAssignment::updateOrCreate([
                 'delivery_id' => $delivery->id,
                 'stage' => $index + 1
             ], [
-                'partner_id' => $delivery->logistics_partner_id,
+                'partner_id' => $partnerId,
                 'status' => 'pending'
             ]);
         }
@@ -145,11 +152,16 @@ class DeliveryStatusService
             'current_position' => $position
         ];
 
-        // Update overall status if all stages are complete
+        // Update overall status based on stage status
         if ($allStagesComplete) {
             $updateData['status'] = 'delivered';
         } else {
-            $updateData['status'] = 'in_transit';
+            // Se for um status de drone, mantenha o status geral como in_transit
+            if (in_array($status, ['drone_launched', 'drone_in_route', 'drone_arrived', 'drone_returned'])) {
+                $updateData['status'] = 'in_transit';
+            } else {
+                $updateData['status'] = $status;
+            }
         }
 
         $delivery->update($updateData);
@@ -167,9 +179,13 @@ class DeliveryStatusService
 
         // Map stage status to assignment status
         $assignmentStatus = match($status) {
-            'collected' => 'in_transit',
+            'collected' => 'collected',
             'in_transit' => 'in_transit',
             'delivered' => 'delivered',
+            'drone_launched' => 'drone_launched',
+            'drone_in_route' => 'drone_in_route',
+            'drone_arrived' => 'drone_arrived',
+            'drone_returned' => 'delivered',
             default => $status
         };
 
@@ -191,6 +207,13 @@ class DeliveryStatusService
                 ->where('delivery_id', $delivery->id)
                 ->where('stage', $stageNumber)
                 ->update(['status' => $finalStatus]);
+
+            Log::debug('Assignment status updated', [
+                'delivery_id' => $delivery->id,
+                'stage' => $stageNumber,
+                'status' => $finalStatus,
+                'rows_updated' => $updated
+            ]);
         }
 
         Log::debug('Final assignment status decision', [

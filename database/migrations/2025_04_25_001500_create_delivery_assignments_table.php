@@ -13,7 +13,18 @@ return new class extends Migration
             $table->foreignId('delivery_id')->constrained('deliveries');
             $table->foreignId('partner_id')->constrained('users');
             $table->integer('stage');
-            $table->string('status');
+            $table->enum('status', [
+                'pending',
+                'accepted',
+                'collected',
+                'in_transit',
+                'delivered',
+                'canceled',
+                'drone_launched',
+                'drone_in_route',
+                'drone_arrived',
+                'drone_returned'
+            ])->default('pending');
             $table->timestamps();
         });
     }

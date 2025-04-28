@@ -28,10 +28,14 @@ return new class extends Migration
             $table->enum('status', [
                 'pending',
                 'accepted',
-                'in_transit',
                 'collected',
+                'in_transit',
                 'delivered',
-                'canceled'
+                'canceled',
+                'drone_launched',
+                'drone_in_route',
+                'drone_arrived',
+                'drone_returned'
             ])->default('pending');
             $table->enum('type', ['standard', 'express', 'sustainable', 'priority']);
             $table->string('item_description');

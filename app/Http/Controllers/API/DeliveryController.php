@@ -65,6 +65,14 @@ class DeliveryController extends Controller
         $deliveryData = $this->prepareDeliveryData($request, $user, $value, $estimatedTime);
         $delivery = Delivery::create($deliveryData);
 
+        // Criar assignments se existirem
+        if (isset($deliveryData['assignments'])) {
+            foreach ($deliveryData['assignments'] as $assignmentData) {
+                $assignmentData['delivery_id'] = $delivery->id;
+                \App\Models\DeliveryAssignment::create($assignmentData);
+            }
+        }
+
         if ($delivery->logistics_partner_id) {
             Notification::create([
                 'user_id' => $delivery->logistics_partner_id,
@@ -345,11 +353,61 @@ class DeliveryController extends Controller
         }
 
         if ($request->isHybrid) {
+            // Buscar nodes apropriados para cada etapa
+            $motoboyNode = null;
+            $droneNode = null;
+            
+            // Buscar nodes ativos para cada tipo
+            $motoboyNode = \App\Models\Node::where('type', 'delivery_point')
+                ->where('status', 'active')
+                ->first();
+
+            $droneNode = \App\Models\Node::where('type', 'distribution_center')
+                ->where('status', 'active')
+                ->first();
+
+            Log::debug('Found nodes for hybrid delivery', [
+                'motoboy_node' => $motoboyNode ? $motoboyNode->toArray() : null,
+                'drone_node' => $droneNode ? $droneNode->toArray() : null
+            ]);
+            
+            // Sempre criar stages mesmo sem nodes encontrados
             $deliveryData['stages'] = [
-                ['type' => 'delivery_point', 'status' => 'pending'],
-                ['type' => 'distribution_center', 'status' => 'pending']
+                [
+                    'type' => 'delivery_point',
+                    'status' => 'pending',
+                    'partner_id' => $motoboyNode ? $motoboyNode->partner_id : null,
+                    'node_id' => $motoboyNode ? $motoboyNode->id : null
+                ],
+                [
+                    'type' => 'distribution_center',
+                    'status' => 'pending',
+                    'partner_id' => $droneNode ? $droneNode->partner_id : null,
+                    'node_id' => $droneNode ? $droneNode->id : null
+                ]
             ];
-            Log::info('Setting hybrid delivery stages', ['stages' => $deliveryData['stages']]);
+            
+            // Definir o parceiro logístico inicial como o primeiro stage
+            $deliveryData['logistics_partner_id'] = $deliveryData['stages'][0]['partner_id'];
+            
+            // Criar assignments automaticamente para cada stage
+            $deliveryData['assignments'] = [
+                [
+                    'partner_id' => $deliveryData['stages'][0]['partner_id'],
+                    'stage' => 1,
+                    'status' => 'pending'
+                ],
+                [
+                    'partner_id' => $deliveryData['stages'][1]['partner_id'],
+                    'stage' => 2,
+                    'status' => 'pending'
+                ]
+            ];
+            
+            Log::info('Setting hybrid delivery stages and assignments', [
+                'stages' => $deliveryData['stages'],
+                'assignments' => $deliveryData['assignments']
+            ]);
         } else {
             $deliveryData['stages'] = null;
         }

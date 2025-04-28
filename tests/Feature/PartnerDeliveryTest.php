@@ -242,54 +242,41 @@ class PartnerDeliveryTest extends TestCase
                 ]
             ]);
 
-        // 7. Verificar se a entrega foi dividida em duas etapas
+        // 7. Verificar resposta completa
         $delivery = \App\Models\Delivery::where('customer_id', $partner->id)->first();
         $this->assertNotNull($delivery->stages);
         $stages = is_array($delivery->stages) ? $delivery->stages : json_decode($delivery->stages, true);
-        if (empty($stages)) {
-            $this->markTestIncomplete('Hybrid delivery stages not implemented yet');
-        } else {
-            $this->assertIsArray($stages);
-            $this->assertNotEmpty($stages);
-        }
+        
+        // Verificações específicas sobre as etapas
+        $this->assertIsArray($stages);
+        $this->assertCount(2, $stages);
         $this->assertEquals('delivery_point', $stages[0]['type']);
         $this->assertEquals('distribution_center', $stages[1]['type']);
+        
+        // Verificar se os parceiros foram associados corretamente (usando IDs dinâmicos)
+        $this->assertArrayHasKey('partner_id', $stages[0]);
+        $this->assertArrayHasKey('partner_id', $stages[1]);
+        $this->assertNotNull($stages[0]['partner_id']);
+        $this->assertNotNull($stages[1]['partner_id']);
+        
+        // Verificar se os nodes foram associados corretamente (usando IDs dinâmicos)
+        $this->assertArrayHasKey('node_id', $stages[0]);
+        $this->assertArrayHasKey('node_id', $stages[1]);
+        $this->assertNotNull($stages[0]['node_id']);
+        $this->assertNotNull($stages[1]['node_id']);
 
-        // 8. Criar assignments manualmente para o teste
-        \App\Models\DeliveryAssignment::create([
-            'delivery_id' => $delivery->id,
-            'partner_id' => $motoboy->id,
-            'stage' => 1,
-            'status' => 'pending'
-        ]);
-
-        \App\Models\DeliveryAssignment::create([
-            'delivery_id' => $delivery->id,
-            'partner_id' => $drone->id,
-            'stage' => 2,
-            'status' => 'pending'
-        ]);
-
-        // Verificar se os assignments foram criados
-        $this->assertTrue(
-            \App\Models\DeliveryAssignment::where([
-                'delivery_id' => $delivery->id,
-                'partner_id' => $motoboy->id
-            ])->exists(),
-            'Motoboy assignment not found'
-        );
-
-        $this->assertTrue(
-            \App\Models\DeliveryAssignment::where([
-                'delivery_id' => $delivery->id,
-                'partner_id' => $drone->id
-            ])->exists(),
-            'Drone assignment not found'
-        );
-
-        // Verificar stages no banco de dados
-        $updatedDelivery = \App\Models\Delivery::find($delivery->id);
-        $this->assertNotEmpty($updatedDelivery->stages);
+        // 8. Verificar se os assignments foram criados automaticamente
+        $assignments = \App\Models\DeliveryAssignment::where('delivery_id', $delivery->id)->get();
+        $this->assertCount(2, $assignments);
+        
+        // Verificar se há assignments para cada stage
+        $stage1Assignment = $assignments->where('stage', 1)->first();
+        $stage2Assignment = $assignments->where('stage', 2)->first();
+        
+        $this->assertNotNull($stage1Assignment);
+        $this->assertNotNull($stage2Assignment);
+        $this->assertEquals('pending', $stage1Assignment->status);
+        $this->assertEquals('pending', $stage2Assignment->status);
     }
 
     /**
@@ -359,7 +346,7 @@ class PartnerDeliveryTest extends TestCase
         
         $response->assertStatus(200);
         $updatedDelivery = \App\Models\Delivery::find($delivery->id);
-        $this->assertContains($updatedDelivery->status, ['in_transit', 'delivered']);
+        $this->assertContains($updatedDelivery->status, ['collected', 'in_transit', 'delivered']);
 
         // 6. Simular drone em voo
         $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", [

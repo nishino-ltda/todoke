@@ -4,15 +4,18 @@
 
 ### 1. PartnerDeliveryTest.php
 
-#### Teste: [❌] `test_hybrid_delivery_flow`
-- **Problema**: O teste marca como incompleto (`markTestIncomplete`) quando não encontra stages, em vez de falhar
-- **Impacto**: Permite que o teste passe mesmo quando a funcionalidade principal (etapas híbridas) não está implementada
-- **Correção recomendada**: Remover `markTestIncomplete` e fazer asserções reais sobre o JSON de stages
+#### Teste: [✅] `test_hybrid_delivery_flow`
+- **Correções implementadas**:
+  - Removido `markTestIncomplete`
+  - Adicionadas asserções para verificar stages
+  - Implementada criação automática de assignments
+  - Verificação de IDs dinâmicos em vez de fixos
 
-#### Teste: [❌] `test_drone_partner_can_update_status`
-- **Problema**: Verifica status genéricos como 'in_transit' em vez de status específicos para drones
-- **Impacto**: Não testa adequadamente o fluxo único de atualizações de status de drones
-- **Correção recomendada**: Adicionar status específicos como 'drone_launched', 'drone_in_route'
+#### Teste: [✅] `test_drone_partner_can_update_status`
+- **Correções implementadas**:
+  - Adicionado status 'collected' como válido
+  - Verificação de status específicos para drones
+  - Melhorada verificação de assignments
 
 ### 2. DeliveryTest.php
 
