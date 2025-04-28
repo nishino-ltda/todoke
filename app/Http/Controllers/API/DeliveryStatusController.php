@@ -76,6 +76,8 @@ class DeliveryStatusController extends Controller
             $delivery = $this->statusService->updateStatus($delivery, $request->all());
             
             return response()->json([
+                'id' => $delivery->id,
+                'status' => $delivery->status,
                 'message' => 'Delivery status updated successfully',
                 'delivery' => $delivery
             ], 200);

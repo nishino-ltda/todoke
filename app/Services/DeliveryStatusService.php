@@ -207,9 +207,9 @@ class DeliveryStatusService
             'delivered' => 'delivered',
             'canceled' => 'canceled',
             'failed' => 'failed',
-            'drone_launched' => 'drone_launched',
-            'drone_in_route' => 'drone_in_route',
-            'drone_arrived' => 'drone_arrived',
+            'drone_launched' => 'in_transit', // Map drone statuses to in_transit for assignments
+            'drone_in_route' => 'in_transit',
+            'drone_arrived' => 'in_transit',
             'drone_returned' => 'failed', // Map drone_returned to failed for assignments
             default => $status
         };
@@ -223,8 +223,8 @@ class DeliveryStatusService
                     ? 'failed'
                     : $assignmentStatus));
 
-        // Force update to delivered/canceled/failed status if that's what was requested
-        if (in_array($status, ['delivered', 'canceled', 'failed', 'drone_returned'])) {
+        // Force update to delivered/canceled/failed/in_transit status if that's what was requested
+        if (in_array($status, ['delivered', 'canceled', 'failed', 'drone_returned', 'in_transit'])) {
             $finalStatus = match($status) {
                 'delivered' => 'delivered',
                 'canceled' => 'canceled',
@@ -254,18 +254,36 @@ class DeliveryStatusService
         Log::debug('Final assignment status decision', [
             'stage_status' => $status,
             'delivery_status' => $updateData['status'],
-            'final_status' => $finalStatus
+            'final_status' => $finalStatus,
+            'stage_number' => $stageNumber,
+            'stage_type' => $stageType,
+            'is_drone_status' => in_array($status, ['drone_launched', 'drone_in_route', 'drone_arrived'])
         ]);
 
         Log::debug('Assignment update result', [
             'rows_updated' => $updated,
             'assignment_status' => $assignmentStatus,
+            'final_status' => $finalStatus,
             'query' => $delivery->assignments()
                 ->where('delivery_id', $delivery->id)
                 ->where('stage', $stageNumber)
                 ->toSql(),
-            'force_delivered' => ($status === 'delivered')
+            'force_delivered' => ($status === 'delivered'),
+            'assignment_exists' => DeliveryAssignment::where('delivery_id', $delivery->id)
+                ->where('stage', $stageNumber)
+                ->exists()
         ]);
+
+        if ($updated === 0) {
+            Log::error('Failed to update assignment status', [
+                'delivery_id' => $delivery->id,
+                'stage' => $stageNumber,
+                'expected_status' => $finalStatus,
+                'current_assignment' => DeliveryAssignment::where('delivery_id', $delivery->id)
+                    ->where('stage', $stageNumber)
+                    ->first()
+            ]);
+        }
 
         Log::info('Delivery status update', [
             'delivery_id' => $delivery->id,

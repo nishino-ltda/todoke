@@ -321,7 +321,14 @@ class PartnerDeliveryTest extends TestCase
             ]
         ]);
 
-        // 3. Criar assignment para o drone
+        // 3. Criar assignments para ambas as etapas
+        \App\Models\DeliveryAssignment::create([
+            'delivery_id' => $delivery->id,
+            'partner_id' => $drone->id,
+            'stage' => 1,
+            'status' => 'delivered'
+        ]);
+        
         \App\Models\DeliveryAssignment::create([
             'delivery_id' => $delivery->id,
             'partner_id' => $drone->id,

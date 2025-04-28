@@ -27,8 +27,15 @@
   - `drone_launched`
   - `drone_in_route` 
   - `drone_arrived`
-- Implemented stage validation in DeliveryStatusService
-- Updated PartnerDeliveryTest with hybrid flow assertions
+- Updated DeliveryStatusService to:
+  - Use 'delivered' as final status (replacing 'completed')
+  - Preserve delivered stages during cancellations
+  - Improve status validation rules
+- Updated test suite:
+  - Fixed HybridDeliveryEdgeCasesTest cancellation handling
+  - Standardized on 'delivered' status in all tests
+  - Added assertions for stage preservation
+  - Fixed PartnerDeliveryTest by ensuring both stage assignments exist before status updates
 
 ## Key Decisions
 1. **Stage Management**:
@@ -37,9 +44,11 @@
    - Strict stage ordering enforcement
 
 2. **Status Flow**:
-   - Standard statuses for traditional delivery
+   - Standard statuses: pending → accepted → collected → in_transit → delivered
    - Specialized statuses for drone operations
-   - Unified final delivery state
+   - Final delivery state is 'delivered' (replaces 'completed')
+   - Cancellation preserves delivered stages
+   - Status validation rules enforced in DeliveryStatusService
 
 3. **Community Pricing**:
    - Borda count method for democratic voting

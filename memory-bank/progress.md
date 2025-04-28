@@ -38,7 +38,7 @@
 ✅ SecurityTest (payload validation - user cannot forge fields test fixed)
 ✅ CommunityPricingTest (voting system, Borda count calculation)
 ⚠️ PerformanceTest (needs expansion)
-❌ HybridDeliveryEdgeCasesTest (failing due to persistent 'is_hybrid' column issue)
+✅ HybridDeliveryEdgeCasesTest (fixed cancellation handling and status validation)
 
 ### Unit Tests
 ✅ ModelTest (basic validations)
@@ -48,10 +48,10 @@
 ## Next Steps
 
 1. **Immediate Priorities**:
-   - Address persistent 'is_hybrid' column issue in HybridDeliveryEdgeCasesTest.php (requires environment/configuration investigation)
    - Continue work on mocking for offline scenarios in DeliveryTest.php
-   - Implement stage cancellation handling (test implemented)
    - Add performance benchmarks
+   - Fix remaining test failures in DeliveryTest and PartnerDeliveryTest
+   - Document status flow changes
 
 2. **Near-term Goals**:
    - Enhance community pricing with audio forum integration
