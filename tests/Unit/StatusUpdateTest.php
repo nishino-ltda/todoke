@@ -8,20 +8,17 @@ use App\Models\Delivery;
 use App\Models\Notification;
 use Mockery;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class StatusUpdateTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->withoutMiddleware();
-        $this->artisan('migrate:fresh');
-    }
-
-    protected function tearDown(): void
-    {
         Mockery::close();
-        parent::tearDown();
+        $this->withoutMiddleware();
     }
 
     public function test_update_status_updates_simple_delivery_status(): void

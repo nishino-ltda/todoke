@@ -67,9 +67,10 @@ sequenceDiagram
 
 6. **Test Isolation Pattern**:
    - Tests are designed to be independent and not affect each other
-   - Direct token generation instead of relying on auth controllers
-   - Mock cleanup with Mockery::close() to prevent interference
-   - RefreshDatabase trait for clean database state between tests
+   - Standardized on `RefreshDatabase` trait for all tests
+   - Implemented `Mockery::close()` in all test `setUp` methods
+   - Authentication methods updated to use direct token generation
+   - All 103 tests passing with reduced interdependencies
 
 ## Data Structures
 

@@ -8,10 +8,17 @@ use Tests\TestCase;
 use App\Models\Node;
 use App\Models\Region;
 use Illuminate\Database\QueryException; // Import for catching database exceptions
+use Mockery;
 
 class NodeRegionTest extends TestCase
     {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
 
     /**
      * Test that a node can be associated with a region.

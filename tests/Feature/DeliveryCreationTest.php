@@ -6,6 +6,7 @@ use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class DeliveryCreationTest extends TestCase
 {
@@ -17,6 +18,7 @@ class DeliveryCreationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
 
         $this->customer = User::factory()->create([
             'id' => 1,
@@ -25,11 +27,8 @@ class DeliveryCreationTest extends TestCase
             'password' => Hash::make('Password123')
         ]);
 
-        $customerLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => 'customere@example.com',
-            'password' => 'Password123'
-        ]);
-        $this->customerToken = $customerLogin->json('token');
+        // Generate token directly
+        $this->customerToken = $this->customer->createToken('customer-token')->plainTextToken;
     }
 
     public function testDeliveryCreation()

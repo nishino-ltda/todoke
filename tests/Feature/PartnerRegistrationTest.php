@@ -5,10 +5,18 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\DeliveryAssignment;
+use Mockery;
 
 class PartnerRegistrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
+
     /**
      * Teste: Cadastro básico de parceiro (BistroTech)
      * - Deve verificar se um partner pode se cadastrar como parceiro

@@ -9,25 +9,22 @@ use App\Models\DeliveryAssignment;
 use App\Models\Notification;
 use Mockery;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class DeliveryAcceptanceTest extends TestCase
 {
+    use RefreshDatabase;
+
     protected function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
         $this->withoutMiddleware();
-        $this->artisan('migrate:fresh');
         
         $logMock = Mockery::mock('alias:' . Log::class);
         $logMock->shouldReceive('debug')->withAnyArgs()->andReturn(null);
         $logMock->shouldReceive('info')->withAnyArgs()->andReturn(null);
         $logMock->shouldReceive('error')->withAnyArgs()->andReturn(null);
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 
     public function test_accept_delivery_accepts_pending_delivery(): void

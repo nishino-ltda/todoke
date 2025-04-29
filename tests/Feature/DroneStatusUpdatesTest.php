@@ -5,9 +5,19 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\DeliveryAssignment;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class DroneStatusUpdatesTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
+
     /**
      * Teste: Atualização de status pelo parceiro DroneExpress
      * - Deve verificar se um parceiro drone pode atualizar status de entrega

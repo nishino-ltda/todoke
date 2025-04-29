@@ -6,12 +6,16 @@ use Tests\TestCase;
 use App\Models\DeliveryAssignment;
 use Illuminate\Support\Facades\Log;
 use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class HybridDeliveryFlowTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
     }
 
     /**

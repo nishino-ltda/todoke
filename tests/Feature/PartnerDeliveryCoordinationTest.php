@@ -6,12 +6,16 @@ use Tests\TestCase;
 use App\Models\DeliveryAssignment;
 use Illuminate\Support\Facades\Log;
 use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PartnerDeliveryCoordinationTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
         // Mock the static create method on DeliveryAssignment to prevent database interaction during model events
         Mockery::mock('alias:' . DeliveryAssignment::class)
             ->shouldReceive('create')

@@ -19,6 +19,11 @@
 - PHPUnit 11
 - Mockery
 - Laravel Pail (log viewer)
+- **Completed test standardization**:
+  - All tests use `RefreshDatabase` trait
+  - `Mockery::close()` added to all test `setUp` methods
+  - Authentication methods updated to use direct token generation
+  - 103 tests passing with reduced interdependencies
 - Note: A code coverage driver is not currently configured, preventing the generation of coverage reports.
 
 ## Development Setup

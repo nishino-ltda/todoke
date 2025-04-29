@@ -9,10 +9,17 @@ use App\Models\Delivery;
 use App\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class SpecialTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
 
     #[Test]
     public function delivery_with_max_values_is_accepted(): void

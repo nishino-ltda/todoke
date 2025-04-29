@@ -13,6 +13,7 @@ use App\Services\FareUpdateService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Mockery;
 
 class CommunityPricingTest extends TestCase
 {
@@ -26,6 +27,7 @@ class CommunityPricingTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
 
         // Create test user
         $this->user = User::factory()->create([

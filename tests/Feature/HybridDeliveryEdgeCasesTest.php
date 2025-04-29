@@ -21,7 +21,7 @@ class HybridDeliveryEdgeCasesTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        // No mocking needed since we're using RefreshDatabase trait
+        Mockery::close();
     }
 
 

@@ -7,11 +7,17 @@ use App\Models\User;
 use App\Models\Delivery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
-
+use Mockery;
 
 class UsabilityTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
 
     #[Test]
     public function error_messages_are_clear_and_helpful()

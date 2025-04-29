@@ -5,12 +5,19 @@ namespace Tests\Unit;
 use Tests\TestCase; // Change to extend Laravel's TestCase
 use App\Models\Region;
 use App\Services\FareUpdateService;
-use Illuminate\Foundation\Testing\DatabaseTransactions; // Use DatabaseTransactions trait
+use Illuminate\Foundation\Testing\RefreshDatabase; // Use RefreshDatabase trait
+use Mockery;
 
 // Test suite for the FareUpdateService
 class FareUpdateServiceTest extends TestCase
 {
-    use DatabaseTransactions; // Use DatabaseTransactions trait
+    use RefreshDatabase; // Use RefreshDatabase trait
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
 
     // Test case: Updating a single region's pricing
     // Should update the community_min_fare_per_km, community_avg_fare_per_km, and community_max_fare_per_km for the specified region.

@@ -12,10 +12,17 @@ use App\Models\Node;
 use App\Models\Region;
 use App\Models\Rating;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class ModelTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Mockery::close();
+    }
     
     #[Test]
     public function user_model_has_expected_attributes()

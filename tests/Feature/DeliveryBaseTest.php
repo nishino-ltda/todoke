@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Delivery;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class DeliveryBaseTest extends TestCase
 {
@@ -21,6 +22,7 @@ class DeliveryBaseTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
 
         // Mock Notification model
         $this->mockNotificationModel();
@@ -37,17 +39,9 @@ class DeliveryBaseTest extends TestCase
             'name' => 'Courier Test'
         ]);
 
-        $customerLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => 'customere@example.com',
-            'password' => 'Password123'
-        ]);
-        $this->customerToken = $customerLogin->json('token');
-
-        $courierLogin = $this->postJson('/api/v1/auth/login', [
-            'email' => $this->courier->email,
-            'password' => 'Password123'
-        ]);
-        $this->courierToken = $courierLogin->json('token');
+        // Generate tokens directly
+        $this->customerToken = $this->customer->createToken('customer-token')->plainTextToken;
+        $this->courierToken = $this->courier->createToken('courier-token')->plainTextToken;
     }
 
     protected function mockNotificationModel(): void

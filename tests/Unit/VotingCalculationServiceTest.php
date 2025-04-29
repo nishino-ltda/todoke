@@ -16,8 +16,9 @@ class VotingCalculationServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function tearDown(): void
+    protected function setUp(): void
     {
+        parent::setUp();
         Mockery::close();
     }
 

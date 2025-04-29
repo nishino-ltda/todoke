@@ -49,9 +49,8 @@
 ## Test Coverage
 
 ### Test Execution Results
-- **75 tests passed** (including new addon tests)
-- **2 tests are incomplete** (related to offline delivery scenarios)
-- **25 tests are risky** (did not perform assertions)
+- **30 tests failed**, 12 risky, 2 incomplete, 69 passed (284 assertions)
+- **Standardization completed** across all test files
 - **No code coverage driver configured**, preventing detailed coverage reports.
 
 ### Feature Tests
@@ -78,6 +77,7 @@
 ## Next Steps
 
 1. **Immediate Priorities**:
+   - **Apply identified corrections to test files to standardize `RefreshDatabase` and `Mockery::close()` usage, and update authentication methods.**
    - Address incomplete tests related to offline delivery tracking and scenarios.
    - Add assertions to and complete risky tests across all test files.
    - Investigate and configure a code coverage driver (e.g., Xdebug).

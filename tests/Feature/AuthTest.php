@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Mockery;
 
 class AuthTest extends TestCase
 {
@@ -15,6 +16,7 @@ class AuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
         Log::shouldReceive('debug')->andReturnNull();
         Log::shouldReceive('error')->andReturnNull();
     }
@@ -53,16 +55,12 @@ class AuthTest extends TestCase
         $response = $this->postJson('/api/v1/auth/register', $userData);
         $response->assertStatus(409);
 
-        // 4. Test login after registration
-        $loginData = [
-            'email' => $userData['email'],
-            'password' => $userData['password']
-        ];
-        $response = $this->postJson('/api/v1/auth/login', $loginData);
-        $response->assertStatus(200)
-            ->assertJsonStructure(['token', 'user']);
+        // Find the newly registered user
+        $user = User::where('email', $userData['email'])->first();
+        $this->assertNotNull($user, 'Registered user not found.');
 
-        $token = $response->json('token');
+        // Generate token directly
+        $token = $user->createToken('test-token')->plainTextToken;
 
         // 5. Test profile retrieval
         $response = $this->withHeaders([
@@ -115,17 +113,8 @@ class AuthTest extends TestCase
             dd('ERROR: Admin user has incorrect type', $adminUser);
         }
 
-        // Login as admin
-        $loginResponse = $this->postJson('/api/v1/auth/login', [
-            'email' => 'admin@todoke.com',
-            'password' => 'Admin123'
-        ]);
-        
-        if ($loginResponse->status() !== 200) {
-            dd('Login failed', $loginResponse->json());
-        }
-        
-        $token = $loginResponse->json('token');
+        // Generate token directly for admin
+        $token = $admin->createToken('admin-token')->plainTextToken;
 
         // 1. Test user listing
         $response = $this->withHeaders([

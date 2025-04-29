@@ -8,7 +8,7 @@ use App\Models\Delivery;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
-
+use Mockery;
 
 class SecurityTest extends TestCase
 {
@@ -23,6 +23,7 @@ class SecurityTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Mockery::close();
 
         // Create two customer users with unique emails
         $this->customer1 = User::factory()->create([
@@ -37,16 +38,9 @@ class SecurityTest extends TestCase
             'password' => Hash::make('Password123')
         ]);
 
-        // Authenticate both customers using their actual emails
-        $this->customer1Token = $this->postJson('/api/v1/auth/login', [
-            'email' => $this->customer1->email,
-            'password' => 'Password123'
-        ])->json('token');
-
-        $this->customer2Token = $this->postJson('/api/v1/auth/login', [
-            'email' => $this->customer2->email,
-            'password' => 'Password123'
-        ])->json('token');
+        // Generate tokens directly
+        $this->customer1Token = $this->customer1->createToken('customer1-token')->plainTextToken;
+        $this->customer2Token = $this->customer2->createToken('customer2-token')->plainTextToken;
 
         // Create a delivery for customer1
         $this->delivery = Delivery::factory()->create([
