@@ -10,50 +10,71 @@ use Illuminate\Support\Facades\DB;
 
 class VotingRoundService
 {
+    protected $calculationService;
+    protected $fareUpdateService;
+
+    public function __construct(
+        VotingCalculationService $calculationService,
+        FareUpdateService $fareUpdateService
+    ) {
+        $this->calculationService = $calculationService;
+        $this->fareUpdateService = $fareUpdateService;
+    }
+
     /**
-     * Create a new voting round for a region.
+     * Create a new voting round for regions.
      *
-     * @param int $regionId
-     * @param Carbon $startTime
-     * @param Carbon $endTime
-     * @param array $options Array of price band options
+     * @param array $regionIds
+     * @param Carbon $startDate
+     * @param Carbon $endDate
      * @return VotingRound
      */
-    public function createVotingRound(int $regionId, Carbon $startTime, Carbon $endTime, array $options)
+    public function createVotingRound(array $regionIds, Carbon $startDate, Carbon $endDate)
     {
-        // Validate region exists
-        $region = Region::findOrFail($regionId);
+        // Validate all regions exist
+        $regions = Region::whereIn('id', $regionIds)->get();
+        if ($regions->count() !== count($regionIds)) {
+            throw new \Exception("One or more regions not found");
+        }
         
-        // Check if there's already an active voting round for this region
-        $existingRound = VotingRound::where('region_id', $regionId)
+        // Check for existing active voting rounds for these regions
+        $existingRounds = VotingRound::whereIn('region_id', $regionIds)
             ->where('status', 'active')
-            ->first();
+            ->exists();
             
-        if ($existingRound) {
-            throw new \Exception("An active voting round already exists for this region.");
+        if ($existingRounds) {
+            throw new \Exception("Active voting rounds already exist for one or more regions");
         }
         
         // Create voting round with options in a transaction
-        return DB::transaction(function () use ($regionId, $startTime, $endTime, $options) {
+        return DB::transaction(function () use ($regionIds, $startDate, $endDate) {
             // Create voting round
             $votingRound = VotingRound::create([
-                'region_id' => $regionId,
-                'start_time' => $startTime,
-                'end_time' => $endTime,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
                 'status' => 'active',
             ]);
             
-            // Create voting options
-            foreach ($options as $option) {
-                VotingOption::create([
-                    'voting_round_id' => $votingRound->id,
-                    'min_fare_per_km' => $option['min_fare_per_km'],
-                    'avg_fare_per_km' => $option['avg_fare_per_km'],
-                    'max_fare_per_km' => $option['max_fare_per_km'],
-                ]);
+            // Attach regions
+            $votingRound->regions()->attach($regionIds);
+            
+            // Generate and create voting options for each region
+            foreach ($regionIds as $regionId) {
+                $region = Region::find($regionId);
+                $options = $this->generatePriceBandOptions($region);
+                
+                foreach ($options as $option) {
+                    VotingOption::create([
+                        'voting_round_id' => $votingRound->id,
+                        'region_id' => $regionId,
+                        'min_fare_per_km' => $option['min_fare_per_km'],
+                        'avg_fare_per_km' => $option['avg_fare_per_km'],
+                        'max_fare_per_km' => $option['max_fare_per_km'],
+                    ]);
+                }
             }
             
-            return $votingRound->load('votingOptions');
+            return $votingRound->load(['votingOptions', 'regions']);
         });
     }
     

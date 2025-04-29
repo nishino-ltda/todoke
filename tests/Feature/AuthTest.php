@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Log;
 class AuthTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Log::shouldReceive('debug')->andReturnNull();
+        Log::shouldReceive('error')->andReturnNull();
+    }
     public function testAuroraRegistersAndConfiguresProfile()
     {
         // Registration data
