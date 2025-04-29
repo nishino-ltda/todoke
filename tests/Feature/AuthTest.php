@@ -17,8 +17,13 @@ class AuthTest extends TestCase
     {
         parent::setUp();
         Mockery::close();
-        Log::shouldReceive('debug')->andReturnNull();
-        Log::shouldReceive('error')->andReturnNull();
+        
+        // Create and bind a proper mock for Log facade
+        $logMock = Mockery::mock('overload:'.Log::class);
+        $logMock->shouldReceive('debug')->andReturnNull()->byDefault();
+        $logMock->shouldReceive('error')->andReturnNull()->byDefault();
+        
+        $this->app->instance(Log::class, $logMock);
     }
     public function testAuroraRegistersAndConfiguresProfile()
     {
@@ -113,8 +118,8 @@ class AuthTest extends TestCase
             dd('ERROR: Admin user has incorrect type', $adminUser);
         }
 
-        // Generate token directly for admin
-        $token = $admin->createToken('admin-token')->plainTextToken;
+        // Generate token with admin abilities
+        $token = $admin->createToken('admin-token', ['admin'])->plainTextToken;
 
         // 1. Test user listing
         $response = $this->withHeaders([

@@ -2,21 +2,28 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase; // Change to extend Laravel's TestCase
+use Tests\TestCase;
 use App\Models\Region;
 use App\Services\FareUpdateService;
-use Illuminate\Foundation\Testing\RefreshDatabase; // Use RefreshDatabase trait
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
 use Mockery;
 
-// Test suite for the FareUpdateService
 class FareUpdateServiceTest extends TestCase
 {
-    use RefreshDatabase; // Use RefreshDatabase trait
+    use RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
         Mockery::close();
+        
+        // Create and bind a proper mock for Log facade
+        $logMock = Mockery::mock('overload:'.Log::class);
+        $logMock->shouldReceive('info')->andReturnNull()->byDefault();
+        $logMock->shouldReceive('debug')->andReturnNull()->byDefault();
+        
+        $this->app->instance(Log::class, $logMock);
     }
 
     // Test case: Updating a single region's pricing
