@@ -56,14 +56,17 @@ class VotingCalculationService
         // Calculate points for each option based on rankings
         foreach ($votes as $vote) {
             $rankedOptions = $vote->ranked_options;
-            $points = $optionCount; // Max points for first choice
             
             foreach ($rankedOptions as $index => $optionId) {
-                if (isset($results[$optionId])) {
-                    $results[$optionId]['points'] += $points;
-                    $results[$optionId]['rankings'][$index]++; // Count this ranking position
-                    $points--; // Decrease points for next ranking
+                if (!isset($results[$optionId])) {
+                    continue;
                 }
+                // Standard Borda count:
+                // 1st place = n points, 2nd place = n-1 points, etc.
+                $points = $optionCount - $index;
+                $results[$optionId]['points'] += $points;
+                $results[$optionId]['rankings'][$index]++; // Count this ranking position
+                
             }
         }
         

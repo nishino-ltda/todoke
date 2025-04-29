@@ -32,7 +32,10 @@ class RegionFactory extends Factory
                     ]
                 ]
             ],
-            'status' => fake()->randomElement(['active', 'inactive'])
+            'status' => fake()->randomElement(['active', 'inactive']),
+            'community_min_fare_per_km' => 0.00,
+            'community_avg_fare_per_km' => 0.00,
+            'community_max_fare_per_km' => 0.00,
         ];
     }
 }

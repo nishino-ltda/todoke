@@ -19,6 +19,7 @@
 - PHPUnit 11
 - Mockery
 - Laravel Pail (log viewer)
+- Note: A code coverage driver is not currently configured, preventing the generation of coverage reports.
 
 ## Development Setup
 

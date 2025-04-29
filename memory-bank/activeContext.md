@@ -25,7 +25,7 @@
   - Created scheduled commands for voting round management
 - Added specialized drone statuses:
   - `drone_launched`
-  - `drone_in_route` 
+  - `drone_in_route`
   - `drone_arrived`
 - Updated DeliveryStatusService to:
   - Use 'delivered' as final status (replacing 'completed')
@@ -57,10 +57,17 @@
    - Tie-breaking based on first-place vote counts
 
 ## Pending Tasks
-- Implement edge case tests for:
+- Implement edge case tests for deliveries, focusing on:
   - Stage cancellations (initial implementation added)
   - Drone failures (initial implementation added)
-  - Offline scenarios (placeholder added, requires mocking)
+  - Offline scenarios (currently incomplete, requires mocking) - Need to complete incomplete tests and add new tests for synchronization and conflict resolution.
+- Enhance test coverage for:
+  - Unit tests for services (VotingCalculationService, DeliveryStatusService, VotingRoundService, FareUpdateService) - Add assertions to existing risky tests and new tests for edge cases and scenarios.
+  - Comprehensive security tests for all endpoints - Add assertions to existing risky tests and expand coverage to all sensitive endpoints and vulnerabilities.
+  - Expanded performance tests with larger datasets and concurrent requests - Add assertions to existing risky tests and expand coverage for critical endpoints.
+  - Tests for region validation (GeoJSON) and node management (approval flow) - Add assertions to existing risky tests and new tests for invalid GeoJSON and non-admin approval attempts.
+- Address incomplete tests related to offline delivery tracking.
+- Investigate and configure a code coverage driver to generate coverage reports.
 - Enhance community pricing with:
   - Audio forum integration
   - Cost-based pricing dashboard

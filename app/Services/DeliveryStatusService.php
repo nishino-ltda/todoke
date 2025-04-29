@@ -264,10 +264,6 @@ class DeliveryStatusService
             'rows_updated' => $updated,
             'assignment_status' => $assignmentStatus,
             'final_status' => $finalStatus,
-            'query' => $delivery->assignments()
-                ->where('delivery_id', $delivery->id)
-                ->where('stage', $stageNumber)
-                ->toSql(),
             'force_delivered' => ($status === 'delivered'),
             'assignment_exists' => DeliveryAssignment::where('delivery_id', $delivery->id)
                 ->where('stage', $stageNumber)

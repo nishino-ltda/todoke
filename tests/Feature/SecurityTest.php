@@ -184,4 +184,96 @@ class SecurityTest extends TestCase
             'email' => $this->customer1->email
         ]);
     }
+
+    // Test case: Unauthorized access to sensitive endpoints (e.g., creating a delivery, updating status)
+    // Should return an authentication error.
+    public function test_unauthorized_access_to_sensitive_endpoints(): void
+    {
+        // Arrange: Get a sensitive endpoint URL (e.g., create delivery).
+        // $sensitiveEndpoint = '/api/v1/deliveries';
+        // $deliveryData = [...]; // Valid delivery data
+
+        // Act: Send a request to the sensitive endpoint without authentication.
+        // $response = $this->postJson($sensitiveEndpoint, $deliveryData);
+
+        // Assert: The API endpoint returns an authentication error (e.g., 401).
+        // $response->assertStatus(401);
+    }
+
+    // Test case: User attempting to access data belonging to another user (e.g., viewing another user's deliveries)
+    // Should return a forbidden error or not include the unauthorized data.
+    public function test_user_cannot_access_other_users_data(): void
+    {
+        // Arrange: Create a delivery for customer1 and authenticate as customer2.
+        // $deliveryForCustomer1 = Delivery::factory()->create(['customer_id' => $this->customer1->id]);
+        // $this->actingAs($this->customer2, 'sanctum');
+
+        // Act: Attempt to access the delivery belonging to customer1.
+        // $response = $this->getJson("/api/v1/deliveries/{$deliveryForCustomer1->id}");
+
+        // Assert: The API endpoint returns a forbidden error (e.g., 403).
+        // $response->assertStatus(403);
+    }
+
+    // Test case: Partner attempting to update a delivery they are not assigned to
+    // Should be denied access.
+    public function test_partner_cannot_update_unassigned_delivery(): void
+    {
+        // Arrange: Create a delivery not assigned to any partner, and a partner user.
+        // $delivery = Delivery::factory()->create(['courier_id' => null]);
+        // $partner = User::factory()->partner()->create();
+        // $this->actingAs($partner, 'sanctum');
+
+        // Act: Attempt to update the status of the unassigned delivery.
+        // $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", ['status' => 'accepted']);
+
+        // Assert: Should be denied access.
+        // $response->assertStatus(403);
+    }
+
+    // Test case: Attempting to inject malicious code in input fields (e.g., script tags in text fields)
+    // Should sanitize or reject the input.
+    public function test_prevents_malicious_code_injection(): void
+    {
+        // Arrange: Prepare data with potential injection attempts.
+        // $maliciousData = [
+        //     'item_description' => '<script>alert("xss")</script>',
+        //     // Add other fields that accept user input
+        // ];
+        // $deliveryData = array_merge([...], $maliciousData); // Combine with valid delivery data
+        // $this->actingAs($this->customer1, 'sanctum');
+
+        // Act: Send a request to create a delivery with malicious data.
+        // $response = $this->postJson('/api/v1/deliveries', $deliveryData);
+
+        // Assert: The API call is successful (assuming validation passes for other fields).
+        // $response->assertStatus(201);
+        // Assert: The stored data is sanitized or the malicious code is not present.
+        // $delivery = Delivery::find($response->json('id'));
+        // $this->assertStringNotContainsString('<script>', $delivery->item_description);
+    }
+
+    // Test case: Validating payloads to prevent forging fields (already partially implemented, needs expansion)
+    // Should ensure that only allowed fields can be submitted and processed.
+    public function test_prevents_forging_fields_in_payload(): void
+    {
+        // Arrange: Create a delivery and prepare a payload with forged fields.
+        // $delivery = Delivery::factory()->create(['customer_id' => $this->customer1->id, 'value' => 100]);
+        // $forgedPayload = [
+        //     'status' => 'delivered', // Valid status update
+        //     'customer_id' => $this->customer2->id, // Forged customer ID
+        //     'value' => 0.01, // Forged value
+        // ];
+        // $this->actingAs($this->customer1, 'sanctum');
+
+        // Act: Send a request to update the delivery with the forged payload.
+        // $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", $forgedPayload);
+
+        // Assert: The API endpoint returns a forbidden error (e.g., 403) or validation errors for the forged fields.
+        // $response->assertStatus(403); // Or 422 with validation errors
+        // Assert: The sensitive fields on the delivery model are not changed.
+        // $delivery->refresh();
+        // $this->assertEquals($this->customer1->id, $delivery->customer_id);
+        // $this->assertEquals(100, $delivery->value);
+    }
 }

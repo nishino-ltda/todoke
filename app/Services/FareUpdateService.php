@@ -59,25 +59,37 @@ class FareUpdateService
     ) {
         $region = Region::findOrFail($regionId);
         
-        // Get base fare per km from region's community pricing
-        $baseFarePerKm = $region->community_avg_fare_per_km ?? 1.5;
+        // Get base fare per km from region's community pricing (use default if 0)
+        $baseFarePerKm = $region->community_avg_fare_per_km > 0 ? $region->community_avg_fare_per_km : 1.5;
         
         // Apply time of day adjustment
         $timeMultiplier = $this->getTimeOfDayMultiplier($timeOfDay);
         
-        // Calculate adjusted fare
-        $adjustedFarePerKm = $baseFarePerKm * $timeMultiplier * $demandFactor;
+        // Calculate adjusted fare (apply time multiplier first, then demand factor)
+        $adjustedFarePerKm = ($baseFarePerKm * $timeMultiplier) * $demandFactor;
+        Log::debug("Fare calculation", [
+            'baseFarePerKm' => $baseFarePerKm,
+            'timeMultiplier' => $timeMultiplier,
+            'demandFactor' => $demandFactor,
+            'adjustedFarePerKm' => $adjustedFarePerKm,
+            'distanceKm' => $distanceKm,
+            'totalFare' => $adjustedFarePerKm * $distanceKm
+        ]);
         
         // Calculate total fare
         $totalFare = $adjustedFarePerKm * $distanceKm;
         
-        // Apply minimum fare if needed
-        $minFare = max(5.0, $region->community_min_fare_per_km * $distanceKm);
-        $totalFare = max($totalFare, $minFare);
+        // Apply minimum fare if needed (only when distance > 0)
+        if ($distanceKm > 0) {
+            $minFare = $region->community_min_fare_per_km * $distanceKm;
+            $totalFare = max($totalFare, $minFare);
+        } else {
+            $totalFare = 0.0;
+        }
         
-        // Apply maximum fare if needed
-        $maxFare = $region->community_max_fare_per_km * $distanceKm;
-        if ($maxFare > 0) {
+        // Apply maximum fare if needed (only when max fare is set)
+        if ($region->community_max_fare_per_km > 0) {
+            $maxFare = $region->community_max_fare_per_km * $distanceKm;
             $totalFare = min($totalFare, $maxFare);
         }
         

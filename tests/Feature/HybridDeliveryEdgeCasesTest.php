@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\Delivery;
+use Mockery;
 use App\Models\DeliveryAssignment;
 use App\Models\User;
 use App\Models\Node;
@@ -16,6 +17,13 @@ use Illuminate\Testing\Fluent\AssertableJson; // Import for API response asserti
 class HybridDeliveryEdgeCasesTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+        // No mocking needed since we're using RefreshDatabase trait
+    }
+
 
     /**
      * Test handling of first stage cancellation in a hybrid delivery.
@@ -91,6 +99,32 @@ class HybridDeliveryEdgeCasesTest extends TestCase
                  ->etc()
         );
     }
+
+    // Test case: Cancellation during the first stage (motorbike)
+    // Should cancel the entire delivery and preserve the status of the completed first stage.
+    // Assert: The delivery status is updated to 'canceled'.
+    // Assert: The status of the first stage assignment is preserved (e.g., 'collected').
+    // Assert: The second stage assignment (drone) is also marked as canceled or not started.
+    // Assert: Relevant notifications are sent to the customer and involved partners.
+
+    // Test case: Cancellation during the second stage (drone)
+    // Should cancel the remaining part of the delivery and preserve the status of the completed first stage.
+    // Assert: The delivery status is updated to 'canceled'.
+    // Assert: The status of the first stage assignment is preserved (e.g., 'delivered_to_dc').
+    // Assert: The second stage assignment (drone) is marked as canceled.
+    // Assert: Relevant notifications are sent.
+
+    // Test case: Drone failure mid-route
+    // Should trigger a fallback mechanism, potentially re-assigning the delivery to a motorbike courier.
+    // Assert: The drone stage status is updated to indicate failure.
+    // Assert: A new delivery assignment is created for a fallback courier.
+    // Assert: The overall delivery status reflects the failure and re-assignment process.
+    // Assert: Relevant parties are notified of the failure and the new assignment.
+
+    // Test case: Attempting to update status of a canceled stage
+    // Should prevent the update and return an error.
+    // Assert: The API endpoint for status update returns an error (e.g., 400 or 422).
+    // Assert: The status of the canceled stage remains unchanged.
 
     /**
      * Test handling of second stage cancellation in a hybrid delivery.
