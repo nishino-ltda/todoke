@@ -1,0 +1,29 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('region_voting_round', function (Blueprint $table) {
+            $table->foreignId('region_id')->constrained()->onDelete('cascade');
+            $table->foreignId('voting_round_id')->constrained()->onDelete('cascade');
+            $table->unique(['region_id', 'voting_round_id']);
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('region_voting_round');
+    }
+};

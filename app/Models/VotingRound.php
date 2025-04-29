@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class VotingRound extends Model
@@ -16,6 +17,11 @@ class VotingRound extends Model
         'end_time',
         'status',
         'region_id',
+    ];
+
+    protected $casts = [
+        'start_time' => 'datetime',
+        'end_time' => 'datetime',
     ];
 
     /**
@@ -40,5 +46,13 @@ class VotingRound extends Model
     public function votes(): HasMany
     {
         return $this->hasMany(Vote::class);
+    }
+
+    /**
+     * Get the regions for the voting round.
+     */
+    public function regions(): BelongsToMany
+    {
+        return $this->belongsToMany(Region::class);
     }
 }

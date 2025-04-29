@@ -50,8 +50,8 @@ class VotingRoundService
         return DB::transaction(function () use ($regionIds, $startDate, $endDate) {
             // Create voting round
             $votingRound = VotingRound::create([
-                'start_date' => $startDate,
-                'end_date' => $endDate,
+                'start_time' => $startDate,
+                'end_time' => $endDate,
                 'status' => 'active',
             ]);
             
