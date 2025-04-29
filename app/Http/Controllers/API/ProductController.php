@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Addon;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
@@ -69,5 +70,47 @@ class ProductController extends Controller
         $product->update($request->all());
 
         return response()->json($product, 200);
+    }
+    
+    public function addAddons(Request $request, Product $product)
+    {
+        $this->authorize('update', $product);
+        
+        $request->validate([
+            'addon_ids' => 'required|array',
+            'addon_ids.*' => 'exists:addons,id'
+        ]);
+        
+        // Verify addons belong to the same partner as the product
+        $addonCount = Addon::whereIn('id', $request->addon_ids)
+            ->where('partner_id', $product->partner_id)
+            ->count();
+            
+        if ($addonCount !== count($request->addon_ids)) {
+            return response()->json([
+                'message' => 'Some addons do not belong to this partner'
+            ], 403);
+        }
+        
+        $product->addons()->sync($request->addon_ids);
+        
+        return response()->json(['message' => 'Addons updated successfully']);
+    }
+
+    public function getAddons(Product $product)
+    {
+        $addons = $product->addons()->where('status', 'available')->get();
+        
+        return response()->json([
+            'addons' => $addons->map(function ($addon) {
+                return [
+                    'id' => $addon->id,
+                    'name' => $addon->name,
+                    'description' => $addon->description,
+                    'price' => $addon->price,
+                    'status' => $addon->status
+                ];
+            })
+        ]);
     }
 }

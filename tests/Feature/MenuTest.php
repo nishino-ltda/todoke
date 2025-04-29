@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Addon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -158,6 +159,130 @@ class MenuTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function testAddonCreation()
+    {
+        $addonData = [
+            'name' => 'Extra Cheese',
+            'description' => 'Premium cheddar cheese',
+            'price' => 5.00
+        ];
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->partnerToken
+        ])->postJson('/api/v1/addons', $addonData);
+        
+        $response->assertStatus(201)
+            ->assertJsonPath('name', 'Extra Cheese')
+            ->assertJsonPath('price', '5.00');
+            
+        $this->assertDatabaseHas('addons', [
+            'name' => 'Extra Cheese',
+            'partner_id' => $this->partner->id
+        ]);
+    }
+    
+    public function testAssociatingAddonsWithProduct()
+    {
+        $product = Product::factory()->forPartner($this->partner->id)->create();
+        $addon1 = Addon::factory()->forPartner($this->partner->id)->create();
+        $addon2 = Addon::factory()->forPartner($this->partner->id)->create();
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->partnerToken
+        ])->postJson("/api/v1/products/{$product->id}/addons", [
+            'addon_ids' => [$addon1->id, $addon2->id]
+        ]);
+        
+        $response->assertStatus(200);
+        
+        $this->assertDatabaseHas('product_addon', [
+            'product_id' => $product->id,
+            'addon_id' => $addon1->id
+        ]);
+        
+        $this->assertDatabaseHas('product_addon', [
+            'product_id' => $product->id,
+            'addon_id' => $addon2->id
+        ]);
+    }
+    
+    public function testGetProductAddons()
+    {
+        $product = Product::factory()->forPartner($this->partner->id)->create();
+        $addon = Addon::factory()->forPartner($this->partner->id)->create([
+            'name' => 'Bacon Bits',
+            'price' => 3.50
+        ]);
+        
+        // Associate addon with product
+        $product->addons()->attach($addon->id);
+        
+        $response = $this->getJson("/api/v1/products/{$product->id}/addons");
+        
+        $response->assertStatus(200)
+            ->assertJsonCount(1, 'addons')
+            ->assertJsonPath('addons.0.name', 'Bacon Bits')
+            ->assertJsonPath('addons.0.price', '3.50');
+    }
+    
+    public function testOrderCreationWithAddons()
+    {
+        $product = Product::factory()->forPartner($this->partner->id)->create([
+            'price' => 10.00
+        ]);
+        
+        $addon = Addon::factory()->forPartner($this->partner->id)->create([
+            'price' => 2.50
+        ]);
+        
+        // Associate addon with product
+        $product->addons()->attach($addon->id);
+        
+        $orderData = [
+            'partner_id' => (string)$this->partner->id,
+            'items' => [
+                [
+                    'product_id' => $product->id, 
+                    'quantity' => 1,
+                    'addons' => [
+                        ['addon_id' => $addon->id, 'quantity' => 2]
+                    ]
+                ]
+            ],
+            'delivery' => [
+                'destination' => [
+                    'lat' => -23.5614,
+                    'lng' => -46.6559,
+                    'address' => 'Rua Augusta, 500'
+                ]
+            ]
+        ];
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customerToken
+        ])->postJson('/api/v1/orders', $orderData);
+        
+        if ($response->status() !== 201) {
+            dd($response->json()); // Show validation errors
+        }
+        
+        $response->assertStatus(201)
+            ->assertJsonPath('total_value', '15.00'); // 10.00 + (2.50 * 2)
+        
+        // Check order item has the correct addons
+        $orderId = $response->json('id');
+        $orderItem = DB::table('order_items')
+            ->where('order_id', $orderId)
+            ->first();
+        
+        $this->assertNotNull($orderItem);
+        $selectedAddons = json_decode($orderItem->selected_addons, true);
+        $this->assertNotNull($selectedAddons);
+        $this->assertCount(1, $selectedAddons);
+        $this->assertEquals($addon->id, $selectedAddons[0]['id']);
+        $this->assertEquals(2, $selectedAddons[0]['quantity']);
+    }
+    
     public function testOrderCreationWithProducts()
     {
         $product1 = Product::factory()->forPartner($this->partner->id)->create([
@@ -205,5 +330,47 @@ class MenuTest extends TestCase
             'quantity' => 2,
             'unit_price' => 10.00
         ]);
+    }
+    
+    public function testIncompatibleAddonRejection()
+    {
+        $product = Product::factory()->forPartner($this->partner->id)->create([
+            'price' => 10.00
+        ]);
+        
+        $addon = Addon::factory()->forPartner($this->partner->id)->create([
+            'price' => 2.50
+        ]);
+        
+        // Do NOT associate the addon with the product
+        
+        $orderData = [
+            'partner_id' => (string)$this->partner->id,
+            'items' => [
+                [
+                    'product_id' => $product->id, 
+                    'quantity' => 1,
+                    'addons' => [
+                        ['addon_id' => $addon->id, 'quantity' => 1]
+                    ]
+                ]
+            ],
+            'delivery' => [
+                'destination' => [
+                    'lat' => -23.5614,
+                    'lng' => -46.6559,
+                    'address' => 'Rua Augusta, 500'
+                ]
+            ]
+        ];
+        
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $this->customerToken
+        ])->postJson('/api/v1/orders', $orderData);
+        
+        $response->assertStatus(400)
+            ->assertJsonFragment([
+                'message' => "Addon {$addon->name} is not compatible with {$product->name}"
+            ]);
     }
 }

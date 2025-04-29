@@ -4,18 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class Addon extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'partner_id',
         'name',
         'description',
         'price',
-        'category',
-        'imageUrl',
         'status'
     ];
 
@@ -29,14 +28,8 @@ class Product extends Model
         return $this->belongsTo(User::class, 'partner_id');
     }
 
-    public function orders()
+    public function products()
     {
-        return $this->belongsToMany(Order::class, 'order_items')
-            ->withPivot('quantity', 'unit_price');
-    }
-    
-    public function addons()
-    {
-        return $this->belongsToMany(Addon::class, 'product_addon');
+        return $this->belongsToMany(Product::class, 'product_addon');
     }
 }

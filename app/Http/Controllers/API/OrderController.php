@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Addon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -24,6 +25,9 @@ class OrderController extends Controller
                 })
             ],
             'items.*.quantity' => 'required|integer|min:1',
+            'items.*.addons' => 'nullable|array',
+            'items.*.addons.*.addon_id' => 'exists:addons,id',
+            'items.*.addons.*.quantity' => 'integer|min:1',
             'delivery.destination.lat' => 'required|numeric|between:-90,90',
             'delivery.destination.lng' => 'required|numeric|between:-180,180',
             'delivery.destination.address' => 'required|string|max:255'
@@ -44,13 +48,40 @@ class OrderController extends Controller
         foreach ($request->items as $item) {
             $product = Product::find($item['product_id']);
             $itemTotal = $product->price * $item['quantity'];
+            
+            // Calculate addons price
+            $selectedAddons = [];
+            if (isset($item['addons']) && is_array($item['addons'])) {
+                foreach ($item['addons'] as $addonItem) {
+                    $addon = Addon::find($addonItem['addon_id']);
+                    
+                    // Verify addon is compatible with this product
+                    if (!$product->addons()->where('addon_id', $addon->id)->exists()) {
+                        return response()->json([
+                            'message' => "Addon {$addon->name} is not compatible with {$product->name}"
+                        ], 400);
+                    }
+                    
+                    $addonPrice = $addon->price * $addonItem['quantity'];
+                    $itemTotal += $addonPrice;
+                    
+                    $selectedAddons[] = [
+                        'id' => $addon->id,
+                        'name' => $addon->name,
+                        'quantity' => $addonItem['quantity'],
+                        'unit_price' => $addon->price
+                    ];
+                }
+            }
+            
             $total += $itemTotal;
             
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
-                'unit_price' => $product->price
+                'unit_price' => $product->price,
+                'selected_addons' => !empty($selectedAddons) ? $selectedAddons : null
             ]);
         }
 

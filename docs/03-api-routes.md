@@ -243,60 +243,175 @@ PUT /api/v1/regions/{id}
 }
 ```
 
-## 4. Pedidos e Produtos (Restaurantes)
+## 4. Produtos, Addons e Pedidos
 
 ### 4.1 Listar Produtos
 ```
 GET /api/v1/products
 ```
+**Query Params:**
+- `category`: Filtrar por categoria
+
 **Resposta (200 OK):**
 ```json
 {
-  "produtos": [
+  "products": [
     {
       "id": "string",
       "name": "string",
-      "descricao": "string",
-      "preco": "number",
-      "categoria": "string",
+      "description": "string",
+      "price": "number",
+      "category": "string",
+      "status": "string",
+      "partner": "string"
+    }
+  ]
+}
+```
+
+### 4.2 Obter Addons de um Produto
+```
+GET /api/v1/products/{product}/addons
+```
+**Resposta (200 OK):**
+```json
+{
+  "addons": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "price": "number",
       "status": "string"
     }
   ]
 }
 ```
 
-### 4.2 Criar Pedido
+### 4.3 Listar Addons
+```
+GET /api/v1/addons
+```
+**Query Params:**
+- `partner_id`: Filtrar por parceiro
+
+**Resposta (200 OK):**
+```json
+{
+  "addons": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "price": "number",
+      "status": "string",
+      "partner": "string"
+    }
+  ]
+}
+```
+
+### 4.4 Criar Addon (Parceiro)
+```
+POST /api/v1/addons
+```
+**Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "price": "number"
+}
+```
+**Resposta (201 Created):**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "status": "string",
+  "partner_id": "string"
+}
+```
+
+### 4.5 Atualizar Addon (Parceiro)
+```
+PUT /api/v1/addons/{addon}
+```
+**Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "price": "number",
+  "status": "available|unavailable"
+}
+```
+
+### 4.6 Associar Addons a um Produto (Parceiro)
+```
+POST /api/v1/products/{product}/addons
+```
+**Body:**
+```json
+{
+  "addon_ids": ["string", "string"]
+}
+```
+**Resposta (200 OK):**
+```json
+{
+  "message": "Addons updated successfully"
+}
+```
+
+### 4.7 Criar Pedido
 ```
 POST /api/v1/orders
 ```
 **Body:**
 ```json
 {
-  "restauranteId": "string",
-  "itens": [
+  "partner_id": "string",
+  "items": [
     {
-      "produtoId": "string",
-      "quantidade": "number"
+      "product_id": "string",
+      "quantity": "number",
+      "addons": [
+        {
+          "addon_id": "string",
+          "quantity": "number"
+        }
+      ]
     }
   ],
-  "entrega": {
-    "destino": {
+  "delivery": {
+    "destination": {
       "lat": "number",
       "lng": "number",
-      "endereco": "string"
+      "address": "string"
     }
   }
 }
 ```
+**Resposta (201 Created):**
+```json
+{
+  "id": "string",
+  "status": "string",
+  "total_value": "number"
+}
+```
 
-### 4.3 Atualizar Status do Pedido
+### 4.8 Atualizar Status do Pedido
 ```
 PATCH /api/v1/orders/{id}/status
 ```
 **Body:**
 ```json
 {
-  "status": "aceito|em_preparo|aguardando_entregador"
+  "status": "accepted|preparing|awaiting_delivery"
 }
 ```
 
@@ -362,59 +477,74 @@ POST /webhooks/delivery-updated
 }
 ```
 
-## Exemplo Completo: Criar e Acompanhar Entrega
+## Exemplo Completo: Criar Pedido com Addons
 
-**1. Cliente cria entrega:**
+**1. Cliente visualiza produtos:**
 ```http
-POST /api/v1/deliveries
+GET /api/v1/products?category=Lanches
+```
+
+**2. Cliente visualiza addons disponíveis para um produto:**
+```http
+GET /api/v1/products/123/addons
+```
+```json
+{
+  "addons": [
+    {
+      "id": "456",
+      "name": "Queijo Extra",
+      "description": "Queijo cheddar premium",
+      "price": "5.00",
+      "status": "available"
+    },
+    {
+      "id": "789",
+      "name": "Bacon",
+      "description": "Bacon crocante",
+      "price": "3.50",
+      "status": "available"
+    }
+  ]
+}
+```
+
+**3. Cliente cria pedido com addons:**
+```http
+POST /api/v1/orders
 Authorization: Bearer <cliente_token>
 ```
 ```json
 {
-  "origem": {
-    "lat": -23.5505,
-    "lng": -46.6333,
-    "endereco": "Av. Paulista, 1000"
-  },
-  "destino": {
-    "lat": -23.5614,
-    "lng": -46.6559,
-    "endereco": "Rua Augusta, 500"
-  },
-  "descricaoItem": "Documentos importantes",
-  "pesoEstimado": 0.5,
-  "dimensoes": {
-    "largura": 25,
-    "altura": 5,
-    "profundidade": 15
-  },
-  "tipo": "expressa"
+  "partner_id": "101",
+  "items": [
+    {
+      "product_id": "123",
+      "quantity": 1,
+      "addons": [
+        {
+          "addon_id": "456",
+          "quantity": 1
+        },
+        {
+          "addon_id": "789",
+          "quantity": 2
+        }
+      ]
+    }
+  ],
+  "delivery": {
+    "destination": {
+      "lat": -23.5614,
+      "lng": -46.6559,
+      "address": "Rua Augusta, 500"
+    }
+  }
 }
-```
-
-**2. Entregador aceita entrega:**
-```http
-PATCH /api/v1/deliveries/660e8400-e29b-41d4-a716-446655441111/accept
-Authorization: Bearer <entregador_token>
-```
-
-**3. Cliente acompanha status:**
-```http
-GET /api/v1/deliveries/660e8400-e29b-41d4-a716-446655441111
-Authorization: Bearer <cliente_token>
 ```
 ```json
 {
   "id": "660e8400-e29b-41d4-a716-446655441111",
-  "status": "em_transito",
-  "entregador": {
-    "name": "Aurora Silva",
-    "fotoUrl": "https://...",
-    "telefone": "+5511999999999"
-  },
-  "posicaoAtual": {
-    "lat": -23.5555,
-    "lng": -46.6444,
-    "timestamp": "2025-04-22T12:45:00Z"
-  }
+  "status": "pending",
+  "total_value": "22.00"
 }

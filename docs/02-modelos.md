@@ -14,6 +14,7 @@ erDiagram
     USER ||--o{ NODE : "parceiro"
     USER ||--o{ REGION : "parceiro"
     USER ||--o{ PRODUCT : "restaurante"
+    USER ||--o{ ADDON : "restaurante"
     USER ||--o{ NOTIFICATION : "notificações"
     DELIVERY ||--o{ RATING : "avaliações"
     RATING }|--|| USER : "avaliador"
@@ -25,6 +26,8 @@ erDiagram
     REGION ||--o{ NODE : "nodes na região"
     ORDER ||--o{ ORDER_ITEM : "itens"
     ORDER_ITEM }|--|| PRODUCT : "produto"
+    ORDER_ITEM ||--o{ ADDON : "addons selecionados"
+    PRODUCT }|--o{ ADDON : "addons compatíveis"
     ORDER ||--|{ USER : "cliente/restaurante"
     DELIVERY_ASSIGNMENT }|--|| USER : "parceiro"
 ```
@@ -33,7 +36,7 @@ erDiagram
 
 ### 1. Usuário (User)
 **Atributos:** id , name, email, phone, type (enum), status  
-**Relacionamentos:** Deliveries, Nodes, Regions, Products, Notifications
+**Relacionamentos:** Deliveries, Nodes, Regions, Products, Addons, Notifications
 
 ### 2. Entrega (Delivery)  
 **Atributos:** 
@@ -130,18 +133,80 @@ erDiagram
 - raterId + ratedId (composto)
 
 ### 6. Produto (Product)  
-**Atributos:** id, partnerId, name, price, status (enum)  
-**Relacionamentos:** User (parceiro), OrderItems
+**Atributos:** 
+- id
+- partnerId (User)
+- name (string)
+- description (text, nullable)
+- price (decimal)
+- category (string)
+- imageUrl (string, nullable)
+- status (enum: available, unavailable)
+- createdAt, updatedAt, deletedAt (timestamps)
 
-### 7. Pedido (Order)  
-**Atributos:** id, customerId, partnerId, status (enum), totalValue  
-**Relacionamentos:** User (cliente/parceiro), Delivery, OrderItems
+**Relacionamentos:** 
+- User (parceiro)
+- OrderItems
+- Addons (many-to-many)
 
-### 8. Item do Pedido (OrderItem)  
-**Atributos:** orderId, productId, quantity, unitPrice  
-**Relacionamentos:** Order, Product
+**Índices:**
+- partnerId + status
+- category
 
-### 9. Notificação (Notification)  
+### 7. Addon (Complemento)
+**Atributos:**
+- id
+- partnerId (User)
+- name (string)
+- description (text, nullable)
+- price (decimal)
+- status (enum: available, unavailable)
+- createdAt, updatedAt, deletedAt (timestamps)
+
+**Relacionamentos:**
+- User (parceiro)
+- Products (many-to-many)
+
+**Índices:**
+- partnerId + status
+
+### 8. Pedido (Order)  
+**Atributos:** 
+- id
+- customerId (User)
+- partnerId (User)
+- status (enum: pending, accepted, preparing, awaiting_delivery, delivery_picked_up, delivered, canceled)
+- total_value (decimal)
+- deliveryId (Delivery, nullable)
+- createdAt, updatedAt, deletedAt (timestamps)
+
+**Relacionamentos:** 
+- User (cliente)
+- User (parceiro)
+- Delivery
+- OrderItems
+
+**Índices:**
+- partnerId + status
+- customerId + createdAt
+
+### 9. Item do Pedido (OrderItem)  
+**Atributos:** 
+- orderId (Order)
+- productId (Product)
+- quantity (integer)
+- unit_price (decimal)
+- selected_addons (JSON, nullable)
+- createdAt, updatedAt (timestamps)
+
+**Relacionamentos:** 
+- Order
+- Product
+
+**Índices:**
+- productId
+
+### 10. Notificação (Notification)  
 **Atributos:** 
 - id 
 - userId (User)
@@ -156,7 +221,7 @@ erDiagram
 **Índices:**
 - userId + read_at
 
-### 10. Mensagem (Message)  
+### 11. Mensagem (Message)  
 **Atributos:** 
 - id 
 - deliveryId (Delivery)
@@ -172,7 +237,7 @@ erDiagram
 - deliveryId
 - userId
 
-### 11. Atribuição de Entrega (DeliveryAssignment)  
+### 12. Atribuição de Entrega (DeliveryAssignment)  
 **Atributos:**
 - id
 - deliveryId (Delivery)

@@ -14,6 +14,7 @@ use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\RegionController;
 use App\Http\Controllers\API\NodeController;
 use App\Http\Controllers\API\VotingController;
+use App\Http\Controllers\API\AddonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,7 @@ Route::prefix('v1')->group(function () {
     // Rotas públicas de produtos
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index']);
+        Route::get('/{product}/addons', [ProductController::class, 'getAddons']);
     });
 
     // Rotas protegidas por autenticação
@@ -85,6 +87,15 @@ Route::prefix('v1')->group(function () {
         Route::prefix('products')->group(function () {
             Route::post('/', [ProductController::class, 'store']);
             Route::put('/{product}', [ProductController::class, 'update']);
+            Route::post('/{product}/addons', [ProductController::class, 'addAddons']);
+        });
+        
+        // Rotas de addons
+        Route::prefix('addons')->group(function () {
+            Route::get('/', [AddonController::class, 'index']);
+            Route::post('/', [AddonController::class, 'store']);
+            Route::put('/{addon}', [AddonController::class, 'update']);
+            Route::delete('/{addon}', [AddonController::class, 'destroy']);
         });
 
         // Rotas de pedidos

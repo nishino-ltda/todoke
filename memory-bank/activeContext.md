@@ -12,12 +12,24 @@
    - Region-specific price bands
    - Automatic fare updates
 
-3. **Test Improvements**:
+3. **Product Customization**:
+   - Product addons/toppings system
+   - Addon-product compatibility management
+   - Order customization with addons
+
+4. **Test Improvements**:
    - Removing incomplete test markers
    - Adding assertions for delivery stages
    - Implementing automatic assignment creation
+   - Testing product customization features
 
 ## Recent Changes
+- Implemented product addons (toppings) functionality:
+  - Created Addon model and related migrations
+  - Implemented many-to-many relationship between products and addons
+  - Added support for addon selection in orders
+  - Created API endpoints for addon management and product-addon associations
+  - Added comprehensive tests for addon functionality
 - Implemented community pricing voting system:
   - Created VotingService, VotingCalculationService, VotingRoundService, and FareUpdateService
   - Added API endpoints for vote submission and retrieval
@@ -36,6 +48,7 @@
   - Standardized on 'delivered' status in all tests
   - Added assertions for stage preservation
   - Fixed PartnerDeliveryTest by ensuring both stage assignments exist before status updates
+  - Added tests for product addons functionality
 
 ## Key Decisions
 1. **Stage Management**:
@@ -56,6 +69,14 @@
    - Monthly voting schedule with automatic processing
    - Tie-breaking based on first-place vote counts
 
+4. **Product Customization**:
+   - Many-to-many relationship between products and addons
+   - Partner-specific addons (addons belong to partners)
+   - JSON storage for selected addons in order items
+   - Validation of addon-product compatibility during order creation
+   - Public API for viewing product addons
+   - Authenticated APIs for managing addons and associations
+
 ## Pending Tasks
 - Implement edge case tests for deliveries, focusing on:
   - Stage cancellations (initial implementation added)
@@ -72,5 +93,9 @@
   - Audio forum integration
   - Cost-based pricing dashboard
   - More sophisticated price band generation
+- Enhance product customization with:
+  - Addon categories (e.g., sauces, toppings, extras)
+  - Required vs. optional addons
+  - Addon quantity limits
 - Document test patterns in 02-code-style.md
 - Review security tests for stage updates
