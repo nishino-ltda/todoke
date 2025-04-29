@@ -86,3 +86,6 @@ A suíte de testes inclui:
 - Reduz pegada de carbono das operações
 - Democratiza acesso a serviços de entrega
 - Fomenta empreendedorismo local
+
+
+Ideia de propaganda: aquele audio 'pronto querem me comer, aquii nãão'

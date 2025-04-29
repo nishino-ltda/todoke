@@ -11,6 +11,8 @@ use Mockery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Facade;
 
 class StageStatusUpdateTest extends TestCase
 {
@@ -20,7 +22,13 @@ class StageStatusUpdateTest extends TestCase
     {
         parent::setUp();
         Mockery::close();
+        Mockery::close();
         $this->withoutMiddleware();
+        Facade::clearResolvedInstances();
+
+        // Mock the Log facade to prevent errors during testing
+        Log::shouldReceive('debug')->andReturn(null);
+        Log::shouldReceive('info')->andReturn(null);
     }
 
     public function test_update_status_updates_hybrid_delivery_stage_status(): void
@@ -57,6 +65,12 @@ class StageStatusUpdateTest extends TestCase
 
         $result = $service->updateStatus($deliveryMock, $data);
         $this->assertEquals($deliveryMock, $result);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
     }
 
     public function test_update_status_throws_exception_for_invalid_stage_type(): void

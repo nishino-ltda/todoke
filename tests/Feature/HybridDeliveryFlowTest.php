@@ -7,6 +7,8 @@ use App\Models\DeliveryAssignment;
 use Illuminate\Support\Facades\Log;
 use Mockery;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Facade;
+use PHPUnit\Framework\Attributes\Test;
 
 class HybridDeliveryFlowTest extends TestCase
 {
@@ -16,8 +18,20 @@ class HybridDeliveryFlowTest extends TestCase
     {
         parent::setUp();
         Mockery::close();
+        Facade::clearResolvedInstances();
+
+        // Mock the Log facade to prevent errors during testing
+        Log::shouldReceive('debug')->andReturn(null);
+        Log::shouldReceive('info')->andReturn(null);
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
+
+    #[Test]
     /**
      * Teste: Entrega híbrida (Moto + Drone)
      * - Deve verificar o fluxo de entrega combinando parceiros diferentes

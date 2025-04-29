@@ -18,6 +18,12 @@ class DroneStatusUpdatesTest extends TestCase
         Mockery::close();
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
+
     /**
      * Teste: Atualização de status pelo parceiro DroneExpress
      * - Deve verificar se um parceiro drone pode atualizar status de entrega

@@ -25,6 +25,12 @@ class HybridDeliveryEdgeCasesTest extends TestCase
     }
 
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
+
     /**
      * Test handling of first stage cancellation in a hybrid delivery.
      *

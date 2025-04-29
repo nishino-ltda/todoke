@@ -40,6 +40,12 @@ class DeliveryTrackingTest extends TestCase
         $this->courierToken = $this->courier->createToken('courier-token')->plainTextToken;
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
+
     public function testDeliveryTracking()
     {
         // Create a delivery

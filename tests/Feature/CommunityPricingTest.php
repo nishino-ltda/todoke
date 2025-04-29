@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 
 class CommunityPricingTest extends TestCase
 {
@@ -71,6 +72,12 @@ class CommunityPricingTest extends TestCase
                 'max_fare_per_km' => 2.2,
             ]),
         ];
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
     }
 
     /** @test */
@@ -203,7 +210,7 @@ class CommunityPricingTest extends TestCase
         $this->assertEquals($option1Id, $winner['option_id']);
     }
 
-    /** @test */
+    #[Test]
     public function voting_round_service_can_close_round_and_update_pricing()
     {
         // Create votes (simplified from previous test)
@@ -217,9 +224,12 @@ class CommunityPricingTest extends TestCase
         ]);
         
         // Close the voting round
-        $votingRoundService = new VotingRoundService();
         $calculationService = new VotingCalculationService();
         $fareUpdateService = new FareUpdateService();
+        $votingRoundService = new VotingRoundService(
+            $calculationService,
+            $fareUpdateService
+        );
         
         $result = $votingRoundService->closeVotingRound(
             $this->votingRound->id,

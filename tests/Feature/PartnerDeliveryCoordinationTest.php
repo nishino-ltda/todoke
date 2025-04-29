@@ -22,6 +22,12 @@ class PartnerDeliveryCoordinationTest extends TestCase
             ->andReturn(new DeliveryAssignment()); // Return a dummy instance
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        Mockery::close();
+    }
+
     /**
      * Teste: Integração entre parceiros (BistroTech -> LogisMaster)
      * - Deve verificar se um partnere pode solicitar entregas para uma logística
