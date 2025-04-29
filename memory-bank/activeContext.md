@@ -24,6 +24,12 @@
    - Testing product customization features
 
 ## Recent Changes
+- Fixed test interdependency issues in MenuTest:
+  - Identified and resolved an issue where MenuTest passed when run individually but failed when run as part of the full test suite
+  - Root cause was improper mocking of the Log facade in other tests that wasn't being cleaned up
+  - Implemented a more resilient approach using direct token generation instead of relying on auth controllers
+  - Added proper mock cleanup with Mockery::close() to prevent interference between tests
+  - Switched from DatabaseTransactions to RefreshDatabase for cleaner test isolation
 - Implemented product addons (toppings) functionality:
   - Created Addon model and related migrations
   - Implemented many-to-many relationship between products and addons

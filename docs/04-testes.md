@@ -134,26 +134,56 @@ $response->assertStatus(500);
 $this->assertNotEmpty($response->json('message'));
 ```
 
+## Padrões de Isolamento de Testes
+
+Para garantir que os testes sejam independentes e não interfiram uns nos outros, implementamos os seguintes padrões:
+
+1. **Limpeza de Mocks**:
+   - Usar `Mockery::close()` no método `setUp()` para limpar mocks de testes anteriores
+   - Evitar mocks estáticos sem limpeza adequada
+
+2. **Autenticação Direta**:
+   - Gerar tokens diretamente usando Sanctum em vez de depender de controllers
+   - Exemplo:
+   ```php
+   private function getAuthToken(User $user): string
+   {
+       // Create a token directly
+       $token = $user->createToken('test-token')->plainTextToken;
+       return $token;
+   }
+   ```
+
+3. **Estado do Banco de Dados**:
+   - Usar `RefreshDatabase` em vez de `DatabaseTransactions` para garantir um estado limpo
+   - Criar dados de teste específicos para cada teste
+
+4. **Evitar Dependências entre Testes**:
+   - Cada teste deve configurar seu próprio ambiente
+   - Não depender de dados criados por outros testes
+
+Estes padrões foram implementados no MenuTest para resolver um problema onde o teste passava quando executado individualmente, mas falhava quando executado como parte da suíte completa.
+
 ## Como executar os testes
 
 Execute todos os testes:
 ```bash
-./vendor/bin/phpunit
+php artisan test
 ```
 
 Executar apenas testes unitários:
 ```bash
-./vendor/bin/phpunit --testsuite=Unit
+php artisan test --testsuite=Unit
 ```
 
 Executar apenas testes de feature:
 ```bash
-./vendor/bin/phpunit --testsuite=Feature
+php artisan test --testsuite=Feature
 ```
 
 Executar um arquivo de teste específico:
 ```bash
-./vendor/bin/phpunit tests/Feature/MenuTest.php
+php artisan test tests/Feature/MenuTest.php
 ```
 
 ## Configuração

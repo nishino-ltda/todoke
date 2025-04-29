@@ -65,6 +65,12 @@ sequenceDiagram
    - Controllers interact with models through repository interfaces
    - Enables clean separation of concerns and testability
 
+6. **Test Isolation Pattern**:
+   - Tests are designed to be independent and not affect each other
+   - Direct token generation instead of relying on auth controllers
+   - Mock cleanup with Mockery::close() to prevent interference
+   - RefreshDatabase trait for clean database state between tests
+
 ## Data Structures
 
 ### Delivery Stages

@@ -7,11 +7,13 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Addon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Mockery;
 
 class MenuTest extends TestCase
 {
-    // use DatabaseTransactions;
+    use RefreshDatabase;
     private User $partner;
     private string $partnerToken;
     private User $customer;
@@ -21,35 +23,34 @@ class MenuTest extends TestCase
     {
         parent::setUp();
         
-        // Run migrations
-        $this->artisan('migrate:fresh');
+        // Reset any mocks that might have been set by other tests
+        Mockery::close();
+        
+        // Create partner restaurant
+        $this->partner = User::factory()->create([
+            'type' => 'partner',
+            'email' => 'bistrotech@example.com',
+            'name' => 'Bistro Tech',
+            'password' => bcrypt('Bistro123'),
+            'status' => 'active'
+        ]);
 
-        // Create partner restaurant only once
-        if (!isset($this->partner)) {
-            $this->partner = new User([
-                 'id' => 1, // ID fixo para o partner
-                'type' => 'partner',
-                'email' => 'bistrotech@example.com',
-                'name' => 'Bistro Tech',
-                'password' => bcrypt('Bistro123'),
-                'status' => 'active'
-            ]);
-            $this->partner->save();
-
-            // Create customer only once
-            $this->customer = User::factory()->create(['type' => 'customer']);
-            
-            // Get tokens
-            $this->partnerToken = $this->postJson('/api/v1/auth/login', [
-                'email' => 'bistrotech@example.com',
-                'password' => 'Bistro123'
-            ])->json('token');
-
-            $this->customerToken = $this->postJson('/api/v1/auth/login', [
-                'email' => $this->customer->email,
-                'password' => 'Password123'
-            ])->json('token');
-        }
+        // Create customer
+        $this->customer = User::factory()->create(['type' => 'customer']);
+        
+        // Get tokens - using direct database authentication to avoid Log facade issues
+        $this->partnerToken = $this->getAuthToken($this->partner);
+        $this->customerToken = $this->getAuthToken($this->customer);
+    }
+    
+    /**
+     * Get authentication token directly without relying on the auth controller
+     */
+    private function getAuthToken(User $user): string
+    {
+        // Create a token directly
+        $token = $user->createToken('test-token')->plainTextToken;
+        return $token;
     }
 
     public function testProductListing()
@@ -144,11 +145,8 @@ class MenuTest extends TestCase
     {
         $product = Product::factory()->forPartner($this->partner->id)->create();
 
-         $outroPartner = User::factory()->create(['type' => 'partner']);
-        $outroToken = $this->postJson('/api/v1/auth/login', [
-             'email' => $outroPartner->email,
-            'password' => 'Password123'
-        ])->json('token');
+        $outroPartner = User::factory()->create(['type' => 'partner']);
+        $outroToken = $this->getAuthToken($outroPartner);
 
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $outroToken

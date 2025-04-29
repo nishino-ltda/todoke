@@ -61,7 +61,7 @@
 ✅ CommunityPricingTest (voting system, Borda count calculation)
 ⚠️ PerformanceTest (needs expansion, risky tests for listing deliveries with large datasets, concurrent order creation, and concurrent status updates)
 ⚠️ HybridDeliveryEdgeCasesTest (fixed cancellation handling and status validation, offline scenario test marked incomplete, risky tests for cancellation and drone failure handling)
-✅ MenuTest (product, order, and addon flows - all tests passing)
+✅ MenuTest (product, order, and addon flows - all tests passing, fixed test interdependency issues)
 ⚠️ NodeRegionTest (node and region associations, risky tests for GeoJSON validation and node approval)
 ✅ PartnerAnalyticsTest (partner metrics)
 ✅ PartnerRegistrationTest (partner and node registration)
