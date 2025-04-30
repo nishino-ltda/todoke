@@ -226,7 +226,7 @@ class SecurityTest extends TestCase
         $this->actingAs($partner, 'sanctum');
 
         // Act: Attempt to update the status of the unassigned delivery.
-        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", ['status' => 'accepted']);
+        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", ['status' => 'collected']);
 
         // Assert: Should be denied access.
         $response->assertStatus(403);
