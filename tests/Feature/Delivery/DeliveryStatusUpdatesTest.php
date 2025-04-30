@@ -1,12 +1,13 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Delivery;
 
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Delivery;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Feature\Delivery\DeliveryBaseTest;
 
 class DeliveryStatusUpdatesTest extends DeliveryBaseTest
 {
