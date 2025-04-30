@@ -82,7 +82,7 @@ class CommunityPricingTest extends TestCase
         parent::tearDown();
     }
 
-    /** @test */
+    #[Test]
     public function courier_can_submit_vote()
     {
         $response = $this->actingAs($this->user)
@@ -105,7 +105,7 @@ class CommunityPricingTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function courier_can_get_active_voting_rounds()
     {
         $response = $this->actingAs($this->user)
@@ -115,7 +115,7 @@ class CommunityPricingTest extends TestCase
             ->assertJsonStructure(['voting_rounds']);
     }
 
-    /** @test */
+    #[Test]
     public function courier_can_get_active_voting_round_for_region()
     {
         $response = $this->actingAs($this->user)
@@ -125,7 +125,7 @@ class CommunityPricingTest extends TestCase
             ->assertJsonStructure(['voting_round']);
     }
 
-    /** @test */
+    #[Test]
     public function borda_count_calculation_works_correctly()
     {
         // Create multiple users and votes

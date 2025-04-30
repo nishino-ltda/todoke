@@ -179,34 +179,42 @@ class SecurityTest extends TestCase
         ]);
     }
 
-    // Test case: Unauthorized access to sensitive endpoints (e.g., creating a delivery, updating status)
-    // Should return an authentication error.
+    #[Test]
     public function test_unauthorized_access_to_sensitive_endpoints(): void
     {
         // Arrange: Get a sensitive endpoint URL (e.g., create delivery).
-        // $sensitiveEndpoint = '/api/v1/deliveries';
-        // $deliveryData = [...]; // Valid delivery data
+        $sensitiveEndpoint = '/api/v1/deliveries';
+        $deliveryData = [
+            'customer_id' => $this->customer1->id,
+            'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
+            'destination' => ['lat' => -23.5675, 'lng' => -46.6558, 'address' => 'Av. Brigadeiro Faria Lima, 1000'],
+            'items' => [
+                ['product_id' => 1, 'quantity' => 1, 'price' => 10.00]
+            ],
+            'value' => 10.00,
+            'type' => 'standard',
+            'payment_method' => 'credit_card'
+        ];
 
         // Act: Send a request to the sensitive endpoint without authentication.
-        // $response = $this->postJson($sensitiveEndpoint, $deliveryData);
+        $response = $this->postJson($sensitiveEndpoint, $deliveryData);
 
         // Assert: The API endpoint returns an authentication error (e.g., 401).
-        // $response->assertStatus(401);
+        $response->assertStatus(401);
     }
 
-    // Test case: User attempting to access data belonging to another user (e.g., viewing another user's deliveries)
-    // Should return a forbidden error or not include the unauthorized data.
+    #[Test]
     public function test_user_cannot_access_other_users_data(): void
     {
         // Arrange: Create a delivery for customer1 and authenticate as customer2.
-        // $deliveryForCustomer1 = Delivery::factory()->create(['customer_id' => $this->customer1->id]);
-        // $this->actingAs($this->customer2, 'sanctum');
+        $deliveryForCustomer1 = Delivery::factory()->create(['customer_id' => $this->customer1->id]);
+        $this->actingAs($this->customer2, 'sanctum');
 
         // Act: Attempt to access the delivery belonging to customer1.
-        // $response = $this->getJson("/api/v1/deliveries/{$deliveryForCustomer1->id}");
+        $response = $this->getJson("/api/v1/deliveries/{$deliveryForCustomer1->id}");
 
         // Assert: The API endpoint returns a forbidden error (e.g., 403).
-        // $response->assertStatus(403);
+        $response->assertStatus(403);
     }
 
     // Test case: Partner attempting to update a delivery they are not assigned to

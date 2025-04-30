@@ -9,6 +9,7 @@ use App\Models\Node;
 use App\Models\Region;
 use Illuminate\Database\QueryException; // Import for catching database exceptions
 use Mockery;
+use App\Models\User;
 
 class NodeRegionTest extends TestCase
     {
@@ -108,26 +109,34 @@ class NodeRegionTest extends TestCase
         $this->assertDatabaseMissing('regions', ['id' => $region->id]);
     }
 
-    // Test case: Creating a region with valid GeoJSON
-    // Should successfully create the region and store the GeoJSON data.
+    /**
+     * Test case: Creating a region with valid GeoJSON
+     * Should successfully create the region and store the GeoJSON data.
+     *
+     * @return void
+     */
     public function test_creates_region_with_valid_geojson(): void
     {
         // Arrange: Set up valid GeoJSON data for a region.
-        // $validGeoJson = '{ "type": "Polygon", "coordinates": [ [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ] ] }';
-        // $regionData = ['name' => 'Test Region', 'geojson' => $validGeoJson];
+        $validGeoJson = '{ "type": "Polygon", "coordinates": [ [ [100.0, 0.0], [101.0, 0.0], [101.0, 1.0], [100.0, 1.0], [100.0, 0.0] ] ] }';
+        $regionData = ['name' => 'Test Region', 'geojson' => $validGeoJson];
 
         // Act: Send a request to create the region.
-        // $response = $this->postJson('/api/v1/regions', $regionData);
+        $response = $this->postJson('/api/v1/regions', $regionData);
 
         // Assert: The API call is successful and the region is created.
-        // $response->assertStatus(201);
-        // $this->assertDatabaseHas('regions', ['name' => 'Test Region', 'geojson' => $validGeoJson]);
+        $response->assertStatus(201);
+        $this->assertDatabaseHas('regions', ['name' => 'Test Region', 'geojson' => $validGeoJson]);
     }
 
-    // Test case: Creating a region with invalid GeoJSON
-    // Should reject the request and return a validation error.
-    public function test_cannot_create_region_with_invalid_geojson(): void
-    {
+    /**
+     * Test case: Creating a region with invalid GeoJSON
+     * Should reject the request and return a validation error.
+     *
+     * @return void
+     */
+    // public function test_cannot_create_region_with_invalid_geojson(): void
+    // {
         // Arrange: Set up invalid GeoJSON data.
         // $invalidGeoJson = '{ "type": "InvalidType", "coordinates": [] }';
         // $regionData = ['name' => 'Invalid Region', 'geojson' => $invalidGeoJson];
@@ -141,12 +150,16 @@ class NodeRegionTest extends TestCase
         // $response->assertJsonValidationErrors('geojson');
         // Assert: No new Region model is created.
         // $this->assertDatabaseMissing('regions', ['name' => 'Invalid Region']);
-    }
+    // }
 
-    // Test case: Admin approving a pending node
-    // Should change the node's status to 'active' and allow it to be assigned deliveries.
-    public function test_admin_approves_pending_node(): void
-    {
+    /**
+     * Test case: Admin approving a pending node
+     * Should change the node's status to 'active' and allow it to be assigned deliveries.
+     *
+     * @return void
+     */
+    // public function test_admin_approves_pending_node(): void
+    // {
         // Arrange: Create a pending node and an admin user.
         // $adminUser = User::factory()->create(['type' => 'admin']);
         // $pendingNode = Node::factory()->create(['status' => 'pending']);
@@ -160,23 +173,24 @@ class NodeRegionTest extends TestCase
         // $response->assertOk();
         // $this->assertEquals('active', $pendingNode->fresh()->status);
         // Assert: The node becomes available for delivery assignments (this might require a separate test or service interaction).
-    }
+    // }
 
     // Test case: Non-admin attempting to approve a node
     // Should be denied access and return a forbidden error.
     public function test_non_admin_cannot_approve_node(): void
     {
         // Arrange: Create a pending node and a non-admin user (e.g., customer or courier).
-        // $nonAdminUser = User::factory()->create(['type' => 'customer']); // Or 'courier'
-        // $pendingNode = Node::factory()->create(['status' => 'pending']);
-        // $this->actingAs($nonAdminUser, 'sanctum');
+        $nonAdminUser = User::factory()->create(['type' => 'customer']); // Or 'courier'
+        $pendingNode = Node::factory()->create(['status' => 'pending_approval']);
+        $this->actingAs($nonAdminUser, 'sanctum');
 
         // Act: Send a request to approve the node.
-        // $response = $this->patchJson("/api/v1/nodes/{$pendingNode->id}/approve");
+        // Assuming an API endpoint like PATCH /api/v1/nodes/{node}/approve
+        $response = $this->patchJson("/api/v1/nodes/{$pendingNode->id}/approve");
 
         // Assert: The API endpoint returns a forbidden error (e.g., 403).
-        // $response->assertStatus(403);
+        $response->assertStatus(403);
         // Assert: The node's status remains unchanged.
-        // $this->assertEquals('pending', $pendingNode->fresh()->status);
+        $this->assertEquals('pending_approval', $pendingNode->fresh()->status);
     }
 }
