@@ -5,27 +5,35 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Delivery;
+use App\Services\NotificationServiceInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 
 class DeliveryBaseTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase {
+        refreshDatabase as baseRefreshDatabase;
+    }
 
     protected User $customer;
     protected string $customerToken;
     protected User $courier;
     protected string $courierToken;
     protected ?Delivery $delivery = null;
+    protected $notificationServiceMock;
 
     protected function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
-
-        // Mock Notification model
-        $this->mockNotificationModel();
+        
+        // Mock NotificationServiceInterface
+        $this->notificationServiceMock = Mockery::mock(NotificationServiceInterface::class);
+        $this->notificationServiceMock->shouldReceive('createDeliveryNotification')
+            ->withAnyArgs()
+            ->andReturn(true);
+        
+        $this->app->instance(NotificationServiceInterface::class, $this->notificationServiceMock);
 
         $this->customer = User::factory()->create([
             'id' => 1,
@@ -44,14 +52,10 @@ class DeliveryBaseTest extends TestCase
         $this->courierToken = $this->courier->createToken('courier-token')->plainTextToken;
     }
 
-    protected function mockNotificationModel(): void
+    protected function tearDown(): void
     {
-        $this->instance(
-            \App\Models\Notification::class,
-            \Mockery::mock('overload:' . \App\Models\Notification::class, function ($mock) {
-                $mock->shouldReceive('create')->andReturn(true);
-            })
-        );
+        Mockery::close();
+        parent::tearDown();
     }
 
     protected function createDelivery(): Delivery

@@ -4,8 +4,8 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Services\DeliveryStatusService;
+use App\Services\NotificationServiceInterface;
 use App\Models\Delivery;
-use App\Models\Notification;
 use Mockery;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,13 +17,19 @@ class StatusUpdateTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
         $this->withoutMiddleware();
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 
     public function test_update_status_updates_simple_delivery_status(): void
     {
-        $deliveryMock = Mockery::mock(Delivery::class)->shouldAllowMockingProtectedMethods();
+        /** @var Delivery|Mockery\MockInterface $deliveryMock */
+        $deliveryMock = Mockery::mock(Delivery::class)->makePartial();
         $deliveryMock->shouldReceive('getAttribute')->with('stages')->andReturn([]);
         $deliveryMock->shouldReceive('update')->once()->with([
             'status' => 'in_transit',
@@ -32,10 +38,12 @@ class StatusUpdateTest extends TestCase
         $deliveryMock->shouldReceive('getAttribute')->with('customer_id')->andReturn('customer-456');
         $deliveryMock->shouldReceive('getAttribute')->with('id')->andReturn('delivery-789');
 
-        $notificationMock = Mockery::mock('overload:' . Notification::class);
-        $notificationMock->shouldReceive('create')->once()->with(Mockery::any());
+        $notificationServiceMock = Mockery::mock(NotificationServiceInterface::class);
+        $notificationServiceMock->shouldReceive('createDeliveryNotification')
+            ->once()
+            ->with('customer-456', 'delivery_updated', Mockery::any());
 
-        $service = new DeliveryStatusService();
+        $service = new DeliveryStatusService($notificationServiceMock);
         $data = [
             'status' => 'in_transit',
             'current_position' => ['lat' => 1.23, 'lng' => 4.56]
@@ -47,11 +55,13 @@ class StatusUpdateTest extends TestCase
 
     public function test_update_status_throws_exception_for_invalid_status(): void
     {
-        $deliveryMock = Mockery::mock(Delivery::class)->shouldAllowMockingProtectedMethods();
+        /** @var Delivery|Mockery\MockInterface $deliveryMock */
+        $deliveryMock = Mockery::mock(Delivery::class)->makePartial();
         $deliveryMock->shouldNotReceive('update');
         $deliveryMock->shouldNotReceive('getAttribute');
 
-        $service = new DeliveryStatusService();
+        $notificationServiceMock = Mockery::mock(NotificationServiceInterface::class);
+        $service = new DeliveryStatusService($notificationServiceMock);
         $data = [
             'status' => 'invalid_status',
         ];

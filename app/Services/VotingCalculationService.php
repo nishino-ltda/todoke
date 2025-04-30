@@ -5,9 +5,16 @@ namespace App\Services;
 use App\Models\VotingRound;
 use App\Models\VotingOption;
 use Illuminate\Support\Collection;
+use App\Repositories\VotingRoundRepositoryInterface;
 
 class VotingCalculationService
 {
+    protected $votingRoundRepository;
+
+    public function __construct(VotingRoundRepositoryInterface $votingRoundRepository)
+    {
+        $this->votingRoundRepository = $votingRoundRepository;
+    }
     /**
      * Calculate the results of a voting round using the Borda count method.
      *
@@ -16,7 +23,7 @@ class VotingCalculationService
      */
     public function calculateResults(int $votingRoundId): array
     {
-        $votingRound = VotingRound::with(['votingOptions', 'votes'])->findOrFail($votingRoundId);
+        $votingRound = $this->votingRoundRepository->findWithRelations($votingRoundId, ['votingOptions', 'votes']);
         $options = $votingRound->votingOptions;
         $votes = $votingRound->votes;
         

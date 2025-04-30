@@ -4,11 +4,17 @@ namespace App\Services;
 
 use App\Models\Delivery;
 use App\Models\DeliveryAssignment;
-use App\Models\Notification;
-use Illuminate\Support\Facades\Log;
+use App\Services\NotificationServiceInterface;
 
 class DeliveryStatusService
 {
+    private NotificationServiceInterface $notificationService;
+
+    public function __construct(NotificationServiceInterface $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     private const VALID_STATUSES = [
         'pending',
         'accepted',
@@ -191,14 +197,6 @@ class DeliveryStatusService
         // Update the corresponding delivery assignment
         $stageIndex = array_search($stageType, array_column($stages, 'type'));
         $stageNumber = $stageIndex;
-        Log::debug('Updating assignment status', [
-            'delivery_id' => $delivery->id,
-            'stage_type' => $stageType,
-            'stage_number' => $stageNumber,
-            'status' => $status,
-            'stages' => $stages,
-            'stage_types' => array_column($stages, 'type')
-        ]);
 
         // Map stage status to assignment status
         $assignmentStatus = match($status) {
@@ -243,50 +241,11 @@ class DeliveryStatusService
                 ->where('stage', $stageNumber)
                 ->update(['status' => $finalStatus]);
 
-            Log::debug('Assignment status updated', [
-                'delivery_id' => $delivery->id,
-                'stage' => $stageNumber,
-                'status' => $finalStatus,
-                'rows_updated' => $updated
-            ]);
         }
-
-        Log::debug('Final assignment status decision', [
-            'stage_status' => $status,
-            'delivery_status' => $updateData['status'],
-            'final_status' => $finalStatus,
-            'stage_number' => $stageNumber,
-            'stage_type' => $stageType,
-            'is_drone_status' => in_array($status, ['drone_launched', 'drone_in_route', 'drone_arrived'])
-        ]);
-
-        Log::debug('Assignment update result', [
-            'rows_updated' => $updated,
-            'assignment_status' => $assignmentStatus,
-            'final_status' => $finalStatus,
-            'force_delivered' => ($status === 'delivered'),
-            'assignment_exists' => DeliveryAssignment::where('delivery_id', $delivery->id)
-                ->where('stage', $stageNumber)
-                ->exists()
-        ]);
 
         if ($updated === 0) {
-            Log::error('Failed to update assignment status', [
-                'delivery_id' => $delivery->id,
-                'stage' => $stageNumber,
-                'expected_status' => $finalStatus,
-                'current_assignment' => DeliveryAssignment::where('delivery_id', $delivery->id)
-                    ->where('stage', $stageNumber)
-                    ->first()
-            ]);
+            // Failed to update assignment status
         }
-
-        Log::info('Delivery status update', [
-            'delivery_id' => $delivery->id,
-            'status' => $status,
-            'stage_type' => $stageType,
-            'all_stages_complete' => $allStagesComplete
-        ]);
 
         $this->createNotification(
             $delivery->customer_id,
@@ -306,10 +265,6 @@ class DeliveryStatusService
      */
     private function createNotification(string $userId, string $type, array $data): void
     {
-        Notification::create([
-            'user_id' => $userId,
-            'type' => $type,
-            'data' => $data
-        ]);
+        $this->notificationService->createDeliveryNotification($userId, $type, $data);
     }
 }

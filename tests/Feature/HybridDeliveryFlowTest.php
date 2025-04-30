@@ -17,18 +17,11 @@ class HybridDeliveryFlowTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
-        Facade::clearResolvedInstances();
-
-        // Mock the Log facade to prevent errors during testing
-        Log::shouldReceive('debug')->andReturn(null);
-        Log::shouldReceive('info')->andReturn(null);
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
-        Mockery::close();
     }
 
     #[Test]

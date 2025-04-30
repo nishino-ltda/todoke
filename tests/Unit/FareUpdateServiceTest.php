@@ -8,6 +8,7 @@ use App\Services\FareUpdateService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Log;
 use Mockery;
+use Illuminate\Support\Facades\Facade; // Add this line
 
 class FareUpdateServiceTest extends TestCase
 {
@@ -17,13 +18,18 @@ class FareUpdateServiceTest extends TestCase
     {
         parent::setUp();
         Mockery::close();
+        Facade::clearResolvedInstances();
         
-        // Create and bind a proper mock for Log facade
-        $logMock = Mockery::mock('overload:'.Log::class);
-        $logMock->shouldReceive('info')->andReturnNull()->byDefault();
-        $logMock->shouldReceive('debug')->andReturnNull()->byDefault();
-        
-        $this->app->instance(Log::class, $logMock);
+        // Mock the Log facade using Laravel's built-in method
+        Log::shouldReceive('info')->andReturnNull()->byDefault();
+        Log::shouldReceive('debug')->andReturnNull()->byDefault();
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        Facade::clearResolvedInstances();
+        parent::tearDown();
     }
 
     // Test case: Updating a single region's pricing

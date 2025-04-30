@@ -1,166 +1,109 @@
-# TODOKE System Patterns
+## Interface Usage Pattern (Updated 2025-04-29)
 
-## Core Architecture
+### Key Principles
 
-### Hybrid Delivery System
-```mermaid
-sequenceDiagram
-    participant Partner
-    participant Controller
-    participant StatusService
-    participant Model
-    
-    Partner->>Controller: Create hybrid delivery
-    Controller->>Model: Save with stages
-    Model->>StatusService: Create assignments
-    StatusService->>Model: Update assignments
-    loop Stage Updates
-        Partner->>Controller: Update stage status
-        Controller->>StatusService: Process update
-        StatusService->>Model: Update stage
-        StatusService->>Model: Update assignment
-        StatusService->>Partner: Notify next stage
-    end
-```
+1. **Dependency Injection**:
+   - Always type-hint interfaces rather than concrete classes
+   - Enables easier testing and implementation swapping
+   - Particularly important for avoiding direct Eloquent model dependencies
 
-### Product Customization System
-```mermaid
-sequenceDiagram
-    participant Customer
-    participant Controller
-    participant Model
-    participant Validator
-    
-    Customer->>Controller: View product addons
-    Controller->>Model: Get product with addons
-    Model->>Controller: Return product addons
-    Controller->>Customer: Display available addons
-    
-    Customer->>Controller: Create order with addons
-    Controller->>Validator: Validate addon compatibility
-    Validator->>Controller: Validation result
-    Controller->>Model: Save order with addons
-    Controller->>Customer: Order confirmation
-```
+2. **Testing**:
+   - Mock interfaces rather than concrete implementations
+   - Avoids the need to mock complex Eloquent model behavior
+   - Makes tests more maintainable and isolated
 
-### Key Design Patterns
+3. **Service Layer**:
+   - Define clear service contracts via interfaces
+   - Hide implementation details from consumers
+   - Services should depend on interfaces, not models
 
-1. **State Pattern**:
-   - Used in DeliveryStatusService for handling different delivery states
-   - Specialized status handling for drone operations
+4. **Repository Pattern**:
+   - Use interfaces for all data access
+   - Makes data layer interchangeable
+   - Prevents direct model usage in business logic
 
-2. **Observer Pattern**:
-   - Status changes trigger notifications
-   - Stage completions notify next partners
+### Implementation Approach
 
-3. **Strategy Pattern**:
-   - Different pricing calculation methods, including region-specific variations based on factors like gas prices and demand.
-   - Various routing algorithms
+1. **For Models**:
+   - Create repository interfaces for model operations
+   - Move all database operations to repository implementations
+   - Never inject models directly into services
 
-4. **Decorator Pattern**:
-   - Product addons act as decorators for base products
-   - Each addon adds functionality (and cost) to the base product
+2. **For Notifications**:
+   - Use NotificationServiceInterface
+   - Implement notification sending in concrete service
+   - Mock interface in tests instead of Notification model
 
-5. **Repository Pattern**:
-   - Controllers interact with models through repository interfaces
-   - Enables clean separation of concerns and testability
+3. **For Other Services**:
+   - Define interfaces for service contracts
+   - Implement concrete versions for production
+   - Mock interfaces in tests
 
-6. **Test Isolation Pattern**:
-   - Tests are designed to be independent and not affect each other
-   - Standardized on `RefreshDatabase` trait for all tests
-   - Implemented `Mockery::close()` in all test `setUp` methods
-   - Authentication methods updated to use direct token generation
-   - All 103 tests passing with reduced interdependencies
+### Benefits
 
-## Data Structures
+- **Avoids Mocking Eloquent**:
+  - No need to mock complex model relationships
+  - No database setup required for unit tests
+  - Tests run faster without database interactions
 
-### Delivery Stages
+- **Loose Coupling**:
+  - Components depend on abstractions
+  - Easier to swap implementations
+  - Clear separation of concerns
+
+- **Testability**:
+  - Mock interfaces are simpler than mocking models
+  - Tests focus on behavior not implementation
+  - More reliable test assertions
+
+### Example Implementations
+
+1. Repository Pattern:
 ```php
-[
-    [
-        'type' => 'delivery_point',
-        'status' => 'pending',
-        'partner_id' => 123,
-        'node_id' => 456
-    ],
-    [
-        'type' => 'distribution_center', 
-        'status' => 'pending',
-        'partner_id' => 789,
-        'node_id' => 101
-    ]
-]
+// Use interface in constructor
+public function __construct(VotingRoundRepositoryInterface $repository) 
+{
+    $this->repository = $repository;
+}
+
+// Mock interface in tests
+$mock = Mockery::mock(VotingRoundRepositoryInterface::class);
 ```
 
-### Delivery Assignments
+2. Notification Service:
 ```php
-[
-    'delivery_id' => 1,
-    'partner_id' => 123,
-    'stage' => 1,
-    'status' => 'pending'
-]
-```
+// Interface definition
+interface NotificationServiceInterface {
+    public function send(User $user, string $message): void;
+}
 
-### Selected Addons
-```php
-[
-    [
-        'id' => 1,
-        'name' => 'Extra Cheese',
-        'quantity' => 2,
-        'unit_price' => 2.50
-    ],
-    [
-        'id' => 3,
-        'name' => 'Bacon Bits',
-        'quantity' => 1,
-        'unit_price' => 3.00
-    ]
-]
-```
-
-## API Design
-
-### Key Endpoints
-
-#### Delivery Endpoints
-- `POST /api/v1/deliveries`: Create delivery (handles hybrid flag)
-- `PATCH /api/v1/deliveries/{id}/status`: Update status (stage-aware)
-- `GET /api/v1/deliveries/{id}/stages`: Get stage information
-
-#### Product and Addon Endpoints
-- `GET /api/v1/products`: List available products
-- `GET /api/v1/products/{product}/addons`: Get addons for a product
-- `POST /api/v1/addons`: Create a new addon
-- `POST /api/v1/products/{product}/addons`: Associate addons with a product
-- `POST /api/v1/orders`: Create an order with optional addons
-
-### Status Flow
-```mermaid
-stateDiagram-v2
-    [*] --> pending
-    pending --> accepted
-    accepted --> collected
-    collected --> in_transit
-    in_transit --> delivered
-    in_transit --> canceled
-    
-    state drone_stage {
-        collected --> drone_launched
-        drone_launched --> drone_in_route
-        drone_in_route --> drone_arrived
-        drone_arrived --> delivered
+// Service implementation
+class NotificationService implements NotificationServiceInterface {
+    public function send(User $user, string $message): void {
+        $user->notifications()->create(['message' => $message]);
     }
+}
+
+// Test usage
+$mock = Mockery::mock(NotificationServiceInterface::class);
+$mock->shouldReceive('send')->once();
 ```
 
-### Entity Relationships
-```mermaid
-erDiagram
-    USER ||--o{ PRODUCT : "partner creates"
-    USER ||--o{ ORDER : "customer places"
-    PRODUCT ||--o{ ORDER_ITEM : "included in"
-    PRODUCT }|--o{ ADDON : "compatible with"
-    ORDER ||--|{ ORDER_ITEM : "contains"
-    ORDER_ITEM ||--o{ ADDON : "selected"
-    USER ||--o{ ADDON : "partner creates"
+3. Service Layer:
+```php
+interface DeliveryStatusServiceInterface {
+    public function update(Delivery $delivery, string $status): void;
+}
+
+// Service depends on interfaces
+class DeliveryStatusService implements DeliveryStatusServiceInterface {
+    public function __construct(
+        private NotificationServiceInterface $notifier
+    ) {}
+    
+    public function update(Delivery $delivery, string $status): void {
+        // Update logic
+        $this->notifier->send($delivery->user, "Status updated");
+    }
+}
+```

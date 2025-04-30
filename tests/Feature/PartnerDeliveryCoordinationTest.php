@@ -12,20 +12,23 @@ class PartnerDeliveryCoordinationTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $deliveryAssignmentMock;
+
     public function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
-        // Mock the static create method on DeliveryAssignment to prevent database interaction during model events
-        Mockery::mock('alias:' . DeliveryAssignment::class)
-            ->shouldReceive('create')
+        
+        // Create regular mock of DeliveryAssignment
+        $this->deliveryAssignmentMock = Mockery::mock(DeliveryAssignment::class);
+        $this->deliveryAssignmentMock->shouldReceive('create')
             ->andReturn(new DeliveryAssignment()); // Return a dummy instance
+        $this->app->instance(DeliveryAssignment::class, $this->deliveryAssignmentMock);
     }
 
     protected function tearDown(): void
     {
-        parent::tearDown();
         Mockery::close();
+        parent::tearDown();
     }
 
     /**

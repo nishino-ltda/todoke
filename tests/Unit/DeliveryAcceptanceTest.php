@@ -4,12 +4,13 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Services\DeliveryStatusService;
+use App\Services\NotificationServiceInterface;
 use App\Models\Delivery;
 use App\Models\DeliveryAssignment;
-use App\Models\Notification;
 use Mockery;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Facade;
 
 class DeliveryAcceptanceTest extends TestCase
 {
@@ -18,17 +19,30 @@ class DeliveryAcceptanceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
-        $this->withoutMiddleware();
         
-        $logMock = Mockery::mock('alias:' . Log::class);
-        $logMock->shouldReceive('debug')->withAnyArgs()->andReturn(null);
-        $logMock->shouldReceive('info')->withAnyArgs()->andReturn(null);
-        $logMock->shouldReceive('error')->withAnyArgs()->andReturn(null);
+        // Clear any existing mocks
+        Mockery::close();
+        Facade::clearResolvedInstances();
+        
+        // Mock all facades
+        Log::shouldReceive('debug')->withAnyArgs()->andReturn(null);
+        Log::shouldReceive('info')->withAnyArgs()->andReturn(null);
+        Log::shouldReceive('error')->withAnyArgs()->andReturn(null);
+        
+        // Disable middleware
+        $this->withoutMiddleware();
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        Facade::clearResolvedInstances();
+        parent::tearDown();
     }
 
     public function test_accept_delivery_accepts_pending_delivery(): void
     {
+        /** @var Mockery\MockInterface|Delivery $deliveryMock */
         $deliveryMock = Mockery::mock(Delivery::class)->shouldAllowMockingProtectedMethods();
         $deliveryMock->shouldReceive('setAttribute')->with('status', 'pending');
         $deliveryMock->shouldReceive('getAttribute')->with('status')->andReturn('pending');
@@ -41,24 +55,20 @@ class DeliveryAcceptanceTest extends TestCase
         $deliveryMock->shouldReceive('getAttribute')->with('customer_id')->andReturn('customer-456');
         $deliveryMock->shouldReceive('getAttribute')->with('id')->andReturn('delivery-789');
 
-        $notificationMock = Mockery::mock('overload:' . Notification::class);
-        $notificationMock->shouldReceive('create')->once()->with([
-            'user_id' => 'customer-456',
-            'type' => 'delivery_updated',
-            'data' => [
-                'delivery_id' => 'delivery-789',
-                'status' => 'accepted',
-                'message' => 'Your delivery has been accepted by a courier'
-            ]
-        ]);
+        // Mock notification service
+        $notificationServiceMock = Mockery::mock(NotificationServiceInterface::class);
+        $notificationServiceMock->shouldReceive('createDeliveryNotification')
+            ->once()
+            ->with('customer-456', 'delivery_updated', Mockery::any());
 
-        $service = new DeliveryStatusService();
+        $service = new DeliveryStatusService($notificationServiceMock);
         $result = $service->acceptDelivery($deliveryMock, 'courier-123');
         $this->assertEquals($deliveryMock, $result);
     }
 
     public function test_accept_delivery_throws_exception_if_already_accepted(): void
     {
+        /** @var Mockery\MockInterface|Delivery $deliveryMock */
         $deliveryMock = Mockery::mock(Delivery::class)->shouldAllowMockingProtectedMethods();
         $deliveryMock->shouldReceive('setAttribute')->with('status', 'accepted');
         $deliveryMock->shouldReceive('getAttribute')->with('status')->andReturn('accepted');
@@ -66,7 +76,8 @@ class DeliveryAcceptanceTest extends TestCase
         $deliveryMock->shouldNotReceive('update');
         $deliveryMock->shouldNotReceive('getAttribute');
 
-        $service = new DeliveryStatusService();
+        $notificationServiceMock = Mockery::mock(NotificationServiceInterface::class);
+        $service = new DeliveryStatusService($notificationServiceMock);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Delivery has already been accepted');
@@ -75,6 +86,7 @@ class DeliveryAcceptanceTest extends TestCase
 
     public function test_accept_delivery_creates_assignments_for_hybrid_delivery(): void
     {
+        /** @var Mockery\MockInterface|Delivery $deliveryMock */
         $deliveryMock = Mockery::mock(Delivery::class)->shouldAllowMockingProtectedMethods();
         $deliveryMock->shouldReceive('setAttribute')->with('status', 'pending');
         $deliveryMock->shouldReceive('getAttribute')->with('status')->andReturn('pending');
@@ -91,8 +103,8 @@ class DeliveryAcceptanceTest extends TestCase
         $deliveryMock->shouldReceive('getAttribute')->with('customer_id')->andReturn('customer-456');
         $deliveryMock->shouldReceive('getAttribute')->with('id')->andReturn('delivery-789');
 
-        $deliveryAssignmentAliasMock = Mockery::mock('alias:' . DeliveryAssignment::class);
-        $deliveryAssignmentAliasMock->shouldReceive('updateOrCreate')
+        $deliveryAssignmentMock = Mockery::mock('overload:' . DeliveryAssignment::class);
+        $deliveryAssignmentMock->shouldReceive('updateOrCreate')
             ->once()
             ->with([
                 'delivery_id' => 'delivery-789',
@@ -101,7 +113,7 @@ class DeliveryAcceptanceTest extends TestCase
                 'partner_id' => 'partner-abc',
                 'status' => 'pending'
             ]);
-        $deliveryAssignmentAliasMock->shouldReceive('updateOrCreate')
+        $deliveryAssignmentMock->shouldReceive('updateOrCreate')
             ->once()
             ->with([
                 'delivery_id' => 'delivery-789',
@@ -111,10 +123,12 @@ class DeliveryAcceptanceTest extends TestCase
                 'status' => 'pending'
             ]);
 
-        $notificationMock = Mockery::mock('overload:' . Notification::class);
-        $notificationMock->shouldReceive('create')->once()->with(Mockery::any());
+        $notificationServiceMock = Mockery::mock(NotificationServiceInterface::class);
+        $notificationServiceMock->shouldReceive('createDeliveryNotification')
+            ->once()
+            ->with('customer-456', 'delivery_updated', Mockery::any());
 
-        $service = new DeliveryStatusService();
+        $service = new DeliveryStatusService($notificationServiceMock);
         $result = $service->acceptDelivery($deliveryMock, 'courier-123');
         $this->assertEquals($deliveryMock, $result);
     }

@@ -19,6 +19,14 @@
 - PHPUnit 11
 - Mockery
 - Laravel Pail (log viewer)
+- **Testing Patterns**:
+  - Interface-based testing for database operations
+  - NotificationServiceInterface pattern avoids mocking Eloquent models
+  - Services depend on interfaces rather than concrete implementations
+- **Test Configuration**:
+  - Process isolation enabled (prevents test interference)
+  - Strict global state checking
+  - SQLite in-memory database for tests
 - **Completed test standardization**:
   - All tests use `RefreshDatabase` trait
   - `Mockery::close()` added to all test `setUp` methods

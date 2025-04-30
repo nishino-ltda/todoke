@@ -3,23 +3,34 @@
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use App\Services\VotingCalculationService;
 use App\Models\VotingRound;
 use App\Models\VotingOption;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Mockery;
+use App\Repositories\VotingRoundRepositoryInterface;
 
 // Test suite for the VotingCalculationService
 class VotingCalculationServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected $votingRoundMock;
+    protected $repositoryMock;
+
     protected function setUp(): void
     {
         parent::setUp();
+        $this->votingRoundMock = Mockery::mock(VotingRound::class);
+        $this->repositoryMock = Mockery::mock(VotingRoundRepositoryInterface::class);
+    }
+
+    protected function tearDown(): void
+    {
         Mockery::close();
+        parent::tearDown();
     }
 
     // Test case: calculateResults method with a simple scenario
@@ -38,13 +49,23 @@ class VotingCalculationServiceTest extends TestCase
             (object)['ranked_options' => [1, 2, 3]],
         ]);
 
-        $votingRoundMock = Mockery::mock('overload:' . VotingRound::class);
-        $votingRoundMock->shouldReceive('with')->with(['votingOptions', 'votes'])->andReturn($votingRoundMock);
-        $votingRoundMock->shouldReceive('findOrFail')->with($votingRoundId)->andReturn($votingRoundMock);
-        $votingRoundMock->votingOptions = $options;
-        $votingRoundMock->votes = $votes;
+        // Mock VotingRound instance
+        $this->votingRoundMock = $this->createMock(VotingRound::class);
+        $this->votingRoundMock->method('__get')
+            ->willReturnCallback(function ($property) use ($options, $votes) {
+                return match($property) {
+                    'votingOptions' => $options,
+                    'votes' => $votes,
+                    default => null
+                };
+            });
+            
+        $this->repositoryMock->shouldReceive('findWithRelations')
+            ->once()
+            ->with($votingRoundId, ['votingOptions', 'votes'])
+            ->andReturn($this->votingRoundMock);
 
-        $service = new VotingCalculationService();
+        $service = new VotingCalculationService($this->repositoryMock);
 
         // Act: Perform the calculation
         $results = $service->calculateResults($votingRoundId);
@@ -71,7 +92,7 @@ class VotingCalculationServiceTest extends TestCase
             2 => ['option_id' => 2, 'points' => 3, 'rankings' => [0, 2, 1]],
             3 => ['option_id' => 3, 'points' => 0, 'rankings' => [0, 1, 2]],
         ];
-        $service = new VotingCalculationService();
+        $service = new VotingCalculationService($this->repositoryMock);
 
         // Act: Get the winning option
         $winner = $service->getWinningOption($results);
@@ -86,7 +107,7 @@ class VotingCalculationServiceTest extends TestCase
     {
         // Arrange: Set up empty results
         $results = [];
-        $service = new VotingCalculationService();
+        $service = new VotingCalculationService($this->repositoryMock);
 
         // Act: Get the winning option
         $winner = $service->getWinningOption($results);
@@ -104,7 +125,7 @@ class VotingCalculationServiceTest extends TestCase
             2 => ['option_id' => 2, 'points' => 3, 'rankings' => [1, 1, 0]], // 1 first place
             3 => ['option_id' => 3, 'points' => 0, 'rankings' => [0, 0, 2]],
         ];
-        $service = new VotingCalculationService();
+        $service = new VotingCalculationService($this->repositoryMock);
 
         // Act: Handle the tie break
         $sortedResults = $service->handleTieBreak($results);
@@ -126,7 +147,7 @@ class VotingCalculationServiceTest extends TestCase
             2 => ['option_id' => 2, 'points' => 3, 'rankings' => [0, 2, 1]],
             3 => ['option_id' => 3, 'points' => 0, 'rankings' => [0, 1, 2]],
         ];
-        $service = new VotingCalculationService();
+        $service = new VotingCalculationService($this->repositoryMock);
 
         // Act: Handle the tie break
         $sortedResults = $service->handleTieBreak($results);
@@ -159,13 +180,23 @@ class VotingCalculationServiceTest extends TestCase
         }
 
         $votingRoundId = 1;
-        $votingRoundMock = Mockery::mock('overload:' . VotingRound::class);
-        $votingRoundMock->shouldReceive('with')->with(['votingOptions', 'votes'])->andReturn($votingRoundMock);
-        $votingRoundMock->shouldReceive('findOrFail')->with($votingRoundId)->andReturn($votingRoundMock);
-        $votingRoundMock->votingOptions = $options;
-        $votingRoundMock->votes = $votes;
+        // Mock VotingRound instance
+        $this->votingRoundMock = $this->createMock(VotingRound::class);
+        $this->votingRoundMock->method('__get')
+            ->willReturnCallback(function ($property) use ($options, $votes) {
+                return match($property) {
+                    'votingOptions' => $options,
+                    'votes' => $votes,
+                    default => null
+                };
+            });
+            
+        $this->repositoryMock->shouldReceive('findWithRelations')
+            ->once()
+            ->with($votingRoundId, ['votingOptions', 'votes'])
+            ->andReturn($this->votingRoundMock);
 
-        $service = new VotingCalculationService();
+        $service = new VotingCalculationService($this->repositoryMock);
 
         // Act: Perform the Borda count calculation.
         $startTime = microtime(true);

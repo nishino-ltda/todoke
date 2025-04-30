@@ -16,14 +16,6 @@ class AuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
-        
-        // Create and bind a proper mock for Log facade
-        $logMock = Mockery::mock('overload:'.Log::class);
-        $logMock->shouldReceive('debug')->andReturnNull()->byDefault();
-        $logMock->shouldReceive('error')->andReturnNull()->byDefault();
-        
-        $this->app->instance(Log::class, $logMock);
     }
     public function testAuroraRegistersAndConfiguresProfile()
     {

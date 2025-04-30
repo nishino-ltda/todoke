@@ -24,11 +24,11 @@ class CommunityPricingTest extends TestCase
     protected $region;
     protected $votingRound;
     protected $votingOptions;
+    protected $repositoryMock;
 
     protected function setUp(): void
     {
         parent::setUp();
-        Mockery::close();
 
         // Create test user
         $this->user = User::factory()->create([
@@ -50,6 +50,9 @@ class CommunityPricingTest extends TestCase
             'end_time' => Carbon::now()->addDays(5),
             'status' => 'active',
         ]);
+
+        // Initialize repository mock
+        $this->repositoryMock = Mockery::mock(\App\Repositories\VotingRoundRepositoryInterface::class);
 
         // Create test voting options
         $this->votingOptions = [
@@ -77,7 +80,6 @@ class CommunityPricingTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Mockery::close();
     }
 
     /** @test */
@@ -184,8 +186,14 @@ class CommunityPricingTest extends TestCase
             ],
         ]);
         
+        // Mock repository to return voting round with relations
+        $this->repositoryMock->shouldReceive('findWithRelations')
+            ->once()
+            ->with($this->votingRound->id, ['votingOptions', 'votes'])
+            ->andReturn($this->votingRound);
+
         // Calculate results using the service
-        $calculationService = new VotingCalculationService();
+        $calculationService = new VotingCalculationService($this->repositoryMock);
         $results = $calculationService->calculateResults($this->votingRound->id);
         
         // Expected points based on Borda count:
@@ -223,8 +231,14 @@ class CommunityPricingTest extends TestCase
             ],
         ]);
         
+        // Mock repository to return voting round with relations
+        $this->repositoryMock->shouldReceive('findWithRelations')
+            ->once()
+            ->with($this->votingRound->id, ['votingOptions', 'votes'])
+            ->andReturn($this->votingRound);
+
         // Close the voting round
-        $calculationService = new VotingCalculationService();
+        $calculationService = new VotingCalculationService($this->repositoryMock);
         $fareUpdateService = new FareUpdateService();
         $votingRoundService = new VotingRoundService(
             $calculationService,
