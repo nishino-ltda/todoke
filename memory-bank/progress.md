@@ -115,6 +115,10 @@ Key improvements:
    - Review API security.
    - Develop admin interface for addon management.
 
+### Web Area Planning
+✅ **Completed**:
+- Detailed planning documents for web areas (Home, Menu, Restaurant/Partner, Courier, Admin, Support), common components, stores/services, and E2E testing strategy have been created in the `web-planning/` directory.
+
 3. **Long-term Roadmap**:
    - Drone failure recovery system.
    - Advanced pricing analytics.

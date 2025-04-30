@@ -1,0 +1,78 @@
+# Web Area Planning: Stores and Services
+
+## Purpose
+Plan for frontend state management (stores) and reusable logic (services) to handle data fetching, authentication, and other cross-cutting concerns.
+
+## State Management (Stores - Pinia)
+- **Auth Store:**
+    - Manages user authentication state (logged in/out).
+    - Stores user information (ID, name, email, type, token).
+    - Handles login, registration, and logout actions (interacting with API).
+    - Persists authentication state (e.g., using local storage).
+- **Cart Store:**
+    - Manages the state of the customer's shopping cart.
+    - Stores selected products, quantities, and addons.
+    - Provides methods to add, remove, and update items.
+    - Calculates subtotal and total value.
+    - Persists cart state (e.g., using local storage).
+- **User Data Store:**
+    - Stores currently logged-in user's profile information (address, payment methods).
+    - Provides methods to fetch and update user data (interacting with API).
+- **Notifications Store:**
+    - Manages UI notifications (alerts).
+    - Stores a list of active notifications.
+    - Provides methods to add and remove notifications.
+- **Loading Store:**
+    - Manages global loading state.
+    - Indicates when an asynchronous operation is in progress.
+
+## Frontend Services
+- **API Service (Axios):**
+    - Centralized service for making HTTP requests to the backend API using Axios.
+    - Handles setting authorization headers.
+    - Provides methods for different API calls (GET, POST, PUT, PATCH, DELETE).
+    - Implements error handling and potentially request interceptors.
+- **Auth Service:**
+    - Encapsulates authentication logic.
+    - Interacts with the Auth Store and API Service for login, registration, and logout.
+- **User Service:**
+    - Encapsulates user-related logic.
+    - Interacts with the User Data Store and API Service for fetching and updating user profile information.
+- **Delivery Service:**
+    - Encapsulates delivery-related logic for customers and couriers.
+    - Interacts with the API Service for fetching available deliveries, accepting assignments, and updating statuses.
+- **Partner Service:**
+    - Encapsulates partner-related logic.
+    - Interacts with the API Service for fetching metrics, managing orders, products, addons, regions, and nodes.
+- **Admin Service:**
+    - Encapsulates admin-related logic.
+    - Interacts with the API Service for user management, node approval, and fetching system stats.
+- **Support Service:**
+    - Encapsulates support ticket logic.
+    - Interacts with the API Service for submitting and retrieving support tickets.
+- **Map Service:**
+    - Encapsulates logic for map integration (e.g., geocoding, displaying routes).
+    - Interacts with a mapping library (Leaflet or Google Maps API).
+
+## Implementation Considerations
+- Use Pinia for state management due to its simplicity and performance.
+- Place stores in a dedicated directory (e.g., `src/stores/`).
+- Place services in a dedicated directory (e.g., `src/services/`).
+- Services should primarily interact with the API Service and relevant stores.
+- Implement proper error handling within services and propagate errors to components/stores.
+- Utilize environment variables for API base URL and other configuration.
+
+## Potential Files
+- `src/stores/auth.js`
+- `src/stores/cart.js`
+- `src/stores/userData.js`
+- `src/stores/notifications.js`
+- `src/stores/loading.js`
+- `src/services/api.js`
+- `src/services/auth.js`
+- `src/services/user.js`
+- `src/services/delivery.js`
+- `src/services/partner.js`
+- `src/services/admin.js`
+- `src/services/support.js`
+- `src/services/map.js`
