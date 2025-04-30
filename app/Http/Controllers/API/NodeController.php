@@ -37,4 +37,16 @@ class NodeController extends Controller
             'data' => $node
         ], 201);
     }
+
+    public function approve(Node $node)
+    {
+        $this->authorize('approve', $node);
+        
+        $node->update(['status' => 'active']);
+        
+        return response()->json([
+            'message' => 'Node approved successfully',
+            'data' => $node
+        ]);
+    }
 }

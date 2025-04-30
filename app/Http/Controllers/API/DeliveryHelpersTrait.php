@@ -66,12 +66,12 @@ trait DeliveryHelpersTrait
             'origin' => [
                 'lat' => $request->origin['lat'],
                 'lng' => $request->origin['lng'],
-                'address' => $request->origin['address']
+                'address' => strip_tags($request->origin['address'])
             ],
             'destination' => [
                 'lat' => $request->destination['lat'],
                 'lng' => $request->destination['lng'],
-                'address' => $request->destination['address']
+                'address' => strip_tags($request->destination['address'])
             ],
             'estimated_weight' => $request->estimated_weight,
             'dimensions' => [

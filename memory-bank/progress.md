@@ -18,6 +18,7 @@ Key improvements:
 ✅ **Completed**:
 - Use case documentation
 - Basic architecture design
+- Implementation of node approval authorization with NodePolicy and admin middleware
 - Implementation of the community fare price voting system for motoboys:
   - Borda count voting algorithm
   - API endpoints for vote submission and retrieval

@@ -65,6 +65,7 @@
   - Added assertions for stage preservation
   - Fixed PartnerDeliveryTest by ensuring both stage assignments exist before status updates
   - Added tests for product addons functionality
+  - Implemented node approval authorization with NodePolicy and admin middleware
 
 ## Key Decisions
 1. **Stage Management**:

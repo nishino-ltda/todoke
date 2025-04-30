@@ -176,34 +176,36 @@ class PerformanceTest extends TestCase
         $this->assertLessThan(5.0, $duration, 'Sequential order creation should be performant');
     }
 
-    // Test case: Updating status for multiple deliveries concurrently
-    // Should handle concurrent status updates correctly and efficiently.
+    #[Test]
     public function test_concurrent_status_update_performance(): void
     {
         // Arrange: Create multiple deliveries and a courier.
-        // $deliveries = Delivery::factory()->count(50)->create(['status' => 'accepted']);
-        // $courier = User::factory()->courier()->create();
-        // $token = $courier->createToken('test')->plainTextToken;
+        $deliveries = Delivery::factory()->count(50)->create(['status' => 'accepted']);
+        $courier = User::factory()->create(['type' => 'courier']);
+        $token = $courier->createToken('test')->plainTextToken;
 
         // Act: Send multiple concurrent requests to update delivery statuses.
-        // $promises = [];
-        // $client = new \GuzzleHttp\Client(['base_uri' => config('app.url')]);
-        // foreach ($deliveries as $delivery) {
-        //     $promises[] = $client->patchAsync("/api/v1/deliveries/{$delivery->id}/status", [
-        //         'headers' => ['Authorization' => "Bearer $token"],
-        //         'json' => ['status' => 'in_transit'],
-        //     ]);
-        // }
-        // $responses = \GuzzleHttp\Promise\Utils::unwrap($promises);
+        $promises = [];
+        $client = new \GuzzleHttp\Client(['base_uri' => config('app.url')]);
+        $start = microtime(true);
+        foreach ($deliveries as $delivery) {
+            $promises[] = $client->patchAsync("/api/v1/deliveries/{$delivery->id}/status", [
+                'headers' => ['Authorization' => "Bearer $token"],
+                'json' => ['status' => 'in_transit'],
+            ]);
+        }
+        $responses = \GuzzleHttp\Promise\Utils::unwrap($promises);
+        $duration = microtime(true) - $start;
 
         // Assert: All requests were successful.
-        // foreach ($responses as $response) {
-        //     $this->assertEquals(200, $response->getStatusCode());
-        // }
+        foreach ($responses as $response) {
+            $this->assertEquals(200, $response->getStatusCode());
+        }
         // Assert: The delivery statuses are updated correctly in the database.
-        // foreach ($deliveries as $delivery) {
-        //     $this->assertEquals('in_transit', $delivery->fresh()->status);
-        // }
-        // Assert: The average response time is within acceptable limits.
+        foreach ($deliveries as $delivery) {
+            $this->assertEquals('in_transit', $delivery->fresh()->status);
+        }
+        // Assert: The total response time for concurrent updates is within acceptable limits.
+        $this->assertLessThan(5.0, $duration, 'Concurrent status updates should be performant');
     }
 }

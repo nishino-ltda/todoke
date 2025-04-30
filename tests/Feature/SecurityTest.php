@@ -217,65 +217,72 @@ class SecurityTest extends TestCase
         $response->assertStatus(403);
     }
 
-    // Test case: Partner attempting to update a delivery they are not assigned to
-    // Should be denied access.
+    #[Test]
     public function test_partner_cannot_update_unassigned_delivery(): void
     {
         // Arrange: Create a delivery not assigned to any partner, and a partner user.
-        // $delivery = Delivery::factory()->create(['courier_id' => null]);
-        // $partner = User::factory()->partner()->create();
-        // $this->actingAs($partner, 'sanctum');
+        $delivery = Delivery::factory()->create(['courier_id' => null]);
+        $partner = User::factory()->create(['type' => 'partner']);
+        $this->actingAs($partner, 'sanctum');
 
         // Act: Attempt to update the status of the unassigned delivery.
-        // $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", ['status' => 'accepted']);
+        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", ['status' => 'accepted']);
 
         // Assert: Should be denied access.
-        // $response->assertStatus(403);
+        $response->assertStatus(403);
     }
 
-    // Test case: Attempting to inject malicious code in input fields (e.g., script tags in text fields)
-    // Should sanitize or reject the input.
+    #[Test]
     public function test_prevents_malicious_code_injection(): void
     {
-        // Arrange: Prepare data with potential injection attempts.
-        // $maliciousData = [
-        //     'item_description' => '<script>alert("xss")</script>',
-        //     // Add other fields that accept user input
-        // ];
-        // $deliveryData = array_merge([...], $maliciousData); // Combine with valid delivery data
-        // $this->actingAs($this->customer1, 'sanctum');
+        // Arrange: Prepare data with potential injection attempts in the destination address.
+        $maliciousAddress = '<script>alert("xss")</script>';
+        $deliveryData = [
+            'customer_id' => $this->customer1->id,
+            'origin' => ['lat' => -23.5505, 'lng' => -46.6333, 'address' => 'Av. Paulista, 1000'],
+            'destination' => ['lat' => -23.5675, 'lng' => -46.6558, 'address' => $maliciousAddress],
+            'items' => [
+                ['product_id' => 1, 'quantity' => 1, 'price' => 10.00]
+            ],
+            'value' => 10.00,
+            'type' => 'standard',
+            'payment_method' => 'credit_card',
+            'item_description' => 'Test item description', // Added required field
+            'estimated_weight' => 1.0, // Added required field
+            'dimensions' => ['width' => 10, 'height' => 10, 'depth' => 10] // Added required field
+        ];
+        $this->actingAs($this->customer1, 'sanctum');
 
         // Act: Send a request to create a delivery with malicious data.
-        // $response = $this->postJson('/api/v1/deliveries', $deliveryData);
+        $response = $this->postJson('/api/v1/deliveries', $deliveryData);
 
         // Assert: The API call is successful (assuming validation passes for other fields).
-        // $response->assertStatus(201);
+        $response->assertStatus(201);
         // Assert: The stored data is sanitized or the malicious code is not present.
-        // $delivery = Delivery::find($response->json('id'));
-        // $this->assertStringNotContainsString('<script>', $delivery->item_description);
+        $delivery = Delivery::find($response->json('id'));
+        $this->assertStringNotContainsString('<script>', $delivery->destination['address']);
     }
 
-    // Test case: Validating payloads to prevent forging fields (already partially implemented, needs expansion)
-    // Should ensure that only allowed fields can be submitted and processed.
+    #[Test]
     public function test_prevents_forging_fields_in_payload(): void
     {
         // Arrange: Create a delivery and prepare a payload with forged fields.
-        // $delivery = Delivery::factory()->create(['customer_id' => $this->customer1->id, 'value' => 100]);
-        // $forgedPayload = [
-        //     'status' => 'delivered', // Valid status update
-        //     'customer_id' => $this->customer2->id, // Forged customer ID
-        //     'value' => 0.01, // Forged value
-        // ];
-        // $this->actingAs($this->customer1, 'sanctum');
+        $delivery = Delivery::factory()->create(['customer_id' => $this->customer1->id, 'value' => 100]);
+        $forgedPayload = [
+            'status' => 'delivered', // Valid status update
+            'customer_id' => $this->customer2->id, // Forged customer ID
+            'value' => 0.01, // Forged value
+        ];
+        $this->actingAs($this->customer1, 'sanctum');
 
         // Act: Send a request to update the delivery with the forged payload.
-        // $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", $forgedPayload);
+        $response = $this->patchJson("/api/v1/deliveries/{$delivery->id}/status", $forgedPayload);
 
         // Assert: The API endpoint returns a forbidden error (e.g., 403) or validation errors for the forged fields.
-        // $response->assertStatus(403); // Or 422 with validation errors
+        $response->assertStatus(403); // Or 422 with validation errors
         // Assert: The sensitive fields on the delivery model are not changed.
-        // $delivery->refresh();
-        // $this->assertEquals($this->customer1->id, $delivery->customer_id);
-        // $this->assertEquals(100, $delivery->value);
+        $delivery->refresh();
+        $this->assertEquals($this->customer1->id, $delivery->customer_id);
+        $this->assertEquals(100, $delivery->value);
     }
 }
