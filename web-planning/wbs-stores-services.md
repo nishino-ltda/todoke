@@ -1,10 +1,10 @@
 # Work Breakdown Structure: Stores & Services
 
 ## 1. State Management (Pinia Stores)
-- [ ] Implement Auth Store
-  - [ ] Manage authentication state
-  - [ ] Handle login/logout
-  - [ ] Persist session
+- [x] Implement Auth Store
+  - [x] Manage authentication state
+  - [x] Handle login/logout
+  - [x] Persist session
 - [ ] Implement Cart Store
   - [ ] Manage shopping cart state
   - [ ] Handle cart operations

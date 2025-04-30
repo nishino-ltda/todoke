@@ -22,7 +22,7 @@
    - [x] Implement LoadingIndicator
 
 2. **State Management**:
-   - [ ] Implement Auth Store
+   - [x] Implement Auth Store
    - [x] Implement Loading Store
 
 3. **Services**:
