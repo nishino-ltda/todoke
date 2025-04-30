@@ -10,6 +10,7 @@ use App\Models\Region;
 use Illuminate\Database\QueryException; // Import for catching database exceptions
 use Mockery;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class NodeRegionTest extends TestCase
     {
@@ -184,10 +185,16 @@ class NodeRegionTest extends TestCase
      */
     public function test_admin_approves_pending_node(): void
     {
-        // Arrange: Create a pending node and an admin user.
+        // Arrange: Create a pending node and an admin user with admin token.
         $adminUser = User::factory()->create(['type' => 'admin']);
         $pendingNode = Node::factory()->create(['status' => 'pending_approval']);
-        $this->actingAs($adminUser, 'sanctum');
+        
+        // Create admin token and set Authorization header directly
+        $token = $adminUser->createToken('test-token', ['admin'])->plainTextToken;
+        $this->withHeaders([
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer ' . $token
+        ]);
 
         // Act: Send a request to approve the node.
         $response = $this->patchJson("/api/v1/admin/nodes/{$pendingNode->id}/approve");
