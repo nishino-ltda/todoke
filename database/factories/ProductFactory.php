@@ -16,8 +16,9 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $partner = \App\Models\User::factory()->create(['type' => 'partner']);
         return [
-            'partner_id' => null,
+            'partner_id' => $partner->id,
             'name' => fake()->words(3, true),
             'description' => fake()->sentence(),
             'price' => fake()->randomFloat(2, 1, 100),

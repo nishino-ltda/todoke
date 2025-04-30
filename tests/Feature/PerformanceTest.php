@@ -114,51 +114,66 @@ class PerformanceTest extends TestCase
 
     // Test case: Listing deliveries with a large dataset
     // Should return results within an acceptable time frame and not exceed memory limits.
+    #[Test]
     public function test_listing_deliveries_with_large_dataset_performance(): void
     {
         // Arrange: Create a large number of deliveries.
-        // Delivery::factory()->count(1000)->create(); // Create 1000 deliveries
-        // $user = User::factory()->create();
-        // $token = $user->createToken('test')->plainTextToken;
+        Delivery::factory()->count(1000)->create(); // Create 1000 deliveries
+        $user = User::factory()->create();
+        $token = $user->createToken('test')->plainTextToken;
 
         // Act: Measure the time to list deliveries.
-        // $start = microtime(true);
-        // $response = $this->withHeaders(['Authorization' => "Bearer $token"])
-        //                  ->getJson('/api/v1/deliveries');
-        // $duration = microtime(true) - $start;
+        $start = microtime(true);
+        $response = $this->withHeaders(['Authorization' => "Bearer $token"])
+                         ->getJson('/api/v1/deliveries');
+        $duration = microtime(true) - $start;
 
         // Assert: The API call is successful.
-        // $response->assertOk();
+        $response->assertOk();
         // Assert: The response time is within an acceptable limit.
-        // $this->assertLessThan(expected_max_duration_in_seconds, $duration, 'Listing deliveries with large dataset should be performant');
+        $this->assertLessThan(5.0, $duration, 'Listing deliveries with large dataset should be performant');
         // Assert: The test does not result in memory exhaustion errors (this is often observed during test execution, not explicitly asserted).
     }
 
-    // Test case: Creating multiple orders concurrently
-    // Should handle concurrent requests without errors or significant performance degradation.
-    public function test_concurrent_order_creation_performance(): void
+    // Test case: Creating multiple orders sequentially
+    // Should handle sequential requests efficiently.
+    #[Test]
+    public function test_sequential_order_creation_performance(): void
     {
-        // Arrange: Create a user and order data.
-        // $user = User::factory()->create();
-        // $token = $user->createToken('test')->plainTextToken;
-        // $orderData = [...]; // Valid order data
+        // Arrange: Create a user, partner, product associated with the partner, and order data.
+        $user = User::factory()->create();
+        $token = $user->createToken('test')->plainTextToken;
+        $partner = User::factory()->create(['type' => 'partner']);
+        $product = \App\Models\Product::factory()->forPartner($partner->id)->create();
 
-        // Act: Send multiple concurrent requests to create orders.
-        // $promises = [];
-        // $client = new \GuzzleHttp\Client(['base_uri' => config('app.url')]); // Use Guzzle for concurrent requests
-        // for ($i = 0; $i < 10; $i++) { // Send 10 concurrent requests
-        //     $promises[] = $client->postAsync('/api/v1/orders', [
-        //         'headers' => ['Authorization' => "Bearer $token"],
-        //         'json' => $orderData,
-        //     ]);
-        // }
-        // $responses = \GuzzleHttp\Promise\Utils::unwrap($promises);
+        $orderData = [
+            'partner_id' => $partner->id,
+            'items' => [
+                ['product_id' => $product->id, 'quantity' => 1]
+            ],
+            'delivery' => [
+                'destination' => [
+                    'lat' => 12.345,
+                    'lng' => 67.890,
+                    'address' => '123 Test Street'
+                ]
+            ]
+        ]; // Valid order data
 
-        // Assert: All requests were successful.
-        // foreach ($responses as $response) {
-        //     $this->assertEquals(201, $response->getStatusCode());
-        // }
-        // Assert: The average response time is within acceptable limits (requires calculating average duration).
+        // Act: Measure the time to create multiple orders sequentially.
+        $start = microtime(true);
+        $iterations = 10;
+        for ($i = 0; $i < $iterations; $i++) { // Send 10 sequential requests
+            $response = $this->withHeaders(['Authorization' => "Bearer $token"])
+                             ->postJson('/api/v1/orders', $orderData);
+
+            // Assert: Each request was successful.
+            $response->assertStatus(201);
+        }
+        $duration = microtime(true) - $start;
+
+        // Assert: The total response time is within acceptable limits for sequential creation.
+        $this->assertLessThan(5.0, $duration, 'Sequential order creation should be performant');
     }
 
     // Test case: Updating status for multiple deliveries concurrently
