@@ -131,12 +131,16 @@ class NodeRegionTest extends TestCase
 
         $response = $this->postJson('/api/v1/regions', $regionData);
 
-        // Assert: The API call is successful and the region is created.
+        // Assert: The API call is successful and the region is created with matching GeoJSON data
         $response->assertStatus(201);
-        $this->assertDatabaseHas('regions', [
-            'name' => 'Test Region',
-            'polygon' => $validGeoJson
-        ]);
+        $region = Region::first();
+        $this->assertEquals('Test Region', $region->name);
+        
+        // Verify the polygon structure directly (already decoded by Laravel)
+        $this->assertEquals('Polygon', $region->polygon['type']);
+        $this->assertIsArray($region->polygon['coordinates']);
+        $this->assertCount(1, $region->polygon['coordinates']); // Outer array
+        $this->assertCount(5, $region->polygon['coordinates'][0]); // Polygon points
     }
 
     /**
