@@ -15,15 +15,15 @@
 - [ ] Implement Notifications Store
   - [ ] Manage UI notifications
   - [ ] Handle notification display
-- [ ] Implement Loading Store
-  - [ ] Track loading states
-  - [ ] Manage loading indicators
+- [x] Implement Loading Store
+  - [x] Track loading states
+  - [x] Manage loading indicators
 
 ## 2. Frontend Services
-- [ ] Implement API Service
-  - [ ] Configure Axios instance
-  - [ ] Set up request/response interceptors
-  - [ ] Handle error responses
+- [x] Implement API Service
+  - [x] Configure Axios instance
+  - [x] Set up request/response interceptors
+  - [x] Handle error responses
 - [ ] Implement Auth Service
   - [ ] Handle login/registration
   - [ ] Manage tokens

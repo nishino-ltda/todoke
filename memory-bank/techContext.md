@@ -12,7 +12,7 @@
 
 ### Frontend
 - **Build Tool**: Vite 6
-- **CSS Framework**: Tailwind CSS 4
+- **UI Framework**: Vuetify 3
 - **HTTP Client**: Axios
 
 ### Testing

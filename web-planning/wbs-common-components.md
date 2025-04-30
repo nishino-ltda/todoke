@@ -36,9 +36,9 @@
 - [ ] Create App Alert (`AppAlert.vue`)
   - [ ] Success/error/info variants
   - [ ] Auto-dismiss functionality
-- [ ] Create Loading Indicator (`LoadingIndicator.vue`)
-  - [ ] Full-page loader
-  - [ ] Inline loader
+- [x] Create Loading Indicator (`LoadingIndicator.vue`)
+  - [x] Full-page loader
+  - [x] Inline loader
 
 ## 5. Testing
 - [ ] Unit tests for all components
