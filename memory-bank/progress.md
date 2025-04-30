@@ -117,7 +117,14 @@ Key improvements:
 
 ### Web Area Planning
 ✅ **Completed**:
-- Detailed planning documents for web areas (Home, Menu, Restaurant/Partner, Courier, Admin, Support), common components, stores/services, and E2E testing strategy have been created in the `web-planning/` directory.
+- Detailed planning documents for web areas (Home, Menu, Restaurant/Partner, Courier, Admin, Support), common components, stores/services, and E2E testing strategy have been created in the `web-planning/` directory
+- Sprint 1 implementation completed:
+  - Common components (AppHeader, AppFooter, LoadingIndicator)
+  - Stores (Auth, Loading)
+  - Services (API, Auth)
+  - Testing infrastructure (Vitest + Vue Test Utils)
+  - Unit tests for all components, stores and services
+  - CI/CD test reporting setup
 
 3. **Long-term Roadmap**:
    - Drone failure recovery system.

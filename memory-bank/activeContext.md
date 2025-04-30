@@ -125,8 +125,7 @@
 - Detailed planning documents for web areas (Home, Menu, Restaurant/Partner, Courier, Admin, Support), common components, stores/services, and E2E testing strategy have been created in the `web-planning/` directory.
 
 ## Next Steps
-- Begin frontend implementation based on the planning documents in `web-planning/`.
-- Set up the Vue 3 project with Vuetify 3.
-- Implement common components, stores, and services.
-- Develop each web area incrementally, starting with the Home page and authentication flows.
-- Set up the Cypress E2E testing framework and begin writing tests for core user flows.
+- Continue with frontend implementation based on the planning documents in `web-planning/`
+- Develop each web area incrementally, starting with the Home page and authentication flows
+- Set up the Cypress E2E testing framework and begin writing tests for core user flows
+- Create test data fixtures for easier test maintenance

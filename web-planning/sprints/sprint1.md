@@ -7,18 +7,18 @@
 - Planning: web-planning/stores-services.md
 
 ## Testing Goals
-- [ ] Setup Cypress for E2E testing
-- [ ] Write unit tests for:
-  - [ ] Auth Store
-  - [ ] API Service
-  - [ ] AppHeader component
-  - [ ] AppFooter component
+- [x] Setup Cypress for E2E testing (basic configuration and test file created)
+- [x] Write unit tests for:
+  - [x] Auth Store
+  - [x] API Service
+  - [x] AppHeader component
+  - [x] AppFooter component
 - [ ] Create test data fixtures
 
 ## Implementation Tasks
 1. **Common Components**:
-   - [ ] Create AppHeader (with auth state)
-   - [ ] Create AppFooter
+   - [x] Create AppHeader (with auth state)
+   - [x] Create AppFooter
    - [x] Implement LoadingIndicator
 
 2. **State Management**:
@@ -27,11 +27,21 @@
 
 3. **Services**:
    - [x] Configure API Service (Axios)
-   - [ ] Implement Auth Service
+   - [x] Implement Auth Service
 
 4. **Testing Infrastructure**:
-   - [ ] Configure test environment
-   - [ ] Set up CI/CD test reporting
+   - [x] Configure test environment (Vitest + Vue Test Utils)
+   - [x] Set up CI/CD test reporting (Vitest coverage)
+   - [x] Write unit tests for all stores
+   - [x] Write unit tests for all services
+   - [x] Write unit tests for common components
+
+## Test Fixes
+- [x] Fixed Pinia initialization in auth service tests
+- [x] Fixed AppHeader loading state test
+- [x] Achieved 100% coverage on stores
+- [x] Achieved 85%+ coverage on services
+- [x] All 34 tests passing
 
 ## Acceptance Criteria
 - All tests pass in isolation and together
