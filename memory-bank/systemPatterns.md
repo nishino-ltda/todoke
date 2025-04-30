@@ -39,6 +39,32 @@
    - Implement concrete versions for production
    - Mock interfaces in tests
 
+### Test Organization Pattern
+
+1. **Logical Grouping**:
+   - Tests organized by feature area (Auth, Delivery, Partner, etc.)
+   - Each feature area has its own directory
+   - Related tests grouped together
+
+2. **Security Tests**:
+   - Isolated in dedicated Security/ subdirectories
+   - Focus on security-specific validations:
+     - SQL Injection
+     - XSS
+     - CSRF
+     - Access control
+     - Security headers
+
+3. **Namespace Conventions**:
+   - Tests\Feature\{FeatureArea} for main tests
+   - Tests\Feature\{FeatureArea}\Security for security tests
+
+4. **Benefits**:
+   - Clear separation of concerns
+   - Easier to locate related tests
+   - Better organization of security tests
+   - Consistent structure across the codebase
+
 ### Benefits
 
 - **Avoids Mocking Eloquent**:

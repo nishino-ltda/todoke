@@ -59,6 +59,11 @@
   - Use 'delivered' as final status (replacing 'completed')
   - Preserve delivered stages during cancellations
   - Improve status validation rules
+- Restructured test suite organization:
+  - Grouped tests by feature area (Auth, Delivery, Partner, etc.)
+  - Created dedicated Security/ subdirectories for security tests
+  - Updated namespaces to match new structure (Tests\Feature\{FeatureArea})
+  - Added README.md files in each Security/ directory explaining test scope
 - Updated test suite:
   - Fixed HybridDeliveryEdgeCasesTest cancellation handling
   - Standardized on 'delivered' status in all tests

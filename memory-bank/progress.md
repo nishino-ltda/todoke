@@ -55,6 +55,11 @@ Key improvements:
   - Interface-based testing for NotificationService
   - Proper mocking of NotificationServiceInterface
   - Updated test dependencies
+- **Test structure reorganized**:
+  - Logical grouping by feature area (Auth, Delivery, Partner, etc.)
+  - Dedicated Security/ subdirectories for security tests
+  - README.md files in each Security/ directory
+  - Updated namespace conventions
 - **No code coverage driver configured**, preventing detailed coverage reports.
 
 ### Interface Testing Improvements

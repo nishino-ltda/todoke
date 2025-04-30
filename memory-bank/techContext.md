@@ -27,6 +27,10 @@
   - Process isolation enabled (prevents test interference)
   - Strict global state checking
   - SQLite in-memory database for tests
+- **Test Structure**:
+  - Logical grouping by feature area (Auth, Delivery, Partner, etc.)
+  - Security tests organized in dedicated Security/ subdirectories
+  - Updated namespace conventions (Tests\Feature\{FeatureArea})
 - **Completed test standardization**:
   - All tests use `RefreshDatabase` trait
   - `Mockery::close()` added to all test `setUp` methods
