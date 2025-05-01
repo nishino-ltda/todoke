@@ -108,3 +108,12 @@ npm run build
 - Environment variable configuration
 - Queue worker for async tasks
 - Database migration on deployment
+
+
+## API Versioning
+- All API endpoints are versioned under /api/v1/
+- Frontend components must use the versioned paths
+- Current API version: v1
+
+## Known API Endpoints
+- Restaurant details: GET /api/v1/restaurants/{slug}

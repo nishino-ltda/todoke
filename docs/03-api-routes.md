@@ -245,7 +245,29 @@ PUT /api/v1/regions/{id}
 
 ## 4. Produtos, Addons e Pedidos
 
-### 4.1 Listar Produtos
+### 4.1 Obter Restaurante por Slug
+```
+GET /api/v1/restaurants/{slug}
+```
+**Resposta (200 OK):**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "slug": "string",
+  "products": [
+    {
+      "id": "string",
+      "name": "string",
+      "description": "string",
+      "price": "number",
+      "category": "string"
+    }
+  ]
+}
+```
+
+### 4.2 Listar Produtos
 ```
 GET /api/v1/products
 ```

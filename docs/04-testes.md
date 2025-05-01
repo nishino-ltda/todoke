@@ -186,6 +186,128 @@ Executar um arquivo de teste específico:
 php artisan test tests/Feature/MenuTest.php
 ```
 
+## Testes de Componentes Vue
+
+### MenuComponent
+- Testa carregamento de produtos por slug de restaurante
+- Verifica estado de loading
+- Testa exibição do nome do restaurante
+- Verifica tratamento de erros
+
+Exemplo de teste:
+```javascript
+it('fetches products based on slug prop', async () => {
+  const mockResponse = {
+    data: {
+      name: "Tia Mary's Restaurant",
+      products: [{ id: 1, name: 'Feijoada', price: 25.90 }]
+    }
+  }
+  
+  const wrapper = mount(Menu, {
+    global: {
+      plugins: [createTestingPinia()],
+      mocks: {
+        $axios: {
+          get: jest.fn().mockResolvedValue(mockResponse)
+        }
+      }
+    },
+    props: {
+      slug: 'tia-mary-corumba'
+    }
+  })
+
+  await wrapper.vm.$nextTick()
+  expect(wrapper.vm.$axios.get).toHaveBeenCalledWith('/api/restaurants/tia-mary-corumba')
+  expect(wrapper.vm.restaurantName).toBe("Tia Mary's Restaurant")
+  expect(wrapper.vm.products).toEqual(mockResponse.data.products)
+})
+
+it('shows loading state while fetching', () => {
+  const wrapper = mount(Menu, {
+    global: {
+      plugins: [createTestingPinia()]
+    },
+    props: {
+      slug: 'test-slug'
+    }
+  })
+
+  expect(wrapper.findComponent({ name: 'v-progress-circular' }).exists()).toBe(true)
+})
+```
+
+## Testes End-to-End (E2E) com Cypress
+
+O projeto utiliza o Cypress para testes end-to-end (E2E) com o objetivo de garantir que a interface do usuário funcione corretamente. O Cypress é uma estrutura de teste robusta construída para aplicações web, projetada para tornar o teste direto e confiável.
+
+### Pré-requisitos
+- Node.js e npm (ou Yarn/pnpm)
+- Editor de código (VS Code recomendado)
+- Navegador compatível (Chrome, Firefox, Edge ou Electron)
+
+### Instalação
+Se o Cypress ainda não estiver instalado, execute:
+
+```bash
+npm install cypress --save-dev
+# ou
+yarn add cypress --dev
+# ou
+pnpm add --save-dev cypress
+```
+
+### Executando em Modo Interativo
+Para abrir o Cypress Test Runner:
+
+```bash
+npx cypress open
+# ou
+yarn cypress open
+# ou
+pnpm cypress open
+```
+
+No Cypress Launchpad:
+1. Selecione "E2E Testing"
+2. Escolha um navegador (ex: Chrome)
+3. Selecione um arquivo de teste para executar
+
+### Estrutura de Arquivos
+- `cypress/e2e/`: Contém os arquivos de teste E2E
+- `cypress/fixtures/`: Dados de teste estáticos
+- `cypress/support/`: Configurações e comandos personalizados
+
+### Exemplo de Teste
+```javascript
+describe('Login Flow', () => {
+  it('successfully logs in', () => {
+    cy.visit('/login')
+    cy.get('[data-test="email"]').type('user@example.com')
+    cy.get('[data-test="password"]').type('password123')
+    cy.get('[data-test="submit"]').click()
+    cy.url().should('include', '/dashboard')
+  })
+})
+```
+
+### Scripts Úteis no package.json
+```json
+{
+  "scripts": {
+    "cy:open": "cypress open",
+    "test:e2e": "cypress run"
+  }
+}
+```
+
+### Boas Práticas
+- Use seletores `data-test` em vez de classes CSS
+- Organize testes por fluxos de usuário
+- Evite condições de corrida usando comandos Cypress nativos
+- Use fixtures para dados de teste reutilizáveis
+
 ## Configuração
 Os testes estão configurados em `phpunit.xml` com:
 - Ambiente de teste configurado

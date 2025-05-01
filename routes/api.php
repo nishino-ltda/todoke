@@ -58,6 +58,11 @@ Route::prefix('v1')->group(function () {
         Route::get('/{product}/addons', [ProductController::class, 'getAddons']);
     });
 
+    // Rotas públicas de restaurantes
+    Route::prefix('restaurants')->group(function () {
+        Route::get('/{slug}', [\App\Http\Controllers\API\RestaurantController::class, 'show']);
+    });
+
     // Rotas protegidas por autenticação
     Route::middleware('auth:sanctum')->group(function () {
         // Rotas de usuário

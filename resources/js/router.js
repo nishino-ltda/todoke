@@ -25,11 +25,6 @@ const routes = [
     component: Register
   },
   {
-    path: '/menu',
-    name: 'menu',
-    component: Menu
-  },
-  {
     path: '/partner',
     name: 'partner',
     component: Partner
@@ -58,6 +53,11 @@ const routes = [
     path: '/privacy',
     name: 'privacy',
     component: () => import('@pages/Privacy.vue')
+  },{
+    path: '/:slug',
+    name: 'restaurant',
+    component: Menu,
+    props: true
   }
 ]
 

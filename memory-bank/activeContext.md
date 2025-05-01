@@ -160,3 +160,15 @@
 - Develop each web area incrementally, starting with the Home page and authentication flows
 - Set up the Cypress E2E testing framework and begin writing tests for core user flows
 - Create test data fixtures for easier test maintenance
+
+
+# Current Work (2025-04-30)
+
+## API Endpoint Fixes
+- Updated Menu.vue to use versioned API path (/api/v1/restaurants/)
+- Confirmed working restaurant endpoint at /api/v1/restaurants/{slug}
+- All API routes should use the /v1/ prefix for consistency
+
+## Next Steps
+- Verify all frontend API calls use versioned endpoints
+- Update API documentation in docs/03-api-routes.md
