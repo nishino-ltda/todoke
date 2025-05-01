@@ -14,6 +14,34 @@
 - **Build Tool**: Vite 6
 - **UI Framework**: Vuetify 3
 - **HTTP Client**: Axios
+- **Vue Composition API**: Using `<script setup>` syntax
+  - **Conversion Patterns**:
+    - **Simple Components**: Remove export default, move imports to top level
+    ```vue
+    <script setup>
+    import { computed } from 'vue'
+    const currentYear = computed(() => new Date().getFullYear())
+    </script>
+    ```
+    - **Store Usage**: Directly use store refs without returning
+    ```vue
+    <script setup>
+    import { useAuthStore } from '@/stores/auth'
+    const authStore = useAuthStore()
+    const { isAuthenticated, user } = storeToRefs(authStore)
+    </script>
+    ```
+    - **Page Components**: Components automatically available in template
+    ```vue
+    <script setup>
+    import GuestLayout from '@/layouts/GuestLayout.vue'
+    import HomeHero from '@/components/HomeHero.vue'
+    </script>
+    ```
+  - **Benefits**:
+    - Less boilerplate
+    - Better TypeScript support
+    - Clearer component structure
 
 ### Testing
 - PHPUnit 11

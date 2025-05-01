@@ -1,23 +1,30 @@
 # TODOKE Active Context
 
 ## Current Focus Areas
-1. **Hybrid Delivery Implementation**:
+1. **Layout System Implementation**:
+   - Created GuestLayout for public pages (Login, Register, Home)
+   - Created AuthenticatedLayout for protected pages (Menu, Partner, etc.)
+   - Implemented AppHeader with navigation and logout
+   - Implemented AppFooter with copyright info
+   - Updated all pages to use appropriate layouts
+
+2. **Hybrid Delivery Implementation**:
    - Stage-based delivery tracking
    - Automatic partner assignments
    - Drone-specific status handling
 
-2. **Community Pricing Implementation**:
+3. **Community Pricing Implementation**:
    - Borda count voting system
    - Monthly voting rounds
    - Region-specific price bands
    - Automatic fare updates
 
-3. **Product Customization**:
+4. **Product Customization**:
    - Product addons/toppings system
    - Addon-product compatibility management
    - Order customization with addons
 
-4. **Test Improvements**:
+5. **Test Improvements**:
    - Completed test standardization across all test files
    - Implemented proper mock cleanup with Mockery::close()
    - Standardized on RefreshDatabase trait for test isolation
@@ -28,6 +35,12 @@
    - Testing product customization features
 
 ## Recent Changes
+- Implemented layout system with:
+  - GuestLayout for public pages
+  - AuthenticatedLayout for protected pages
+  - AppHeader with navigation and logout
+  - AppFooter with copyright info
+  - Updated all pages to use appropriate layouts
 - Fixed test interdependency issues in MenuTest:
   - Identified and resolved an issue where MenuTest passed when run individually but failed when run as part of the full test suite
   - Root cause was improper mocking of the Log facade in other tests that wasn't being cleaned up
@@ -73,25 +86,31 @@
   - Implemented node approval authorization with NodePolicy and admin middleware
 
 ## Key Decisions
-1. **Stage Management**:
+1. **Layout System**:
+   - GuestLayout for public pages (minimal header/footer)
+   - AuthenticatedLayout for protected pages (full navigation)
+   - Consistent styling across all layouts
+   - Single source of truth for header/footer components
+
+2. **Stage Management**:
    - Using JSON field for delivery stages
    - Separate assignments table for tracking
    - Strict stage ordering enforcement
 
-2. **Status Flow**:
+3. **Status Flow**:
    - Standard statuses: pending → accepted → collected → in_transit → delivered
    - Specialized statuses for drone operations
    - Final delivery state is 'delivered' (replaces 'completed')
    - Cancellation preserves delivered stages
    - Status validation rules enforced in DeliveryStatusService
 
-3. **Community Pricing**:
+4. **Community Pricing**:
    - Borda count method for democratic voting
    - Region-specific price bands (min/avg/max fare per km)
    - Monthly voting schedule with automatic processing
    - Tie-breaking based on first-place vote counts
 
-4. **Product Customization**:
+5. **Product Customization**:
    - Many-to-many relationship between products and addons
    - Partner-specific addons (addons belong to partners)
    - JSON storage for selected addons in order items
@@ -123,6 +142,7 @@
 
 ## Completed Planning
 - Detailed planning documents for web areas (Home, Menu, Restaurant/Partner, Courier, Admin, Support), common components, stores/services, and E2E testing strategy have been created in the `web-planning/` directory.
+- Implemented layout system for all pages
 
 ## Next Steps
 - Continue with frontend implementation based on the planning documents in `web-planning/`

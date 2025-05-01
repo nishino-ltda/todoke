@@ -11,6 +11,14 @@
   - [x] Legal links
   - [x] Social media links
   - [x] Unit tests (100% coverage)
+- [x] Create Guest Layout (`GuestLayout.vue`)
+  - [x] Minimal header/footer
+  - [x] Applied to Login/Register/Home pages
+  - [x] Unit tests (100% coverage)
+- [x] Create Authenticated Layout (`AuthenticatedLayout.vue`)
+  - [x] Full navigation header
+  - [x] Applied to all authenticated pages
+  - [x] Unit tests (100% coverage)
 
 ## 2. Authentication Components
 - [ ] Create Auth Form (`AuthForm.vue`)

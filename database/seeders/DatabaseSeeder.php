@@ -15,24 +15,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create a partner user if it doesn't exist
-        $partner = User::where('email', 'partner@example.com')->first();
-        if (!$partner) {
-            $partner = User::factory()->create([
+        // Create test users for all types if they don't exist
+        $users = [
+            'admin' => [
+                'name' => 'Admin User',
+                'email' => 'admin@todoke.com',
+                'type' => 'admin'
+            ],
+            'courier' => [
+                'name' => 'Test Courier',
+                'email' => 'courier@example.com',
+                'type' => 'courier'
+            ],
+            'partner' => [
                 'name' => 'Restaurant Partner',
                 'email' => 'partner@example.com',
-                'type' => 'partner',
-            ]);
-        }
-        
-        // Create a customer user if it doesn't exist
-        $customer = User::where('email', 'customer@example.com')->first();
-        if (!$customer) {
-            $customer = User::factory()->create([
+                'type' => 'partner'
+            ],
+            'customer' => [
                 'name' => 'Test Customer',
                 'email' => 'customer@example.com',
-                'type' => 'customer',
-            ]);
+                'type' => 'customer'
+            ]
+        ];
+
+        foreach ($users as $type => $data) {
+            $user = User::where('email', $data['email'])->first();
+            if (!$user) {
+                $user = User::factory()->{$type}()->create($data);
+            }
+        }
+        
+        // Get the partner user for product/addon creation
+        $partner = User::where('email', 'partner@example.com')->first();
+        if (!$partner) {
+            throw new \Exception('Partner user not found');
         }
         
         // Check if products already exist for this partner

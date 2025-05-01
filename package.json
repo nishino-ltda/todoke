@@ -4,9 +4,9 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "test": "vitest",
-        "test:watch": "vitest watch",
-        "test:coverage": "vitest run --coverage",
+        "test": "vitest --mode test",
+        "test:watch": "vitest watch --mode test",
+        "test:coverage": "vitest run --coverage --mode test",
         "test:e2e": "cypress open",
         "test:e2e:ci": "concurrently -k \"php artisan serve\" \"cypress run\"",
         "test:e2e:local": "concurrently -k \"php artisan serve\" \"cypress open\""

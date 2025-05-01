@@ -1,80 +1,37 @@
-<script setup>
-import { useAuthStore } from '@/stores/auth'
-import { useLoadingStore } from '@/stores/loading'
-import { computed } from 'vue'
-
-const authStore = useAuthStore()
-const loadingStore = useLoadingStore()
-
-const isLoading = computed(() => loadingStore.isLoading)
-</script>
-
 <template>
-  <header class="app-header">
-    <div class="logo">TODOKE</div>
-    
-    <nav class="main-nav">
-      <router-link to="/">Home</router-link>
-      <router-link to="/menu" v-if="authStore.isAuthenticated">Menu</router-link>
-    </nav>
+  <v-app-bar app color="primary" dark>
+    <v-app-bar-nav-icon @click="toggleDrawer" />
+    <v-toolbar-title>TODOKE</v-toolbar-title>
+    <v-spacer />
 
-    <div class="auth-section">
-      <template v-if="authStore.isAuthenticated">
-        <span>Welcome, {{ authStore.user?.name }}</span>
-        <button @click="authStore.logout" :disabled="isLoading">
-          Logout
-        </button>
-      </template>
-      <template v-else>
-        <router-link to="/login">Login</router-link>
-        <router-link to="/register">Register</router-link>
-      </template>
-    </div>
-  </header>
+    <template v-if="isAuthenticated">
+      <span class="welcome-message">Welcome, {{ user?.name }}</span>
+      <v-btn text to="/menu">Menu</v-btn>
+      <v-btn text disabled v-if="loading">Loading...</v-btn>
+      <v-btn text @click="handleLogout" :disabled="loading">
+        Logout
+      </v-btn>
+    </template>
+
+    <template v-else>
+      <v-btn text to="/login">Login</v-btn>
+      <v-btn text to="/register">Register</v-btn>
+    </template>
+  </v-app-bar>
 </template>
 
-<style scoped>
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background-color: #2c3e50;
-  color: white;
-}
+<script setup>
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
-.logo {
-  font-weight: bold;
-  font-size: 1.5rem;
-}
+const router = useRouter()
+const authStore = useAuthStore()
 
-.main-nav {
-  display: flex;
-  gap: 1rem;
-}
+const { isAuthenticated, user, loading } = storeToRefs(authStore)
+const handleLogout = authStore.logout
 
-.main-nav a {
-  color: white;
-  text-decoration: none;
+function toggleDrawer() {
+  // Will implement drawer toggle later
 }
-
-.auth-section {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-button {
-  padding: 0.5rem 1rem;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-</style>
+</script>

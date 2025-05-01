@@ -1,86 +1,35 @@
-<script setup>
-const currentYear = new Date().getFullYear()
-</script>
-
 <template>
-  <footer class="app-footer">
-    <div class="footer-content">
-      <div class="legal">
-        <p>&copy; {{ currentYear }} TODOKE. All rights reserved.</p>
-        <div class="legal-links">
-          <router-link to="/terms">Terms of Service</router-link>
-          <router-link to="/privacy">Privacy Policy</router-link>
-        </div>
-      </div>
-      
-      <div class="social">
-        <a href="#" class="social-link">
-          <span class="icon">f</span> Facebook
-        </a>
-        <a href="#" class="social-link">
-          <span class="icon">t</span> Twitter
-        </a>
-        <a href="#" class="social-link">
-          <span class="icon">i</span> Instagram
-        </a>
-      </div>
-    </div>
-  </footer>
+  <v-footer app color="primary" dark class="app-footer">
+    <v-container>
+      <v-row justify="space-between" align="center">
+        <v-col cols="12" md="4">
+          <p>&copy; {{ currentYear }} TODOKE</p>
+        </v-col>
+        
+        <v-col cols="12" md="4" class="text-center">
+          <router-link to="/terms" class="mr-4">Terms</router-link>
+          <router-link to="/privacy">Privacy</router-link>
+        </v-col>
+
+        <v-col cols="12" md="4" class="text-right">
+          <a href="https://facebook.com" class="social-link mr-2">Facebook</a>
+          <a href="https://twitter.com" class="social-link mr-2">Twitter</a>
+          <a href="https://instagram.com" class="social-link">Instagram</a>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-footer>
 </template>
 
+<script setup>
+import { computed } from 'vue'
+
+const currentYear = computed(() => new Date().getFullYear())
+</script>
+
 <style scoped>
-.app-footer {
-  background-color: #2c3e50;
-  color: white;
-  padding: 2rem 1rem;
-}
-
-.footer-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.legal {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.legal-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.legal-links a {
-  color: white;
-  text-decoration: none;
-}
-
-.social {
-  display: flex;
-  gap: 1.5rem;
-}
-
 .social-link {
   color: white;
   text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.icon {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 24px;
-  height: 24px;
-  background-color: white;
-  color: #2c3e50;
-  border-radius: 50%;
-  font-weight: bold;
 }
 </style>
