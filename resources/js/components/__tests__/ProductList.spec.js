@@ -1,6 +1,26 @@
 import { mount } from '@vue/test-utils'
+import { vi } from 'vitest'
 import ProductList from '../ProductList.vue'
 import ProductCard from '../ProductCard.vue'
+
+// Stub Vuetify and child components
+const vuetifyStubs = {
+  'v-container': {
+    template: '<div><slot/></div>'
+  },
+  'v-row': {
+    template: '<div><slot/></div>'
+  },
+  'v-col': {
+    template: '<div><slot/></div>'
+  },
+  'ProductCard': {
+    template: '<div data-test="product-card"></div>',
+    methods: {
+      $emit: vi.fn()
+    }
+  }
+}
 
 describe('ProductList', () => {
   const products = [
@@ -10,7 +30,10 @@ describe('ProductList', () => {
 
   it('renders product cards for each product', () => {
     const wrapper = mount(ProductList, {
-      props: { products }
+      props: { products },
+      global: {
+        stubs: vuetifyStubs
+      }
     })
 
     expect(wrapper.findAll('[data-test="product-card"]')).toHaveLength(products.length)
@@ -18,7 +41,10 @@ describe('ProductList', () => {
 
   it('emits add-to-cart event when child component emits', async () => {
     const wrapper = mount(ProductList, {
-      props: { products }
+      props: { products },
+      global: {
+        stubs: vuetifyStubs
+      }
     })
 
     const productCards = wrapper.findAllComponents(ProductCard)

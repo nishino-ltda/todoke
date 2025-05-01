@@ -1,4 +1,28 @@
-## Interface Usage Pattern (Updated 2025-04-29)
+## Testing Patterns (Updated 2025-05-01)
+
+### Frontend Testing Best Practices
+
+1. **API Mocking**:
+   - Mock axios directly rather than injecting mocks
+   - Use vi.spyOn(axios, 'get|post') for precise control
+   - Match production API response structure
+
+2. **Async Handling**:
+   - Always use flushPromises() after async operations
+   - Await all promises before assertions
+   - Test both loading and resolved states
+
+3. **Component Stubs**:
+   - Stub child components with minimal templates
+   - Focus tests on component behavior
+   - Avoid testing implementation details
+
+4. **Test Organization**:
+   - Group related test cases in describe blocks
+   - Separate happy path and error cases
+   - Keep tests focused and independent
+
+### Interface Usage Pattern (Updated 2025-04-29)
 
 ### Key Principles
 

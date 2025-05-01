@@ -6,13 +6,16 @@
 - Planning: web-planning/menu.md
 
 ## Testing Goals
-- [ ] Write E2E tests for:
-  - [ ] Product browsing
-  - [ ] Add to cart flow
-- [ ] Write unit tests for:
-  - [ ] ProductList component
-  - [ ] ProductCard component
-  - [ ] Cart Store
+✅ Completed:
+- Unit tests for:
+  - ProductList component (all cases passing)
+  - ProductCard component (all cases passing)
+  - Menu page component (axios mocking and async handling implemented)
+  
+⚠️ Pending:
+- E2E tests for:
+  - Product browsing
+  - Add to cart flow
 
 ## Implementation Tasks
 1. **Menu Components**:

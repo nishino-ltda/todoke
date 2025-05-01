@@ -33,8 +33,18 @@
    - Added assertions for delivery stages
    - Implemented automatic assignment creation
    - Testing product customization features
+   - Fixed axios mocking in component tests
+   - Added proper async handling with flushPromises()
+   - Fixed axios mocking in component tests
+   - Added proper async handling with flushPromises()
 
 ## Recent Changes
+- Fixed menu.spec.js tests by:
+  - Implementing direct axios mocking instead of component injection
+  - Adding proper async handling with flushPromises()
+  - Ensuring all API calls are properly mocked
+  - Verifying both happy path and loading states
+
 - Fixed HomeFeatures.spec.js test by:
   - Replacing direct Vuetify component imports with component stubs
   - Following the same pattern used in HomeHero.spec.js
@@ -46,37 +56,28 @@
   - Adding test cases for product card rendering
   - Verifying add-to-cart event propagation
 
-- Implemented layout system with:
-  - GuestLayout for public pages
-  - AuthenticatedLayout for protected pages
-  - AppHeader with navigation and logout
-  - AppFooter with copyright info
-  - Updated all pages to use appropriate layouts
-- Fixed test interdependency issues in MenuTest:
-  - Identified and resolved an issue where MenuTest passed when run individually but failed when run as part of the full test suite
-  - Root cause was improper mocking of the Log facade in other tests that wasn't being cleaned up
-  - Implemented a more resilient approach using direct token generation instead of relying on auth controllers
-  - Added proper mock cleanup with Mockery::close() to prevent interference between tests
-  - Switched from DatabaseTransactions to RefreshDatabase for cleaner test isolation
-- Completed comprehensive test suite standardization:
-  - Applied RefreshDatabase trait to all 26 test files (18 Feature, 8 Unit)
-  - Added Mockery::close() to setUp methods for consistent mock cleanup
-  - Updated authentication methods in Feature tests to use direct token generation
-  - Verified all tests pass when run individually and as part of full suite
-  - Resolved all test interdependencies
-- Implemented product addons (toppings) functionality:
-  - Created Addon model and related migrations
-  - Implemented many-to-many relationship between products and addons
-  - Added support for addon selection in orders
-  - Created API endpoints for addon management and product-addon associations
-  - Added comprehensive tests for addon functionality
-- Implemented community pricing voting system:
-  - Created VotingService, VotingCalculationService, VotingRoundService, and FareUpdateService
-  - Added API endpoints for vote submission and retrieval
-  - Implemented Borda count algorithm for vote calculation
-  - Created scheduled commands for voting round management
-- Added specialized drone statuses:
-  - `drone_launched`
+## Key Decisions
+1. **Testing Patterns**:
+   - Direct axios mocking preferred over component injection
+   - flushPromises() for async operation handling
+   - Component stubs for external dependencies
+   - Clear separation between unit and integration tests
+
+2. **API Testing**:
+   - Versioned endpoints (/api/v1/) for all API calls
+   - Mock responses match production API structure
+   - Error cases tested alongside happy paths
+
+## Pending Tasks
+- Implement E2E tests for menu browsing flow
+- Add tests for cart operations
+- Expand test coverage for edge cases
+- Document testing patterns in systemPatterns.md
+
+## Next Steps
+1. Continue expanding test coverage for frontend components
+2. Implement Cypress E2E tests for core user flows
+3. Document testing best practices
   - `drone_in_route`
   - `drone_arrived`
 - Updated DeliveryStatusService to:

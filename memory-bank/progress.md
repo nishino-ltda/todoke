@@ -7,11 +7,15 @@
   - CartIcon component
   - Menu page integration
   - Restaurant slug routing (/tia-mary-corumba)
-  - API endpoint for restaurant products (/api/restaurants/{slug})
+  - API endpoint for restaurant products (/api/v1/restaurants/{slug})
+  - Fixed menu.spec.js tests:
+    - Implemented direct axios mocking
+    - Added proper async handling with flushPromises()
+    - Verified both happy path and loading states
+    - All test cases now passing
 
 ⚠️ Pending:
 - E2E tests for product browsing and cart flow
-- Fix menu.spec.js test (missing @pinia/testing)
 - Advanced cart features (persistence, item counts)
 - Product details modal
 - Checkout flow implementation
