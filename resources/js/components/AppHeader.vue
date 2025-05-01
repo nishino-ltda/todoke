@@ -8,6 +8,7 @@
       <span class="welcome-message">Welcome, {{ user?.name }}</span>
       <v-btn text to="/menu">Menu</v-btn>
       <v-btn text disabled v-if="loading">Loading...</v-btn>
+      <CartIcon />
       <v-btn text @click="handleLogout" :disabled="loading">
         Logout
       </v-btn>
@@ -24,6 +25,7 @@
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import CartIcon from './CartIcon.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
