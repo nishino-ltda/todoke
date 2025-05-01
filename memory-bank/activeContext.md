@@ -175,7 +175,7 @@
 
 ⚠️ Pending:
 - Implement E2E tests for product browsing and cart flow
-- Product details modal
+- Product details modal with addon selection (completed)
 - Checkout flow implementation
 
 ✅ Completed:

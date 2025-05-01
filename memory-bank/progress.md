@@ -22,7 +22,7 @@
 ⚠️ Pending:
 - E2E tests for product browsing and cart flow
 - Advanced cart features (persistence, item counts)
-- Product details modal
+- Product details modal with addon selection (completed)
 - Checkout flow implementation
 
 ## Community Pricing Tests - 2025-04-29
@@ -67,6 +67,11 @@ Key improvements:
   - Order customization with addons
   - Addon-product compatibility validation
   - Comprehensive tests for addon functionality
+  - Cart store integration with addon support:
+    - Items with different addons treated as separate
+    - Quantity increments only for identical items
+    - Proper localStorage persistence
+    - Full test coverage
 
 ⏳ **Pending**:
 - Addon categories (sauces, toppings, extras)

@@ -29,11 +29,18 @@ export const useCartStore = defineStore('cart', () => {
   )
 
   function addItem(product) {
-    const existing = items.value.find(item => item.id === product.id)
+    const existing = items.value.find(item => 
+      item.id === product.id && 
+      JSON.stringify(item.selectedAddons) === JSON.stringify(product.selectedAddons)
+    )
     if (existing) {
       existing.quantity++
     } else {
-      items.value.push({ ...product, quantity: 1 })
+      items.value.push({ 
+        ...product, 
+        quantity: 1,
+        selectedAddons: product.selectedAddons || []
+      })
     }
   }
 

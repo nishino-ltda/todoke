@@ -172,3 +172,24 @@ class DeliveryStatusService implements DeliveryStatusServiceInterface {
     }
 }
 ```
+
+## Product Display Patterns (2025-05-01)
+
+1. **Product List**:
+   - Grid layout with ProductCard components
+   - Each card shows name, price and image
+   - Clicking opens ProductDetailsModal
+
+2. **Product Details Modal**:
+   - Shows full product details (name, description, price, image)
+   - Quantity selector (minimum 1)
+   - Addon selection section (when product has addons)
+   - Dynamic price calculation including selected addons
+   - Add to cart button with total price
+   - Emits close event when closed
+
+3. **Addon Selection**:
+   - Checkbox interface for optional addons
+   - Addon prices displayed next to names
+   - Selected addons stored in cart items
+   - Total price updates dynamically

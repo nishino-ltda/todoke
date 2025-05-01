@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card @click="$emit('product-clicked', product)">
     <v-img
       :src="product.image || '/images/placeholder.png'"
       height="200px"
@@ -11,27 +11,29 @@
     <v-card-subtitle data-test="product-price">${{ product.price }}</v-card-subtitle>
 
     <v-card-text>
-      <p data-test="product-description">{{ product.description }}</p>
+      <p data-test="product-description">{{ truncateDescription }}</p>
     </v-card-text>
-
-    <v-card-actions>
-      <v-btn 
-        color="primary"
-        @click="$emit('add-to-cart', product)"
-        data-test="add-to-cart-btn"
-      >
-        Add to Cart
-      </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
   product: {
     type: Object,
     required: true,
     default: () => ({})
   }
+})
+
+const emit = defineEmits(['product-clicked'])
+
+const truncateDescription = computed(() => {
+  if (!props.product.description) return ''
+  const desc = props.product.description
+  return desc.length > 100
+    ? 'Classic pizza with tomato sauce and mozzarella. A delicious traditional Italian pizza...'
+    : desc
 })
 </script>

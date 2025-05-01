@@ -39,10 +39,11 @@ describe('Cart Store', () => {
     expect(cart.items[0].quantity).toBe(1)
   })
 
-  it('increments quantity when adding existing item', () => {
+  it('increments quantity when adding identical items', () => {
     const cart = useCartStore()
-    cart.addItem(product1)
-    cart.addItem(product1)
+    const item = { ...product1, selectedAddons: [] }
+    cart.addItem(item)
+    cart.addItem(item)
     expect(cart.items).toHaveLength(1)
     expect(cart.items[0].quantity).toBe(2)
   })
@@ -94,7 +95,11 @@ describe('Cart Store', () => {
     await new Promise(resolve => setTimeout(resolve, 0))
     
     const saved = JSON.parse(localStorage.store.cart)
-    expect(saved).toEqual([{ ...product1, quantity: 1 }])
+    expect(saved).toEqual([{ 
+      ...product1, 
+      quantity: 1,
+      selectedAddons: []
+    }])
   })
 
   it('handles localStorage errors gracefully', () => {
@@ -104,5 +109,39 @@ describe('Cart Store', () => {
     
     const cart = useCartStore()
     expect(() => cart.addItem(product1)).not.toThrow()
+  })
+
+  it('treats items with different addons as separate', () => {
+    const cart = useCartStore()
+    const productWithAddons = { ...product1, selectedAddons: [1, 2] }
+    const productWithOtherAddons = { ...product1, selectedAddons: [3] }
+    
+    cart.addItem(productWithAddons)
+    cart.addItem(productWithOtherAddons)
+    
+    expect(cart.items).toHaveLength(2)
+    expect(cart.items[0].selectedAddons).toEqual([1, 2])
+    expect(cart.items[1].selectedAddons).toEqual([3])
+  })
+
+  it('increments quantity only for items with identical addons', () => {
+    const cart = useCartStore()
+    const productWithAddons = { ...product1, selectedAddons: [1, 2] }
+    const productSameAddons = { ...product1, selectedAddons: [1, 2] }
+    const productDifferentAddons = { ...product1, selectedAddons: [1] }
+    
+    cart.addItem(productWithAddons)
+    cart.addItem(productSameAddons)
+    cart.addItem(productDifferentAddons)
+    
+    expect(cart.items).toHaveLength(2)
+    expect(cart.items[0].quantity).toBe(2)
+    expect(cart.items[1].quantity).toBe(1)
+  })
+
+  it('handles items without addons', () => {
+    const cart = useCartStore()
+    cart.addItem(product1)
+    expect(cart.items[0].selectedAddons).toEqual([])
   })
 })
