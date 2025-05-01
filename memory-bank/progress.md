@@ -1,14 +1,20 @@
-## Sprint 3 Completion - 2025-04-30
+## Sprint 3 Status - 2025-05-01
 
-- Completed all menu browsing and cart functionality:
-  - ProductList and ProductCard components implemented
-  - Cart store with add/remove functionality
+✅ Completed:
+- Core menu browsing functionality:
+  - ProductList and ProductCard components
+  - Cart store with basic add/remove
   - CartIcon component
   - Menu page integration
-  - Dynamic restaurant slug routing (/tia-mary-corumba)
+  - Restaurant slug routing (/tia-mary-corumba)
   - API endpoint for restaurant products (/api/restaurants/{slug})
-  - Menu component tests for loading state and data fetching
-  - All unit tests passing
+
+⚠️ Pending:
+- E2E tests for product browsing and cart flow
+- Fix menu.spec.js test (missing @pinia/testing)
+- Advanced cart features (persistence, item counts)
+- Product details modal
+- Checkout flow implementation
 
 ## Community Pricing Tests - 2025-04-29
 
