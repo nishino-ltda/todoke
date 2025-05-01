@@ -12,18 +12,14 @@ class RestaurantController extends Controller
     {
         $restaurant = Node::where('identifier', $slug)
             ->where('type', 'partner')
-            ->with(['partner', 'region'])
+            ->with(['partner', 'region', 'products'])
             ->firstOrFail();
 
         return response()->json([
-            'data' => [
-                'id' => $restaurant->id,
-                'name' => $restaurant->identifier,
-                'partner' => $restaurant->partner,
-                'region' => $restaurant->region,
-                'status' => $restaurant->status,
-                'capacity' => $restaurant->capacity
-            ]
+            'name' => $restaurant->identifier,
+            'products' => $restaurant->products,
+            'partner' => $restaurant->partner,
+            'region' => $restaurant->region
         ]);
     }
 }

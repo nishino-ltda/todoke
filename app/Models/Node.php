@@ -38,4 +38,9 @@ class Node extends Model
     {
         return $this->hasMany(Delivery::class, 'node_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'node_id');
+    }
 }

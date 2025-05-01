@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Addon;
+use App\Models\Node;
 use Illuminate\Support\Facades\Hash;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -54,18 +55,23 @@ class DatabaseSeeder extends Seeder
             throw new \Exception('Partner user not found');
         }
         
-        // Check if products already exist for this partner
-        $productCount = Product::where('partner_id', $partner->id)->count();
-        if ($productCount < 5) {
-            // Create products for the partner
-            $products = Product::factory()
-                ->count(5 - $productCount)
-                ->forPartner($partner->id)
-                ->create();
+        // Get the restaurant node for this partner
+        $restaurant = Node::where('identifier', 'tia-mary-corumba')->first();
+        if (!$restaurant) {
+            throw new \Exception('Restaurant node not found');
         }
         
-        // Get all products for this partner
-        $products = Product::where('partner_id', $partner->id)->get();
+        // Check if products already exist for this restaurant
+        $productCount = Product::where('node_id', $restaurant->id)->count();
+        if ($productCount < 5) {
+            // Create products for the restaurant
+            $products = Product::factory()
+                ->count(5 - $productCount)
+                ->create(['node_id' => $restaurant->id]);
+        }
+        
+        // Get all products for this restaurant
+        $products = Product::where('node_id', $restaurant->id)->get();
             
         // Check if addons already exist for this partner
         $addonCount = Addon::where('partner_id', $partner->id)->count();
