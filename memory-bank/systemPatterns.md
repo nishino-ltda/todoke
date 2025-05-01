@@ -89,6 +89,21 @@
    - Better organization of security tests
    - Consistent structure across the codebase
 
+### State Persistence Patterns
+
+1. **LocalStorage Integration**:
+   - Use Pinia's watchEffect for automatic persistence
+   - Implement error handling for localStorage operations
+   - JSON serialize/deserialize state
+   - Load initial state from localStorage on store creation
+   - Test with proper localStorage mocking
+
+2. **Benefits**:
+   - State survives page refreshes
+   - No external dependencies
+   - Simple implementation
+   - Works across all browsers
+
 ### Benefits
 
 - **Avoids Mocking Eloquent**:

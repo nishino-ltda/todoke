@@ -1,9 +1,31 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { useCartStore } from '../cart'
+import { vi } from 'vitest'
 
 describe('Cart Store', () => {
+  let localStorageMock = {
+    store: {},
+    getItem(key) {
+      return this.store[key] || null
+    },
+    setItem(key, value) {
+      this.store[key] = value
+    },
+    clear() {
+      this.store = {}
+    }
+  }
+
   beforeEach(() => {
+    // Replace global localStorage with mock
+    vi.stubGlobal('localStorage', localStorageMock)
+    localStorageMock.clear()
+    
     setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
   const product1 = { id: 1, name: 'Pizza', price: 10 }
@@ -54,5 +76,33 @@ describe('Cart Store', () => {
     cart.addItem(product1)
     cart.clearCart()
     expect(cart.items).toHaveLength(0)
+  })
+
+  it('loads initial state from localStorage', () => {
+    const savedCart = [{ id: 1, name: 'Saved Pizza', price: 12, quantity: 2 }]
+    localStorage.setItem('cart', JSON.stringify(savedCart))
+    
+    const cart = useCartStore()
+    expect(cart.items).toEqual(savedCart)
+  })
+
+  it('saves state to localStorage on changes', async () => {
+    const cart = useCartStore()
+    await cart.addItem(product1)
+    
+    // Wait for next tick to ensure watchEffect completes
+    await new Promise(resolve => setTimeout(resolve, 0))
+    
+    const saved = JSON.parse(localStorage.store.cart)
+    expect(saved).toEqual([{ ...product1, quantity: 1 }])
+  })
+
+  it('handles localStorage errors gracefully', () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('Storage failed')
+    })
+    
+    const cart = useCartStore()
+    expect(() => cart.addItem(product1)).not.toThrow()
   })
 })

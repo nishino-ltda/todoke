@@ -21,9 +21,9 @@
 ## 4. Shopping Cart
 - [ ] Create Cart Icon component (`CartIcon.vue`)
 - [ ] Create Cart modal/page (`Cart.vue`)
-- [ ] Implement cart state management
-- [ ] Add/remove items functionality
-- [ ] Calculate and display subtotal
+- [x] Implement cart state management (Pinia store with localStorage persistence)
+- [x] Add/remove items functionality
+- [x] Calculate and display subtotal
 
 ## 5. Checkout Flow
 - [ ] Create Checkout Form component (`CheckoutForm.vue`)
@@ -43,5 +43,5 @@
 - [ ] Submit orders
 
 ## 8. Testing
-- [ ] Unit tests for components
+- [x] Unit tests for components (ProductList, ProductCard, CartStore)
 - [ ] E2E tests for ordering flow
