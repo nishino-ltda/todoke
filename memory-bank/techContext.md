@@ -51,6 +51,11 @@
   - Interface-based testing for database operations
   - NotificationServiceInterface pattern avoids mocking Eloquent models
   - Services depend on interfaces rather than concrete implementations
+  - **Frontend Component Testing**:
+    - Vue Test Utils for component testing
+    - Component stubs for Vuetify components to avoid CSS import issues
+    - Example pattern in HomeHero.spec.js and HomeFeatures.spec.js
+    - Comprehensive assertions for component content and structure
 - **Test Configuration**:
   - Process isolation enabled (prevents test interference)
   - Strict global state checking
