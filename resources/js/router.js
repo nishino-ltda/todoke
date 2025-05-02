@@ -53,9 +53,16 @@ const routes = [
     path: '/privacy',
     name: 'privacy',
     component: () => import('@pages/Privacy.vue')
-  },{
-    path: '/:slug',
+  },
+  {
+    path: '/menu/:slug',
     name: 'restaurant',
+    component: Menu,
+    props: true
+  },
+  {
+    path: '/:slug',
+    name: 'directRestaurant',
     component: Menu,
     props: true
   }

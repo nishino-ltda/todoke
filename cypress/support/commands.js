@@ -1,17 +1,30 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
+// Pinia store access command
+Cypress.Commands.add('getStore', (storeName) => {
+  return cy.window().then(win => {
+    const app = win.document.querySelector('#app').__vue_app__
+    return app.config.globalProperties.$pinia._s.get(storeName)
+  })
+})
 
 Cypress.Commands.add('login', (email, password) => {
   // TODO: Implement login command
 })
 
 Cypress.Commands.add('logout', () => {
-  // TODO: Implement logout command
+  // Use the auth store's logout method if available
+  cy.getStore('auth').then((store) => {
+    if (store && store.logout) {
+      store.logout()
+    } else {
+      // Fallback to manual logout
+      cy.window().then((win) => {
+        win.localStorage.removeItem('token')
+        win.localStorage.removeItem('user')
+      })
+      cy.clearCookies()
+    }
+  })
+  
+  // Ensure we're on login page
+  cy.visit('/login')
 })

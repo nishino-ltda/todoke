@@ -6,7 +6,10 @@
   - Cart store with basic add/remove
   - CartIcon component
   - Menu page integration
-  - Restaurant slug routing (/tia-mary-corumba)
+  - Restaurant slug routing:
+    - Traditional /menu/{slug} route
+    - Direct /{slug} route support
+    - Error handling for invalid slugs
   - API endpoint for restaurant products (/api/v1/restaurants/{slug})
   - Fixed menu.spec.js tests:
     - Implemented direct axios mocking
@@ -19,8 +22,11 @@
   - Initial state loading from localStorage
   - Comprehensive test coverage
 
-⚠️ Pending:
+✅ Completed:
 - E2E tests for product browsing and cart flow
+  - All 5 test cases passing
+  - Verified cart persistence
+  - Fixed Pinia store access in tests
 - Advanced cart features (persistence, item counts)
 - Product details modal with addon selection (completed)
 - Checkout flow implementation

@@ -1,5 +1,8 @@
 <template>
-  <v-card @click="$emit('product-clicked', product)">
+  <v-card 
+    @click="$emit('product-clicked', product)"
+    data-test="product-card"
+  >
     <v-img
       :src="product.image || '/images/placeholder.png'"
       height="200px"
@@ -13,6 +16,16 @@
     <v-card-text>
       <p data-test="product-description">{{ truncateDescription }}</p>
     </v-card-text>
+
+    <v-card-actions>
+      <v-btn 
+        @click.stop="$emit('add-to-cart', product)"
+        color="primary"
+        data-test="add-to-cart-button"
+      >
+        Add to Cart
+      </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -27,13 +40,13 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['product-clicked'])
+const emit = defineEmits(['product-clicked', 'add-to-cart'])
 
 const truncateDescription = computed(() => {
   if (!props.product.description) return ''
   const desc = props.product.description
   return desc.length > 100
-    ? 'Classic pizza with tomato sauce and mozzarella. A delicious traditional Italian pizza...'
+    ? `${desc.substring(0, 97)}...`
     : desc
 })
 </script>

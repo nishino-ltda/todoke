@@ -4,6 +4,7 @@
     :value="cart.count > 0"
     color="error"
     overlap
+    data-test="cart-icon"
   >
     <v-btn icon @click="showCartDialog = true">
       <v-icon>mdi-cart</v-icon>
@@ -28,7 +29,11 @@
           </v-list-item-content>
           
           <v-list-item-action>
-            <v-btn icon @click="removeItem(item.id)">
+            <v-btn 
+              icon 
+              @click="removeItem(item.id)"
+              data-test="remove-item"
+            >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
           </v-list-item-action>

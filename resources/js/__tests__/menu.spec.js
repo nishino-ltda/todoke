@@ -133,4 +133,44 @@ describe('Menu.vue', () => {
     
     expect(cartStore.addItem).toHaveBeenCalled()
   })
+
+  it('redirects to home when restaurant is not found (404)', async () => {
+    const mockError = {
+      response: { status: 404 }
+    }
+    vi.spyOn(axios, 'get').mockRejectedValue(mockError)
+    delete window.location
+    window.location = { href: vi.fn() }
+
+    mount(Menu, {
+      global: {
+        plugins: [pinia],
+        stubs: stubs
+      },
+      props: { slug: 'invalid-slug' }
+    })
+
+    await flushPromises()
+    expect(window.location.href).toBe('/?error=restaurant_not_found')
+  })
+
+  it('redirects to home on server error', async () => {
+    const mockError = {
+      response: { status: 500 }
+    }
+    vi.spyOn(axios, 'get').mockRejectedValue(mockError)
+    delete window.location
+    window.location = { href: vi.fn() }
+
+    mount(Menu, {
+      global: {
+        plugins: [pinia],
+        stubs: stubs
+      },
+      props: { slug: 'test-slug' }
+    })
+
+    await flushPromises()
+    expect(window.location.href).toBe('/?error=server_error')
+  })
 })

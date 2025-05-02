@@ -21,6 +21,10 @@ const vuetify = createVuetify({
 const app = createApp(App)
 const pinia = createPinia()
 
+// Always expose Pinia for testing
+window.__pinia__ = pinia
+console.log('Pinia exposed to window:', !!window.__pinia__)
+
 app
   .use(pinia)
   .use(router)

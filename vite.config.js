@@ -41,10 +41,7 @@ export default defineConfig(({ command, mode }) => {
                 '**/node_modules/vuetify/**/*.css',
                 '**/node_modules/vuetify/lib/**/*.css',
                 '**/node_modules/vuetify/styles/**/*.css'
-            ],
-            css: {
-                modules: false
-            }
+            ]
         },
         resolve: {
             alias: [

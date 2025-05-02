@@ -65,8 +65,12 @@ onMounted(async () => {
     restaurantName.value = response.data.name
     products.value = response.data.products
   } catch (error) {
-    console.error('Error fetching restaurant data:', error)
-    // Handle error (e.g., redirect to 404)
+    if (error.response?.status === 404) {
+      window.location.href = '/?error=restaurant_not_found'
+    } else {
+      console.error('Error fetching restaurant data:', error)
+      window.location.href = '/?error=server_error'
+    }
   } finally {
     loading.value = false
   }

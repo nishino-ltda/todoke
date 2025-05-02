@@ -1,7 +1,10 @@
 # Work Breakdown Structure: Menu
 
 ## 1. Page Structure
-- [ ] Create dynamic route for partner menus (`/menu/:partnerId`)
+- [x] Implement dual routing:
+  - Traditional `/menu/:partnerId` route
+  - Direct `/:partnerId` route support
+  - Error handling for invalid slugs
 - [ ] Implement partner-specific layout (header with branding)
 - [ ] Create responsive product grid
 
@@ -44,4 +47,4 @@
 
 ## 8. Testing
 - [x] Unit tests for components (ProductList, ProductCard, CartStore)
-- [ ] E2E tests for ordering flow
+- [x] E2E tests for ordering flow (browsing, cart, persistence)

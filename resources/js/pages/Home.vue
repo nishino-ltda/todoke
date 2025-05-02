@@ -4,7 +4,7 @@
     <HomeFeatures />
     <div class="text-center mt-8 mb-16">
       <v-btn 
-        to="/tia-mary-corumba" 
+        :to="{ name: 'restaurant', params: { slug: 'tia-mary-corumba' } }"
         color="primary"
         size="large"
       >

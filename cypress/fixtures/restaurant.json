@@ -1,0 +1,31 @@
+{
+  "name": "Test Restaurant",
+  "products": [
+    {
+      "id": 1,
+      "name": "Margherita Pizza",
+      "description": "Classic pizza with tomato sauce, mozzarella and basil",
+      "price": 12.99,
+      "image": "/images/pizza.jpg",
+      "addons": [
+        {
+          "id": 1,
+          "name": "Extra Cheese",
+          "price": 1.50
+        },
+        {
+          "id": 2,
+          "name": "Pepperoni",
+          "price": 2.00
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Caesar Salad",
+      "description": "Fresh romaine lettuce with Caesar dressing, croutons and parmesan",
+      "price": 8.99,
+      "image": "/images/salad.jpg"
+    }
+  ]
+}

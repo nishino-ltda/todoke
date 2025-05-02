@@ -12,10 +12,11 @@
   - ProductCard component (all cases passing)
   - Menu page component (axios mocking and async handling implemented)
   
-⚠️ Pending:
+✅ Completed:
 - E2E tests for:
   - Product browsing
   - Add to cart flow
+  - Cart persistence
 
 ## Implementation Tasks
 1. **Menu Components**:
@@ -31,6 +32,7 @@
 3. **State Management**:
    - [x] Extend Cart Store for persistence (localStorage integration)
    - [ ] Add cart item count to AppHeader
+   - [x] Implement direct slug routing (e.g., /restaurant-name)
 
 ## Acceptance Criteria
 ✅ Users can browse products

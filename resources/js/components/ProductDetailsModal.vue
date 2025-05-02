@@ -33,7 +33,11 @@
           <button @click="quantity++">+</button>
         </div>
         
-        <button class="add-to-cart" @click="addToCart">
+        <button 
+          class="add-to-cart" 
+          @click="addToCart"
+          data-test="add-to-cart"
+        >
           Add to Cart (\${{ totalPrice.toFixed(2) }})
         </button>
       </div>

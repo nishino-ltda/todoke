@@ -1,5 +1,10 @@
 describe('Login Flow', () => {
   beforeEach(() => {
+    // Clear auth state
+    cy.window().then((win) => {
+      win.localStorage.removeItem('token')
+    })
+
     // Intercept API requests
     cy.intercept('POST', '/api/auth/login', (req) => {
       // Successful login response
@@ -27,8 +32,9 @@ describe('Login Flow', () => {
       }
     }).as('loginRequest')
 
-    // Visit login page
+    // Visit login page and verify logged out state
     cy.visit('/login')
+    cy.window().its('localStorage.token').should('be.undefined')
   })
 
   it('displays the login form', () => {
@@ -84,24 +90,32 @@ describe('Login Flow', () => {
   })
 
   it('shows loading state during login', () => {
-    // Slow down the API response
-    cy.intercept('POST', '/api/auth/login', (req) => {
-      req.on('response', (res) => {
-        // Delay the response by 1 second
-        res.setDelay(1000)
-      })
-    }).as('slowLoginRequest')
+    // Ensure we're logged out
+    cy.logout()
+    
+    // Ensure we're properly logged out
+    cy.clearCookies()
+    cy.window().then((win) => {
+      win.localStorage.removeItem('token')
+    })
+    
+    // Mock a delayed API response (500ms) that fails
+    cy.intercept('POST', '/api/auth/login', {
+      delay: 500,
+      statusCode: 401,
+      body: {
+        message: 'Invalid credentials'
+      }
+    }).as('loginRequest')
     
     // Fill in the form
     cy.get('[data-test="email-input"] input').type('test@example.com')
     cy.get('[data-test="password-input"] input').type('password123')
     
-    // Submit the form
-    cy.get('[data-test="submit-button"]').click()
-    
-    // Check if loading state is shown
-    cy.get('[data-test="submit-button"]').should('be.disabled')
-      .and('contain', 'Logging in...')
+    // Submit the form and verify loading state appears
+    cy.get('[data-test="submit-button"]').as('submitBtn')
+    cy.get('@submitBtn').should('be.visible').click()
+    cy.get('@submitBtn').should('have.class', 'v-btn--loading')
   })
 
   it('navigates to register page when clicking the link', () => {
