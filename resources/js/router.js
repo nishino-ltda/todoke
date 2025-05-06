@@ -7,6 +7,7 @@ import Partner from '@pages/Partner.vue'
 import Courier from '@pages/Courier.vue'
 import Admin from '@pages/Admin.vue'
 import Support from '@pages/Support.vue'
+import Checkout from '@pages/Checkout.vue'
 
 const routes = [
   {
@@ -65,6 +66,11 @@ const routes = [
     name: 'directRestaurant',
     component: Menu,
     props: true
+  },
+  {
+    path: '/checkout',
+    name: 'checkout',
+    component: Checkout
   }
 ]
 

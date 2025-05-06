@@ -72,7 +72,13 @@ describe('CartIcon', () => {
   beforeEach(() => {
     router = createRouter({
       history: createMemoryHistory(),
-      routes: []
+      routes: [
+        {
+          path: '/checkout',
+          name: 'checkout',
+          component: { template: '<div>Checkout</div>' }
+        }
+      ]
     })
 
     const pinia = createPinia()
@@ -116,16 +122,12 @@ describe('CartIcon', () => {
     expect(cartStore.removeItem).toHaveBeenCalledWith(1)
   })
 
-  it('clears cart on checkout', async () => {
-    // Mock window.confirm
-    window.confirm = vi.fn(() => true)
-    
+  it('navigates to checkout on checkout button click', async () => {
+    const push = vi.spyOn(router, 'push')
     cartStore.items = [{ id: 1, name: 'Product', price: 10, quantity: 1 }]
-    cartStore.clearCart = vi.fn()
     await wrapper.find('[data-test="cart-icon"] button').trigger('click') // Open dialog
     
     await wrapper.find('[data-test="checkout-button"]').trigger('click')
-    expect(window.confirm).toHaveBeenCalled()
-    expect(cartStore.clearCart).toHaveBeenCalled()
+    expect(push).toHaveBeenCalledWith({ name: 'checkout' })
   })
 })

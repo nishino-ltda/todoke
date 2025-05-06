@@ -75,14 +75,8 @@ function removeItem(id) {
   cart.removeItem(id)
 }
 
-function checkout() {
-  showCartDialog.value = false
-  // Navigate to checkout page (to be implemented)
-  // router.push('/checkout')
-  
-  // For now, just clear the cart
-  if (confirm('Checkout functionality will be implemented in the next sprint. Clear cart for now?')) {
-    cart.clearCart()
+  function checkout() {
+    showCartDialog.value = false
+    router.push({ name: 'checkout' })
   }
-}
 </script>

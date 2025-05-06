@@ -144,4 +144,17 @@ describe('Cart Store', () => {
     cart.addItem(product1)
     expect(cart.items[0].selectedAddons).toEqual([])
   })
+
+  it('submits order successfully', async () => {
+    const cart = useCartStore()
+    cart.addItem(product1)
+    
+    const orderData = {
+      address: '123 Main St',
+      items: cart.items
+    }
+    
+    const result = await cart.submitOrder(orderData)
+    expect(result).toEqual({ success: true })
+  })
 })

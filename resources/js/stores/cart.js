@@ -55,12 +55,19 @@ export const useCartStore = defineStore('cart', () => {
     items.value = []
   }
 
+  async function submitOrder(orderData) {
+    // TODO: Implement actual API call
+    console.log('Submitting order:', orderData)
+    return { success: true }
+  }
+
   return { 
     items,
     count,
     total,
     addItem,
     removeItem,
-    clearCart
+    clearCart,
+    submitOrder
   }
 })

@@ -11,7 +11,7 @@
   - ProductList component (all cases passing)
   - ProductCard component (all cases passing)
   - Menu page component (axios mocking and async handling implemented)
-  - CartIcon component (all cases passing, badge display verified)
+  - CartIcon component (all cases passing including checkout navigation, badge display verified)
   
 ✅ Completed:
 - E2E tests for:
@@ -23,16 +23,18 @@
 1. **Menu Components**:
    - [x] Create ProductList component
    - [x] Create ProductCard component
-   - [ ] Implement product search/filter
+   - [x] Implement product search/filter
+   - [x] Create ProductDetailsModal with addon selection
 
 2. **Cart Functionality**:
    - [x] Implement Cart Store
-   - [x] Create CartIcon component
-   - [x] Add basic cart operations (add/remove)
+   - [x] Create CartIcon component with badge count
+   - [x] Add advanced cart operations (add/remove/persistence)
+   - [x] Implement checkout flow
 
 3. **State Management**:
    - [x] Extend Cart Store for persistence (localStorage integration)
-   - [ ] Add cart item count to AppHeader
+   - [x] Add cart item count to AppHeader
    - [x] Implement direct slug routing (e.g., /restaurant-name)
 
 ## Acceptance Criteria

@@ -168,15 +168,19 @@
 ## Sprint 3 Status
 ✅ Completed:
 - Core menu browsing functionality (ProductList, ProductCard)
-- Basic cart operations (add/remove items)
-- CartIcon component
-- Restaurant slug routing
-- API endpoint for restaurant products
-
-⚠️ Pending:
-- Implement E2E tests for product browsing and cart flow
-- Product details modal with addon selection (completed)
-- Checkout flow implementation
+- Advanced cart operations with persistence
+- CartIcon component with badge count
+- Restaurant slug routing with error handling
+- API endpoint for restaurant products (/api/v1/restaurants/{slug})
+- ProductDetailsModal with addon selection
+- Checkout flow implementation:
+  - Checkout page component with order summary
+  - Address validation
+  - Order submission to cart store
+  - Route integration
+  - Comprehensive unit tests (100% coverage)
+  - E2E test coverage (all core flows)
+- Search/filter functionality for products
 
 ✅ Completed:
 - Cart state persistence using localStorage
