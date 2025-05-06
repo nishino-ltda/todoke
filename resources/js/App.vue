@@ -2,6 +2,7 @@
   <div>
     <header data-test="app-header">
       <h1>Food Delivery App</h1>
+      <CartIcon />
     </header>
     <main>
       <router-view />
@@ -13,8 +14,13 @@
 </template>
 
 <script>
+import CartIcon from '@/components/CartIcon.vue'
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    CartIcon
+  }
 }
 </script>
 

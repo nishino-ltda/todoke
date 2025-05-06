@@ -45,7 +45,7 @@ const emit = defineEmits(['product-clicked', 'add-to-cart'])
 const truncateDescription = computed(() => {
   if (!props.product.description) return ''
   const desc = props.product.description
-  return desc.length > 100
+  return desc.length >= 100
     ? `${desc.substring(0, 97)}...`
     : desc
 })

@@ -53,6 +53,7 @@
           color="primary" 
           :disabled="cart.items.length === 0"
           @click="checkout"
+          data-test="checkout-button"
         >
           Checkout
         </v-btn>

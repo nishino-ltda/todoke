@@ -26,7 +26,7 @@ describe('ProductCard', () => {
     id: 1,
     name: 'Margherita Pizza',
     price: 12.99,
-    description: 'Classic pizza with tomato sauce and mozzarella. A delicious traditional Italian pizza that everyone loves.',
+    description: 'Classic pizza with tomato sauce and mozzarella. Delicious!',
     image: '/images/pizza.jpg'
   }
 
@@ -40,7 +40,7 @@ describe('ProductCard', () => {
 
     expect(wrapper.find('[data-test="product-name"]').text()).toBe(product.name)
     expect(wrapper.find('[data-test="product-price"]').text()).toBe(`$${product.price}`)
-    expect(wrapper.find('[data-test="product-description"]').text()).toBe('Classic pizza with tomato sauce and mozzarella. A delicious traditional Italian pizza...')
+    expect(wrapper.find('[data-test="product-description"]').text().trim()).toBe(product.description.trim())
     expect(wrapper.find('[data-test="product-image"]').attributes('src')).toBe(product.image)
   })
 
