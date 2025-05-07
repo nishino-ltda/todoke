@@ -45,11 +45,31 @@ vi.mock('@/stores/cart', () => ({
   }))
 }))
 
+// Type for order service
+type OrderService = {
+  createOrder: (orderData: {
+    items: Array<{
+      id: number
+      name: string
+      price: number
+      quantity: number
+      selectedAddons?: Array<{
+        id: number
+        name: string
+        price: number
+      }>
+    }>
+    address: string
+    paymentMethod: string
+  }) => Promise<void>
+}
+
 // Mock services
+const mockCreateOrder = vi.fn()
 vi.mock('@/services/order', () => ({
-  useOrderApi: vi.fn(() => ({
-    createOrder: vi.fn()
-  }))
+  default: vi.fn(() => ({
+    createOrder: mockCreateOrder
+  })) as () => OrderService
 }))
 
 describe('CheckoutForm', () => {
@@ -75,10 +95,32 @@ describe('CheckoutForm', () => {
   })
 
   it('submits order data', async () => {
-    // Test implementation will go here
+    // Set form data
+    await wrapper.find('[data-testid="address-input"]').setValue('123 Main St')
+    await wrapper.find('[data-testid="payment-select"]').setValue('Credit Card')
+    
+    // Submit form
+    await wrapper.find('form').trigger('submit.prevent')
+    
+    // Verify API call
+    expect(mockCreateOrder).toHaveBeenCalledWith({
+      address: '123 Main St',
+      paymentMethod: 'Credit Card',
+      items: [{ id: 1, name: 'Test', price: 10, quantity: 1 }]
+    })
+    
+    // Verify cart cleared
+    expect(cartStore.clearCart).toHaveBeenCalled()
   })
 
   it('handles submission errors', async () => {
-    // Test implementation will go here
+    mockCreateOrder.mockRejectedValue(new Error('API Error'))
+    
+    // Submit form
+    await wrapper.find('form').trigger('submit.prevent')
+    
+    // Verify error handling
+    expect(wrapper.text()).toContain('Error submitting order')
+    expect(cartStore.clearCart).not.toHaveBeenCalled()
   })
 })
