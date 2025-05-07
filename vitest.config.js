@@ -12,6 +12,20 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
       include: ['resources/js/**/*.{js,vue}']
+    },
+    transformMode: {
+      web: [/\.[jt]sx?$/, /\.vue$/]
+    },
+    css: {
+      modules: {
+        classNameStrategy: 'non-scoped'
+      }
+    },
+    // Mock CSS imports
+    server: {
+      deps: {
+        inline: [/vuetify/]
+      }
     }
   },
   resolve: {
