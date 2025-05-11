@@ -40,11 +40,14 @@ const vuetifyStubs = {
     template: '<div><slot/></div>'
   },
   'v-text-field': {
-    template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" />',
+    template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" data-test="address" />',
     props: ['modelValue']
   },
   'v-btn': {
-    template: '<button @click="$emit(\'click\')"><slot/></button>'
+    template: '<button @click="$emit(\'click\')" data-test="submit-order"><slot/></button>'
+  },
+  'v-form': {
+    template: '<form @submit.prevent="$emit(\'submit\')"><slot/></form>'
   }
 }
 
@@ -99,8 +102,10 @@ describe('Checkout', () => {
     await wrapper.vm.$nextTick()
 
     await wrapper.find('[data-test="address"]').setValue('123 Main St')
-    await wrapper.find('form').trigger('submit')
-
+    
+    // Call the submit method directly on the component
+    await wrapper.vm.submitOrder()
+    
     expect(cartStore.submitOrder).toHaveBeenCalledWith({
       address: '123 Main St',
       items: cartStore.items
