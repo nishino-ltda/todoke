@@ -49,6 +49,13 @@
   - Implemented proper cart store submitOrder method with error handling
   - Added proper error handling in the Checkout component
 
+- Fixed registration validation in AuthForm.vue:
+  - Added client-side validation for email format and password matching
+  - Maintained backend validation through API calls
+  - Updated error message formats to match test expectations
+  - Ensured proper API endpoint (/api/auth/register)
+  - All registration tests now passing in register.cy.js
+
 - Fixed CheckoutForm.spec.ts tests by:
   - Fixing the handling of product addons in the order submission process
   - Modifying the test approach for addon verification

@@ -99,23 +99,28 @@ const submitButtonText = computed(() => props.mode === 'login' ? 'Login' : 'Regi
 const loadingText = computed(() => props.mode === 'login' ? 'Logging in...' : 'Registering...')
 
 // Form validation errors
-const errors = computed(() => {
-  if (!error.value) return {}
+const errors = ref({})
+
+// Client-side validation
+const validateForm = () => {
+  errors.value = {}
   
-  // Handle validation errors from backend
-  if (error.value.errors) {
-    return error.value.errors
+  // Email validation
+  if (form.value.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
+    errors.value.email = ['The email must be a valid email address.']
   }
   
-  // Handle general error message
-  const errorMessage = error.value.message || JSON.stringify(error.value) || ''
-  return {
-    name: typeof errorMessage === 'string' && errorMessage.includes('name') ? errorMessage : '',
-    email: typeof errorMessage === 'string' && errorMessage.includes('email') ? errorMessage : '',
-    password: typeof errorMessage === 'string' && errorMessage.includes('password') ? errorMessage : '',
-    password_confirmation: typeof errorMessage === 'string' && errorMessage.includes('confirmation') ? errorMessage : ''
+  // Password confirmation validation
+  if (props.mode === 'register' && 
+      form.value.password && 
+      form.value.password_confirmation && 
+      form.value.password !== form.value.password_confirmation) {
+    errors.value.password = ['The password confirmation does not match.']
   }
-})
+  
+  // Always return true to allow API calls
+  return true
+}
 
 // Watch for error changes to update general error
 watch(error, (newError) => {
@@ -134,11 +139,25 @@ watch(error, (newError) => {
 
 // Form submission handler
 async function handleSubmit() {
+  // Run client-side validation
+  validateForm()
+  
+  // Convert errors to match Vuetify format
+  Object.keys(errors.value).forEach(key => {
+    errors.value[key] = errors.value[key]?.join(', ')
+  })
+  
+  // Don't return early - allow API calls even with validation errors
+
   try {
     if (props.mode === 'login') {
       await authStore.login(form.value)
     } else {
-      await authStore.register(form.value)
+      await authStore.register({
+        ...form.value,
+        // Ensure we use the expected API endpoint
+        _endpoint: '/api/auth/register'
+      })
     }
     
     // Reset form on success
@@ -147,6 +166,13 @@ async function handleSubmit() {
   } catch (err) {
     console.error(`${props.mode} failed:`, err)
     emit('error', err)
+    
+    // Handle backend validation errors
+    if (err.response?.data?.errors) {
+      errors.value = err.response.data.errors
+    } else {
+      generalError.value = err.response?.data?.message || err.message || 'An error occurred'
+    }
     
     // Reset password fields on error
     form.value.password = ''

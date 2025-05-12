@@ -6,16 +6,22 @@
       v-model="address"
       :errors="errors.address"
       :rules="[required]"
+      data-test="address"
     />
 
     <payment-method-input 
       v-model="paymentMethod"
       :errors="errors.paymentMethod" 
       :rules="[required]"
+      data-test="payment-method-input"
     />
 
-    <div v-if="errorMessage" class="error-message text-error mt-4">
+    <div v-if="errorMessage" class="error-message text-error mt-4 mb-4" data-test="checkout-form">
       {{ errorMessage }}
+      <ul v-if="errors.address || errors.paymentMethod">
+        <li v-if="errors.address">Address is required</li>
+        <li v-if="errors.paymentMethod">Payment method is required</li>
+      </ul>
     </div>
 
     <v-btn 
@@ -24,21 +30,15 @@
       :loading="isSubmitting"
       :disabled="isSubmitting"
       class="mt-4"
+      data-test="submit-order"
     >
       Place Order
     </v-btn>
 
-    <v-dialog v-model="showConfirmation" max-width="500">
-      <v-card>
-        <v-card-title>Order Confirmed</v-card-title>
-        <v-card-text>
-          Your order has been placed successfully!
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" @click="showConfirmation = false">OK</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <div v-if="showConfirmation" class="mt-4">
+      <h3>Order Confirmed</h3>
+      <p>Your order has been placed successfully!</p>
+    </div>
   </v-form>
 </template>
 
