@@ -5,10 +5,10 @@
   - [x] Manage authentication state
   - [x] Handle login/logout
   - [x] Persist session
-- [ ] Implement Cart Store
-  - [ ] Manage shopping cart state
-  - [ ] Handle cart operations
-  - [ ] Persist cart
+- [x] Implement Cart Store
+  - [x] Manage shopping cart state
+  - [x] Handle cart operations
+  - [x] Persist cart
 - [ ] Implement User Data Store
   - [ ] Manage user profile data
   - [ ] Handle profile updates
