@@ -89,3 +89,5 @@ A suíte de testes inclui:
 
 
 Ideia de propaganda: aquele audio 'pronto querem me comer, aquii nãão'
+
+Todo: Celular pra quem nao tem 

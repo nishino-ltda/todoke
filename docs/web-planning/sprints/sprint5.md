@@ -5,13 +5,13 @@
 - Planning: web-planning/restaurant-partner.md
 
 ## Testing Goals
-- [ ] Write E2E tests for:
-  - [ ] Partner login flow
-  - [ ] Order management
-- [ ] Write unit tests for:
-  - [ ] PartnerDashboard component
-  - [ ] OrderList component
-  - [ ] OrderCard component
+- [x] Write E2E tests for:
+  - [x] Partner login flow (partner-login.cy.js)
+  - [x] Order management (partner-orders.cy.js)
+- [x] Write unit tests for:
+  - [x] PartnerDashboard component (PartnerDashboard.spec.js)
+  - [x] OrderList component (OrderList.spec.js)
+  - [x] OrderCard component (OrderCard.spec.js)
 
 ## Implementation Tasks
 1. **Dashboard Components**:
