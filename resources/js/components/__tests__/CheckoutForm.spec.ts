@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest'
+import { useRouter } from 'vue-router'
 import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
@@ -10,43 +11,42 @@ import useCartStore from '@/stores/cart'
 
 const vuetify = createVuetify({ components, directives })
 
+// Mock vue-router
+const mockRouter = {
+  push: vi.fn().mockResolvedValue(undefined),
+  currentRoute: { name: 'checkout' },
+  mock: {
+    calls: [] as any[]
+  }
+}
+
+vi.mock('vue-router', () => ({
+  useRouter: vi.fn(() => mockRouter),
+  useRoute: vi.fn(() => ({ name: 'checkout' }))
+}))
+
 function mountWithVuetify(component: CheckoutFormType, options: any = {}) {
   return mount(component, {
     ...options,
     global: {
-      plugins: [vuetify, createPinia()]
+      plugins: [vuetify, createPinia()],
+      stubs: {
+        'v-dialog': {
+          template: '<div v-if="modelValue"><slot /></div>',
+          props: ['modelValue']
+        },
+        'v-btn': {
+          template: '<button :disabled="disabled"><slot /></button>',
+          props: ['disabled', 'loading']
+        }
+      }
     }
   })
 }
 
-// Mock child components
-vi.mock('../AddressInput.vue', () => ({
-  default: {
-    template: '<textarea data-testid="address-input"></textarea>',
-    props: ['modelValue', 'errors'],
-    emits: ['update:modelValue'],
-    setup(props: any, { emit }: { emit: (event: string, payload: string) => void }) {
-      const updateAddress = (value: string) => {
-        emit('update:modelValue', value);
-      };
-      return { updateAddress };
-    },
-  }
-}))
-
-vi.mock('../PaymentMethodInput.vue', () => ({
-  default: {
-    template: '<select data-testid="payment-select"><option value="Credit Card">Credit Card</option></select>',
-    props: ['modelValue', 'errors'],
-    emits: ['update:modelValue'],
-    setup(props: any, { emit }: { emit: (event: string, payload: string) => void }) {
-      const updatePaymentMethod = (value: string) => {
-        emit('update:modelValue', value);
-      };
-      return { updatePaymentMethod };
-    },
-  }
-}))
+// Import actual components for integration testing
+import AddressInput from '../AddressInput.vue'
+import PaymentMethodInput from '../PaymentMethodInput.vue'
 
 // Mock stores
 vi.mock('@/stores/cart', () => ({
@@ -95,10 +95,11 @@ describe('CheckoutForm', () => {
     vi.useFakeTimers()
     setActivePinia(createPinia())
     
-    // Create a mock cart store with clearCart method
+    // Create a mock cart store with required methods
     mockCartStore = {
       items: [{ id: 1, name: 'Test', price: 10, quantity: 1 }],
-      clearCart: vi.fn()
+      clearCart: vi.fn(),
+      submitOrder: vi.fn().mockResolvedValue({})
     }
     
     // Override the useCartStore mock to return our mockCartStore
@@ -113,18 +114,80 @@ describe('CheckoutForm', () => {
     vi.useRealTimers()
   })
 
-  it('renders form with submit button', () => {
+  it('renders form with submit button and child components', () => {
     expect(wrapper.find('form').exists()).toBe(true)
+    expect(wrapper.findComponent(AddressInput).exists()).toBe(true)
+    expect(wrapper.findComponent(PaymentMethodInput).exists()).toBe(true)
     expect(wrapper.find('button[type="submit"]').exists()).toBe(true)
+  })
+
+  it('shows loading state during submission', async () => {
+    mockCreateOrder.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 1000)))
+    
+    await wrapper.find('form').trigger('submit.prevent')
+    
+    const btn = wrapper.find('button[type="submit"]')
+    expect(btn.attributes('disabled')).toBeDefined()
+    expect(wrapper.vm.isSubmitting).toBe(true)
+    
+    await vi.runAllTimersAsync()
+    await wrapper.vm.$nextTick()
+    
+    expect(btn.attributes('disabled')).toBeUndefined()
+    expect(wrapper.vm.isSubmitting).toBe(false)
+  })
+
+  it('shows confirmation dialog after successful order', async () => {
+    mockCreateOrder.mockResolvedValue({})
+    
+    await wrapper.find('form').trigger('submit.prevent')
+    await vi.runAllTimersAsync()
+    await wrapper.vm.$nextTick()
+    
+    // Check component state rather than DOM since dialog is stubbed
+    expect(wrapper.vm.showConfirmation).toBe(true)
+  })
+
+  it('handles orders with addons', async () => {
+    const addonItems = [{
+      id: 1,
+      name: 'Test',
+      price: 10,
+      quantity: 1,
+      selectedAddons: [
+        { id: 1, name: 'Addon 1', price: 2 },
+        { id: 2, name: 'Addon 2', price: 3 }
+      ]
+    }]
+    
+    // Create new mock store instance with addons
+    const mockStoreWithAddons = {
+      items: addonItems,
+      clearCart: vi.fn(),
+      submitOrder: vi.fn().mockResolvedValue({})
+    }
+    vi.mocked(useCartStore).mockReturnValue(mockStoreWithAddons)
+    
+    // Re-mount with new store
+    wrapper = mountWithVuetify(CheckoutForm as unknown as CheckoutFormType)
+    
+    await wrapper.find('form').trigger('submit.prevent')
+    await vi.runAllTimersAsync()
+    
+    expect(mockCreateOrder).toHaveBeenCalledWith({
+      address: '',
+      paymentMethod: '',
+      items: addonItems
+    })
   })
 
   it('submits order data', async () => {
     // Reset the mock to ensure it's clean
     mockCartStore.clearCart.mockClear();
     
-    // Set form data by calling methods on mocked components
-    await wrapper.findComponent('[data-testid="address-input"]').vm.updateAddress('123 Main St');
-    await wrapper.findComponent('[data-testid="payment-select"]').vm.updatePaymentMethod('Credit Card');
+    // Set form data directly through component props
+    await wrapper.findComponent(AddressInput).setValue('123 Main St')
+    await wrapper.findComponent(PaymentMethodInput).setValue('Credit Card')
     
     // Mock the createOrder to resolve immediately
     mockCreateOrder.mockResolvedValueOnce({});
@@ -156,9 +219,9 @@ describe('CheckoutForm', () => {
   it('handles submission errors', async () => {
     mockCreateOrder.mockRejectedValue(new Error('API Error'))
     
-    // Set form data by calling methods on mocked components
-    await wrapper.findComponent('[data-testid="address-input"]').vm.updateAddress('123 Main St');
-    await wrapper.findComponent('[data-testid="payment-select"]').vm.updatePaymentMethod('Credit Card');
+    // Set form data directly through component props
+    await wrapper.findComponent(AddressInput).setValue('123 Main St')
+    await wrapper.findComponent(PaymentMethodInput).setValue('Credit Card')
 
     // Submit form
     await wrapper.find('form').trigger('submit.prevent')
@@ -169,5 +232,52 @@ describe('CheckoutForm', () => {
     // Verify error handling
     expect(wrapper.text()).toContain('Error submitting order')
     expect(cartStore.clearCart).not.toHaveBeenCalled()
+  })
+
+  it('shows validation errors for empty fields', async () => {
+    // Mock API call to reject with validation errors
+    mockCreateOrder.mockRejectedValueOnce({
+      response: {
+        data: {
+          errors: {
+            address: ['Address is required'],
+            paymentMethod: ['Payment method is required']
+          }
+        }
+      }
+    })
+
+    // Submit form without setting any values
+    await wrapper.find('form').trigger('submit.prevent')
+    await vi.runAllTimersAsync()
+    await wrapper.vm.$nextTick()
+
+    // Verify error message is shown
+    expect(wrapper.text()).toContain('Error submitting order')
+    expect(wrapper.vm.errorMessage).toBe('Error submitting order')
+    expect(wrapper.vm.errors.address).toContain('Address is required')
+    expect(wrapper.vm.errors.paymentMethod).toContain('Payment method is required')
+  })
+
+  it('navigates home after successful order', async () => {
+    // Get the mocked router instance
+    const mockRouter = useRouter()
+    mockCreateOrder.mockResolvedValue({})
+    
+    // Set form data directly through component props
+    await wrapper.findComponent(AddressInput).setValue('123 Main St')
+    await wrapper.findComponent(PaymentMethodInput).setValue('Credit Card')
+    
+    // Submit form
+    await wrapper.find('form').trigger('submit.prevent')
+    
+    // Advance timers by 1s to simulate API delay
+    await vi.advanceTimersByTimeAsync(1000)
+    await wrapper.vm.$nextTick()
+    
+    // Verify navigation was called and confirmation shown
+    expect(mockRouter.push).toHaveBeenCalledWith({ name: 'home' })
+    expect(mockRouter.push).toHaveBeenCalledTimes(1)
+    expect(wrapper.vm.showConfirmation).toBe(true)
   })
 })

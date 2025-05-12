@@ -5,6 +5,7 @@
     label="Payment Method"
     :error-messages="errors"
     required
+    data-testid="payment-method-input"
   />
 </template>
 
