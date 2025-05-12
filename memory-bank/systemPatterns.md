@@ -6,6 +6,7 @@
    - Mock axios directly rather than injecting mocks
    - Use vi.spyOn(axios, 'get|post') for precise control
    - Match production API response structure
+   - Use versioned API paths (/api/v1/) in all tests
 
 2. **Async Handling**:
    - Always use flushPromises() after async operations
@@ -216,3 +217,39 @@ class DeliveryStatusService implements DeliveryStatusServiceInterface {
    - Addon prices displayed next to names
    - Selected addons stored in cart items
    - Total price updates dynamically
+
+## E2E Testing Patterns (2025-05-05)
+
+1. **Test Setup**:
+   - Use API interception to provide consistent test data
+   - Mock API responses with fixtures
+   - Visit specific pages directly rather than navigating through the app
+   - Wait for API responses before proceeding with tests
+
+2. **Element Selection**:
+   - Use data-test attributes for all elements that need to be tested
+   - Avoid using CSS classes or element types for selection
+   - Ensure elements are properly visible before interacting with them
+
+3. **Form Testing**:
+   - Test validation errors by submitting invalid data
+   - Test happy path by submitting valid data
+   - Verify API requests contain the expected data
+   - Test error handling for API failures
+
+4. **API Mocking**:
+   - Use cy.intercept() to mock API responses
+   - Test both success and error scenarios
+   - Verify request payloads with cy.wait() and assertions
+   - Use fixtures for complex response data
+
+5. **Store Testing**:
+   - Use cy.getStore() custom command to access Pinia stores
+   - Verify store state after actions
+   - Test persistence between page reloads
+
+6. **Error Handling**:
+   - Test validation error display
+   - Test network error handling
+   - Verify error messages are displayed correctly
+   - Ensure the application remains in a usable state after errors

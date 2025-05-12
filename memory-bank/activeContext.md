@@ -39,6 +39,16 @@
    - Added proper async handling with flushPromises()
 
 ## Recent Changes
+- Fixed E2E tests for checkout flow:
+  - Updated checkout.cy.js and checkout-complete.cy.js to properly visit the menu page
+  - Added API interception to provide test restaurant data
+  - Updated API endpoint to use versioned path (/api/v1/orders)
+  - Fixed the issue where tests couldn't find product-card elements
+  - Ensured proper test setup for addon selection and submission
+  - Fixed validation error testing by directly manipulating the DOM
+  - Implemented proper cart store submitOrder method with error handling
+  - Added proper error handling in the Checkout component
+
 - Fixed CheckoutForm.spec.ts tests by:
   - Fixing the handling of product addons in the order submission process
   - Modifying the test approach for addon verification

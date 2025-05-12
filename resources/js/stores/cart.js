@@ -56,9 +56,35 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   async function submitOrder(orderData) {
-    // TODO: Implement actual API call
-    console.log('Submitting order:', orderData)
-    return { success: true }
+    try {
+      const response = await fetch('/api/v1/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+        },
+        body: JSON.stringify(orderData)
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        // If we have validation errors
+        if (response.status === 422 && data.errors) {
+          const error = new Error('Validation failed');
+          error.response = { data };
+          throw error;
+        }
+        
+        throw new Error(data.message || 'Failed to submit order');
+      }
+      
+      return { success: true, data };
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      throw error;
+    }
   }
 
   return { 
