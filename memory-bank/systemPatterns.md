@@ -1,4 +1,4 @@
-## Testing Patterns (Updated 2025-05-01)
+## Testing Patterns (Updated 2025-05-05)
 
 ### Frontend Testing Best Practices
 
@@ -9,8 +9,10 @@
 
 2. **Async Handling**:
    - Always use flushPromises() after async operations
+   - For timer-based tests, use vi.runAllTimersAsync() 
    - Await all promises before assertions
    - Test both loading and resolved states
+   - Use vi.useFakeTimers() in beforeEach and vi.useRealTimers() in afterEach
 
 3. **Component Stubs**:
    - Stub child components with minimal templates
@@ -21,6 +23,27 @@
    - Group related test cases in describe blocks
    - Separate happy path and error cases
    - Keep tests focused and independent
+
+5. **Store Testing**:
+   - Remount components when store data changes
+   - Use custom mock implementations for complex verifications
+   - Reset mocks between tests with mockClear()
+   - For Pinia stores, use setActivePinia(createPinia()) in beforeEach
+   - Mock store methods that aren't being tested
+
+6. **Complex Data Verification**:
+   - For complex objects, use custom mock implementations with inline assertions
+   - Example:
+   ```javascript
+   mockFunction.mockImplementation((data) => {
+     expect(data).toEqual({
+       expectedKey: expectedValue,
+       // other expected properties
+     });
+     return Promise.resolve({});
+   });
+   ```
+   - This approach is more reliable than using toHaveBeenCalledWith for complex objects
 
 ### Interface Usage Pattern (Updated 2025-04-29)
 

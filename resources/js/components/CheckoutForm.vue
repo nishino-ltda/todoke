@@ -60,30 +60,25 @@ const router = useRouter()
 
 const required = (value) => !!value || 'This field is required'
 
+const cartStore = useCartStore()
+const orderApi = useOrderApi()
+
 const handleSubmit = async () => {
   isSubmitting.value = true
   errors.value = {}
   errorMessage.value = ''
-
-  const cartStore = useCartStore()
-  const orderApi = useOrderApi()
   
     const orderData = {
-    items: cartStore.items.map(item => {
-      const itemData = {
+      items: cartStore.items.map(item => ({
         id: item.id,
         name: item.name,
         price: item.price,
-        quantity: item.quantity
-      }
-      if (item.selectedAddons) {
-        itemData.selectedAddons = item.selectedAddons
-      }
-      return itemData
-    }),
-    address: address.value,
-    paymentMethod: paymentMethod.value
-  }
+        quantity: item.quantity,
+        selectedAddons: item.selectedAddons || []
+      })),
+      address: address.value,
+      paymentMethod: paymentMethod.value
+    }
 
   try {
     const result = await orderApi.createOrder(orderData)

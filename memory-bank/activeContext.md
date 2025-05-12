@@ -39,6 +39,13 @@
    - Added proper async handling with flushPromises()
 
 ## Recent Changes
+- Fixed CheckoutForm.spec.ts tests by:
+  - Fixing the handling of product addons in the order submission process
+  - Modifying the test approach for addon verification
+  - Using a custom mock implementation to directly verify order data
+  - Ensuring proper remounting of components when cart store data changes
+  - Properly handling async operations with vi.runAllTimersAsync()
+
 - Fixed menu.spec.js tests by:
   - Implementing direct axios mocking instead of component injection
   - Adding proper async handling with flushPromises()
