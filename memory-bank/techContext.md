@@ -12,6 +12,13 @@
 
 ### Frontend
 - **Build Tool**: Vite 6
+- **File Structure**:
+  - Pages organized by user role under resources/js/Pages/
+  - Shared auth components in Pages/auth/
+  - Customer pages in Pages/Customer/
+  - Courier pages in Pages/Courier/
+  - Partner pages in Pages/Partner/
+  - Tests follow same directory structure
 - **UI Framework**: Vuetify 3
 - **HTTP Client**: Axios
 - **Vue Composition API**: Using `<script setup>` syntax
@@ -102,6 +109,17 @@ npm run build
   - 201: Created
   - 422: Validation error
   - 403: Forbidden
+
+## Frontend Architecture
+- Inertia.js for server-side rendered single page app experience
+- Clear separation between:
+  - Web routes: Handle only Inertia page rendering
+  - API routes: Handle all business logic and data operations
+- Frontend components make API calls to:
+  - Fetch data
+  - Submit forms
+  - Trigger business processes
+- Web routes should never contain business logic
 
 ## Deployment Considerations
 - Vite-based asset compilation

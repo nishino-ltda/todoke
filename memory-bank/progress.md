@@ -1,3 +1,14 @@
+## Route/Controller Implementation (2025-05-13)
+
+### Completed:
+- Customer routes and controllers
+- Partner routes and controllers  
+- Courier routes and controllers
+- Clear separation between:
+  - Web routes (Inertia rendering)
+  - API routes (business logic)
+- Documentation in techContext.md and systemPatterns.md
+
 ## Testing Progress (2025-05-13)
 
 ### Completed:

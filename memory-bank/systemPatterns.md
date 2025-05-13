@@ -218,6 +218,62 @@ class DeliveryStatusService implements DeliveryStatusServiceInterface {
    - Selected addons stored in cart items
    - Total price updates dynamically
 
+## Route/Controller Patterns (2025-05-13)
+
+### Web Routes
+- Handle only Inertia page rendering
+- No business logic in web routes
+- All data operations via API calls
+- Clear separation between:
+  - Web routes (Inertia rendering)
+  - API routes (business logic)
+
+### Controller Responsibilities
+- Web controllers:
+  - Only return Inertia responses
+  - No direct database operations
+  - Minimal processing logic
+- API controllers:
+  - Handle all business logic
+  - Perform database operations
+  - Return JSON responses
+
+## Frontend Structure Patterns (2025-05-13)
+
+### Pages Organization
+1. **Directory Structure**:
+   ```
+   resources/js/Pages/
+   ├── App.vue
+   ├── auth/
+   │   ├── Login.vue
+   │   └── Register.vue
+   ├── Customer/
+   │   ├── Dashboard.vue
+   │   ├── Home.vue
+   │   ├── Menu.vue
+   │   ├── Checkout.vue
+   │   ├── Support.vue
+   │   ├── Terms.vue
+   │   └── Privacy.vue
+   ├── Courier/
+   │   └── Dashboard.vue
+   └── Partner/
+       ├── Dashboard.vue
+       └── Admin.vue
+   ```
+
+2. **Key Principles**:
+   - Pages organized by user role (Customer, Courier, Partner)
+   - Shared auth components at top level
+   - Each role has its own subdirectory
+   - Consistent naming conventions (PascalCase for files)
+
+3. **Routing**:
+   - Routes defined in router.js with updated import paths
+   - Role-specific routes prefixed in Laravel (e.g., /customer/dashboard)
+   - InertiaController renders appropriate Vue components
+
 ## E2E Testing Patterns (2025-05-05)
 
 1. **Test Logging**:
