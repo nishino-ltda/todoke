@@ -4,6 +4,7 @@ describe('App Component Tests', () => {
   })
 
   it('should load the main app view', () => {
+    cy.log('🔍 Verifying app container exists')
     cy.get('[data-v-app]').should('exist')
   })
 })

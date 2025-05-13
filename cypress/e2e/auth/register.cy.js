@@ -103,6 +103,7 @@ describe('Registration Flow', () => {
     cy.get('[data-test="password-confirmation-input"] input').type('password123')
     
     // Submit the form
+    cy.log('🚀 Submitting registration form')
     cy.get('[data-test="submit-button"]').click()
     
     // Wait for the API request
@@ -127,7 +128,9 @@ describe('Registration Flow', () => {
     cy.wait('@registerRequest')
     
     // Debug validation errors
+    cy.log('⏸️ Pausing for debug inspection')
     cy.pause()
+    cy.log('🔍 Inspecting form inputs')
     cy.get('[data-test="name-input"]').then(($el) => {
       console.log('Name input DOM:', $el[0].outerHTML)
     })
@@ -150,6 +153,7 @@ describe('Registration Flow', () => {
     cy.get('[data-test="password-confirmation-input"] input').type('password123')
     
     // Submit the form
+    cy.log('🚀 Submitting registration form')
     cy.get('[data-test="submit-button"]').click()
     
     // Wait for the API request
@@ -170,6 +174,7 @@ describe('Registration Flow', () => {
     cy.get('[data-test="password-confirmation-input"] input').type('different123')
     
     // Submit the form
+    cy.log('🚀 Submitting registration form')
     cy.get('[data-test="submit-button"]').click()
     
     // Wait for the API request
@@ -190,6 +195,7 @@ describe('Registration Flow', () => {
     cy.get('[data-test="password-confirmation-input"] input').type('password123')
     
     // Submit the form
+    cy.log('🚀 Submitting registration form')
     cy.get('[data-test="submit-button"]').click()
     
     // Wait for the API request
@@ -218,6 +224,7 @@ describe('Registration Flow', () => {
     cy.get('[data-test="password-confirmation-input"] input').type('password123')
     
     // Submit the form
+    cy.log('🚀 Submitting registration form')
     cy.get('[data-test="submit-button"]').click()
     
     // Check if loading state is shown
