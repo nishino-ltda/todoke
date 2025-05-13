@@ -4,10 +4,15 @@ describe('Partner Login', () => {
   })
 
   it('displays login form', () => {
+    cy.log('Starting login form test')
     cy.get('[data-test="login-form"]').should('exist')
+    cy.log('Found login form')
     cy.get('[data-test="email-input"]').should('exist')
+    cy.log('Found email input')
     cy.get('[data-test="password-input"]').should('exist')
+    cy.log('Found password input')
     cy.get('[data-test="submit-btn"]').should('exist')
+    cy.log('Found submit button - test complete')
   })
 
   it('validates required fields', () => {

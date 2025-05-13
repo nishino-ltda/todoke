@@ -13,7 +13,12 @@ export default defineConfig({
     viewportWidth: 1280,
     viewportHeight: 720,
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      on("task", {
+        log(args) {
+          console.log(...args);
+          return null;
+        }
+      });
     },
   },
 });

@@ -28,3 +28,18 @@ Cypress.Commands.add('logout', () => {
   // Ensure we're on login page
   cy.visit('/login')
 })
+
+Cypress.Commands.overwrite("log", function(log, ...args) {
+  const indent = "\t";
+  const formattedArgs = args.map((arg) =>
+        typeof arg === "string" ? indent + arg : indent + JSON.stringify(arg)
+  );
+  if (Cypress.browser.isHeadless) {
+    return cy.task("log", formattedArgs, { log: false }).then(() => {
+      return log(...args);
+    });
+  } else {
+    console.log(...formattedArgs);
+    return log(...args);
+  }
+});
