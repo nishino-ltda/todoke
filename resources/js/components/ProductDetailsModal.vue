@@ -1,18 +1,35 @@
 <template>
-  <div v-if="product" class="product-details-modal">
-    <div class="modal-content">
-      <button class="close-button" @click="$emit('close')">×</button>
+  <v-dialog v-if="product" v-model="showModal" max-width="600" persistent>
+    <v-card>
+      <v-btn 
+        icon
+        @click="$emit('close')"
+        class="close-button"
+        absolute
+        right
+        top
+      >
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
       
-      <div class="product-image">
-        <img :src="product.image || '/images/placeholder-food.jpg'" :alt="product.name">
-      </div>
+      <v-img
+        :src="product.image || '/images/placeholder-food.jpg'"
+        :alt="product.name"
+        cover
+        max-height="300"
+        class="ma-4"
+      ></v-img>
       
-      <div class="product-info">
-        <h2>{{ product.name }}</h2>
-        <p class="price">${{ product.price.toFixed(2) }}</p>
-        <p class="description">{{ product.description || 'No description available' }}</p>
+      <v-card-text>
+        <v-card-title class="text-h5">{{ product.name }}</v-card-title>
+        <v-card-subtitle class="text-h6 font-weight-bold primary--text">
+          ${{ product.price.toFixed(2) }}
+        </v-card-subtitle>
+        <v-card-text class="text-body-1">
+          {{ product.description || 'No description available' }}
+        </v-card-text>
 
-        <div v-if="product.addons && product.addons.length" class="addons-section">
+        <v-card-text v-if="product.addons && product.addons.length" class="addons-section">
           <h3>Addons</h3>
           <div v-for="addon in product.addons" :key="addon.id" class="addon-item">
             <input 
@@ -25,24 +42,31 @@
               {{ addon.name }} (+ \${{ addon.price.toFixed(2) }})
             </label>
           </div>
-        </div>
+        </v-card-text>
         
-        <div class="quantity-controls">
-          <button @click="quantity > 1 ? quantity-- : null">-</button>
-          <span>{{ quantity }}</span>
-          <button @click="quantity++">+</button>
-        </div>
+        <v-card-actions class="quantity-controls">
+          <v-btn @click="quantity > 1 ? quantity-- : null" icon>
+            <v-icon>mdi-minus</v-icon>
+          </v-btn>
+          <span class="mx-2">{{ quantity }}</span>
+          <v-btn @click="quantity++" icon>
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </v-card-actions>
         
-        <button 
-          class="add-to-cart" 
-          @click="addToCart"
-          data-test="add-to-cart"
-        >
-          Add to Cart (\${{ totalPrice.toFixed(2) }})
-        </button>
-      </div>
-    </div>
-  </div>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            @click="addToCart"
+            block
+            data-test="add-to-cart"
+          >
+            Add to Cart (\${{ totalPrice.toFixed(2) }})
+          </v-btn>
+        </v-card-actions>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -61,6 +85,7 @@ const emit = defineEmits(['close'])
 const cart = useCartStore()
 const quantity = ref(1)
 const selectedAddons = ref([])
+const showModal = ref(true)
 
 const totalPrice = computed(() => {
   const addonsTotal = selectedAddons.value.reduce((sum, addonId) => {
@@ -104,88 +129,11 @@ const addToCart = () => {
 .addon-item input[type="checkbox"] {
   margin-right: 0.5rem;
 }
-.product-details-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 90%;
-  position: relative;
-}
-
-.close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-}
-
-.product-image img {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-
-.product-info {
-  margin-top: 1rem;
-}
-
-.price {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: #2c3e50;
-}
-
-.description {
-  margin: 1rem 0;
-  color: #666;
-}
 
 .quantity-controls {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
   margin: 1rem 0;
-}
-
-.quantity-controls button {
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid #ddd;
-  background: none;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.add-to-cart {
-  background-color: #42b983;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
-}
-
-.add-to-cart:hover {
-  background-color: #3aa876;
 }
 </style>

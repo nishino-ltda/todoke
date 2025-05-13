@@ -1,3 +1,11 @@
+<script setup>
+import { computed } from 'vue'
+import { Link } from '@inertiajs/vue3'
+import { route } from '@inertiajs/vue3'
+
+const currentYear = computed(() => new Date().getFullYear())
+</script>
+
 <template>
   <v-footer app color="primary" dark class="app-footer">
     <v-container>
@@ -7,25 +15,29 @@
         </v-col>
         
         <v-col cols="12" md="4" class="text-center">
-          <router-link to="/terms" class="mr-4">Terms</router-link>
-          <router-link to="/privacy">Privacy</router-link>
+          <Link :href="route('terms')" class="text-white mr-2" data-test="terms-link">Terms</Link>
+          <Link :href="route('privacy')" class="text-white" data-test="privacy-link">Privacy</Link>
         </v-col>
 
         <v-col cols="12" md="4" class="text-right">
-          <a href="https://facebook.com" class="social-link mr-2">Facebook</a>
-          <a href="https://twitter.com" class="social-link mr-2">Twitter</a>
-          <a href="https://instagram.com" class="social-link">Instagram</a>
+          <v-btn variant="text" color="white" href="https://facebook.com" class="mr-2" data-test="facebook-link">
+            <v-icon left>mdi-facebook</v-icon>
+            Facebook
+          </v-btn>
+          <v-btn variant="text" color="white" href="https://twitter.com" class="mr-2" data-test="twitter-link">
+            <v-icon left>mdi-twitter</v-icon>
+            Twitter
+          </v-btn>
+          <v-btn variant="text" color="white" href="https://instagram.com" data-test="instagram-link">
+            <v-icon left>mdi-instagram</v-icon>
+            Instagram
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
   </v-footer>
 </template>
 
-<script setup>
-import { computed } from 'vue'
-
-const currentYear = computed(() => new Date().getFullYear())
-</script>
 
 <style scoped>
 .social-link {

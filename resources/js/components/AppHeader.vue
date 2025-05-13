@@ -6,7 +6,7 @@
 
     <template v-if="isAuthenticated">
       <span class="welcome-message">Welcome, {{ user?.name }}</span>
-      <v-btn text to="/menu">Menu</v-btn>
+      <Link :href="route('menu')" class="text-white mr-2" data-test="menu-link">Menu</Link>
       <v-btn text disabled v-if="loading">Loading...</v-btn>
       <CartIcon />
       <v-btn text @click="handleLogout" :disabled="loading">
@@ -15,8 +15,8 @@
     </template>
 
     <template v-else>
-      <v-btn text to="/login">Login</v-btn>
-      <v-btn text to="/register">Register</v-btn>
+      <Link :href="route('login')" class="text-white mr-2" data-test="login-link">Login</Link>
+      <Link :href="route('register')" class="text-white" data-test="register-link">Register</Link>
     </template>
   </v-app-bar>
 </template>
@@ -24,10 +24,8 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'vue-router'
+import { Link } from '@inertiajs/vue3'
 import CartIcon from './CartIcon.vue'
-
-const router = useRouter()
 const authStore = useAuthStore()
 
 const { isAuthenticated, user, loading } = storeToRefs(authStore)

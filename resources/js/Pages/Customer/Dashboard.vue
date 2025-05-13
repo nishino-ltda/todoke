@@ -5,19 +5,21 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 <template>
   <AppLayout title="Customer Dashboard">
     <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+      <v-toolbar-title class="text-h5" data-test="dashboard-title">
         Customer Dashboard
-      </h2>
+      </v-toolbar-title>
     </template>
 
-    <div class="py-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 bg-white border-b border-gray-200">
-            Welcome to your customer dashboard!
-          </div>
-        </div>
-      </div>
-    </div>
+    <v-container class="py-12">
+      <v-row justify="center">
+        <v-col cols="12" md="8" lg="6">
+          <v-card data-test="welcome-card">
+            <v-card-text data-test="welcome-message">
+              Welcome to your customer dashboard!
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </AppLayout>
 </template>

@@ -1,7 +1,11 @@
+<script setup>
+import { Link } from '@inertiajs/vue3'
+</script>
+
 <template>
-  <v-container fluid class="hero-container pa-0">
+  <v-container fluid class="pa-0">
     <v-row no-gutters class="fill-height" align="center">
-      <v-col cols="12" md="6" class="hero-content">
+      <v-col cols="12" md="6" class="pa-8">
         <div class="text-center text-md-left">
           <h1 class="text-h3 text-md-h2 font-weight-bold mb-4">
             Hybrid Delivery with Community Pricing
@@ -10,20 +14,20 @@
             Combining motorbike couriers and drones for fast, fair deliveries
           </p>
           <div class="d-flex flex-column flex-sm-row justify-center justify-md-start gap-4">
-            <v-btn 
-              color="primary" 
-              size="x-large"
-              to="/register"
+            <Link
+              :href="route('register')"
+              class="v-btn bg-primary text-white v-btn--size-x-large"
+              data-test="hero-register-link"
             >
               Get Started
-            </v-btn>
-            <v-btn 
-              variant="outlined" 
-              size="x-large"
-              to="/login"
+            </Link>
+            <Link
+              :href="route('login')"
+              class="v-btn v-btn--variant-outlined v-btn--size-x-large"
+              data-test="hero-login-link"
             >
               Sign In
-            </v-btn>
+            </Link>
           </div>
         </div>
       </v-col>

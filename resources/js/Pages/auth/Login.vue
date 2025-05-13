@@ -12,7 +12,7 @@
             />
           </v-card-text>
           <v-card-actions class="justify-center">
-            <router-link to="/register">Create an account</router-link>
+            <Link :href="route('register')" class="text-primary" data-test="register-link">Create an account</Link>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -21,13 +21,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { Link } from '@inertiajs/vue3'
 import GuestLayout from '@/layouts/GuestLayout.vue'
 import AuthForm from '@/components/AuthForm.vue'
 
-const router = useRouter()
-
 function handleSuccess() {
-  router.push('/')
+  window.location.href = '/'
 }
 </script>

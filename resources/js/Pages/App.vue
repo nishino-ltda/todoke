@@ -5,9 +5,9 @@ import { Head, Link } from '@inertiajs/vue3'
 <template>
   <Head title="TODOKE" />
   
-  <div class="min-h-screen bg-gray-100">
-    <main>
+  <v-app>
+    <v-main>
       <slot />
-    </main>
-  </div>
+    </v-main>
+  </v-app>
 </template>
