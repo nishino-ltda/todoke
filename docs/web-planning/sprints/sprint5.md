@@ -6,8 +6,8 @@
 
 ## Testing Goals
 - [x] Write E2E tests for:
-  - [x] Partner login flow (partner-login.cy.js)
-  - [x] Order management (partner-orders.cy.js)
+  - [x] Partner login flow (partner-login.cy.js) - Completed 2025-05-13
+  - [x] Order management (partner-orders.cy.js) - Updated 2025-05-13
 - [x] Write unit tests for:
   - [x] PartnerDashboard component (PartnerDashboard.spec.js)
   - [x] OrderList component (OrderList.spec.js)

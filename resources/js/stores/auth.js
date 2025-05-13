@@ -15,7 +15,10 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const response = await api.post('/auth/login', credentials)
       setAuth(response.data)
-      if (router) router.push('/')
+      if (router) {
+        const redirectPath = response.data.user?.type === 'partner' ? '/partner' : '/'
+        router.push(redirectPath)
+      }
       return response
     } catch (err) {
       clearAuth()

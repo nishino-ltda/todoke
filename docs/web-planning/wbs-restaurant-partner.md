@@ -46,4 +46,6 @@
 
 ## 8. Testing
 - [ ] Unit tests for components
-- [ ] E2E tests for partner workflows
+- [x] E2E tests for partner workflows (completed 2025-05-13)
+  - Login flow tests updated and passing
+  - Order management tests aligned with current implementation

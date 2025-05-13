@@ -45,3 +45,12 @@ Provide partners (restaurants, logistics companies) with a web interface to mana
 - Region Editor component (`RegionEditor.vue`)
 - Node List component (`NodeList.vue`)
 - Node Form component (`NodeForm.vue`)
+
+## Testing Status (2025-05-13)
+- Completed E2E tests for:
+  - Partner login flow (validations, error cases, success flow)
+  - Basic order management scenarios
+- Updated tests to:
+  - Match actual API responses
+  - Use correct test credentials
+  - Follow current authentication flow

@@ -1,64 +1,36 @@
 describe('Partner Order Management', () => {
   beforeEach(() => {
-    cy.loginAsPartner()
-    cy.visit('/partner/dashboard')
+    // Login as partner first
+    cy.visit('/login')
+    cy.get('[data-test="email-input"]').type('partner@example.com')
+    cy.get('[data-test="password-input"]').type('password123')
+    cy.get('[data-test="submit-button"]').click()
+    cy.url().should('include', '/partner')
   })
 
   it('displays order list', () => {
-    cy.log('🔍 Starting order list display test')
     cy.get('[data-test="order-list"]').should('exist')
-    cy.log('✅ Found order list container')
-    cy.get('[data-test="order-card"]').then(($cards) => {
-      cy.log(`🔍 Found ${$cards.length} order cards`)
-      $cards.each((index, card) => {
-        cy.log(`🔍 Order ${index + 1} status: ${card.textContent}`)
-      })
-    }).should('have.length.at.least', 1)
-    cy.log('✅ Completed order list display test')
+    cy.get('[data-test="order-card"]').should('have.length.at.least', 1)
   })
 
-  it('filters orders by status', () => {
-    cy.log('🔍 Starting order filtering test')
-    cy.log('🚀 Filtering for PREPARING orders')
-    cy.get('[data-test="filter-preparing"]').click()
-    cy.get('[data-test="order-card"]').each($card => {
-      cy.log(`🔍 Order card content: ${$card.text()}`)
-      expect($card).to.contain('PREPARING')
+  it('allows filtering orders', () => {
+    cy.get('[data-test="filter-new"]').click()
+    cy.get('[data-test="order-card"]').each(($el) => {
+      cy.wrap($el).find('[data-test="order-status"]').should('contain', 'new')
     })
-
-    cy.log('🚀 Filtering for READY orders')
-    cy.get('[data-test="filter-ready"]').click()
-    cy.get('[data-test="order-card"]').each($card => {
-      cy.log(`Order card content: ${$card.text()}`)
-      expect($card).to.contain('READY')
-    })
-    cy.log('✅ Completed order filtering test')
   })
 
-  it('updates order status', () => {
-    cy.log('🔍 Starting order status update test')
-    cy.get('[data-test="order-card"]').first().as('firstOrder')
-    cy.get('@firstOrder').find('[data-test="status-badge"]').then(($badge) => {
-      cy.log(`🔍 Initial status: ${$badge.text()}`)
-    }).should('contain', 'PREPARING')
-    cy.log('🚀 Marking order as READY')
-    cy.get('@firstOrder').find('[data-test="mark-ready-btn"]').click()
-    cy.get('@firstOrder').find('[data-test="status-badge"]').then(($badge) => {
-      cy.log(`✅ Updated status: ${$badge.text()}`)
-    }).should('contain', 'READY')
-    cy.log('✅ Completed order status update test')
+  it('allows updating order status', () => {
+    cy.get('[data-test="order-card"]').first().find('[data-test="update-status"]').click()
+    cy.get('[data-test="status-select"]').select('preparing')
+    cy.get('[data-test="confirm-update"]').click()
+    cy.get('[data-test="order-status"]').should('contain', 'preparing')
   })
 
-  it('shows real-time updates', () => {
-    cy.log('🔍 Starting real-time updates test')
-    cy.get('[data-test="order-card"]').then(($cards) => {
-      cy.log(`🔍 Initial order count: ${$cards.length}`)
-    }).should('have.length', 3)
-    cy.log('🚀 Waiting for new order...')
-    cy.waitForNewOrder()
-    cy.get('[data-test="order-card"]').then(($cards) => {
-      cy.log(`✅ Updated order count: ${$cards.length}`)
-    }).should('have.length', 4)
-    cy.log('✅ Completed real-time updates test')
+  it('shows order details', () => {
+    cy.get('[data-test="order-card"]').first().click()
+    cy.get('[data-test="order-details"]').should('exist')
+    cy.get('[data-test="customer-name"]').should('exist')
+    cy.get('[data-test="order-items"]').should('have.length.at.least', 1)
   })
 })

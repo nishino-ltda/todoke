@@ -130,6 +130,13 @@ Route::prefix('v1')->group(function () {
         Route::prefix('partner')->group(function () {
             Route::get('/metrics', [\App\Http\Controllers\API\PartnerController::class, 'metrics']);
         });
+
+        // Test routes - only available in development environment
+        if (app()->environment('local', 'testing')) {
+            Route::prefix('test')->group(function () {
+                Route::post('/setup-orders', [\App\Http\Controllers\API\TestController::class, 'setupOrders']);
+            });
+        }
         
     });
 });

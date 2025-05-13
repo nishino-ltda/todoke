@@ -55,10 +55,12 @@ class DatabaseSeeder extends Seeder
             throw new \Exception('Partner user not found');
         }
         
-        // Get the restaurant node for this partner
-        $restaurant = Node::where('identifier', 'tia-mary-corumba')->first();
+        // Get the test restaurant node
+        $restaurant = Node::where('identifier', 'test-restaurant')->first();
         if (!$restaurant) {
-            throw new \Exception('Restaurant node not found');
+            // If test restaurant doesn't exist, create it via TestSeeder
+            $this->call(TestSeeder::class);
+            $restaurant = Node::where('identifier', 'test-restaurant')->first();
         }
         
         // Check if products already exist for this restaurant
@@ -153,6 +155,11 @@ class DatabaseSeeder extends Seeder
                     ])
                 );
             }
+        }
+
+        // Run test-specific seeders in local/testing environments
+        if (app()->environment('local', 'testing')) {
+            $this->call(TestSeeder::class);
         }
     }
 }

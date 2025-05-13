@@ -7,7 +7,33 @@ Cypress.Commands.add('getStore', (storeName) => {
 })
 
 Cypress.Commands.add('login', (email, password) => {
-  // TODO: Implement login command
+  cy.visit('/login')
+  cy.get('[data-test="email-input"]').type(email)
+  cy.get('[data-test="password-input"]').type(password)
+  cy.get('[data-test="submit-btn"]').click()
+})
+
+Cypress.Commands.add('loginAsPartner', () => {
+  cy.visit('/partner/login')
+  cy.get('[data-test="email-input"]').type('partner@example.com')
+  cy.get('[data-test="password-input"]').type('password123')
+  cy.get('[data-test="submit-btn"]').click()
+})
+
+Cypress.Commands.add('setupTestOrders', () => {
+  cy.request('POST', '/api/v1/test/setup-orders', {
+    partnerId: 1,
+    orders: [
+      { status: 'PREPARING', items: ['Margherita Pizza'] },
+      { status: 'PREPARING', items: ['Caesar Salad'] },
+      { status: 'READY', items: ['Pepperoni Pizza'] }
+    ]
+  })
+})
+
+Cypress.Commands.add('waitForNewOrder', () => {
+  cy.intercept('GET', '/api/v1/partner/orders').as('getOrders')
+  cy.wait('@getOrders')
 })
 
 Cypress.Commands.add('logout', () => {
