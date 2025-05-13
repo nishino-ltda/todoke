@@ -2,7 +2,7 @@ import { mount, flushPromises } from '@vue/test-utils'
 import ProductCard from '@/components/ProductCard.vue'
 import { vi } from 'vitest'
 import axios from 'axios'
-import Menu from '@/pages/Menu.vue'
+import Menu from '@/Pages/Customer/Menu.vue'
 import { createTestingPinia } from '@pinia/testing'
 import { useCartStore } from '@/stores/cart'
 

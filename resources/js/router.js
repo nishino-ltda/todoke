@@ -1,13 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '@pages/Home.vue'
-import Login from '@pages/auth/Login.vue'
-import Register from '@pages/auth/Register.vue'
-import Menu from '@pages/Menu.vue'
-import Partner from '@pages/Partner.vue'
-import Courier from '@pages/Courier.vue'
-import Admin from '@pages/Admin.vue'
-import Support from '@pages/Support.vue'
-import Checkout from '@pages/Checkout.vue'
+import Home from '@/Pages/Customer/Home.vue'
+import Login from '@/Pages/auth/Login.vue'
+import Register from '@/Pages/auth/Register.vue'
+import Menu from '@/Pages/Customer/Menu.vue'
+import Partner from '@/Pages/Partner/Partner.vue'
+import Courier from '@/Pages/Courier/Courier.vue'
+import Admin from '@/Pages/Partner/Admin.vue'
+import Support from '@/Pages/Customer/Support.vue'
+import Checkout from '@/Pages/Customer/Checkout.vue'
 
 const routes = [
   {
@@ -48,12 +48,12 @@ const routes = [
   {
     path: '/terms',
     name: 'terms',
-    component: () => import('@pages/Terms.vue')
+    component: () => import('@/Pages/Customer/Terms.vue')
   },
   {
     path: '/privacy',
     name: 'privacy',
-    component: () => import('@pages/Privacy.vue')
+    component: () => import('@/Pages/Customer/Privacy.vue')
   },
   {
     path: '/menu/:slug',
