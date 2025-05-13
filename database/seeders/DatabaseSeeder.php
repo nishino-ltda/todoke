@@ -54,14 +54,28 @@ class DatabaseSeeder extends Seeder
         if (!$partner) {
             throw new \Exception('Partner user not found');
         }
+
+        // Create default region if none exists
+        $region = \App\Models\Region::firstOrCreate(
+            ['name' => 'Default Region'],
+            [
+                'partner_id' => $partner->id,
+                'polygon' => 'POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'
+            ]
+        );
         
-        // Get the test restaurant node
-        $restaurant = Node::where('identifier', 'test-restaurant')->first();
-        if (!$restaurant) {
-            // If test restaurant doesn't exist, create it via TestSeeder
-            $this->call(TestSeeder::class);
-            $restaurant = Node::where('identifier', 'test-restaurant')->first();
-        }
+        // Get or create the test restaurant node
+        $restaurant = Node::firstOrCreate(
+            ['identifier' => 'test-restaurant'],
+            [
+                'partner_id' => $partner->id,
+                'type' => 'partner',
+                'capacity' => 50,
+                'status' => 'active',
+                'region_id' => $region->id,
+                'current_position' => 'POINT(-57.6516 -19.0086)'
+            ]
+        );
         
         // Check if products already exist for this restaurant
         $productCount = Product::where('node_id', $restaurant->id)->count();
@@ -101,16 +115,6 @@ class DatabaseSeeder extends Seeder
                 );
             }
         }
-
-        // Create default region if none exists
-        $partner = User::where('type', 'partner')->first();
-        $region = \App\Models\Region::firstOrCreate(
-            ['name' => 'Default Region'],
-            [
-                'partner_id' => $partner->id,
-                'polygon' => 'POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))'
-            ]
-        );
 
         // Create restaurant nodes for partners
         $partner = User::where('type', 'partner')->first();
@@ -157,9 +161,5 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // Run test-specific seeders in local/testing environments
-        if (app()->environment('local', 'testing')) {
-            $this->call(TestSeeder::class);
-        }
     }
 }

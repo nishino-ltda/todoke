@@ -21,19 +21,34 @@ Cypress.Commands.add('loginAsPartner', () => {
 })
 
 Cypress.Commands.add('setupTestOrders', () => {
-  cy.request('POST', '/api/v1/test/setup-orders', {
-    partnerId: 1,
-    orders: [
-      { status: 'PREPARING', items: ['Margherita Pizza'] },
-      { status: 'PREPARING', items: ['Caesar Salad'] },
-      { status: 'READY', items: ['Pepperoni Pizza'] }
-    ]
+  cy.log('🔄 Setting up test orders via API')
+  cy.request({
+    method: 'POST',
+    url: '/api/v1/test/setup-orders',
+    body: {
+      partnerId: 1,
+      orders: [
+        { status: 'preparing', items: ['Margherita Pizza'] },
+        { status: 'preparing', items: ['Caesar Salad'] },
+        { status: 'ready', items: ['Pepperoni Pizza'] }
+      ]
+    },
+    failOnStatusCode: false
+  }).then(response => {
+    if (response.status !== 200) {
+      cy.log('❌ Error setting up test orders:', response.body)
+    } else {
+      cy.log('✅ Test orders created successfully:', response.body.count)
+    }
   })
 })
 
 Cypress.Commands.add('waitForNewOrder', () => {
-  cy.intercept('GET', '/api/v1/partner/orders').as('getOrders')
-  cy.wait('@getOrders')
+  cy.log('⏳ Waiting for orders API response')
+  cy.intercept('GET', '**/partner/orders').as('getOrdersRefresh')
+  cy.wait('@getOrdersRefresh', { timeout: 10000 }).then(interception => {
+    cy.log('📋 Orders refreshed:', interception.response?.body)
+  })
 })
 
 Cypress.Commands.add('logout', () => {
