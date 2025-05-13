@@ -1,11 +1,31 @@
 describe('Partner Order Management', () => {
   beforeEach(() => {
-    // Login as partner first
+    cy.log('🔐 Starting partner login')
     cy.visit('/login')
+    cy.log('📝 Filling login form')
     cy.get('[data-test="email-input"]').type('partner@example.com')
     cy.get('[data-test="password-input"]').type('password123')
+    cy.log('🔄 Submitting form')
     cy.get('[data-test="submit-button"]').click()
+    
+    // Check for error alert first
+    cy.get('[data-test="error-alert"]').then(($alert) => {
+      if ($alert.length) {
+        cy.log('❌ Error alert found:', $alert.text())
+      }
+    })
+
+    // Debug the API response
+    cy.intercept('POST', '/api/v1/auth/login').as('loginRequest')
+    cy.wait('@loginRequest').then((interception) => {
+      cy.log('🔍 Login API response:', interception.response?.body)
+      if (interception.response?.body?.user) {
+        cy.log('👤 User type:', interception.response.body.user.type)
+      }
+    })
+
     cy.url().should('include', '/partner')
+    cy.log('✅ Login completed')
   })
 
   it('displays order list', () => {
