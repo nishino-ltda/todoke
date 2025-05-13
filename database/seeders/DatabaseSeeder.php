@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             'partner' => [
                 'name' => 'Restaurant Partner',
                 'email' => 'partner@example.com',
-                'type' => 'partner'
+                'type' => 'partner',
+                'password' => Hash::make('password123')
             ],
             'customer' => [
                 'name' => 'Test Customer',
