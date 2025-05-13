@@ -20,6 +20,20 @@
   - Partner pages in Pages/Partner/
   - Tests follow same directory structure
 - **UI Framework**: Vuetify 3
+  - **Component Usage**:
+    - All components use Vuetify 3 syntax
+    - Buttons use `v-btn` with proper props
+    - Forms use `v-form` with validation
+    - Layout uses `v-row` and `v-col` for grid
+  - **Inertia Integration**:
+    - Links use Inertia's `Link` component
+    ```vue
+    <Link :href="route('login')" class="text-primary" data-test="login-link">
+      Already have an account?
+    </Link>
+    ```
+    - Avoid `to=` attribute (router-link syntax)
+    - Use `route()` helper for named routes
 - **HTTP Client**: Axios
 - **Vue Composition API**: Using `<script setup>` syntax
   - **Conversion Patterns**:
@@ -111,7 +125,21 @@ npm run build
   - 403: Forbidden
 
 ## Frontend Architecture
-- Inertia.js for server-side rendered single page app experience
+- **Inertia.js**:
+  - Version: 2.0.9
+  - Configuration:
+    - Properly initialized in resources/js/app.js
+    - Uses `createInertiaApp` with page component resolver
+    - All controllers return Inertia responses
+  - Routing:
+    - Web routes handle page rendering
+    - API routes handle business logic
+    - Frontend uses `Link` component for navigation
+  - Testing:
+    - Components include `data-test` attributes
+    ```vue
+    <v-btn data-test="submit-button">Submit</v-btn>
+    ```
 - Clear separation between:
   - Web routes: Handle only Inertia page rendering
   - API routes: Handle all business logic and data operations

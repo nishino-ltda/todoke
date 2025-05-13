@@ -14,7 +14,13 @@
   - [x] OrderCard component (OrderCard.spec.js)
 
 ## Implementation Tasks
-1. **Dashboard Components**:
+1. **Frontend Foundation**:
+   - [x] Converted all boilerplate pages to Vuetify3
+   - [x] Replaced router-links with Inertia Link
+   - [x] Added data-test attributes for testing
+   - [x] Updated tech documentation
+
+2. **Dashboard Components**:
    - [ ] Create PartnerDashboard layout
    - [ ] Implement OrderList component
    - [ ] Create OrderCard component

@@ -9,9 +9,18 @@
   - API routes (business logic)
 - Documentation in techContext.md and systemPatterns.md
 
-## Testing Progress (2025-05-13)
+## Frontend Updates (2025-05-13)
 
 ### Completed:
+- Converted all boilerplate pages to use Vuetify3 components
+- Replaced router-links with Inertia Link components
+- Added data-test attributes for testing:
+  - Login/Register forms
+  - Navigation buttons
+  - Form submissions
+- Updated techContext.md with integration details
+
+### Testing Progress:
 - Partner login test fixes
   - Credential validation
   - Error message handling
