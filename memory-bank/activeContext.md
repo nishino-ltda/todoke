@@ -35,8 +35,14 @@
    - Testing product customization features
    - Fixed axios mocking in component tests
    - Added proper async handling with flushPromises()
-   - Fixed axios mocking in component tests
-   - Added proper async handling with flushPromises()
+   - Implemented enhanced Cypress logging:
+     - Added Node task in cypress.config.js to forward logs to console
+     - Overrode cy.log command to:
+       - Use task in headless mode
+       - Use console.log directly in headed mode
+       - Format output with tab indentation
+     - Verified functionality works in both modes
+     - Documented patterns in systemPatterns.md
 
 ## Recent Changes
 - Fixed E2E tests for checkout flow:

@@ -220,7 +220,44 @@ class DeliveryStatusService implements DeliveryStatusServiceInterface {
 
 ## E2E Testing Patterns (2025-05-05)
 
-1. **Test Setup**:
+1. **Test Logging**:
+   - Use `cy.log()` extensively to document test progress
+   - Particularly valuable in headless mode where UI isn't visible
+   - Implement via:
+     ```javascript
+     cy.log('Starting test section', args)
+     ```
+   - For headless mode, configure task in cypress.config.js:
+     ```javascript
+     on("task", {
+       log(args) {
+         console.log(...args);
+         return null;
+       }
+     });
+     ```
+   - Override cy.log for better formatting:
+     ```javascript
+     Cypress.Commands.overwrite("log", function(log, ...args) {
+       const indent = "\t";
+       const formattedArgs = args.map((arg) =>
+         typeof arg === "string" ? indent + arg : indent + JSON.stringify(arg)
+       );
+       if (Cypress.browser.isHeadless) {
+         return cy.task("log", formattedArgs, { log: false });
+       } else {
+         console.log(...formattedArgs);
+         return log(...args);
+       }
+     });
+     ```
+   - Benefits:
+     - Clear test execution flow in logs
+     - Easier debugging of failed tests
+     - Better visibility into test state
+     - Works consistently in both headed and headless modes
+
+2. **Test Setup**:
    - Use API interception to provide consistent test data
    - Mock API responses with fixtures
    - Visit specific pages directly rather than navigating through the app
