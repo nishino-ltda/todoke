@@ -14,3 +14,7 @@ Route::get('/', [PublicController::class, 'index'])->name('index');
 // Auth routes
 Route::get('/login', [PublicController::class, 'login'])->name('login');
 Route::get('/register', [PublicController::class, 'register'])->name('register');
+
+// Legal pages
+Route::get('/terms', [PublicController::class, 'terms'])->name('terms');
+Route::get('/privacy', [PublicController::class, 'privacy'])->name('privacy');

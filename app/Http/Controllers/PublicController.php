@@ -14,7 +14,7 @@ class PublicController extends Controller
 
     public function index()
     {
-        return Inertia::render('Welcome');
+        return Inertia::render('Public/Home');
     }
 
     public function login()
@@ -25,5 +25,15 @@ class PublicController extends Controller
     public function register()
     {
         return Inertia::render('auth/Register');
+    }
+
+    public function terms()
+    {
+        return Inertia::render('Public/Terms');
+    }
+
+    public function privacy()
+    {
+        return Inertia::render('Public/Privacy');
     }
 }

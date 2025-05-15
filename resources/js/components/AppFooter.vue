@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
-import { route } from '@inertiajs/vue3'
+
 
 const currentYear = computed(() => new Date().getFullYear())
 </script>
