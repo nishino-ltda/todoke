@@ -1,9 +1,9 @@
 <script setup>
-import AppLayout from '@/Layouts/AppLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 </script>
 
 <template>
-  <AppLayout title="Courier Dashboard">
+  <AuthenticatedLayout title="Courier Dashboard">
     <template #header>
       <v-toolbar-title class="text-h5">
         Courier Dashboard
@@ -21,5 +21,5 @@ import AppLayout from '@/Layouts/AppLayout.vue'
         </v-col>
       </v-row>
     </v-container>
-  </AppLayout>
+  </AuthenticatedLayout>
 </template>
