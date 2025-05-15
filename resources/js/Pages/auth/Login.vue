@@ -21,11 +21,12 @@
 </template>
 
 <script setup>
-import { Link } from '@inertiajs/vue3'
+import { Link, router } from '@inertiajs/vue3'
 import GuestLayout from '@/Layouts/GuestLayout.vue'
 import AuthForm from '@/components/AuthForm.vue'
 
 function handleSuccess() {
-  window.location.href = '/partner/dashboard'
+  // Use Inertia's router for proper SPA navigation
+  router.visit('/partner/dashboard')
 }
 </script>

@@ -1,13 +1,17 @@
-## Test Fixes (2025-05-13)
+## Test Improvements (2025-05-15)
 
-- Updated partner login tests to:
-  - Use correct test credentials (partner@example.com/password123)
-  - Expect Portuguese error messages from API
-  - Follow actual login flow with proper redirects
-- Modified auth store to redirect partners to /partner after login
-- Aligned test assertions with actual API responses
+- Refactored partner login tests to:
+  - Handle exact error message matching ("The email field is required. (and 1 more error)")
+  - Properly validate Portuguese error messages ("As credenciais fornecidas estão incorretas")
+  - Fix promise handling in test assertions
+  - Add comprehensive logging for debugging
+  - Fixed router reference in Login.vue
+  - Added data-test attribute to Partner Dashboard
+  - Verified successful login flow with API response checks
+- Added error handling for Ziggy route errors in tests
+- Updated test selectors to match current UI components
 
-## CORS Issue Fix (2025-05-15)
+## CORS & API Configuration (2025-05-15)
 
 - Added proxy configuration in vite.config.js to forward API requests to Laravel backend:
   - Configured proxies for /api, /register, and /login endpoints

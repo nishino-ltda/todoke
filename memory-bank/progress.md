@@ -21,10 +21,15 @@
 - Updated techContext.md with integration details
 
 ### Testing Progress:
-- Partner login test fixes
-  - Credential validation
-  - Error message handling
-  - Redirect behavior
+- Partner login test fixes:
+  - Credential validation (working)
+  - Error message handling (working)
+  - Redirect behavior (fixed with router.visit)
+  - Added comprehensive test logging
+  - Fixed test selectors to match current UI
+  - Added data-test attribute to dashboard
+  - Verified API response handling
+  - All tests now passing
 - Partner orders test alignment with login flow
 
 ### Remaining:

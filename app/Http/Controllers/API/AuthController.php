@@ -76,6 +76,8 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        Log::debug('Login request received', ['email' => $request->email]);
+        
         $request->validate([
             'email' => 'required|email|regex:/^.+@.+\..+$/',
             'password' => 'required|string|min:8',
@@ -84,16 +86,36 @@ class AuthController extends Controller
             'password.min' => 'A senha deve ter pelo menos 8 caracteres'
         ]);
 
+        Log::debug('Request validated successfully');
+        
         $user = User::where('email', $request->email)->first();
+        Log::debug('User lookup result', ['user_exists' => !!$user]);
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['As credenciais fornecidas estão incorretas.'],
-            ]);
+        if (!$user) {
+            Log::debug('User not found for email', ['email' => $request->email]);
+            return response()->json([
+                'message' => 'As credenciais fornecidas estão incorretas',
+                'errors' => [
+                    'email' => ['As credenciais fornecidas estão incorretas.']
+                ]
+            ], 401);
         }
 
+        if (!Hash::check($request->password, $user->password)) {
+            Log::debug('Password mismatch for user', ['user_id' => $user->id]);
+            return response()->json([
+                'message' => 'As credenciais fornecidas estão incorretas',
+                'errors' => [
+                    'email' => ['As credenciais fornecidas estão incorretas.']
+                ]
+            ], 401);
+        }
+
+        Log::debug('Credentials validated successfully', ['user_id' => $user->id]);
+        
         // Delete any existing tokens for the user
         $user->tokens()->delete();
+        Log::debug('Deleted existing tokens for user', ['user_id' => $user->id]);
         
         // Verify user type before creating token
         $abilities = [$user->type];
@@ -107,6 +129,10 @@ class AuthController extends Controller
         ]);
 
         $token = $user->createToken('auth_token', $abilities)->plainTextToken;
+        Log::debug('Created new token for user', [
+            'user_id' => $user->id,
+            'token_abilities' => $abilities
+        ]);
 
         $createdToken = $user->tokens()->latest()->first();
         
@@ -145,6 +171,7 @@ class AuthController extends Controller
             throw new \Exception('Invalid token abilities assigned');
         }
 
+        Log::debug('Returning successful login response');
         return response()->json([
             'token' => $token,
             'user' => [

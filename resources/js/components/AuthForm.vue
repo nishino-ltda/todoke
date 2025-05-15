@@ -55,12 +55,12 @@
 
     <!-- Error alert -->
     <v-alert
-      v-if="generalError"
+      v-if="generalError || Object.keys(errors).length"
       type="error"
       class="mt-4"
       data-test="error-alert"
     >
-      {{ generalError }}
+      {{ generalError || 'Por favor, corrija os erros no formulário' }}
     </v-alert>
   </v-form>
 </template>
