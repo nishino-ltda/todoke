@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\InertiaController;
+use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\OrderController;
 
 /*
@@ -10,7 +10,7 @@ use App\Http\Controllers\OrderController;
  */
 Route::prefix('partner')->group(function () {
     // Dashboard - Inertia render only
-    Route::get('/dashboard', [InertiaController::class, 'partnerDashboard'])
+    Route::get('/dashboard', [PartnerController::class, 'dashboard'])
         ->name('partner.dashboard');
     
     // Order management - Inertia render only
@@ -22,6 +22,6 @@ Route::prefix('partner')->group(function () {
         ->name('partner.order.update-status');
     
     // Settings - Inertia render only
-    Route::get('/settings', [InertiaController::class, 'partnerSettings'])
+    Route::get('/settings', [PartnerController::class, 'settings'])
         ->name('partner.settings');
 });

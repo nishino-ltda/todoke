@@ -26,6 +26,6 @@ import GuestLayout from '@/layouts/GuestLayout.vue'
 import AuthForm from '@/components/AuthForm.vue'
 
 function handleSuccess() {
-  window.location.href = '/'
+  window.location.href = '/partner/dashboard'
 }
 </script>

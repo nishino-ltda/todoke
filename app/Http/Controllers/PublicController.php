@@ -17,5 +17,13 @@ class PublicController extends Controller
         return Inertia::render('Welcome');
     }
 
-    
+    public function login()
+    {
+        return Inertia::render('auth/Login');
+    }
+
+    public function register()
+    {
+        return Inertia::render('auth/Register');
+    }
 }
