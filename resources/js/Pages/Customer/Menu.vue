@@ -28,7 +28,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import ProductList from '@/components/ProductList.vue'
 import ProductDetailsModal from '@/components/ProductDetailsModal.vue'
 import { useCartStore } from '@/stores/cart'

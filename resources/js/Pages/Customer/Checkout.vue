@@ -105,9 +105,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
-import { useRouter } from 'vue-router'
+import { router } from '@inertiajs/vue3'
 
-const router = useRouter()
 const cart = useCartStore()
 const address = ref('')
 const paymentMethod = ref('')
@@ -141,7 +140,7 @@ async function submitOrder() {
       
       // Redirect after dialog is closed
       setTimeout(() => {
-        router.push({ name: 'home' })
+        router.visit('/')
       }, 2000)
     }
   } catch (error) {

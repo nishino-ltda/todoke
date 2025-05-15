@@ -21,7 +21,7 @@
 1. **Layout System**:
    - [x] Create GuestLayout
    - [x] Create AuthenticatedLayout
-   - [x] Apply layouts to all pages
+   - [x] Apply Layouts to all pages
    - [x] Implement responsive design
    - [x] Add navigation integration
 

@@ -65,9 +65,8 @@
 <script setup>
 import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
-import { useRouter } from 'vue-router'
+import { router } from '@inertiajs/vue3'
 
-const router = useRouter()
 const cart = useCartStore()
 const showCartDialog = ref(false)
 
@@ -77,6 +76,6 @@ function removeItem(id) {
 
   function checkout() {
     showCartDialog.value = false
-    router.push({ name: 'checkout' })
+    router.visit('/checkout')
   }
 </script>

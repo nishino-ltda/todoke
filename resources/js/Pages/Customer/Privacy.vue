@@ -26,5 +26,5 @@
 </template>
 
 <script setup>
-import GuestLayout from '@/layouts/GuestLayout.vue'
+import GuestLayout from '@/Layouts/GuestLayout.vue'
 </script>

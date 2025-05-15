@@ -55,7 +55,7 @@
     - **Page Components**: Components automatically available in template
     ```vue
     <script setup>
-    import GuestLayout from '@/layouts/GuestLayout.vue'
+    import GuestLayout from '@/Layouts/GuestLayout.vue'
     import HomeHero from '@/components/HomeHero.vue'
     </script>
     ```

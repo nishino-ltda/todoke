@@ -33,7 +33,11 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await api.post('/auth/register', {
+      // Use the endpoint provided in userData or default to '/auth/register'
+      const endpoint = userData._endpoint || '/auth/register'
+      delete userData._endpoint
+      
+      const response = await api.post(endpoint, {
         ...userData,
         role: userData.role || 'customer'
       })

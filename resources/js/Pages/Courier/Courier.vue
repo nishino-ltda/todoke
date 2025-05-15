@@ -12,5 +12,5 @@
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 </script>

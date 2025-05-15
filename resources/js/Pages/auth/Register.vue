@@ -22,7 +22,7 @@
 
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import GuestLayout from '@/layouts/GuestLayout.vue'
+import GuestLayout from '@/Layouts/GuestLayout.vue'
 import AuthForm from '@/components/AuthForm.vue'
 
 function handleSuccess() {

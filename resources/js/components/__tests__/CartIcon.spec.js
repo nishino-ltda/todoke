@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import CartIcon from '../CartIcon.vue'
 import { vi } from 'vitest'
-import { createRouter, createMemoryHistory } from 'vue-router'
+import { router } from '@inertiajs/vue3'
 
 // Stub Vuetify components
 const vuetifyStubs = {
@@ -67,26 +67,17 @@ const vuetifyStubs = {
 describe('CartIcon', () => {
   let wrapper
   let cartStore
-  let router
 
   beforeEach(() => {
-    router = createRouter({
-      history: createMemoryHistory(),
-      routes: [
-        {
-          path: '/checkout',
-          name: 'checkout',
-          component: { template: '<div>Checkout</div>' }
-        }
-      ]
-    })
-
     const pinia = createPinia()
     cartStore = useCartStore(pinia)
     
+    // Mock Inertia's router.visit
+    router.visit = vi.fn()
+    
     wrapper = mount(CartIcon, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyStubs
       }
     })
@@ -123,11 +114,10 @@ describe('CartIcon', () => {
   })
 
   it('navigates to checkout on checkout button click', async () => {
-    const push = vi.spyOn(router, 'push')
     cartStore.items = [{ id: 1, name: 'Product', price: 10, quantity: 1 }]
     await wrapper.find('[data-test="cart-icon"] button').trigger('click') // Open dialog
     
     await wrapper.find('[data-test="checkout-button"]').trigger('click')
-    expect(push).toHaveBeenCalledWith({ name: 'checkout' })
+    expect(router.visit).toHaveBeenCalledWith('/checkout')
   })
 })

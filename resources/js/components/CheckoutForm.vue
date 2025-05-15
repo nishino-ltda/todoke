@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { router } from '@inertiajs/vue3'
 import AddressInput from './AddressInput.vue'
 import PaymentMethodInput from './PaymentMethodInput.vue'
 import { useCartStore } from '@/stores/cart'
@@ -56,7 +56,6 @@ const isSubmitting = ref(false)
 const errors = ref({})
 const errorMessage = ref('')
 const showConfirmation = ref(false)
-const router = useRouter()
 
 const required = (value) => !!value || 'This field is required'
 
@@ -82,7 +81,7 @@ const handleSubmit = async () => {
 
   try {
     const result = await orderApi.createOrder(orderData)
-    await router.push({ name: 'home' })
+    await router.visit('/')
     cartStore.clearCart()
     showConfirmation.value = true
   } catch (error) {

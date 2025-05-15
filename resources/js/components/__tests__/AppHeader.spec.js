@@ -3,7 +3,6 @@ import AppHeader from '../AppHeader.vue'
 import { useAuthStore } from '@/stores/auth'
 import { createPinia } from 'pinia'
 import { vi } from 'vitest'
-import { createRouter, createWebHistory } from 'vue-router'
 
 // Mock Vuetify components
 const VAppBar = { 
@@ -53,17 +52,6 @@ const vuetifyComponents = {
   WelcomeMessage
 }
 
-// Create a real router instance for testing
-const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    { path: '/', component: { template: '<div>Home</div>' } },
-    { path: '/login', component: { template: '<div>Login</div>' } },
-    { path: '/register', component: { template: '<div>Register</div>' } },
-    { path: '/menu', component: { template: '<div>Menu</div>' } }
-  ]
-})
-
 describe('AppHeader', () => {
   let wrapper
   let authStore
@@ -79,7 +67,7 @@ describe('AppHeader', () => {
 
     wrapper = mount(AppHeader, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyComponents
       }
     })
@@ -104,7 +92,7 @@ describe('AppHeader', () => {
 
     const testWrapper = mount(AppHeader, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyComponents
       }
     })
@@ -126,7 +114,7 @@ describe('AppHeader', () => {
 
     const testWrapper = mount(AppHeader, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyComponents
       }
     })
@@ -146,7 +134,7 @@ describe('AppHeader', () => {
 
     const testWrapper = mount(AppHeader, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyComponents
       }
     })
@@ -165,7 +153,7 @@ describe('AppHeader', () => {
 
     const testWrapper = mount(AppHeader, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyComponents
       }
     })
@@ -189,7 +177,7 @@ describe('AppHeader', () => {
 
     const testWrapper = mount(AppHeader, {
       global: {
-        plugins: [pinia, router],
+        plugins: [pinia],
         stubs: vuetifyComponents
       }
     })

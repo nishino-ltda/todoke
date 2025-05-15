@@ -22,4 +22,4 @@ yarn-error.log
 /.vscode
 /.zed
 /coverage
-/cypress/screenshots
+/cypress/screenshots/
