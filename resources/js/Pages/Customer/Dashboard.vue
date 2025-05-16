@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
+        <div data-test="customer-dashboard">
             <h1>Customer Dashboard</h1>
-            <p>Welcome to your customer dashboard.</p>
+            <p>Welcome to the customer dashboard.</p>
         </div>
     </AuthenticatedLayout>
 </template>

@@ -1,8 +1,8 @@
 <template>
     <GuestLayout>
-        <div>
-            <h1>Home Page</h1>
-            <p>Welcome to TODOKE!</p>
+        <div data-test="home-page">
+            <h1>Welcome to TODOKE</h1>
+            <p>Your innovative delivery management platform.</p>
         </div>
     </GuestLayout>
 </template>

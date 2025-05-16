@@ -1,13 +1,9 @@
-<script setup>
-import { Head, Link } from '@inertiajs/vue3'
-</script>
-
 <template>
-  <Head title="TODOKE" />
-  
-  <v-app>
-    <v-main>
-      <slot />
-    </v-main>
-  </v-app>
+    <div data-test="app">
+        <h1>App</h1>
+        <p>Main application component.</p>
+    </div>
 </template>
+
+<script setup>
+</script>

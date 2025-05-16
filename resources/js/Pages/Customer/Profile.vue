@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
-            <h1>My Profile</h1>
-            <p>This is the customer profile page.</p>
+        <div data-test="customer-profile">
+            <h1>Customer Profile</h1>
+            <p>Manage your profile information.</p>
         </div>
     </AuthenticatedLayout>
 </template>

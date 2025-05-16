@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
+        <div data-test="admin-users">
             <h1>Admin Users</h1>
-            <p>This is the admin users page.</p>
+            <p>User management section.</p>
         </div>
     </AuthenticatedLayout>
 </template>

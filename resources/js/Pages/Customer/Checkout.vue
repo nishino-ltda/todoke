@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
-            <h1>Checkout</h1>
-            <p>This is the checkout page.</p>
+        <div data-test="customer-checkout">
+            <h1>Customer Checkout</h1>
+            <p>Complete your order.</p>
         </div>
     </AuthenticatedLayout>
 </template>

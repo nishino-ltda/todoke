@@ -10,6 +10,6 @@ class RegionController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Regions');
+        return Inertia::render('Admin/Regions/Index');
     }
 }

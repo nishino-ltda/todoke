@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
+        <div data-test="customer-support">
             <h1>Customer Support</h1>
-            <p>This is the customer support page.</p>
+            <p>Get help with your issues.</p>
         </div>
     </AuthenticatedLayout>
 </template>

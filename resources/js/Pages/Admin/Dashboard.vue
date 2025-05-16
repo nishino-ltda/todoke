@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div>
+        <div data-test="admin-dashboard">
             <h1>Admin Dashboard</h1>
             <p>Welcome to the admin dashboard.</p>
         </div>

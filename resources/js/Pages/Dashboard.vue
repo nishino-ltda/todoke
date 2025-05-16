@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
+        <div data-test="dashboard-page">
             <h1>Dashboard</h1>
-            <p>This is the main dashboard.</p>
+            <p>This is the main dashboard page.</p>
         </div>
     </AuthenticatedLayout>
 </template>

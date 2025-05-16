@@ -8,30 +8,15 @@ use Inertia\Inertia;
 
 class OrderController extends Controller
 {
-    /**
-     * Display a listing of the partner's orders.
-     */
     public function index()
     {
         return Inertia::render('Partner/Orders/Index');
     }
 
-    /**
-     * Display the specified partner order.
-     */
-    public function show($orderId)
+    public function show($id)
     {
         return Inertia::render('Partner/Orders/Show', [
-            'orderId' => $orderId,
+            'orderId' => $id,
         ]);
-    }
-
-    /**
-     * Update the status of the specified partner order.
-     */
-    public function updateStatus(Request $request, $orderId)
-    {
-        // Placeholder for status update logic
-        return response()->json(['message' => 'Status updated (placeholder)']);
     }
 }

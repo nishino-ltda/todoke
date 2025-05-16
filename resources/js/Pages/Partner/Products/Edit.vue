@@ -1,28 +1,17 @@
+<template>
+    <AuthenticatedLayout>
+        <div data-test="partner-products-edit">
+            <h1>Edit Product</h1>
+            <p>Edit details for product: {{ productId }}</p>
+        </div>
+    </AuthenticatedLayout>
+</template>
+
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { defineProps } from 'vue';
 
 const props = defineProps({
     productId: String,
 });
 </script>
-
-<template>
-    <Head :title="'Edit Product ' + productId" />
-
-    <AuthenticatedLayout>
-        <template #header>
-            <h2 data-test="edit-product-title">Edit Product {{ productId }}</h2>
-        </template>
-
-        <div data-test="edit-product-container">
-            <div>
-                <div>
-                    <div>
-                        Partner Products Edit Page (Placeholder) for Product ID: {{ productId }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </AuthenticatedLayout>
-</template>

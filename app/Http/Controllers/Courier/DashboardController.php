@@ -8,11 +8,8 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the courier dashboard.
-     */
     public function index()
     {
-        return Inertia::render('Courier/Dashboard/Index');
+        return Inertia::render('Courier/Dashboard');
     }
 }

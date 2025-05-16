@@ -8,10 +8,8 @@ use Inertia\Inertia;
 
 class MenuController extends Controller
 {
-    public function show($partnerId)
+    public function index()
     {
-        return Inertia::render('Customer/Menu', [
-            'partnerId' => $partnerId,
-        ]);
+        return Inertia::render('Customer/Menu');
     }
 }

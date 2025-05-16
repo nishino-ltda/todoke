@@ -1,10 +1,12 @@
 <template>
-  <div data-test="partner-dashboard">
-    <h1>Partner Dashboard</h1>
-    <p>Welcome to your partner dashboard</p>
-  </div>
+    <AuthenticatedLayout>
+        <div data-test="partner-dashboard">
+            <h1>Partner Dashboard</h1>
+            <p>Welcome to the partner dashboard.</p>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script setup>
-// Dashboard logic will be implemented here
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 </script>

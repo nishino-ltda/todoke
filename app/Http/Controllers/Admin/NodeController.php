@@ -10,6 +10,6 @@ class NodeController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Nodes');
+        return Inertia::render('Admin/Nodes/Index');
     }
 }

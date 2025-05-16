@@ -1,16 +1,12 @@
 <template>
-    <GuestLayout>
-        <div>
-            <h1>Partner Menu</h1>
-            <p>Viewing menu for partner ID: {{ partnerId }}</p>
+    <AuthenticatedLayout>
+        <div data-test="customer-menu">
+            <h1>Customer Menu</h1>
+            <p>Browse available products.</p>
         </div>
-    </GuestLayout>
+    </AuthenticatedLayout>
 </template>
 
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-
-const props = defineProps({
-    partnerId: String,
-});
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 </script>

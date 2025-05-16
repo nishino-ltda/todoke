@@ -10,13 +10,13 @@ class OrderController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Customer/Orders');
+        return Inertia::render('Customer/Orders/Index');
     }
 
-    public function show($orderId)
+    public function show($id)
     {
-        return Inertia::render('Customer/OrderDetail', [
-            'orderId' => $orderId,
+        return Inertia::render('Customer/Orders/Show', [
+            'orderId' => $id,
         ]);
     }
 }

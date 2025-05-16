@@ -1,16 +1,12 @@
 <template>
-  <AuthenticatedLayout>
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <h1 class="text-h4">Courier Portal</h1>
-          <p class="text-body-1">Courier dashboard coming soon</p>
-        </v-col>
-      </v-row>
-    </v-container>
-  </AuthenticatedLayout>
+    <AuthenticatedLayout>
+        <div data-test="courier-page">
+            <h1>Courier Page</h1>
+            <p>Courier management section.</p>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 </script>

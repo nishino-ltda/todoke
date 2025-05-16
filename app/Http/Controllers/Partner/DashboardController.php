@@ -8,11 +8,8 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    /**
-     * Display the partner dashboard.
-     */
     public function index()
     {
-        return Inertia::render('Partner/Dashboard/Index');
+        return Inertia::render('Partner/Dashboard');
     }
 }

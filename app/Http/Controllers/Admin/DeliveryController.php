@@ -10,6 +10,6 @@ class DeliveryController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Deliveries');
+        return Inertia::render('Admin/Deliveries/Index');
     }
 }
