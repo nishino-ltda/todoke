@@ -6,6 +6,9 @@ use Inertia\Inertia;
 // Public Controllers
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\WelcomeController;
+use App\Http\Controllers\MenuController;
+
+// Common Controllers
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SupportController;
 
@@ -15,7 +18,6 @@ use App\Http\Controllers\Customer\MenuController as CustomerMenuController;
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
-use App\Http\Controllers\Customer\SupportController as CustomerSupportController;
 use App\Http\Controllers\Customer\TermsController as CustomerTermsController;
 use App\Http\Controllers\Customer\PrivacyController as CustomerPrivacyController;
 
@@ -27,6 +29,7 @@ use App\Http\Controllers\Partner\AddonController as PartnerAddonController;
 use App\Http\Controllers\Partner\RegionController as PartnerRegionController;
 use App\Http\Controllers\Partner\NodeController as PartnerNodeController;
 use App\Http\Controllers\Partner\SettingsController as PartnerSettingsController;
+use App\Http\Controllers\Partner\VariationController as PartnerVariationController;
 
 // Courier Controllers
 use App\Http\Controllers\Courier\DashboardController as CourierDashboardController;
@@ -41,7 +44,7 @@ use App\Http\Controllers\Admin\NodeController as AdminNodeController;
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\DeliveryController as AdminDeliveryController;
-
+use App\Http\Controllers\Admin\SystemMonitorController as AdminSystemMonitorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,19 +61,38 @@ use App\Http\Controllers\Admin\DeliveryController as AdminDeliveryController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
 
+// Partner Menu Routes (Public)
+Route::get('/menu/{partner}', [MenuController::class, 'show'])->name('menu.show');
+Route::get('/{partner}', [MenuController::class, 'show'])->name('partner.menu');
+
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Common Routes (for all authenticated users)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Support Routes
+    Route::prefix('support')->name('support.')->group(function () {
+        Route::get('/', [SupportController::class, 'index'])->name('dashboard');
+        Route::get('/tickets', [SupportController::class, 'tickets'])->name('tickets.index');
+        Route::get('/tickets/create', [SupportController::class, 'create'])->name('tickets.create');
+        Route::get('/tickets/{id}', [SupportController::class, 'show'])->name('tickets.show');
+        Route::get('/tickets/{id}/reply', [SupportController::class, 'reply'])->name('tickets.reply');
+        Route::get('/faq', [SupportController::class, 'faq'])->name('faq');
+    });
 
     // Customer Routes
     Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/menu', [CustomerMenuController::class, 'index'])->name('menu');
         Route::get('/checkout', [CustomerCheckoutController::class, 'index'])->name('checkout');
-        Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{id}', [CustomerOrderController::class, 'show'])->name('orders.show');
+        
+        // Customer Orders
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [CustomerOrderController::class, 'index'])->name('index');
+            Route::get('/{id}', [CustomerOrderController::class, 'show'])->name('show');
+        });
+
         Route::get('/profile', [CustomerProfileController::class, 'index'])->name('profile');
-        Route::get('/support', [CustomerSupportController::class, 'index'])->name('support');
         Route::get('/terms', [CustomerTermsController::class, 'index'])->name('terms');
         Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('privacy');
     });
@@ -78,57 +100,128 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Partner Routes
     Route::prefix('partner')->name('partner.')->group(function () {
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/orders', [PartnerOrderController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{id}', [PartnerOrderController::class, 'show'])->name('orders.show');
-        Route::get('/products', [PartnerProductController::class, 'index'])->name('products.index');
-        Route::get('/products/create', [PartnerProductController::class, 'create'])->name('products.create');
-        Route::get('/products/{id}/edit', [PartnerProductController::class, 'edit'])->name('products.edit');
-        Route::get('/products/{id}', [PartnerProductController::class, 'show'])->name('products.show');
-        Route::get('/addons', [PartnerAddonController::class, 'index'])->name('addons.index');
-        Route::get('/addons/create', [PartnerAddonController::class, 'create'])->name('addons.create');
-        Route::get('/addons/{id}/edit', [PartnerAddonController::class, 'edit'])->name('addons.edit');
-        Route::get('/addons/{id}', [PartnerAddonController::class, 'show'])->name('addons.show');
-        Route::get('/regions', [PartnerRegionController::class, 'index'])->name('regions.index');
-        Route::get('/regions/create', [PartnerRegionController::class, 'create'])->name('regions.create');
-        Route::get('/regions/{id}/edit', [PartnerRegionController::class, 'edit'])->name('regions.edit');
-        Route::get('/regions/{id}', [PartnerRegionController::class, 'show'])->name('regions.show');
-        Route::get('/nodes', [PartnerNodeController::class, 'index'])->name('nodes.index');
-        Route::get('/nodes/create', [PartnerNodeController::class, 'create'])->name('nodes.create');
-        Route::get('/nodes/{id}/edit', [PartnerNodeController::class, 'edit'])->name('nodes.edit');
-        Route::get('/nodes/{id}', [PartnerNodeController::class, 'show'])->name('nodes.show');
+        
+        // Partner Orders
+        Route::prefix('orders')->name('orders.')->group(function () {
+            Route::get('/', [PartnerOrderController::class, 'index'])->name('index');
+            Route::get('/create', [PartnerOrderController::class, 'create'])->name('create');
+            Route::get('/{id}', [PartnerOrderController::class, 'show'])->name('show');
+            Route::get('/batch-create', [PartnerOrderController::class, 'batchCreate'])->name('batch.create');
+        });
+
+        // Partner Products
+        Route::prefix('products')->name('products.')->group(function () {
+            Route::get('/', [PartnerProductController::class, 'index'])->name('index');
+            Route::get('/create', [PartnerProductController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [PartnerProductController::class, 'edit'])->name('edit');
+            Route::get('/{id}', [PartnerProductController::class, 'show'])->name('show');
+            
+            // Product Variations
+            Route::prefix('{product}/variations')->name('variations.')->group(function () {
+                Route::get('/', [PartnerVariationController::class, 'index'])->name('index');
+                Route::get('/create', [PartnerVariationController::class, 'create'])->name('create');
+                Route::get('/{variation}/edit', [PartnerVariationController::class, 'edit'])->name('edit');
+            });
+        });
+
+        // Partner Addons
+        Route::prefix('addons')->name('addons.')->group(function () {
+            Route::get('/', [PartnerAddonController::class, 'index'])->name('index');
+            Route::get('/create', [PartnerAddonController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [PartnerAddonController::class, 'edit'])->name('edit');
+            Route::get('/{id}', [PartnerAddonController::class, 'show'])->name('show');
+        });
+
+        // Partner Regions
+        Route::prefix('regions')->name('regions.')->group(function () {
+            Route::get('/', [PartnerRegionController::class, 'index'])->name('index');
+            Route::get('/create', [PartnerRegionController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [PartnerRegionController::class, 'edit'])->name('edit');
+            Route::get('/{id}', [PartnerRegionController::class, 'show'])->name('show');
+        });
+
+        // Partner Nodes
+        Route::prefix('nodes')->name('nodes.')->group(function () {
+            Route::get('/', [PartnerNodeController::class, 'index'])->name('index');
+            Route::get('/create', [PartnerNodeController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [PartnerNodeController::class, 'edit'])->name('edit');
+            Route::get('/{id}', [PartnerNodeController::class, 'show'])->name('show');
+        });
+
         Route::get('/settings', [PartnerSettingsController::class, 'index'])->name('settings.index');
     });
 
     // Courier Routes
     Route::prefix('courier')->name('courier.')->group(function () {
         Route::get('/dashboard', [CourierDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/deliveries', [CourierDeliveryController::class, 'index'])->name('deliveries.index');
-        Route::get('/deliveries/{id}', [CourierDeliveryController::class, 'show'])->name('deliveries.show');
-        Route::get('/hybrid-deliveries', [CourierHybridDeliveryController::class, 'index'])->name('hybrid-deliveries.index');
-        Route::get('/hybrid-deliveries/{id}', [CourierHybridDeliveryController::class, 'show'])->name('hybrid-deliveries.show');
+        
+        // Courier Deliveries
+        Route::prefix('deliveries')->name('deliveries.')->group(function () {
+            Route::get('/', [CourierDeliveryController::class, 'index'])->name('index');
+            Route::get('/{id}', [CourierDeliveryController::class, 'show'])->name('show');
+        });
+
+        // Courier Hybrid Deliveries
+        Route::prefix('hybrid-deliveries')->name('hybrid-deliveries.')->group(function () {
+            Route::get('/', [CourierHybridDeliveryController::class, 'index'])->name('index');
+            Route::get('/create', [CourierHybridDeliveryController::class, 'create'])->name('create');
+            Route::get('/{id}', [CourierHybridDeliveryController::class, 'show'])->name('show');
+            Route::get('/{id}/handoff', [CourierHybridDeliveryController::class, 'handoff'])->name('handoff');
+        });
+
         Route::get('/settings', [CourierSettingsController::class, 'index'])->name('settings.index');
     });
 
     // Admin Routes
     Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
-        Route::get('/nodes', [AdminNodeController::class, 'index'])->name('nodes.index');
-        Route::get('/regions', [AdminRegionController::class, 'index'])->name('regions.index');
-        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
-        Route::get('/deliveries', [AdminDeliveryController::class, 'index'])->name('deliveries.index');
-    });
+        
+        // Admin Users
+        Route::prefix('users')->name('users.')->group(function () {
+            Route::get('/', [AdminUserController::class, 'index'])->name('index');
+            Route::get('/{id}', [AdminUserController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [AdminUserController::class, 'edit'])->name('edit');
+        });
 
-    // Support Routes (common for all authenticated users)
-    Route::prefix('support')->name('support.')->group(function () {
-        Route::get('/', [SupportController::class, 'index'])->name('dashboard'); // Renamed to dashboard for consistency
-        Route::get('/tickets', [SupportController::class, 'tickets'])->name('tickets.index');
-        Route::get('/tickets/{id}', [SupportController::class, 'showTicket'])->name('tickets.show');
+        // Admin Nodes
+        Route::prefix('nodes')->name('nodes.')->group(function () {
+            Route::get('/', [AdminNodeController::class, 'index'])->name('index');
+            Route::get('/{id}', [AdminNodeController::class, 'show'])->name('show');
+            Route::get('/{id}/approve', [AdminNodeController::class, 'approve'])->name('approve');
+        });
+
+        // Admin Regions
+        Route::prefix('regions')->name('regions.')->group(function () {
+            Route::get('/', [AdminRegionController::class, 'index'])->name('index');
+            Route::get('/{id}', [AdminRegionController::class, 'show'])->name('show');
+        });
+
+        // Admin Deliveries
+        Route::prefix('deliveries')->name('deliveries.')->group(function () {
+            Route::get('/', [AdminDeliveryController::class, 'index'])->name('index');
+            Route::get('/monitor', [AdminDeliveryController::class, 'monitor'])->name('monitor');
+            Route::get('/{id}', [AdminDeliveryController::class, 'show'])->name('show');
+        });
+
+        // System Monitoring
+        Route::prefix('system')->name('system.')->group(function () {
+            Route::get('/monitor', [AdminSystemMonitorController::class, 'index'])->name('monitor');
+            Route::get('/logs', [AdminSystemMonitorController::class, 'logs'])->name('logs');
+        });
+
+        // Admin Stats
+        Route::prefix('stats')->name('stats.')->group(function () {
+            Route::get('/', [AdminDashboardController::class, 'stats'])->name('index');
+        });
+
+        // Platform Configuration
+        Route::prefix('platform')->name('platform.')->group(function () {
+            Route::get('/settings', [AdminSettingsController::class, 'platform'])->name('settings');
+            Route::get('/settings/edit', [AdminSettingsController::class, 'editPlatform'])->name('settings.edit');
+        });
+
+        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
     });
 });
 
-
 require __DIR__.'/auth.php';
-// require __DIR__.'/customer.php'; // Commented out as routes are now in web.php
-// require __DIR__.'/partner.php'; // Commented out as routes are now in web.php
-// require __DIR__.'/courier.php'; // Commented out as routes are now in web.php

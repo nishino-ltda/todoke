@@ -3,8 +3,8 @@
 | File Path | Status | Notes |
 |----------|--------|-------|
 | resources/js/Pages/Partner/Regions/Index.vue | created | Basic placeholder with data-test |
-| resources/js/Pages/Partner/Orders/Index.vue | processed | Tailwind removed, test attributes added |
-| resources/js/Pages/Partner/Orders/Show.vue | processed | Tailwind removed, test attributes added |
+| resources/js/Pages/Partner/Orders/Index.vue | created | Basic placeholder with data-test |
+| resources/js/Pages/Partner/Orders/Show.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Partner/Products/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Partner/Products/Create.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Partner/Products/Edit.vue | created | Basic placeholder with data-test |
@@ -21,14 +21,14 @@
 | resources/js/Pages/Partner/Nodes/Edit.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Partner/Nodes/Show.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Partner/Settings/Index.vue | created | Basic placeholder with data-test |
-| resources/js/Pages/Courier/Dashboard/Index.vue | processed | Tailwind removed, test attributes added |
+| resources/js/Pages/Courier/Dashboard/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Courier/Deliveries/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Courier/Deliveries/Show.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Courier/HybridDeliveries/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Courier/HybridDeliveries/Show.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Courier/Settings/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Admin/Users/Index.vue | created | Basic placeholder with data-test |
-| resources/js/Pages/Admin/Nodes/Index.vue | processed | Test attributes added |
+| resources/js/Pages/Admin/Nodes/Index.vue | created | Test attributes added |
 | resources/js/Pages/Admin/Regions/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Admin/Settings/Index.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Admin/Deliveries/Index.vue | created | Basic placeholder with data-test |
@@ -63,3 +63,4 @@
 | resources/js/Pages/Public/Home.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Public/Privacy.vue | created | Basic placeholder with data-test |
 | resources/js/Pages/Public/Terms.vue | created | Basic placeholder with data-test |
+| resources/js/Pages/Partner/Orders/Create.vue | created | Basic placeholder with data-test |
