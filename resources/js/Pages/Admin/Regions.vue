@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
-        <div>
-            <h1>Admin Regions</h1>
-            <p>This is the admin regions page.</p>
+        <div data-test="admin-regions-page">
+            <h1 data-test="admin-regions-title">Admin Regions</h1>
+            <p data-test="admin-regions-description">This is the admin regions page.</p>
         </div>
     </AuthenticatedLayout>
 </template>

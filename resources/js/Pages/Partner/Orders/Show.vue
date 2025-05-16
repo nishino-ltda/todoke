@@ -12,13 +12,13 @@ const props = defineProps({
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Partner Order {{ orderId }}</h2>
+            <h2 data-test="order-detail-header" :data-test-order-id="orderId">Partner Order {{ orderId }}</h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
+        <div data-test="order-detail-container">
+            <div>
+                <div>
+                    <div data-test="order-detail-content" :data-test-order-id="orderId">
                         Partner Order Show Page (Placeholder) for Order ID: {{ orderId }}
                     </div>
                 </div>

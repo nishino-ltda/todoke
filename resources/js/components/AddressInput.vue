@@ -6,7 +6,7 @@
     rows="3"
     auto-grow
     required
-    data-testid="address-input"
+    data-test="address-input"
   />
 </template>
 
