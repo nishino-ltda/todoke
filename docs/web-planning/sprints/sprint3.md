@@ -6,39 +6,37 @@
 - Planning: web-planning/menu.md
 
 ## Testing Goals
-✅ Completed:
-- Unit tests for:
-  - ProductList component (all cases passing)
-  - ProductCard component (all cases passing)
-  - Menu page component (axios mocking and async handling implemented)
-  - CartIcon component (all cases passing including checkout navigation, badge display verified)
+- [ ] Unit tests for:
+  - [ ] ProductList component
+  - [ ] ProductCard component
+  - [ ] Menu page component
+  - [ ] CartIcon component
   
-✅ Completed:
-- E2E tests for:
-  - Product browsing
-  - Add to cart flow
-  - Cart persistence
+- [ ] E2E tests for:
+  - [ ] Product browsing
+  - [ ] Add to cart flow
+  - [ ] Cart persistence
 
 ## Implementation Tasks
 1. **Menu Components**:
-   - [x] Create ProductList component
-   - [x] Create ProductCard component
-   - [x] Implement product search/filter
-   - [x] Create ProductDetailsModal with addon selection
+   - [ ] Create ProductList component
+   - [ ] Create ProductCard component
+   - [ ] Implement product search/filter
+   - [ ] Create ProductDetailsModal with addon selection
 
 2. **Cart Functionality**:
-   - [x] Implement Cart Store
-   - [x] Create CartIcon component with badge count
-   - [x] Add advanced cart operations (add/remove/persistence)
-   - [x] Implement checkout flow
+   - [ ] Implement Cart Store
+   - [ ] Create CartIcon component with badge count
+   - [ ] Add advanced cart operations (add/remove/persistence)
+   - [ ] Implement checkout flow
 
 3. **State Management**:
-   - [x] Extend Cart Store for persistence (localStorage integration)
-   - [x] Add cart item count to AppHeader
-   - [x] Implement direct slug routing (e.g., /restaurant-name)
+   - [ ] Extend Cart Store for persistence (localStorage integration)
+   - [ ] Add cart item count to AppHeader
+   - [ ] Implement direct slug routing (e.g., /restaurant-name)
 
 ## Acceptance Criteria
-✅ Users can browse products
-✅ Products can be added/removed from cart
-✅ Cart state persists between sessions
-✅ Cart icon updates correctly
+- [ ] Users can browse products
+- [ ] Products can be added/removed from cart
+- [ ] Cart state persists between sessions
+- [ ] Cart icon updates correctly

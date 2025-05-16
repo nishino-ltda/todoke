@@ -6,16 +6,16 @@
 
 ## 2. Sections
 ### 2.1 Hero Section
-- [x] Create Hero component (`HomeHero.vue`)
-- [x] Add engaging visuals
-- [x] Implement compelling copy
-- [x] Add call-to-action buttons
+- [ ] Create Hero component (`HomeHero.vue`)
+- [ ] Add engaging visuals
+- [ ] Implement compelling copy
+- [ ] Add call-to-action buttons
 
 ### 2.2 Features Section
-- [x] Create Features component (`HomeFeatures.vue`)
-- [x] Highlight Hybrid Delivery System
-- [x] Highlight Community Pricing
-- [x] Add feature cards with icons/text
+- [ ] Create Features component (`HomeFeatures.vue`)
+- [ ] Highlight Hybrid Delivery System
+- [ ] Highlight Community Pricing
+- [ ] Add feature cards with icons/text
 
 ### 2.3 Call-to-Action Section
 - [ ] Create CTA component (`HomeCTA.vue`)

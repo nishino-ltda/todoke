@@ -1,16 +1,12 @@
 <template>
-  <AuthenticatedLayout>
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <h1 class="text-h4">Support Center</h1>
-          <p class="text-body-1">Support portal coming soon</p>
-        </v-col>
-      </v-row>
-    </v-container>
-  </AuthenticatedLayout>
+    <AuthenticatedLayout>
+        <div>
+            <h1>Customer Support</h1>
+            <p>This is the customer support page.</p>
+        </div>
+    </AuthenticatedLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 </script>

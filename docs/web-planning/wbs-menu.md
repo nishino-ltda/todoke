@@ -1,10 +1,10 @@
 # Work Breakdown Structure: Menu
 
 ## 1. Page Structure
-- [x] Implement dual routing:
-  - Traditional `/menu/:partnerId` route
-  - Direct `/:partnerId` route support
-  - Error handling for invalid slugs
+- [ ] Implement dual routing:
+  - [ ] Traditional `/menu/:partnerSlug` route
+  - [ ] Direct `/:partnerSlug` route support
+  - [ ] Error handling for invalid slugs
 - [ ] Implement partner-specific layout (header with branding)
 - [ ] Create responsive product grid
 
@@ -24,9 +24,9 @@
 ## 4. Shopping Cart
 - [ ] Create Cart Icon component (`CartIcon.vue`)
 - [ ] Create Cart modal/page (`Cart.vue`)
-- [x] Implement cart state management (Pinia store with localStorage persistence)
-- [x] Add/remove items functionality
-- [x] Calculate and display subtotal
+- [ ] Implement cart state management (Pinia store with localStorage persistence)
+- [ ] Add/remove items functionality
+- [ ] Calculate and display subtotal
 
 ## 5. Checkout Flow
 - [ ] Create Checkout Form component (`CheckoutForm.vue`)
@@ -46,5 +46,5 @@
 - [ ] Submit orders
 
 ## 8. Testing
-- [x] Unit tests for components (ProductList, ProductCard, CartStore)
-- [x] E2E tests for ordering flow (browsing, cart, persistence)
+- [ ] Unit tests for components (ProductList, ProductCard, CartStore)
+- [ ] E2E tests for ordering flow (browsing, cart, persistence)

@@ -7,39 +7,39 @@
 - Planning: web-planning/common-components.md
 
 ## Testing Goals
-- [x] Write E2E tests for:
-  - [x] Login flow
-  - [x] Registration flow
-- [x] Write unit tests for:
-  - [x] AuthForm component
-  - [x] HomeHero component
-  - [x] HomeFeatures component
-  - [x] GuestLayout component
-  - [x] AuthenticatedLayout component
+- [ ] Write E2E tests for:
+  - [ ] Login flow
+  - [ ] Registration flow
+- [ ] Write unit tests for:
+  - [ ] AuthForm component
+  - [ ] HomeHero component
+  - [ ] HomeFeatures component
+  - [ ] GuestLayout component
+  - [ ] AuthenticatedLayout component
 
 ## Implementation Tasks
 1. **Layout System**:
-   - [x] Create GuestLayout
-   - [x] Create AuthenticatedLayout
-   - [x] Apply Layouts to all pages
-   - [x] Implement responsive design
-   - [x] Add navigation integration
+   - [ ] Create GuestLayout
+   - [ ] Create AuthenticatedLayout
+   - [ ] Apply Layouts to all pages
+   - [ ] Implement responsive design
+   - [ ] Add navigation integration
 
 2. **Authentication**:
-   - [x] Implement AuthForm component
-   - [x] Connect to Auth Service
-   - [x] Add form validation
-   - [x] Implement error handling
+   - [ ] Implement AuthForm component
+   - [ ] Connect to Auth Service
+   - [ ] Add form validation
+   - [ ] Implement error handling
 
 3. **Home Page**:
-   - [x] Create HomeHero component
-   - [x] Create HomeFeatures component
-   - [x] Implement responsive design
-   - [x] Add navigation links
+   - [ ] Create HomeHero component
+   - [ ] Create HomeFeatures component
+   - [ ] Implement responsive design
+   - [ ] Add navigation links
 
 4. **State Management**:
-   - [x] Extend Auth Store for registration
-   - [x] Add error state handling
+   - [ ] Extend Auth Store for registration
+   - [ ] Add error state handling
 
 ## Acceptance Criteria
 - All auth tests pass

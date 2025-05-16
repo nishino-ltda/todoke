@@ -36,3 +36,15 @@
 - Implement full partner dashboard functionality
 - Add order management components
 - Complete real-time updates
+
+## E2E Test File Creation (2025-05-16)
+
+### Completed:
+- Initial placeholder E2E test files created/updated for all major web areas based on planning documents and use cases.
+- Basic test structure with `describe` and `it` blocks outlining test concepts implemented.
+- Emojis included in `cy.log` calls for better terminal visibility.
+
+### Remaining:
+- Implement the actual test logic within the placeholder files.
+- Add detailed assertions and test data.
+- Integrate tests into the CI/CD pipeline.

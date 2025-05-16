@@ -1,33 +1,33 @@
 # Work Breakdown Structure: Stores & Services
 
 ## 1. State Management (Pinia Stores)
-- [x] Implement Auth Store
-  - [x] Manage authentication state
-  - [x] Handle login/logout
-  - [x] Persist session
-- [x] Implement Cart Store
-  - [x] Manage shopping cart state
-  - [x] Handle cart operations
-  - [x] Persist cart
+- [ ] Implement Auth Store
+  - [ ] Manage authentication state
+  - [ ] Handle login/logout
+  - [ ] Persist session
+- [ ] Implement Cart Store
+  - [ ] Manage shopping cart state
+  - [ ] Handle cart operations
+  - [ ] Persist cart
 - [ ] Implement User Data Store
   - [ ] Manage user profile data
   - [ ] Handle profile updates
 - [ ] Implement Notifications Store
   - [ ] Manage UI notifications
   - [ ] Handle notification display
-- [x] Implement Loading Store
-  - [x] Track loading states
-  - [x] Manage loading indicators
+- [ ] Implement Loading Store
+  - [ ] Track loading states
+  - [ ] Manage loading indicators
 
 ## 2. Frontend Services
-- [x] Implement API Service
-  - [x] Configure Axios instance
-  - [x] Set up request/response interceptors
-  - [x] Handle error responses
-- [x] Implement Auth Service
-  - [x] Handle login/registration
-  - [x] Manage tokens
-  - [x] Unit tests (100% coverage)
+- [ ] Implement API Service
+  - [ ] Configure Axios instance
+  - [ ] Set up request/response interceptors
+  - [ ] Handle error responses
+- [ ] Implement Auth Service
+  - [ ] Handle login/registration
+  - [ ] Manage tokens
+  - [ ] Unit tests (100% coverage)
 - [ ] Implement User Service
   - [ ] Fetch/update user data
 - [ ] Implement Delivery Service
@@ -43,7 +43,7 @@
   - [ ] Manage map interactions
 
 ## 3. Testing
-- [x] Unit tests for stores
-- [x] Unit tests for services
-- [x] Integration tests with components
-- [x] E2E testing setup
+- [ ] Unit tests for stores
+- [ ] Unit tests for services
+- [ ] Integration tests with components
+- [ ] E2E testing setup

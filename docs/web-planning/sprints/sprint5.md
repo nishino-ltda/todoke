@@ -5,20 +5,20 @@
 - Planning: web-planning/restaurant-partner.md
 
 ## Testing Goals
-- [x] Write E2E tests for:
-  - [x] Partner login flow (partner-login.cy.js) - Completed 2025-05-13
-  - [x] Order management (partner-orders.cy.js) - Updated 2025-05-13
-- [x] Write unit tests for:
-  - [x] PartnerDashboard component (PartnerDashboard.spec.js)
-  - [x] OrderList component (OrderList.spec.js)
-  - [x] OrderCard component (OrderCard.spec.js)
+- [ ] Write E2E tests for:
+  - [ ] Partner login flow
+  - [ ] Order management
+- [ ] Write unit tests for:
+  - [ ] PartnerDashboard component
+  - [ ] OrderList component
+  - [ ] OrderCard component
 
 ## Implementation Tasks
 1. **Frontend Foundation**:
-   - [x] Converted all boilerplate pages to Vuetify3
-   - [x] Replaced router-links with Inertia Link
-   - [x] Added data-test attributes for testing
-   - [x] Updated tech documentation
+   - [ ] Convert all boilerplate pages to Vuetify3
+   - [ ] Replace router-links with Inertia Link
+   - [ ] Add data-test attributes for testing
+   - [ ] Update tech documentation
 
 2. **Dashboard Components**:
    - [ ] Create PartnerDashboard layout

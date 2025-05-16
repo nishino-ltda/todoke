@@ -1,31 +1,31 @@
 # Work Breakdown Structure: Common Components
 
 ## 1. Layout Components
-- [x] Create App Header (`AppHeader.vue`)
-  - [x] Dynamic navigation based on user role
-  - [x] Authentication state display
-  - [x] Responsive menu
-  - [x] Unit tests (100% coverage)
-- [x] Create App Footer (`AppFooter.vue`)
-  - [x] Standard footer content
-  - [x] Legal links
-  - [x] Social media links
-  - [x] Unit tests (100% coverage)
-- [x] Create Guest Layout (`GuestLayout.vue`)
-  - [x] Minimal header/footer
-  - [x] Applied to Login/Register/Home pages
-  - [x] Unit tests (100% coverage)
-- [x] Create Authenticated Layout (`AuthenticatedLayout.vue`)
-  - [x] Full navigation header
-  - [x] Applied to all authenticated pages
-  - [x] Unit tests (100% coverage)
+- [ ] Create App Header (`AppHeader.vue`)
+  - [ ] Dynamic navigation based on user role
+  - [ ] Authentication state display
+  - [ ] Responsive menu
+  - [ ] Unit tests (100% coverage)
+- [ ] Create App Footer (`AppFooter.vue`)
+  - [ ] Standard footer content
+  - [ ] Legal links
+  - [ ] Social media links
+  - [ ] Unit tests (100% coverage)
+- [ ] Create Guest Layout (`GuestLayout.vue`)
+  - [ ] Minimal header/footer
+  - [ ] Applied to Login/Register/Home pages
+  - [ ] Unit tests (100% coverage)
+- [ ] Create Authenticated Layout (`AuthenticatedLayout.vue`)
+  - [ ] Full navigation header
+  - [ ] Applied to all authenticated pages
+  - [ ] Unit tests (100% coverage)
 
 ## 2. Authentication Components
-- [x] Create Auth Form (`AuthForm.vue`)
-  - [x] Login functionality
-  - [x] Registration functionality
-  - [x] Form validation
-  - [x] Error handling
+- [ ] Create Auth Form (`AuthForm.vue`)
+  - [ ] Login functionality
+  - [ ] Registration functionality
+  - [ ] Form validation
+  - [ ] Error handling
 
 ## 3. Form Components
 - [ ] Create Address Input (`AddressInput.vue`)
@@ -46,12 +46,12 @@
 - [ ] Create App Alert (`AppAlert.vue`)
   - [ ] Success/error/info variants
   - [ ] Auto-dismiss functionality
-- [x] Create Loading Indicator (`LoadingIndicator.vue`)
-  - [x] Full-page loader
-  - [x] Inline loader
+- [ ] Create Loading Indicator (`LoadingIndicator.vue`)
+  - [ ] Full-page loader
+  - [ ] Inline loader
 
 ## 5. Testing
-- [x] Unit tests for all components
-- [x] Integration tests with parent components
-- [x] Accessibility testing
-- [x] E2E testing setup
+- [ ] Unit tests for all components
+- [ ] Integration tests with parent components
+- [ ] Accessibility testing
+- [ ] E2E testing setup

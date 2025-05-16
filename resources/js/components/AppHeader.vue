@@ -6,9 +6,16 @@
 
     <template v-if="isAuthenticated">
       <span class="welcome-message">Welcome, {{ user?.name }}</span>
-      <Link :href="route('menu')" class="text-white mr-2" data-test="menu-link">Menu</Link>
+      <Link 
+        v-if="user?.role === 'customer'"
+        :href="route('menu')" 
+        class="text-white mr-2" 
+        data-test="menu-link"
+      >
+        Menu
+      </Link>
       <v-btn text disabled v-if="loading">Loading...</v-btn>
-      <CartIcon />
+      <CartIcon v-if="user?.role === 'customer'" />
       <v-btn text @click="handleLogout" :disabled="loading">
         Logout
       </v-btn>
