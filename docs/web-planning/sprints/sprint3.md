@@ -4,6 +4,15 @@
 - WBS: web-planning/wbs-menu.md
 - WBS: web-planning/wbs-common-components.md
 - Planning: web-planning/menu.md
+- Controllers:
+  - Customer/MenuController.php
+  - Customer/CheckoutController.php
+- Vue Components:
+  - Pages/Customer/Menu.vue
+  - Pages/Customer/Checkout.vue
+- Routes:
+  - GET /customer/menu (MenuController@index)
+  - GET /customer/checkout (CheckoutController@index)
 
 ## Testing Goals
 - [ ] Unit tests for:

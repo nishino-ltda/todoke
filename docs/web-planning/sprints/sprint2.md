@@ -1,6 +1,23 @@
 # Sprint 2: Authentication, Home Page & Layout System (TDD Focus)
 
 ## References
+
+### Components
+- Authentication:
+  - `resources/js/components/AuthForm.vue`
+- Home Page:
+  - `resources/js/components/HomeHero.vue`
+  - `resources/js/components/HomeFeatures.vue`
+- Layouts:
+  - (To be created in `resources/js/layouts/` or `resources/js/components/`)
+
+### Stores & Services
+- Auth Store:
+  - `resources/js/stores/auth.js` (or .ts)
+- API Service:
+  - `resources/js/services/api.js` (or .ts)
+
+### Planning Docs
 - WBS: web-planning/wbs-common-components.md
 - WBS: web-planning/wbs-home.md
 - Planning: web-planning/home.md
