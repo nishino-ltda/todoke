@@ -13,6 +13,9 @@
 - Routes:
   - GET /customer/menu (MenuController@index)
   - GET /customer/checkout (CheckoutController@index)
+- E2E Tests:
+  - cypress/e2e/menu/menu-system.cy.js
+  - cypress/e2e/checkout/checkout-flow.cy.js
 
 ## Testing Goals
 - [ ] Unit tests for:

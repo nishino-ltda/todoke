@@ -11,6 +11,10 @@
   - Pages/Admin/Dashboard.vue
   - Pages/Admin/Users/Index.vue
   - Pages/Admin/Nodes/Index.vue
+- E2E Tests:
+  - admin-login.cy.js
+  - user-management.cy.js
+  - node-management.cy.js
 
 ## Testing Goals
 - [ ] Write E2E tests for:

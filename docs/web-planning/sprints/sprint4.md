@@ -15,6 +15,7 @@
 - Controller: app/Http/Controllers/Customer/OrderController.php
 - Controller: app/Http/Controllers/Partner/OrderController.php
 - Vue Page: resources/js/Pages/Customer/Checkout.vue
+- E2E Tests: cypress/e2e/checkout/checkout-flow.cy.js
 
 ## Testing Goals
 - [ ] Write E2E tests for:

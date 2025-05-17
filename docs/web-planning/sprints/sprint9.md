@@ -12,6 +12,9 @@
   - resources/js/Pages/Support/TicketDetail.vue
   - resources/js/Pages/Support/TicketReply.vue
   - resources/js/Pages/Support/Tickets.vue
+- E2E Tests:
+  - cypress/e2e/support/ticket-system.cy.js
+  - cypress/e2e/support/tickets.cy.js
 
 ## Testing Goals
 - [ ] Write E2E tests for:

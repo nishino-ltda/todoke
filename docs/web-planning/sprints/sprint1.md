@@ -35,6 +35,13 @@
 - Planning: web-planning/common-components.md
 - Planning: web-planning/stores-services.md
 
+### E2E Tests
+- `cypress/e2e/auth/authentication.cy.js`
+- `cypress/e2e/auth/login.cy.js`
+- `cypress/e2e/auth/registration.cy.js`
+- `cypress/e2e/common/components.cy.js`
+- `cypress/e2e/app.cy.js`
+
 ## Testing Goals
 - [ ] Setup Cypress for E2E testing (basic configuration and test file created)
 - [ ] Write unit tests for:

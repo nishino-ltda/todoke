@@ -5,6 +5,11 @@
 - web-planning/wbs-restaurant-partner.md
 - web-planning/restaurant-partner.md
 
+### E2E Tests
+- cypress/e2e/partner/partner-dashboard.cy.js
+- cypress/e2e/partner/order-management.cy.js
+- cypress/e2e/partner/partner-flow.cy.js
+
 ### Route Controllers
 - app/Http/Controllers/Partner/DashboardController.php
 - app/Http/Controllers/Partner/OrderController.php  

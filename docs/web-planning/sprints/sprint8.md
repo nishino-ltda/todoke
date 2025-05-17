@@ -5,6 +5,7 @@
 - WBS: web-planning/wbs-e2e-testing.md
 - Planning: web-planning/common-components.md
 - Planning: web-planning/e2e-testing.md
+- Tests: cypress/e2e/notifications/notification-system.cy.js
 
 ### Relevant Controllers
 - Customer/DashboardController

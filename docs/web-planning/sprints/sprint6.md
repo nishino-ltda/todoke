@@ -18,6 +18,10 @@
   - resources/js/Components/Courier/AssignedDeliveryDetails.vue
   - resources/js/Components/Courier/StatusUpdateButtons.vue
   - resources/js/Components/Courier/DeliveryMap.vue
+- E2E Tests (to be implemented):
+  - cypress/e2e/courier/courier-dashboard.cy.js
+  - cypress/e2e/courier/courier-flow.cy.js
+  - cypress/e2e/courier/dashboard.cy.js
 
 ## Testing Goals
 - [ ] Write E2E tests for:

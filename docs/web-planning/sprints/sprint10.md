@@ -7,6 +7,11 @@
   - app/Http/Controllers/Admin/SystemMonitorController.php
   - app/Http/Controllers/Admin/DashboardController.php (stats)
   - app/Http/Controllers/Admin/DeliveryController.php (monitor)
+- E2E Tests:
+  - cypress/e2e/admin/system-configuration.cy.js
+  - cypress/e2e/admin/delivery-monitoring.cy.js
+  - cypress/e2e/performance/performance-metrics.cy.js
+  - cypress/e2e/accessibility/accessibility-checks.cy.js
 - Accessibility Components:
   - resources/js/Components/Modal.vue
   - resources/js/Components/Dropdown.vue

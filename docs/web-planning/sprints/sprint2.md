@@ -17,6 +17,13 @@
 - API Service:
   - `resources/js/services/api.js` (or .ts)
 
+### Test Files
+- Authentication:
+  - `cypress/e2e/auth/login.cy.js`
+  - `cypress/e2e/auth/registration.cy.js`
+- Home Page:
+  - `cypress/e2e/home/home-page.cy.js`
+
 ### Planning Docs
 - WBS: web-planning/wbs-common-components.md
 - WBS: web-planning/wbs-home.md
