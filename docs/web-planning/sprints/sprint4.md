@@ -11,6 +11,10 @@
 - WBS: web-planning/wbs-stores-services.md
 - Planning: web-planning/common-components.md
 - Planning: web-planning/stores-services.md
+- Controller: app/Http/Controllers/Customer/CheckoutController.php
+- Controller: app/Http/Controllers/Customer/OrderController.php
+- Controller: app/Http/Controllers/Partner/OrderController.php
+- Vue Page: resources/js/Pages/Customer/Checkout.vue
 
 ## Testing Goals
 - [ ] Write E2E tests for:

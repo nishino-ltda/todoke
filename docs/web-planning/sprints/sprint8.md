@@ -6,6 +6,22 @@
 - Planning: web-planning/common-components.md
 - Planning: web-planning/e2e-testing.md
 
+### Relevant Controllers
+- Customer/DashboardController
+- Partner/DashboardController
+- Courier/DashboardController
+- Admin/DashboardController
+- Customer/OrderController
+- Partner/OrderController
+- Courier/DeliveryController
+- SupportController
+
+### Vue Components
+- resources/js/Components/common/AppAlert.vue
+- resources/js/Components/common/AppHeader.vue
+- resources/js/Stores/NotificationsStore.js (to be created)
+- resources/js/Services/WebSocketService.js (to be created)
+
 ## Testing Goals
 - [ ] Write E2E tests for:
   - [ ] Notification display

@@ -3,6 +3,14 @@
 ## References
 - WBS: web-planning/wbs-admin.md
 - Planning: web-planning/admin.md
+- Controllers:
+  - Admin/DashboardController.php
+  - Admin/UserController.php
+  - Admin/NodeController.php
+- Vue Components:
+  - Pages/Admin/Dashboard.vue
+  - Pages/Admin/Users/Index.vue
+  - Pages/Admin/Nodes/Index.vue
 
 ## Testing Goals
 - [ ] Write E2E tests for:

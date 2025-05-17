@@ -3,6 +3,15 @@
 ## References
 - WBS: web-planning/wbs-support.md
 - Planning: web-planning/support.md
+- Routes: routes/web.php (Support routes)
+- Controller: app/Http/Controllers/SupportController.php
+- Vue Components:
+  - resources/js/Pages/Support/Dashboard.vue
+  - resources/js/Pages/Support/Faq.vue
+  - resources/js/Pages/Support/TicketCreate.vue
+  - resources/js/Pages/Support/TicketDetail.vue
+  - resources/js/Pages/Support/TicketReply.vue
+  - resources/js/Pages/Support/Tickets.vue
 
 ## Testing Goals
 - [ ] Write E2E tests for:

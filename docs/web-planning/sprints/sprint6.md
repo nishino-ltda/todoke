@@ -3,6 +3,21 @@
 ## References
 - WBS: web-planning/wbs-courier.md
 - Planning: web-planning/courier.md
+- Web Routes: routes/web.php (Courier routes)
+- API Routes: routes/api.php (Delivery endpoints)
+- Controllers:
+  - app/Http/Controllers/Courier/DashboardController.php
+  - app/Http/Controllers/Courier/DeliveryController.php
+  - app/Http/Controllers/Courier/HybridDeliveryController.php
+  - app/Http/Controllers/API/DeliveryManagementController.php
+  - app/Http/Controllers/API/DeliveryStatusController.php
+- Vue Components (to be created):
+  - resources/js/Pages/Courier/Dashboard.vue
+  - resources/js/Components/Courier/AvailabilityToggle.vue
+  - resources/js/Components/Courier/AvailableDeliveriesList.vue
+  - resources/js/Components/Courier/AssignedDeliveryDetails.vue
+  - resources/js/Components/Courier/StatusUpdateButtons.vue
+  - resources/js/Components/Courier/DeliveryMap.vue
 
 ## Testing Goals
 - [ ] Write E2E tests for:

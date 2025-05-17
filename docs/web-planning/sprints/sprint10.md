@@ -3,6 +3,23 @@
 ## References
 - WBS: web-planning/wbs-e2e-testing.md
 - Planning: web-planning/e2e-testing.md
+- Performance Controllers:
+  - app/Http/Controllers/Admin/SystemMonitorController.php
+  - app/Http/Controllers/Admin/DashboardController.php (stats)
+  - app/Http/Controllers/Admin/DeliveryController.php (monitor)
+- Accessibility Components:
+  - resources/js/Components/Modal.vue
+  - resources/js/Components/Dropdown.vue
+  - resources/js/Pages/Customer/Checkout.vue
+  - resources/js/Pages/Partner/Orders/Index.vue
+- Security Configs:
+  - config/auth.php
+  - config/session.php
+  - config/cors.php
+- Performance Views:
+  - resources/js/Pages/Admin/Dashboard.vue
+  - resources/js/Pages/Partner/Orders/Index.vue
+  - resources/js/Pages/Courier/Deliveries/Index.vue
 
 ## Testing Goals
 - [ ] Write performance tests

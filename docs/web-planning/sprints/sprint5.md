@@ -1,8 +1,45 @@
 # Sprint 5: Partner Dashboard (TDD Focus)
 
 ## References
-- WBS: web-planning/wbs-restaurant-partner.md
-- Planning: web-planning/restaurant-partner.md
+### Planning Documents
+- web-planning/wbs-restaurant-partner.md
+- web-planning/restaurant-partner.md
+
+### Route Controllers
+- app/Http/Controllers/Partner/DashboardController.php
+- app/Http/Controllers/Partner/OrderController.php  
+- app/Http/Controllers/Partner/ProductController.php
+- app/Http/Controllers/Partner/AddonController.php
+- app/Http/Controllers/Partner/RegionController.php
+- app/Http/Controllers/Partner/NodeController.php
+- app/Http/Controllers/Partner/SettingsController.php
+- app/Http/Controllers/Partner/VariationController.php
+
+### Vue Components
+- resources/js/Pages/Partner/Dashboard.vue
+- resources/js/Pages/Partner/Orders/Index.vue
+- resources/js/Pages/Partner/Orders/Show.vue
+- resources/js/Pages/Partner/Orders/BatchCreate.vue
+- resources/js/Pages/Partner/Products/Index.vue
+- resources/js/Pages/Partner/Products/Show.vue
+- resources/js/Pages/Partner/Products/Create.vue
+- resources/js/Pages/Partner/Products/Edit.vue
+- resources/js/Pages/Partner/Products/Variations/Index.vue
+- resources/js/Pages/Partner/Products/Variations/Create.vue
+- resources/js/Pages/Partner/Products/Variations/Edit.vue
+- resources/js/Pages/Partner/Addons/Index.vue
+- resources/js/Pages/Partner/Addons/Show.vue
+- resources/js/Pages/Partner/Addons/Create.vue
+- resources/js/Pages/Partner/Addons/Edit.vue
+- resources/js/Pages/Partner/Regions/Index.vue
+- resources/js/Pages/Partner/Regions/Show.vue
+- resources/js/Pages/Partner/Regions/Create.vue
+- resources/js/Pages/Partner/Regions/Edit.vue
+- resources/js/Pages/Partner/Nodes/Index.vue
+- resources/js/Pages/Partner/Nodes/Show.vue
+- resources/js/Pages/Partner/Nodes/Create.vue
+- resources/js/Pages/Partner/Nodes/Edit.vue
+- resources/js/Pages/Partner/Settings/Index.vue
 
 ## Testing Goals
 - [ ] Write E2E tests for:
