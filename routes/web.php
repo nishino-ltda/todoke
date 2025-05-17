@@ -5,11 +5,9 @@ use Inertia\Inertia;
 
 // Public Controllers
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\WelcomeController;
 use App\Http\Controllers\MenuController;
 
 // Common Controllers
-use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SupportController;
 
 // Customer Controllers
@@ -59,7 +57,6 @@ use App\Http\Controllers\Admin\SystemMonitorController as AdminSystemMonitorCont
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/welcome', [WelcomeController::class, 'index'])->name('welcome');
 
 // Partner Menu Routes (Public)
 Route::get('/menu/{partner}', [MenuController::class, 'show'])->name('menu.show');
@@ -67,10 +64,7 @@ Route::get('/{partner}', [MenuController::class, 'show'])->name('partner.menu');
 
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Common Routes (for all authenticated users)
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
-    // Support Routes
+        // Support Routes
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', [SupportController::class, 'index'])->name('dashboard');
         Route::get('/tickets', [SupportController::class, 'tickets'])->name('tickets.index');

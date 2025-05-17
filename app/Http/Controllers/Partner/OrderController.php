@@ -19,4 +19,14 @@ class OrderController extends Controller
             'orderId' => $id,
         ]);
     }
+
+    public function create()
+    {
+        return Inertia::render('Partner/Orders/Create');
+    }
+
+    public function batchCreate()
+    {
+        return Inertia::render('Partner/Orders/BatchCreate');
+    }
 }
