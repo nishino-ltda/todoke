@@ -61,9 +61,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/terms', [CustomerTermsController::class, 'index'])->name('terms');
 Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('privacy');
 
-// Partner Menu Routes (Public)
-Route::get('/menu/{partner}', [MenuController::class, 'show'])->name('menu.show');
-Route::get('/{partner}', [MenuController::class, 'show'])->name('partner.menu');
+
 
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -221,3 +219,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// Partner Menu Routes (Public)
+Route::get('/menu/{partner}', [MenuController::class, 'show'])->name('menu.show');
+Route::get('/{partner}', [MenuController::class, 'show'])->name('partner.menu');
