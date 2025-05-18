@@ -5,6 +5,7 @@ describe('🍽️ Partner Order Management', () => {
     // TODO: Add partner login steps
   });
 
+  // Sprint 5: Order List Component Implementation
   it('🌱 Should display a list of current orders', () => {
     cy.log('✨ Navigating to partner order management page');
     // TODO: Add steps to navigate to order management
@@ -13,6 +14,7 @@ describe('🍽️ Partner Order Management', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 5: Order Status Update Implementation  
   it('✏️ Should update order status', () => {
     cy.log('✨ Navigating to partner order management page');
     // TODO: Add steps to navigate to order management
@@ -27,6 +29,7 @@ describe('🍽️ Partner Order Management', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 5: Order Detail Component Implementation
   it('👁️ Should view order details', () => {
     cy.log('✨ Navigating to partner order management page');
     // TODO: Add steps to navigate to order management

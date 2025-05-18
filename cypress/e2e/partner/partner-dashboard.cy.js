@@ -4,6 +4,7 @@ describe('🍽️ Partner Dashboard', () => {
     // Will login as partner before each test
   });
 
+  // Sprint 5: Partner Dashboard Implementation
   it('📊 Should display business metrics', () => {
     cy.log('📈 Testing business dashboard');
     // Test will verify:
@@ -14,6 +15,7 @@ describe('🍽️ Partner Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 5: Order Management Implementation  
   it('📦 Should manage orders', () => {
     cy.log('📦 Testing order management');
     // Test will verify:

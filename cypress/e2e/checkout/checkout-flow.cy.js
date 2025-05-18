@@ -1,4 +1,5 @@
 describe('🛒 Checkout Flow', () => {
+  // SPRINT 3: Add to cart flow & cart persistence test
   it('📦 Should add items to cart', () => {
     cy.log('🛍️ Testing cart functionality');
     // Test will verify:
@@ -47,6 +48,7 @@ describe('🛒 Checkout Flow', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 4: Checkout flow test case
   it('✅ Should successfully place an order', () => {
     cy.log('👍 Testing successful order placement');
     // Test will verify:
@@ -57,6 +59,7 @@ describe('🛒 Checkout Flow', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 4: Checkout flow test case  
   it('👁️ Should view order confirmation', () => {
     cy.log('📄 Testing order confirmation display');
     // Test will verify:
@@ -66,6 +69,7 @@ describe('🛒 Checkout Flow', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 4: Checkout flow test case
   it('➕ Should handle addons during checkout', () => {
     cy.log('🧩 Testing addon selection in checkout');
     // Test will verify:
@@ -75,6 +79,7 @@ describe('🛒 Checkout Flow', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 4: Checkout flow test case
   it('❌ Should handle checkout error cases', () => {
     cy.log('🔥 Testing checkout error handling');
     // Test will verify:

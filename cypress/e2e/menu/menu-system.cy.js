@@ -1,4 +1,5 @@
 describe('🍽️ Menu System', () => {
+  // SPRINT 3: Product browsing test
   it('📋 Should display menu categories', () => {
     cy.log('📜 Testing menu categories');
     // Test will verify:
@@ -9,6 +10,7 @@ describe('🍽️ Menu System', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 3: Product browsing test  
   it('📦 Should show product details', () => {
     cy.log('📦 Testing product display');
     // Test will verify:
@@ -19,6 +21,7 @@ describe('🍽️ Menu System', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 3: Product browsing test
   it('⚙️ Should handle menu filtering', () => {
     cy.log('🔍 Testing menu filters');
     // Test will verify:
@@ -29,6 +32,7 @@ describe('🍽️ Menu System', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 3: Product browsing test
   it('⚠️ Should handle unavailable items', () => {
     cy.log('⏸️ Testing unavailable items');
     // Test will verify:
@@ -57,6 +61,7 @@ describe('🍽️ Menu System', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 3: Add to cart flow test
   it('➕ Should allow selecting product quantity and addons', () => {
     cy.log('🔢 Testing quantity and addon selection');
     // Test will verify:
@@ -66,6 +71,7 @@ describe('🍽️ Menu System', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 3: Add to cart flow & cart persistence test
   it('🛒 Should handle shopping cart interactions', () => {
     cy.log('🛍️ Testing shopping cart');
     // Test will verify:

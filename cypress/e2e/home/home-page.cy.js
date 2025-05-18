@@ -1,4 +1,5 @@
 describe('🏠 Home Page', () => {
+  // SPRINT 2: Home page implementation testing
   it('🌟 Should display hero section', () => {
     cy.log('✨ Testing hero section');
     // Test will verify:
@@ -8,6 +9,7 @@ describe('🏠 Home Page', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 2: Home page implementation testing
   it('💡 Should showcase features', () => {
     cy.log('🔮 Testing features section');
     // Test will verify:
@@ -17,6 +19,7 @@ describe('🏠 Home Page', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 2: Home page implementation testing
   it('👥 Should handle user type selection', () => {
     cy.log('👤 Testing user type selection');
     // Test will verify:
@@ -27,6 +30,7 @@ describe('🏠 Home Page', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 2: Home page implementation testing
   it('📱 Should be responsive', () => {
     cy.log('🔄 Testing responsive design');
     // Test will verify:
@@ -36,6 +40,7 @@ describe('🏠 Home Page', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 2: Home page implementation testing
   it('🧭 Should have working navigation', () => {
     cy.log('🔗 Testing navigation links');
     // Test will verify:
