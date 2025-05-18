@@ -58,6 +58,9 @@ use App\Http\Controllers\Admin\SystemMonitorController as AdminSystemMonitorCont
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/terms', [CustomerTermsController::class, 'index'])->name('terms');
+Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('privacy');
+
 // Partner Menu Routes (Public)
 Route::get('/menu/{partner}', [MenuController::class, 'show'])->name('menu.show');
 Route::get('/{partner}', [MenuController::class, 'show'])->name('partner.menu');
@@ -87,8 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::get('/profile', [CustomerProfileController::class, 'index'])->name('profile');
-        Route::get('/terms', [CustomerTermsController::class, 'index'])->name('terms');
-        Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('privacy');
+        
     });
 
     // Partner Routes
