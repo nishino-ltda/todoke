@@ -11,6 +11,7 @@ describe('🗺️ Partner Region Management', () => {
     // - Can edit boundaries
     // - Changes persist
     // - Affects delivery routing
+    cy.fail('Test not implemented');
   });
 
   it('📌 Should manage nodes', () => {
@@ -20,6 +21,7 @@ describe('🗺️ Partner Region Management', () => {
     // - Can edit node details
     // - Can assign to regions
     // - Changes persist
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle region conflicts', () => {
@@ -29,6 +31,7 @@ describe('🗺️ Partner Region Management', () => {
     // - Shows warnings
     // - Prevents invalid assignments
     // - Resolution workflow
+    cy.fail('Test not implemented');
   });
 
   it('📊 Should show coverage metrics', () => {
@@ -38,6 +41,7 @@ describe('🗺️ Partner Region Management', () => {
     // - Gap identification
     // - Performance metrics
     // - Charts render
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -46,5 +50,6 @@ describe('🗺️ Partner Region Management', () => {
     // - Map is usable
     // - Forms are accessible
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

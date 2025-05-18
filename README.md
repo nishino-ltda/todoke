@@ -8,7 +8,10 @@ O TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada para
 ## Principais Recursos
 - **Integração pioneira com drones** para áreas de difícil acesso
 - **Algoritmos de otimização de rotas** que reduzem tempo e consumo
-- **Sistema de reputação transparente** baseado em múltiplos fatores
+- **Sistema de reputação transparente** incluindo:
+  - Reputação do cliente para segurança de parceiros/entregadores
+  - Mecanismos de avaliação e feedback
+  - Detecção de atividades suspeitas
 - **Funcionalidades offline** para áreas com conectividade limitada
 - **Precificação comunitária** com participação democrática dos entregadores
 - **Ecossistema completo:** API + App + Painel Administrativo
@@ -86,8 +89,9 @@ A suíte de testes inclui:
 - Reduz pegada de carbono das operações
 - Democratiza acesso a serviços de entrega
 - Fomenta empreendedorismo local
+- Aumenta segurança para parceiros e entregadores através do sistema de reputação
 
 
 Ideia de propaganda: aquele audio 'pronto querem me comer, aquii nãão'
 
-Todo: Celular pra quem nao tem 
+Todo: Celular pra quem nao tem

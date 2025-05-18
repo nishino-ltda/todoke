@@ -218,25 +218,47 @@ class DeliveryStatusService implements DeliveryStatusServiceInterface {
    - Selected addons stored in cart items
    - Total price updates dynamically
 
-## Route/Controller Patterns (2025-05-13)
+## Route/Controller Patterns (2025-05-17)
 
-### Web Routes
-- Handle only Inertia page rendering
-- No business logic in web routes
-- All data operations via API calls
-- Clear separation between:
-  - Web routes (Inertia rendering)
-  - API routes (business logic)
+### Web Routes (Inertia)
+- Handle page rendering via Inertia.js
+- Defined in Laravel's routes/web.php
+- No client-side routing (Vue-router removed)
+- Key characteristics:
+  - Return Inertia responses with page components
+  - Can pass shared props to all pages
+  - Handle server-side redirects
+  - Support partial reloads via Inertia
+- Example:
+```php
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+});
+```
+
+### API Routes
+- Handle all business logic
+- Defined in routes/api.php
+- Return JSON responses
+- Authenticated via Sanctum tokens
+- Versioned under /api/v1/
 
 ### Controller Responsibilities
 - Web controllers:
-  - Only return Inertia responses
-  - No direct database operations
-  - Minimal processing logic
+  - Return Inertia responses
+  - No business logic
+  - Can pass page-specific props
 - API controllers:
-  - Handle all business logic
+  - Handle all data operations
   - Perform database operations
-  - Return JSON responses
+  - Return standardized JSON responses
+
+### Benefits of This Approach
+1. Simplified frontend routing (no Vue-router needed)
+2. Clear separation of concerns
+3. Better SEO with server-side rendered pages
+4. Automatic handling of back/forward navigation
+5. Shared data available to all pages
 
 ## Frontend Structure Patterns (2025-05-13)
 

@@ -6,6 +6,7 @@ describe('🛒 Checkout Flow', () => {
     // - Quantity updates
     // - Price calculates correctly
     // - Cart updates in real-time
+    cy.fail('Test not implemented');
   });
 
   it('🏠 Should handle address selection', () => {
@@ -15,6 +16,7 @@ describe('🛒 Checkout Flow', () => {
     // - Can add new address
     // - Validation works
     // - Affects delivery options
+    cy.fail('Test not implemented');
   });
 
   it('💳 Should process payments', () => {
@@ -24,6 +26,7 @@ describe('🛒 Checkout Flow', () => {
     // - Card validation works
     // - Payment succeeds/fails appropriately
     // - Receipt generates
+    cy.fail('Test not implemented');
   });
 
   it('⏱️ Should handle scheduled deliveries', () => {
@@ -32,6 +35,7 @@ describe('🛒 Checkout Flow', () => {
     // - Can select future time
     // - Availability checks work
     // - Confirmation shows correct time
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should be mobile friendly', () => {
@@ -40,6 +44,7 @@ describe('🛒 Checkout Flow', () => {
     // - Forms are usable
     // - Keyboard works properly
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 
   it('✅ Should successfully place an order', () => {
@@ -49,6 +54,7 @@ describe('🛒 Checkout Flow', () => {
     // - Order is submitted to the API
     // - Redirects to order confirmation page
     // - Cart is cleared after order
+    cy.fail('Test not implemented');
   });
 
   it('👁️ Should view order confirmation', () => {
@@ -57,6 +63,7 @@ describe('🛒 Checkout Flow', () => {
     // - Order details are displayed correctly
     // - Confirmation number is visible
     // - Next steps are clear
+    cy.fail('Test not implemented');
   });
 
   it('➕ Should handle addons during checkout', () => {
@@ -65,6 +72,7 @@ describe('🛒 Checkout Flow', () => {
     // - Selected addons are reflected in the cart
     // - Addon prices are included in the total
     // - Addons are included in the order submission
+    cy.fail('Test not implemented');
   });
 
   it('❌ Should handle checkout error cases', () => {
@@ -74,5 +82,6 @@ describe('🛒 Checkout Flow', () => {
     // - API errors during order submission are handled
     // - User is informed of the error
     // - Cart state is maintained appropriately on error
+    cy.fail('Test not implemented');
   });
 });

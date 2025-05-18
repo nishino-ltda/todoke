@@ -10,6 +10,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Toggle switches between online/offline
     // - Status persists
     // - Affects delivery assignment
+    cy.fail('Test not implemented');
   });
 
   it('📦 Should display available delivery requests', () => {
@@ -18,6 +19,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Requests appear when available
     // - Shows key details (pickup/dropoff, distance, value)
     // - Updates in real-time
+    cy.fail('Test not implemented');
   });
 
   it('✅ Should be able to accept/reject deliveries', () => {
@@ -26,6 +28,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Can accept delivery
     // - Can reject delivery
     // - Status updates correctly
+    cy.fail('Test not implemented');
   });
 
   it('📍 Should update delivery status', () => {
@@ -35,5 +38,6 @@ describe('🛵 Courier Dashboard', () => {
     // - Can mark as in transit
     // - Can mark as delivered
     // - Status changes persist
+    cy.fail('Test not implemented');
   });
 });

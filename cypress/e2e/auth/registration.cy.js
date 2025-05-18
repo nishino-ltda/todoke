@@ -6,6 +6,7 @@ describe('🔐 User Registration', () => {
     // - Success flow
     // - Account is created
     // - Redirects to correct dashboard
+    cy.fail('Test not implemented');
   });
 
   it('🛵 Should register as courier', () => {
@@ -15,6 +16,7 @@ describe('🔐 User Registration', () => {
     // - Document upload
     // - Background check initiation
     // - Approval workflow
+    cy.fail('Test not implemented');
   });
 
   it('🍽️ Should register as partner', () => {
@@ -23,6 +25,7 @@ describe('🔐 User Registration', () => {
     // - Business info collection
     // - Verification workflow
     // - Admin approval process
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle validation errors', () => {
@@ -31,6 +34,7 @@ describe('🔐 User Registration', () => {
     // - Field-level errors
     // - Form-level errors
     // - Error messages are clear
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -39,5 +43,6 @@ describe('🔐 User Registration', () => {
     // - Form is usable
     // - Keyboard works properly
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

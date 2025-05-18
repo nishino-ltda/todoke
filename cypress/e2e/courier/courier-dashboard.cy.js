@@ -11,6 +11,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Ratings visible
     // - Earnings calculated
     // - Charts render
+    cy.fail('Test not implemented');
   });
 
   it('📅 Should manage availability', () => {
@@ -20,6 +21,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Status updates in real-time
     // - Affects order assignments
     // - Schedule works
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work offline', () => {
@@ -28,6 +30,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Core features work
     // - Data syncs when back online
     // - Status updates queue
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle edge cases', () => {
@@ -37,6 +40,7 @@ describe('🛵 Courier Dashboard', () => {
     // - Customer not available
     // - Payment issues
     // - Support access
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -45,5 +49,6 @@ describe('🛵 Courier Dashboard', () => {
     // - Map is usable
     // - Buttons accessible
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

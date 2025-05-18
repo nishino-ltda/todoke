@@ -10,6 +10,7 @@ describe('Admin System Configuration', () => {
     // TODO: Add steps to navigate to system configuration
     cy.log('👀 Verifying configuration settings are displayed');
     // TODO: Add assertions for configuration settings
+    cy.fail('Test not implemented');
   });
 
   it('✏️ Should update system configuration settings', () => {
@@ -21,6 +22,7 @@ describe('Admin System Configuration', () => {
     // TODO: Add steps to save changes
     cy.log('👍 Verifying settings are updated successfully');
     // TODO: Add assertions for successful update
+    cy.fail('Test not implemented');
   });
 
   it('❌ Should display validation errors for invalid settings', () => {
@@ -32,5 +34,6 @@ describe('Admin System Configuration', () => {
     // TODO: Add steps to save changes
     cy.log('🔥 Verifying validation errors are displayed');
     // TODO: Add assertions for validation errors
+    cy.fail('Test not implemented');
   });
 });

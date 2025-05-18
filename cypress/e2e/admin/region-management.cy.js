@@ -10,6 +10,7 @@ describe('Admin Region Management', () => {
     // TODO: Add steps to navigate to region management
     cy.log('👀 Verifying region list is displayed');
     // TODO: Add assertions for region list
+    cy.fail('Test not implemented');
   });
 
   it('➕ Should create a new region', () => {
@@ -23,6 +24,7 @@ describe('Admin Region Management', () => {
     // TODO: Add steps to save region
     cy.log('👍 Verifying new region is in the list');
     // TODO: Add assertions for new region
+    cy.fail('Test not implemented');
   });
 
   it('✏️ Should edit an existing region', () => {
@@ -38,6 +40,7 @@ describe('Admin Region Management', () => {
     // TODO: Add steps to save changes
     cy.log('👍 Verifying region details are updated');
     // TODO: Add assertions for updated region
+    cy.fail('Test not implemented');
   });
 
   it('🗑️ Should delete a region', () => {
@@ -51,5 +54,6 @@ describe('Admin Region Management', () => {
     // TODO: Add steps to confirm deletion
     cy.log('🚫 Verifying region is removed from the list');
     // TODO: Add assertions for deleted region
+    cy.fail('Test not implemented');
   });
 });

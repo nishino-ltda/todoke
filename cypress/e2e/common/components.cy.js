@@ -6,6 +6,7 @@ describe('🔄 Common Components', () => {
     // - Navigation works
     // - Auth state shows correctly
     // - Responsive behavior
+    cy.fail('Test not implemented');
   });
 
   it('🦶 Should render footer correctly', () => {
@@ -14,6 +15,7 @@ describe('🔄 Common Components', () => {
     // - Links work
     // - Copyright info shows
     // - Responsive behavior
+    cy.fail('Test not implemented');
   });
 
   it('🔄 Should handle loading states', () => {
@@ -22,6 +24,7 @@ describe('🔄 Common Components', () => {
     // - Loading indicators show
     // - Content is blocked during load
     // - Disappears when done
+    cy.fail('Test not implemented');
   });
 
   it('💬 Should display notifications', () => {
@@ -31,6 +34,7 @@ describe('🔄 Common Components', () => {
     // - Error messages appear
     // - Messages auto-dismiss
     // - Can be manually dismissed
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -39,6 +43,7 @@ describe('🔄 Common Components', () => {
     // - Hamburger menu works
     // - Touch targets are adequate
     // - Layout adapts properly
+    cy.fail('Test not implemented');
   });
 
   it('📝 Should handle Login/Registration Forms/Modals', () => {
@@ -48,6 +53,7 @@ describe('🔄 Common Components', () => {
     // - Validation works
     // - Can switch between login and registration
     // - Modals open and close
+    cy.fail('Test not implemented');
   });
 
   it('🏠 Should handle Address Input', () => {
@@ -56,6 +62,7 @@ describe('🔄 Common Components', () => {
     // - Can enter address
     // - Validation works
     // - (Optional) Geocoding integration
+    cy.fail('Test not implemented');
   });
 
   it('💳 Should handle Payment Method Input', () => {
@@ -64,6 +71,7 @@ describe('🔄 Common Components', () => {
     // - Can select payment method
     // - Can enter payment details
     // - Validation works
+    cy.fail('Test not implemented');
   });
 
   it('📊 Should handle Data Tables', () => {
@@ -73,6 +81,7 @@ describe('🔄 Common Components', () => {
     // - Sorting works
     // - Filtering works
     // - Pagination works
+    cy.fail('Test not implemented');
   });
 
   it('🖼️ Should handle Modals/Dialogs', () => {
@@ -81,5 +90,6 @@ describe('🔄 Common Components', () => {
     // - Modals/dialogs open and close
     // - Content is displayed correctly
     // - Interactions within modals/dialogs work
+    cy.fail('Test not implemented');
   });
 });

@@ -132,14 +132,21 @@ npm run build
     - Uses `createInertiaApp` with page component resolver
     - All controllers return Inertia responses
   - Routing:
-    - Web routes handle page rendering
-    - API routes handle business logic
-    - Frontend uses `Link` component for navigation
+    - Web routes handle page rendering (defined in Laravel routes/web.php)
+    - API routes handle business logic (defined in routes/api.php)
+    - Frontend uses Inertia's `Link` component for navigation (replaces Vue-router)
+    - No client-side routing needed - all navigation handled server-side via Laravel
+  - Key Benefits:
+    - Single-page app experience without client-side routing complexity
+    - Full page reloads when needed (preserving scroll position)
+    - Automatic handling of back/forward navigation
+    - Shared data via Inertia's shared props
   - Testing:
     - Components include `data-test` attributes
     ```vue
     <v-btn data-test="submit-button">Submit</v-btn>
     ```
+    - Test navigation using Inertia's `router.visit()` mock
 - Clear separation between:
   - Web routes: Handle only Inertia page rendering
   - API routes: Handle all business logic and data operations

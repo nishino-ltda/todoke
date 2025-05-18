@@ -10,6 +10,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Key metrics are visible
     // - Data is accurate
     // - Updates in real-time
+    cy.fail('Test not implemented');
   });
 
   it('📦 Should manage orders', () => {
@@ -19,6 +20,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Can update order status
     // - Can filter/search orders
     // - Changes persist
+    cy.fail('Test not implemented');
   });
 
   it('🍔 Should manage products', () => {
@@ -27,6 +29,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Can add/edit/delete products
     // - Can manage product categories
     // - Changes persist
+    cy.fail('Test not implemented');
   });
 
   it('➕ Should manage addons', () => {
@@ -35,6 +38,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Can add/edit/delete addons
     // - Can assign to products
     // - Changes persist
+    cy.fail('Test not implemented');
   });
 
   it('🗺️ Should manage regions (for logistics partners)', () => {
@@ -43,5 +47,6 @@ describe('🍽️ Partner Dashboard', () => {
     // - Can define service regions
     // - Can edit region boundaries
     // - Changes persist
+    cy.fail('Test not implemented');
   });
 });

@@ -6,6 +6,7 @@ describe('📴 Offline Mode', () => {
     // - Conflicts are handled
     // - Status updates correctly
     // - No data loss
+    cy.fail('Test not implemented');
   });
 
   it('📝 Should queue actions while offline', () => {
@@ -15,6 +16,7 @@ describe('📴 Offline Mode', () => {
     // - Executes when online
     // - Maintains order
     // - Progress indicators show
+    cy.fail('Test not implemented');
   });
 
   it('🗺️ Should show cached map data', () => {
@@ -24,6 +26,7 @@ describe('📴 Offline Mode', () => {
     // - Navigation works
     // - Location tracking continues
     // - Updates when back online
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle prolonged offline', () => {
@@ -33,6 +36,7 @@ describe('📴 Offline Mode', () => {
     // - Performance remains
     // - Critical functions work
     // - Graceful degradation
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -41,5 +45,6 @@ describe('📴 Offline Mode', () => {
     // - Battery efficient
     // - Network changes handled
     // - No crashes
+    cy.fail('Test not implemented');
   });
 });

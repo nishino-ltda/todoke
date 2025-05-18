@@ -10,6 +10,7 @@ describe('Admin Delivery Monitoring', () => {
     // TODO: Add steps to navigate to delivery monitoring
     cy.log('👀 Verifying delivery list is displayed');
     // TODO: Add assertions for delivery list
+    cy.fail('Test not implemented');
   });
 
   it('🔍 Should filter deliveries by status', () => {
@@ -19,6 +20,7 @@ describe('Admin Delivery Monitoring', () => {
     // TODO: Add steps to select filter
     cy.log('👍 Verifying only deliveries with selected status are shown');
     // TODO: Add assertions for filtered list
+    cy.fail('Test not implemented');
   });
 
   it('👁️ Should view detailed information for a specific delivery', () => {
@@ -30,5 +32,6 @@ describe('Admin Delivery Monitoring', () => {
     // TODO: Add steps to click to view details
     cy.log('🧐 Verifying detailed delivery information is displayed');
     // TODO: Add assertions for detailed information
+    cy.fail('Test not implemented');
   });
 });

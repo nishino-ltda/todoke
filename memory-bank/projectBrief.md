@@ -17,7 +17,10 @@ TODOKE is an innovative delivery management platform combining traditional couri
 3. **Technical Capabilities**:
    - Offline functionality for low-connectivity areas
    - Optimized routing algorithms
-   - Comprehensive reputation system
+   - Comprehensive reputation system including:
+     - Customer reputation tracking for partner/courier safety
+     - Rating and feedback mechanisms
+     - Fraud detection capabilities
 
 ## Business Model
 - Fixed monthly subscription fee

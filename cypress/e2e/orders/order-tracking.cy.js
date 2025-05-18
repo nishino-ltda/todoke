@@ -11,6 +11,7 @@ describe('📦 Order Tracking', () => {
     // - Timeline is accurate
     // - Courier info shows
     // - Map updates
+    cy.fail('Test not implemented');
   });
 
   it('💬 Should handle order messages', () => {
@@ -19,6 +20,7 @@ describe('📦 Order Tracking', () => {
     // - Can message courier
     // - Notifications work
     // - Message history persists
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle issues', () => {
@@ -27,6 +29,7 @@ describe('📦 Order Tracking', () => {
     // - Can report problems
     // - Support is notified
     // - Status updates appropriately
+    cy.fail('Test not implemented');
   });
 
   it('📋 Should view order history', () => {
@@ -35,6 +38,7 @@ describe('📦 Order Tracking', () => {
     // - Past orders appear
     // - Can filter/search
     // - Details are accurate
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -43,5 +47,6 @@ describe('📦 Order Tracking', () => {
     // - Map is usable
     // - Status is clear
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

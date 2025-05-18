@@ -6,6 +6,7 @@ describe('🔑 Password Reset Flow', () => {
     // - Email is sent
     // - Success message appears
     // - Rate limiting works
+    cy.fail('Test not implemented');
   });
 
   it('🔄 Should complete password reset', () => {
@@ -15,6 +16,7 @@ describe('🔑 Password Reset Flow', () => {
     // - Can set new password
     // - Password requirements enforced
     // - Can login with new password
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle invalid tokens', () => {
@@ -24,6 +26,7 @@ describe('🔑 Password Reset Flow', () => {
     // - Invalid tokens fail
     // - Used tokens fail
     // - Error messages are clear
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -32,5 +35,6 @@ describe('🔑 Password Reset Flow', () => {
     // - Form is usable
     // - Keyboard works properly
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

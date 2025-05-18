@@ -11,6 +11,7 @@ describe('📊 Analytics & Reporting', () => {
     // - Charts render
     // - Time filters work
     // - Data is accurate
+    cy.fail('Test not implemented');
   });
 
   it('📋 Should generate reports', () => {
@@ -20,6 +21,7 @@ describe('📊 Analytics & Reporting', () => {
     // - Can set date ranges
     // - PDF/CSV export works
     // - Data is complete
+    cy.fail('Test not implemented');
   });
 
   it('🔍 Should filter data', () => {
@@ -29,6 +31,7 @@ describe('📊 Analytics & Reporting', () => {
     // - Product filters work
     // - Time filters work
     // - Combinations work
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -37,6 +40,7 @@ describe('📊 Analytics & Reporting', () => {
     // - Charts are readable
     // - Filters are usable
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 
   it('🔄 Should update in real-time', () => {
@@ -45,5 +49,6 @@ describe('📊 Analytics & Reporting', () => {
     // - New orders appear
     // - Metrics update
     // - No refresh needed
+    cy.fail('Test not implemented');
   });
 });

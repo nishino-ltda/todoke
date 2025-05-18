@@ -6,6 +6,7 @@ describe('🔔 Notification System', () => {
     // - In-app notifications appear
     // - Email notifications sent
     // - SMS notifications sent
+    cy.fail('Test not implemented');
   });
 
   it('👀 Should mark notifications as read', () => {
@@ -15,6 +16,7 @@ describe('🔔 Notification System', () => {
     // - Can mark all as read
     // - Status persists
     // - Badge updates
+    cy.fail('Test not implemented');
   });
 
   it('⚙️ Should manage preferences', () => {
@@ -23,6 +25,7 @@ describe('🔔 Notification System', () => {
     // - Can enable/disable types
     // - Can set quiet hours
     // - Preferences persist
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -31,6 +34,7 @@ describe('🔔 Notification System', () => {
     // - Push permissions work
     // - In-app display correct
     // - Actions work properly
+    cy.fail('Test not implemented');
   });
 
   it('🔗 Should handle notification actions', () => {
@@ -39,5 +43,6 @@ describe('🔔 Notification System', () => {
     // - Links open correct views
     // - Deep links work
     // - Context is preserved
+    cy.fail('Test not implemented');
   });
 });

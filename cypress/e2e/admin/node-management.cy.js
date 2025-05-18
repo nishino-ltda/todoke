@@ -10,6 +10,7 @@ describe('Admin Node Management', () => {
     // TODO: Add steps to navigate to node management
     cy.log('👀 Verifying node list is displayed');
     // TODO: Add assertions for node list
+    cy.fail('Test not implemented');
   });
 
   it('✏️ Should approve a pending node', () => {
@@ -21,6 +22,7 @@ describe('Admin Node Management', () => {
     // TODO: Add steps to approve the node
     cy.log('👍 Verifying node status is updated');
     // TODO: Add assertions for updated node status
+    cy.fail('Test not implemented');
   });
 
   it('❌ Should reject a pending node', () => {
@@ -32,6 +34,7 @@ describe('Admin Node Management', () => {
     // TODO: Add steps to reject the node
     cy.log('🚫 Verifying node is removed or marked as rejected');
     // TODO: Add assertions for rejected node
+    cy.fail('Test not implemented');
   });
 
   it('👁️ Should view node details', () => {
@@ -43,5 +46,6 @@ describe('Admin Node Management', () => {
     // TODO: Add steps to view details
     cy.log('🧐 Verifying node details are displayed');
     // TODO: Add assertions for node details
+    cy.fail('Test not implemented');
   });
 });

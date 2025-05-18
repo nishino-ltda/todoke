@@ -11,6 +11,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Popular items highlighted
     // - Earnings calculated
     // - Charts render
+    cy.fail('Test not implemented');
   });
 
   it('📦 Should manage orders', () => {
@@ -20,6 +21,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Can accept/reject
     // - Status updates
     // - Preparation time accurate
+    cy.fail('Test not implemented');
   });
 
   it('📅 Should handle scheduling', () => {
@@ -29,6 +31,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Special hours work
     // - Affects order availability
     // - Capacity limits enforced
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle issues', () => {
@@ -38,6 +41,7 @@ describe('🍽️ Partner Dashboard', () => {
     // - Courier delays
     // - Customer complaints
     // - Support access
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -46,5 +50,6 @@ describe('🍽️ Partner Dashboard', () => {
     // - Order cards usable
     // - Buttons accessible
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

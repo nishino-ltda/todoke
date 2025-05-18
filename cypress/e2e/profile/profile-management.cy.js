@@ -11,6 +11,7 @@ describe('👤 Profile Management', () => {
     // - Changes persist
     // - Validation works
     // - Avatar upload works
+    cy.fail('Test not implemented');
   });
 
   it('🔒 Should update security settings', () => {
@@ -19,6 +20,7 @@ describe('👤 Profile Management', () => {
     // - Can change password
     // - 2FA can be enabled/disabled
     // - Recovery options work
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should manage devices', () => {
@@ -27,6 +29,7 @@ describe('👤 Profile Management', () => {
     // - Active sessions show
     // - Can logout other devices
     // - Can revoke access
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle validation errors', () => {
@@ -35,6 +38,7 @@ describe('👤 Profile Management', () => {
     // - Invalid inputs rejected
     // - Error messages clear
     // - No data loss on errors
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -43,6 +47,7 @@ describe('👤 Profile Management', () => {
     // - Forms are usable
     // - Tabs work properly
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 
   it('🏠 Should manage saved addresses', () => {
@@ -53,6 +58,7 @@ describe('👤 Profile Management', () => {
     // - Can edit existing address
     // - Can remove address
     // - Validation works
+    cy.fail('Test not implemented');
   });
 
   it('💳 Should manage payment methods', () => {
@@ -63,5 +69,6 @@ describe('👤 Profile Management', () => {
     // - Can remove payment method
     // - Validation works
     // - Secure handling of payment details
+    cy.fail('Test not implemented');
   });
 });

@@ -6,6 +6,7 @@ describe('🔑 Login Flow', () => {
     // - Success flow
     // - Redirects to customer dashboard
     // - Session is established
+    cy.fail('Test not implemented');
   });
 
   it('🛵 Should login as courier', () => {
@@ -14,6 +15,7 @@ describe('🔑 Login Flow', () => {
     // - Redirects to courier dashboard
     // - Shows availability toggle
     // - Shows delivery requests
+    cy.fail('Test not implemented');
   });
 
   it('🍽️ Should login as partner', () => {
@@ -22,6 +24,7 @@ describe('🔑 Login Flow', () => {
     // - Redirects to partner dashboard
     // - Shows order management
     // - Shows business metrics
+    cy.fail('Test not implemented');
   });
 
   it('👔 Should login as admin', () => {
@@ -30,6 +33,7 @@ describe('🔑 Login Flow', () => {
     // - Redirects to admin dashboard
     // - Shows system controls
     // - Shows user management
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle failed logins', () => {
@@ -39,6 +43,7 @@ describe('🔑 Login Flow', () => {
     // - Nonexistent account
     // - Locked account
     // - Rate limiting
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -47,5 +52,6 @@ describe('🔑 Login Flow', () => {
     // - Form is usable
     // - Keyboard works properly
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });

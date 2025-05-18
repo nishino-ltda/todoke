@@ -56,6 +56,11 @@ TODOKE addresses the need for a fair, transparent delivery platform that:
   - Fair reputation system
 - Reduces environmental impact via optimized drone routing
 - Increases delivery access to remote areas
+- Enhances safety for all participants through:
+  - Customer reputation tracking
+  - Rating and feedback system
+  - Fraud detection mechanisms
+  - Transparent interaction history
 
 ## Future API Scope
 - The platform's API is designed to be extensible and will not be limited to food delivery in the future.

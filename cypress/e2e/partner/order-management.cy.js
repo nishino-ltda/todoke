@@ -10,6 +10,7 @@ describe('🍽️ Partner Order Management', () => {
     // TODO: Add steps to navigate to order management
     cy.log('👀 Verifying order list is displayed');
     // TODO: Add assertions for order list
+    cy.fail('Test not implemented');
   });
 
   it('✏️ Should update order status', () => {
@@ -23,6 +24,7 @@ describe('🍽️ Partner Order Management', () => {
     // TODO: Add steps to select new status
     cy.log('👍 Verifying order status is updated');
     // TODO: Add assertions for updated status
+    cy.fail('Test not implemented');
   });
 
   it('👁️ Should view order details', () => {
@@ -34,6 +36,7 @@ describe('🍽️ Partner Order Management', () => {
     // TODO: Add steps to click to view details
     cy.log('🧐 Verifying order details are displayed');
     // TODO: Add assertions for order details
+    cy.fail('Test not implemented');
   });
 
   it('🖨️ Should print customer address labels', () => {
@@ -42,6 +45,7 @@ describe('🍽️ Partner Order Management', () => {
     // - Can initiate printing process
     // - Correct address information is used
     // - (Optional) Print preview is correct
+    cy.fail('Test not implemented');
   });
 
   it('🛵 Should request a courier or drone for pickup', () => {
@@ -50,5 +54,6 @@ describe('🍽️ Partner Order Management', () => {
     // - Can initiate pickup request
     // - System attempts to allocate a courier/drone
     // - Order status updates to reflect request
+    cy.fail('Test not implemented');
   });
 });

@@ -6,6 +6,7 @@ describe('🛠️ Support Ticket System', () => {
     // - Can attach files
     // - Ticket categories work
     // - Confirmation received
+    cy.fail('Test not implemented');
   });
 
   it('📋 Should view ticket history', () => {
@@ -15,6 +16,7 @@ describe('🛠️ Support Ticket System', () => {
     // - Status is visible
     // - Can filter/search
     // - Details are complete
+    cy.fail('Test not implemented');
   });
 
   it('💬 Should handle ticket messages', () => {
@@ -24,6 +26,7 @@ describe('🛠️ Support Ticket System', () => {
     // - Notifications work
     // - Agent responses appear
     // - History persists
+    cy.fail('Test not implemented');
   });
 
   it('⚠️ Should handle urgent tickets', () => {
@@ -32,6 +35,7 @@ describe('🛠️ Support Ticket System', () => {
     // - Priority marking works
     // - Faster response times
     // - Escalation process
+    cy.fail('Test not implemented');
   });
 
   it('📱 Should work on mobile', () => {
@@ -40,5 +44,6 @@ describe('🛠️ Support Ticket System', () => {
     // - Form is usable
     // - Attachments work
     // - No horizontal scrolling
+    cy.fail('Test not implemented');
   });
 });
