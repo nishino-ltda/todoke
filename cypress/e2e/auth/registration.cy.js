@@ -1,4 +1,5 @@
 describe('🔐 User Registration', () => {
+  // SPRINT 1: Core authentication testing
   it('👤 Should register as customer', () => {
     cy.log('🛒 Testing customer registration');
     // Test will verify:
@@ -66,6 +67,7 @@ describe('🔐 User Registration', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing
   it('🛵 Should register as courier', () => {
     cy.log('🏍️ Testing courier registration');
     // Test will verify:
@@ -163,6 +165,7 @@ describe('🔐 User Registration', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing
   it('🍽️ Should register as partner', () => {
     cy.log('🏢 Testing partner registration');
     // Test will verify:
@@ -269,6 +272,7 @@ describe('🔐 User Registration', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing
   it('⚠️ Should handle validation errors', () => {
     cy.log('❌ Testing validation errors');
     // Test will verify:
@@ -332,6 +336,7 @@ describe('🔐 User Registration', () => {
     cy.contains('The role field is required').should('be.visible');
   });
 
+  // SPRINT 1: Core authentication testing
   it('📱 Should work on mobile', () => {
     cy.log('📲 Testing mobile registration');
     // Test will verify:

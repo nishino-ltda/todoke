@@ -1,4 +1,5 @@
 describe('🔄 Common Components', () => {
+  // SPRINT 1: Common components testing
   it('🔤 Should render header correctly', () => {
     cy.log('🔝 Testing header component');
     // Test will verify:
@@ -9,6 +10,7 @@ describe('🔄 Common Components', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 1: Common components testing
   it('🦶 Should render footer correctly', () => {
     cy.log('🔚 Testing footer component');
     // Test will verify:
@@ -18,6 +20,7 @@ describe('🔄 Common Components', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 1: Common components testing
   it('🔄 Should handle loading states', () => {
     cy.log('⏳ Testing loading components');
     // Test will verify:
@@ -27,6 +30,7 @@ describe('🔄 Common Components', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 1: Common components testing
   it('💬 Should display notifications', () => {
     cy.log('🔔 Testing notification system');
     // Test will verify:
@@ -37,6 +41,7 @@ describe('🔄 Common Components', () => {
     cy.fail('Test not implemented');
   });
 
+  // SPRINT 1: Common components testing
   it('📱 Should work on mobile', () => {
     cy.log('📲 Testing mobile components');
     // Test will verify:

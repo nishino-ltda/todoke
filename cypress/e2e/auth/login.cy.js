@@ -1,4 +1,5 @@
 describe('🔑 Login Flow', () => {
+  // SPRINT 1: Core authentication testing
   it('👤 Should login as customer', () => {
     cy.log('🛒 Testing customer login');
     // Test will verify:
@@ -55,6 +56,7 @@ describe('🔑 Login Flow', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing  
   it('🛵 Should login as courier', () => {
     cy.log('🏍️ Testing courier login');
     // Test will verify:
@@ -107,6 +109,7 @@ describe('🔑 Login Flow', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing
   it('🍽️ Should login as partner', () => {
     cy.log('🏢 Testing partner login');
     // Test will verify:
@@ -159,6 +162,7 @@ describe('🔑 Login Flow', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing
   it('👔 Should login as admin', () => {
     cy.log('💼 Testing admin login');
     // Test will verify:
@@ -211,6 +215,7 @@ describe('🔑 Login Flow', () => {
     cy.window().its('localStorage.token').should('exist');
   });
 
+  // SPRINT 1: Core authentication testing
   it('⚠️ Should handle failed logins', () => {
     cy.log('❌ Testing login failures');
     // Test will verify:
@@ -285,6 +290,7 @@ describe('🔑 Login Flow', () => {
     cy.contains('Too many attempts').should('be.visible');
   });
 
+  // SPRINT 1: Core authentication testing
   it('📱 Should work on mobile', () => {
     cy.log('📲 Testing mobile login');
     // Test will verify:
