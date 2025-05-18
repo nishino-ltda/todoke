@@ -33,16 +33,28 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = null
     try {
-      // Use the endpoint provided in userData or default to '/auth/register'
       const endpoint = userData._endpoint || '/auth/register'
       delete userData._endpoint
       
-      const response = await api.post(endpoint, {
-        ...userData,
-        role: userData.role || 'customer'
-      })
+      const config = {}
+      if (userData instanceof FormData) {
+        config.headers = {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+
+      const response = await api.post(endpoint, userData, config)
       setAuth(response.data)
-      if (router) router.push('/')
+      
+      // Redirect based on user type
+      if (router) {
+        const redirectPath = response.data.user?.type === 'partner' 
+          ? '/partner/dashboard'
+          : response.data.user?.type === 'courier'
+          ? '/courier/dashboard'
+          : '/'
+        router.push(redirectPath)
+      }
       return response
     } catch (err) {
       clearAuth()

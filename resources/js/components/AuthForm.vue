@@ -1,200 +1,223 @@
 <template>
-  <v-form @submit.prevent="handleSubmit" class="auth-form">
-    <!-- Name field (only for registration) -->
-    <v-text-field
-      v-if="mode === 'register'"
-      v-model="form.name"
-      label="Name"
-      required
-      :error-messages="errors?.name"
-      data-test="name-input"
-    ></v-text-field>
-    
-    <!-- Email field -->
+  <v-form @submit.prevent="submit">
     <v-text-field
       v-model="form.email"
       label="Email"
       type="email"
       required
-      :error-messages="errors?.email"
+      :error-messages="errors.email"
       data-test="email-input"
     ></v-text-field>
-    
-    <!-- Password field -->
+
     <v-text-field
       v-model="form.password"
       label="Password"
       type="password"
       required
-      :error-messages="errors?.password"
+      :error-messages="errors.password"
       data-test="password-input"
     ></v-text-field>
 
-    <!-- Password confirmation (only for registration) -->
-    <v-text-field
-      v-if="mode === 'register'"
-      v-model="form.password_confirmation"
-      label="Confirm Password"
-      type="password"
-      required
-      :error-messages="errors?.password_confirmation"
-      data-test="password-confirmation-input"
-    ></v-text-field>
+    <template v-if="mode === 'register'">
+      <v-text-field
+        v-model="form.name"
+        label="Name"
+        required
+        :error-messages="errors.name"
+        data-test="name-input"
+      ></v-text-field>
 
-    <!-- Submit button -->
-    <v-btn 
-      type="submit" 
+      <v-text-field
+        v-model="form.password_confirmation"
+        label="Confirm Password"
+        type="password"
+        required
+        :error-messages="errors.password_confirmation"
+        data-test="password-confirm-input"
+      ></v-text-field>
+
+      <v-select
+        v-model="form.role"
+        :items="roles"
+        label="Account Type"
+        required
+        :error-messages="errors.role"
+        data-test="role-select"
+      ></v-select>
+
+      <!-- Courier specific fields -->
+      <template v-if="form.role === 'courier'">
+        <v-text-field
+          v-model="form.license_number"
+          label="License Number"
+          required
+          :error-messages="errors.license_number"
+          data-test="license-input"
+        ></v-text-field>
+
+        <v-select
+          v-model="form.vehicle_type"
+          :items="vehicleTypes"
+          label="Vehicle Type"
+          required
+          :error-messages="errors.vehicle_type"
+          data-test="vehicle-select"
+        ></v-select>
+
+        <v-file-input
+          v-model="form.document"
+          label="Upload License"
+          accept="image/*"
+          required
+          :error-messages="errors.document"
+          data-test="document-upload"
+        ></v-file-input>
+      </template>
+
+      <!-- Partner specific fields -->
+      <template v-if="form.role === 'partner'">
+        <v-text-field
+          v-model="form.business_name"
+          label="Business Name"
+          required
+          :error-messages="errors.business_name"
+          data-test="business-name-input"
+        ></v-text-field>
+
+        <v-select
+          v-model="form.business_type"
+          :items="businessTypes"
+          label="Business Type"
+          required
+          :error-messages="errors.business_type"
+          data-test="business-type-select"
+        ></v-select>
+
+        <v-text-field
+          v-model="form.tax_id"
+          label="Tax ID"
+          required
+          :error-messages="errors.tax_id"
+          data-test="tax-id-input"
+        ></v-text-field>
+
+        <v-text-field
+          v-model="form.address"
+          label="Business Address"
+          required
+          :error-messages="errors.address"
+          data-test="address-input"
+        ></v-text-field>
+
+        <v-file-input
+          v-model="form.business_document"
+          label="Business License"
+          accept=".pdf,.jpg,.png"
+          required
+          :error-messages="errors.business_document"
+          data-test="business-document-upload"
+        ></v-file-input>
+      </template>
+    </template>
+
+    <v-btn
+      type="submit"
       color="primary"
       :loading="loading"
-      :loading-text="loadingText"
-      block
       data-test="submit-button"
     >
-      {{ submitButtonText }}
+      {{ mode === 'login' ? 'Login' : 'Register' }}
     </v-btn>
-
-    <!-- Error alert -->
-    <v-alert
-      v-if="generalError || Object.keys(errors).length"
-      type="error"
-      class="mt-4"
-      data-test="error-alert"
-    >
-      {{ generalError || 'Por favor, corrija os erros no formulário' }}
-    </v-alert>
   </v-form>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { storeToRefs } from 'pinia'
 
 const props = defineProps({
   mode: {
     type: String,
-    required: true,
+    default: 'login',
     validator: (value) => ['login', 'register'].includes(value)
   }
 })
 
-const emit = defineEmits(['success', 'error'])
-
 const authStore = useAuthStore()
-const { loading, error } = storeToRefs(authStore)
-
-// Form data
 const form = ref({
-  name: '',
   email: '',
   password: '',
-  password_confirmation: ''
+  name: '',
+  password_confirmation: '',
+  role: 'customer',
+  // Courier fields
+  license_number: '',
+  vehicle_type: '',
+  document: null,
+  // Partner fields
+  business_name: '',
+  business_type: '',
+  tax_id: '',
+  address: '',
+  business_document: null
 })
-
-// General error message
-const generalError = ref('')
-
-// Computed properties for UI elements
-const submitButtonText = computed(() => props.mode === 'login' ? 'Login' : 'Register')
-const loadingText = computed(() => props.mode === 'login' ? 'Logging in...' : 'Registering...')
-
-// Form validation errors
 const errors = ref({})
+const loading = computed(() => authStore.loading)
 
-// Client-side validation
-const validateForm = () => {
-  errors.value = {}
-  
-  // Email validation
-  if (form.value.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) {
-    errors.value.email = ['The email must be a valid email address.']
-  }
-  
-  // Password confirmation validation
-  if (props.mode === 'register' && 
-      form.value.password && 
-      form.value.password_confirmation && 
-      form.value.password !== form.value.password_confirmation) {
-    errors.value.password = ['The password confirmation does not match.']
-  }
-  
-  // Always return true to allow API calls
-  return true
-}
+const roles = [
+  { title: 'Customer', value: 'customer' },
+  { title: 'Courier', value: 'courier' },
+  { title: 'Partner', value: 'partner' }
+]
 
-// Watch for error changes to update general error
-watch(error, (newError) => {
-  if (newError) {
-    if (typeof newError === 'string') {
-      generalError.value = newError
-    } else if (newError.message && !newError.errors) {
-      generalError.value = newError.message
-    } else {
-      generalError.value = ''
-    }
-  } else {
-    generalError.value = ''
-  }
-})
+const vehicleTypes = [
+  { title: 'Motorcycle', value: 'motorcycle' },
+  { title: 'Bicycle', value: 'bicycle' },
+  { title: 'Car', value: 'car' }
+]
 
-// Form submission handler
-async function handleSubmit() {
-  // Run client-side validation
-  validateForm()
-  
-  // Convert errors to match Vuetify format
-  Object.keys(errors.value).forEach(key => {
-    errors.value[key] = errors.value[key]?.join(', ')
-  })
-  
-  // Don't return early - allow API calls even with validation errors
+const businessTypes = [
+  { title: 'Restaurant', value: 'restaurant' },
+  { title: 'Cafe', value: 'cafe' },
+  { title: 'Bakery', value: 'bakery' },
+  { title: 'Grocery', value: 'grocery' }
+]
 
+async function submit() {
   try {
     if (props.mode === 'login') {
-      await authStore.login(form.value)
-    } else {
-      await authStore.register({
-        ...form.value,
-        // Ensure we use the expected API endpoint
-        _endpoint: '/api/auth/register'
+      await authStore.login({
+        email: form.value.email,
+        password: form.value.password
       })
-    }
-    
-    // Reset form on success
-    resetForm()
-    emit('success')
-  } catch (err) {
-    console.error(`${props.mode} failed:`, err)
-    emit('error', err)
-    
-    // Handle backend validation errors
-    if (err.response?.data?.errors) {
-      errors.value = err.response.data.errors
     } else {
-      generalError.value = err.response?.data?.message || err.message || 'An error occurred'
-    }
-    
-    // Reset password fields on error
-    form.value.password = ''
-    if (props.mode === 'register') {
-      form.value.password_confirmation = ''
-    }
-  }
-}
+      const formData = new FormData()
+      formData.append('name', form.value.name)
+      formData.append('email', form.value.email)
+      formData.append('password', form.value.password)
+      formData.append('password_confirmation', form.value.password_confirmation)
+      formData.append('role', form.value.role)
 
-// Reset form
-function resetForm() {
-  form.value = {
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: ''
+      if (form.value.role === 'courier') {
+        formData.append('license_number', form.value.license_number)
+        formData.append('vehicle_type', form.value.vehicle_type)
+        if (form.value.document) {
+          formData.append('document', form.value.document)
+        }
+      } else if (form.value.role === 'partner') {
+        formData.append('business_name', form.value.business_name)
+        formData.append('business_type', form.value.business_type)
+        formData.append('tax_id', form.value.tax_id)
+        formData.append('address', form.value.address)
+        if (form.value.business_document) {
+          formData.append('business_document', form.value.business_document)
+        }
+      }
+
+      await authStore.register(formData)
+    }
+  } catch (error) {
+    errors.value = error.response?.data?.errors || {}
   }
 }
 </script>
-
-<style scoped>
-.auth-form {
-  width: 100%;
-}
-</style>
