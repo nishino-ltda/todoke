@@ -52,6 +52,23 @@ This document tracks the progress of implementing the web interface based on the
 - `routes/web.php` (added general, admin, and support routes)
 - `routes/customer.php` (added customer routes)
 
+## Sprint 1 Implementation Progress:
+
+### Authentication
+- [x] Auth store unit tests (6/6 passing)
+- [x] API service unit tests (6/6 passing)
+- [ ] E2E login flow
+
+### Common Components Implementation:
+
+- **LoadingIndicator.vue** - Implemented with:
+  - Full-page overlay loader with progress circle
+  - Inline loader with progress circle
+  - Support for custom loading messages
+  - Data-test attributes for testing
+  - Comprehensive tests in components.cy.js
+  - Test page at TestLoading.vue
+
 ## Remaining Tasks:
 
 - **Implement Controller Logic:** Add the necessary logic to controllers to fetch and process data (leveraging the API).

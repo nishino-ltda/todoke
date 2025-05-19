@@ -11,5 +11,18 @@
 // ***********************************************
 
 import './commands'
+import { createPinia } from 'pinia'
+
+// Initialize Pinia before each test
+beforeEach(() => {
+    const pinia = createPinia()
+    
+    cy.window().then((win) => {
+        win.pinia = pinia
+        if (win.__logStore) {
+            win.__logStore.$pinia = pinia
+        }
+  })
+})
 
 // Add global before/beforeEach/after/afterEach hooks here if needed

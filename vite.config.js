@@ -3,6 +3,16 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
+    server: {
+        proxy: {
+            '/api': {
+                target: process.env.VITE_API_BASE_URL || 'http://localhost:8000',
+                changeOrigin: true,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/api/, '')
+            }
+        }
+    },
     plugins: [
         laravel({
             input: [

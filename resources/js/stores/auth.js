@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import api from '@/services/api'
+import { useLogStore } from './log'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
@@ -16,8 +17,18 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.post('/auth/login', credentials)
       setAuth(response.data)
       if (router) {
-        const redirectPath = response.data.user?.type === 'partner' ? '/partner' : '/'
+        const logStore = useLogStore()
+        const userType = response.data.user?.type
+        logStore.log(`🔑 Login successful, user type: ${userType}`, 'debug')
+        const redirectPath = 
+          userType === 'admin' ? '/admin/dashboard' :
+          userType === 'courier' ? '/courier/dashboard' :
+          userType === 'partner' ? '/partner/dashboard' :
+          '/customer/dashboard'
+        logStore.log(`🛣️ Redirecting to: ${redirectPath}`, 'debug')
         router.push(redirectPath)
+          .then(() => logStore.log('✅ Redirect successful', 'debug'))
+          .catch(err => logStore.log(`❌ Redirect failed: ${err}`, 'error'))
       }
       return response
     } catch (err) {
@@ -48,11 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
       
       // Redirect based on user type
       if (router) {
-        const redirectPath = response.data.user?.type === 'partner' 
-          ? '/partner/dashboard'
-          : response.data.user?.type === 'courier'
-          ? '/courier/dashboard'
-          : '/'
+        const userType = response.data.user?.type
+        const redirectPath = 
+          userType === 'admin' ? '/admin/dashboard' :
+          userType === 'courier' ? '/courier/dashboard' :
+          userType === 'partner' ? '/partner/dashboard' :
+          '/customer/dashboard'
         router.push(redirectPath)
       }
       return response
@@ -75,11 +87,20 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function setAuth(authData) {
+    const logStore = useLogStore()
+    logStore.log(`Setting auth data: ${JSON.stringify(authData)}`, 'debug')
+    if (!authData || !authData.token || !authData.user) {
+      logStore.log('Invalid auth data received', 'error')
+      throw new Error('Invalid auth data received')
+    }
+    
     user.value = authData.user
     token.value = authData.token
     isAuthenticated.value = true
     error.value = null
+    
     localStorage.setItem('token', authData.token)
+    logStore.log(`Auth set successfully for user: ${authData.user.email}`, 'info')
   }
 
   function clearAuth() {

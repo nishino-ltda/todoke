@@ -1,6 +1,18 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+
+// Mock localStorage
+const localStorageMock = (() => {
+  let store = {}
+  return {
+    getItem: vi.fn((key) => store[key] || null),
+    setItem: vi.fn((key, value) => { store[key] = value.toString() }),
+    removeItem: vi.fn((key) => { delete store[key] }),
+    clear: vi.fn(() => { store = {} })
+  }
+})()
 
 // Mock the api service
 vi.mock('@/services/api', () => ({
@@ -9,9 +21,14 @@ vi.mock('@/services/api', () => ({
   }
 }))
 
+// Mock global localStorage
+global.localStorage = localStorageMock
+
 describe('Auth Store', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
+    localStorage.clear()
+    vi.clearAllMocks()
   })
 
   it('should initialize with default state', () => {
@@ -72,6 +89,7 @@ describe('Auth Store', () => {
 
     const store = useAuthStore()
     await store.register({ 
+      _endpoint: '/auth/register',
       name: 'Test User',
       email: 'test@example.com',
       password: 'password',
@@ -84,7 +102,7 @@ describe('Auth Store', () => {
       password: 'password',
       password_confirmation: 'password',
       role: 'customer'
-    })
+    }, {})
     expect(store.user).toEqual(mockResponse.data.user)
     expect(store.token).toBe(mockResponse.data.token)
     expect(store.isAuthenticated).toBe(true)

@@ -46,6 +46,10 @@
    ```
    - This approach is more reliable than using toHaveBeenCalledWith for complex objects
 
+7. **Cypress Logging**:
+   - Always use the centralized log store (`resources/js/stores/log.js`) for logging within components and services during Cypress tests.
+   - This allows Cypress tests to access and verify logged messages via the store's state or the window object, facilitating debugging and test validation.
+
 ### Interface Usage Pattern (Updated 2025-04-29)
 
 ### Key Principles

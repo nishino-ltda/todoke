@@ -21,25 +21,27 @@ class DatabaseSeeder extends Seeder
         $users = [
             'admin' => [
                 'name' => 'Admin User',
-                'email' => 'admin@todoke.com',
-                'type' => 'admin'
+                'email' => 'admin@todoke.test',
+                'type' => 'admin',
+                'password' => Hash::make('password123')
             ],
             'courier' => [
                 'name' => 'Test Courier',
-                'email' => 'courier@example.com',
-                'type' => 'courier'
+                'email' => 'courier@todoke.test',
+                'type' => 'courier',
+                'password' => Hash::make('password123')
             ],
             'partner' => [
                 'name' => 'Restaurant Partner',
-                'email' => 'partner@example.com',
+                'email' => 'partner@todoke.test',
                 'type' => 'partner',
                 'password' => Hash::make('password123')
             ],
             'customer' => [
                 'name' => 'Test Customer',
-                'email' => 'customer@example.com',
+                'email' => 'customer@todoke.test',
                 'type' => 'customer',
-                'password' => Hash::make('Password123')
+                'password' => Hash::make('password123')
             ]
         ];
 
@@ -51,7 +53,7 @@ class DatabaseSeeder extends Seeder
         }
         
         // Get the partner user for product/addon creation
-        $partner = User::where('email', 'partner@example.com')->first();
+        $partner = User::where('email', 'partner@todoke.test')->first();
         if (!$partner) {
             throw new \Exception('Partner user not found');
         }

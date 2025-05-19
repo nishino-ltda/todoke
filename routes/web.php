@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Controllers\TestLogController;
 
 // Public Controllers
 use App\Http\Controllers\HomeController;
@@ -57,6 +58,11 @@ use App\Http\Controllers\Admin\SystemMonitorController as AdminSystemMonitorCont
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/test-loading', function () {
+    return Inertia::render('TestLoading');
+});
+
+Route::get('/test-log', TestLogController::class)->name('test.log');
 
 Route::get('/terms', [CustomerTermsController::class, 'index'])->name('terms');
 Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('privacy');
@@ -65,6 +71,23 @@ Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('priva
 
 // Authenticated Routes
 Route::middleware(['auth', 'verified'])->group(function () {
+    // Root redirects based on user type
+    Route::get('/customer', function () {
+        return redirect()->route('customer.dashboard');
+    });
+    
+    Route::get('/courier', function () {
+        return redirect()->route('courier.dashboard');
+    });
+    
+    Route::get('/partner', function () {
+        return redirect()->route('partner.dashboard');
+    });
+    
+    Route::get('/admin', function () {
+        return redirect()->route('admin.dashboard');
+    });
+
         // Support Routes
     Route::prefix('support')->name('support.')->group(function () {
         Route::get('/', [SupportController::class, 'index'])->name('dashboard');

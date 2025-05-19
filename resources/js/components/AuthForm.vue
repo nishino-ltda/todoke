@@ -1,21 +1,36 @@
 <template>
-  <v-form @submit.prevent="submit">
+  <v-form ref="form" @submit.prevent="submit">
+    <v-alert
+      v-if="errors.general"
+      type="error"
+      data-test="auth-alert"
+    >
+      {{ errors.general }}
+    </v-alert>
+
     <v-text-field
       v-model="form.email"
       label="Email"
       type="email"
+      :rules="[
+        v => !!v || 'Email is required',
+        v => /.+@.+\..+/.test(v) || 'Email must be valid'
+      ]"
       required
       :error-messages="errors.email"
       data-test="email-input"
+      @blur="validateField('email')"
     ></v-text-field>
 
     <v-text-field
       v-model="form.password"
       label="Password"
       type="password"
+      :rules="[v => !!v || 'Password is required']"
       required
       :error-messages="errors.password"
       data-test="password-input"
+      @blur="validateField('password')"
     ></v-text-field>
 
     <template v-if="mode === 'register'">
@@ -124,7 +139,7 @@
       type="submit"
       color="primary"
       :loading="loading"
-      data-test="submit-button"
+      :data-test="mode === 'login' ? 'login-button' : 'submit-button'"
     >
       {{ mode === 'login' ? 'Login' : 'Register' }}
     </v-btn>
@@ -133,6 +148,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
 const props = defineProps({
@@ -143,7 +159,15 @@ const props = defineProps({
   }
 })
 
+const router = useRouter()
 const authStore = useAuthStore()
+const formRef = ref(null)
+
+const validateField = (field) => {
+  if (formRef.value) {
+    formRef.value.validate()
+  }
+}
 const form = ref({
   email: '',
   password: '',
@@ -189,7 +213,7 @@ async function submit() {
       await authStore.login({
         email: form.value.email,
         password: form.value.password
-      })
+      }, router)
     } else {
       const formData = new FormData()
       formData.append('name', form.value.name)
@@ -214,10 +238,15 @@ async function submit() {
         }
       }
 
-      await authStore.register(formData)
+      await authStore.register(formData, router)
     }
   } catch (error) {
     errors.value = error.response?.data?.errors || {}
+    if (error.response?.data?.message) {
+      errors.value.general = error.response.data.message
+    } else if (!Object.keys(errors.value).length) {
+      errors.value.general = 'An unexpected error occurred'
+    }
   }
 }
 </script>

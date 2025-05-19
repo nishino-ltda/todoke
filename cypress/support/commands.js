@@ -1,10 +1,38 @@
-// Pinia store access command
+// Pinia store access command with test support
 Cypress.Commands.add('getStore', (storeName) => {
   return cy.window().then(win => {
-    const app = win.document.querySelector('#app').__vue_app__
-    return app.config.globalProperties.$pinia._s.get(storeName)
-  })
-})
+    try {
+      // First try to use the pre-initialized store
+      if (storeName === 'log' && win.logStore) {
+        return win.logStore;
+      }
+
+      // Then try to use the test Pinia instance
+      if (win.pinia) {
+        const store = win.pinia._s.get(storeName);
+        if (store) return store;
+      }
+
+      // Fallback to app Pinia instance
+      const appElement = win.document.querySelector('#app');
+      if (appElement?.__vue_app__) {
+        const pinia = appElement.__vue_app__.config.globalProperties.$pinia;
+        if (pinia) {
+          const store = pinia._s.get(storeName);
+          if (store) return store;
+        }
+      }
+
+      // Final error with available stores
+      const pinia = win.pinia || appElement?.__vue_app__?.config.globalProperties.$pinia;
+      const availableStores = pinia ? Array.from(pinia._s.keys()).join(', ') : 'none';
+      throw new Error(`Store "${storeName}" not found. Available stores: ${availableStores}`);
+    } catch (err) {
+      console.error('Error accessing store:', err);
+      throw err;
+    }
+  });
+});
 
 Cypress.Commands.add('login', (email, password) => {
   cy.visit('/login')
@@ -83,4 +111,30 @@ Cypress.Commands.overwrite("log", function(log, ...args) {
     console.log(...formattedArgs);
     return log(...args);
   }
+});
+
+/**
+ * Dumps application logs to Cypress output
+ * @param {boolean} clearAfter - Whether to clear logs after dumping (default: true)
+ */
+Cypress.Commands.add('dumpLogs', (clearAfter = true) => {
+  cy.window().then(win => {
+    if (win.logStore) {
+      const logs = win.logStore.messages;
+      if (logs && logs.length > 0) {
+        cy.log('📜 Application logs:');
+        logs.forEach(log => {
+          cy.log(`${log.timestamp} [${log.type}]: ${log.message}`);
+        });
+        
+        if (clearAfter) {
+          win.logStore.clear();
+        }
+      } else {
+        cy.log('ℹ️ No application logs found');
+      }
+    } else {
+      cy.log('⚠️ Log store not available in window');
+    }
+  });
 });
