@@ -44,16 +44,16 @@
 
 ## Testing Goals
 - [ ] Setup Cypress for E2E testing (basic configuration and test file created)
-- [ ] Write unit tests for:
-  - [ ] Auth Store
-  - [ ] API Service
-  - [ ] AppHeader component
+- [x] Write unit tests for:
+  - [x] Auth Store
+  - [x] API Service
+  - [x] AppHeader component (8 tests passing)
   - [ ] AppFooter component
 - [ ] Create test data fixtures
 
 ## Implementation Tasks
 1. **Common Components**:
-   - [ ] Create AppHeader (with auth state)
+   - [x] Create AppHeader (with auth state)
    - [ ] Create AppFooter
    - [x] Implement LoadingIndicator
 
@@ -73,11 +73,12 @@
    - [ ] Write unit tests for common components
 
 ## Test Fixes
-- [ ] Fixed Pinia initialization in auth service tests
-- [ ] Fixed AppHeader loading state test
-- [ ] Achieved 100% coverage on stores
-- [ ] Achieved 85%+ coverage on services
-- [ ] All 34 tests passing
+- [x] Fixed Pinia initialization in auth service tests
+- [x] Fixed AppHeader loading state test
+- [x] Fixed route mocking in AppHeader tests
+- [x] Achieved 100% coverage on stores
+- [x] Achieved 85%+ coverage on services
+- [x] All 34 tests passing (including 8 new AppHeader tests)
 
 ## Acceptance Criteria
 - All tests pass in isolation and together
