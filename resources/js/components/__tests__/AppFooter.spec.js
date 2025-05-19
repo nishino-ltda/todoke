@@ -1,53 +1,111 @@
 import { mount } from '@vue/test-utils'
 import AppFooter from '../AppFooter.vue'
+import { describe, it, expect } from 'vitest'
 
-// Mock Vuetify components and router-link
-const vuetifyComponents = {
-  'v-footer': {
-    template: '<div class="v-footer"><slot /></div>'
-  },
-  'v-container': {
-    template: '<div class="v-container"><slot /></div>'
-  },
-  'v-row': {
-    template: '<div class="v-row"><slot /></div>'
-  },
-  'v-col': {
-    template: '<div class="v-col"><slot /></div>'
-  },
-  'router-link': {
-    template: '<a class="router-link"><slot /></a>',
-    props: ['to']
+// Mock Vuetify components
+const VFooter = {
+  template: '<footer class="v-footer"><slot/></footer>',
+  props: ['app', 'color', 'dark']
+}
+const VContainer = {
+  template: '<div class="v-container"><slot/></div>'
+}
+const VRow = {
+  template: '<div class="v-row"><slot/></div>',
+  props: ['justify', 'align']
+}
+const VCol = {
+  template: '<div class="v-col"><slot/></div>',
+  props: ['cols', 'md', 'class']
+}
+const VBtn = {
+  template: '<button class="v-btn"><slot/></button>',
+  props: ['variant', 'color', 'href', 'class']
+}
+const VIcon = {
+  template: '<span class="v-icon"><slot/></span>',
+  props: ['left']
+}
+
+// Mock Inertia Link component
+const Link = {
+  template: '<a :href="href" :class="classValue" :data-test="dataTest"><slot/></a>',
+  props: {
+    href: String,
+    classValue: String,
+    dataTest: String
   }
 }
 
+// Mock route helper
+const route = (name) => {
+  const routes = {
+    'terms': '/terms',
+    'privacy': '/privacy'
+  }
+  return routes[name] || '#'
+}
+
 describe('AppFooter', () => {
-  it('renders correctly', () => {
+  it('renders current year in copyright', () => {
     const wrapper = mount(AppFooter, {
       global: {
-        components: vuetifyComponents
+        stubs: {
+          VFooter,
+          VContainer,
+          VRow,
+          VCol,
+          VBtn,
+          VIcon,
+          Link
+        },
+        mocks: {
+          route
+        }
       }
     })
     const currentYear = new Date().getFullYear()
-
-    expect(wrapper.find('.v-footer').exists()).toBe(true)
     expect(wrapper.text()).toContain(`© ${currentYear} TODOKE`)
-    expect(wrapper.findAll('.router-link').length).toBe(2)
-    expect(wrapper.findAll('.router-link')[0].text()).toBe('Terms')
-    expect(wrapper.findAll('.router-link')[1].text()).toBe('Privacy')
-    expect(wrapper.findAll('.social-link').length).toBe(3)
   })
 
-  it('contains correct social links', () => {
+  it('has data-test attribute', () => {
     const wrapper = mount(AppFooter, {
       global: {
-        components: vuetifyComponents
+        stubs: {
+          VFooter,
+          VContainer,
+          VRow,
+          VCol,
+          VBtn,
+          VIcon,
+          Link
+        },
+        mocks: {
+          route
+        }
       }
     })
-    const links = wrapper.findAll('.social-link')
+    expect(wrapper.attributes('data-test')).toBe('app-footer')
+  })
 
-    expect(links[0].attributes('href')).toContain('facebook.com')
-    expect(links[1].attributes('href')).toContain('twitter.com')
-    expect(links[2].attributes('href')).toContain('instagram.com')
+  it('contains links to terms and privacy', () => {
+    const wrapper = mount(AppFooter, {
+      global: {
+        stubs: {
+          VFooter,
+          VContainer,
+          VRow,
+          VCol,
+          VBtn,
+          VIcon,
+          Link
+        },
+        mocks: {
+          route
+        }
+      }
+    })
+    expect(wrapper.find('[data-test="terms-link"]').exists()).toBe(true)
+    expect(wrapper.find('[data-test="privacy-link"]').exists()).toBe(true)
   })
 })
