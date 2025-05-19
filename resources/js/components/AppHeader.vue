@@ -31,14 +31,23 @@
 <script setup>
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
+import { useLogStore } from '@/stores/log'
 import { Link } from '@inertiajs/vue3'
 import CartIcon from './CartIcon.vue'
+
 const authStore = useAuthStore()
+const logStore = useLogStore()
 
 const { isAuthenticated, user, loading } = storeToRefs(authStore)
-const handleLogout = authStore.logout
+const handleLogout = () => {
+  logStore.log('🔄 AppHeader: Logout initiated')
+  authStore.logout()
+    .then(() => logStore.log('✅ AppHeader: Logout successful'))
+    .catch(err => logStore.log(`❌ AppHeader: Logout failed - ${err.message}`))
+}
 
 function toggleDrawer() {
+  logStore.log('📱 AppHeader: Drawer toggled')
   // Will implement drawer toggle later
 }
 </script>

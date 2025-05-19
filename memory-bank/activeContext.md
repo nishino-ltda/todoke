@@ -47,6 +47,20 @@
     - Profile Management (added tests for address and payment management, existing reviewed)
     - Support/Ticket System (no new files, existing reviewed)
 
+## AppHeader Component Testing (2025-05-19)
+
+### Test Improvements
+- Completed comprehensive testing for AppHeader component:
+  - Added tests for all authentication states (logged in/out)
+  - Verified menu link visibility based on user role
+  - Tested drawer toggle event logging
+  - Validated loading state handling
+- Fixed issues with:
+  - Route helper mocking in tests
+  - Auth state management
+  - Button disabled states
+- Added data-test attributes for reliable test targeting
+
 ## Centralized Logging and Cypress Test (2025-05-19)
 
 ### Log Store Implementation

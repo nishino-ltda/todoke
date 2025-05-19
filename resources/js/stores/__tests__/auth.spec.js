@@ -1,10 +1,17 @@
+import { createPinia, setActivePinia } from 'pinia'
 import { useAuthStore } from '../auth'
 import { vi } from 'vitest'
 import api from '@/services/api'
 
 describe('Auth Store', () => {
   beforeEach(() => {
+    // Create a fresh Pinia instance and make it active
+    setActivePinia(createPinia())
     localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
   })
 
   it('should initialize with default state', () => {
