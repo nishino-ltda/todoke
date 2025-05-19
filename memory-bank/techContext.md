@@ -77,6 +77,16 @@
     - Component stubs for Vuetify components to avoid CSS import issues
     - Example pattern in HomeHero.spec.js and HomeFeatures.spec.js
     - Comprehensive assertions for component content and structure
+  - **Logging in Tests**:
+    - Use log store (resources/js/stores/log.js) instead of console.log
+    - Logs available to Cypress via window.logStore API
+    - Includes timestamps and message history
+    - Access logs in tests:
+    ```javascript
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+    });
+    ```
 - **Test Configuration**:
   - Process isolation enabled (prevents test interference)
   - Strict global state checking

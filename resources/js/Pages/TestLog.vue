@@ -1,21 +1,27 @@
 <template>
   <div>
     <h1>Test Log Page</h1>
-    <p id="logged-message">{{ loggedMessage }}</p>
+    <TestComponent />
+    <p id="logged-message">{{ latestLog }}</p>
+    <div v-if="logs.length > 0">
+      <h3>Recent Logs:</h3>
+      <ul>
+        <li v-for="(entry, index) in logs" :key="index">
+          [{{ entry.timestamp }}] {{ entry.message }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { computed } from 'vue';
 import { useLogStore } from '@/stores/log';
 import { storeToRefs } from 'pinia';
+import TestComponent from '@/components/TestComponent.vue';
 
 const logStore = useLogStore();
-const { loggedMessage } = storeToRefs(logStore);
-const { log } = logStore;
+const { logs } = storeToRefs(logStore);
 
-onMounted(() => {
-  console.log('Direct console.log from TestLog.vue');
-  log('Hello from TestLog.vue');
-});
+const latestLog = computed(() => logs.value[0]?.message || '');
 </script>

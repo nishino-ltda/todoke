@@ -1,7 +1,18 @@
 describe('Log Store Test', () => {
-  it('should display the logged message on the page and update the window object', () => {
+  it('should capture and display logs from components', () => {
     cy.visit('/test-log');
-    cy.get('#logged-message').should('contain', 'Hello from TestLog.vue');
-    cy.window().should('have.property', 'loggedMessage', 'Hello from TestLog.vue');
+    
+    // Click the button to trigger a log
+    cy.get('#log-button').click();
+    
+    // Verify the log appears in the UI
+    cy.get('#logged-message').should('contain', 'Test message from TestComponent');
+    
+    // Verify the log is available to Cypress
+    cy.window().then((win) => {
+      const latestLog = win.logStore.getLatest();
+      cy.log('📢 Latest log from store:', latestLog);
+      expect(latestLog).to.equal('Test message from TestComponent');
+    });
   });
 });

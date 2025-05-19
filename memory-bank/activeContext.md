@@ -49,8 +49,38 @@
 
 ## Centralized Logging and Cypress Test (2025-05-19)
 
-- Implemented a centralized logging solution in `resources/js/stores/log.js`.
-- Created a test page `resources/js/Pages/TestLog.vue` and controller `app/Http/Controllers/TestLogController.php` to demonstrate the log store.
-- Added a route `/test-log` in `routes/web.php`.
-- Created a Cypress test file `cypress/e2e/common/log-store.cy.js` to verify the log store functionality.
-- Confirmed the log store is working correctly by running the Cypress test `cypress/e2e/common/log-store.cy.js`. The test passed, verifying the logged message appears on the page and is available on the window object.
+### Log Store Implementation
+- Created `resources/js/stores/log.js` with enhanced features:
+  - Stores multiple log entries with timestamps
+  - Provides Cypress access via window.logStore API
+  - Includes clear() functionality
+  - Limits log history to 100 entries
+- Replaces console.log usage with log store for:
+  - Better testability in Cypress
+  - Structured logging with timestamps
+  - Consistent logging across components
+
+### Testing Infrastructure
+- Created TestComponent (`resources/js/components/TestComponent.vue`) demonstrating log store usage
+- Updated TestLog page (`resources/js/Pages/TestLog.vue`) to:
+  - Display TestComponent
+  - Show latest log and full history
+- Enhanced Cypress test (`cypress/e2e/common/log-store.cy.js`) to:
+  - Click button to trigger logging
+  - Verify logs appear in UI
+  - Check logs are available to Cypress
+  - Output logs to terminal with emoji
+
+### Usage Guidelines
+1. Import log store: `import { useLogStore } from '@/stores/log'`
+2. Use in components:
+```javascript
+const logStore = useLogStore();
+logStore.log('Your message here');
+```
+3. In tests, access logs via:
+```javascript
+cy.window().then(win => {
+  const logs = win.logStore.getLogs();
+});
+```
