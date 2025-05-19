@@ -4,6 +4,7 @@ describe('🛵 Courier Dashboard', () => {
     // Will login as courier before each test
   });
 
+  // Sprint 6: Availability Status Toggle
   it('🔄 Should toggle availability status', () => {
     cy.log('🔘 Testing availability toggle');
     // Test will verify:
@@ -13,6 +14,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Delivery Request Display
   it('📦 Should display available delivery requests', () => {
     cy.log('📬 Testing delivery request display');
     // Test will verify:
@@ -22,6 +24,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Delivery Acceptance/Rejection
   it('✅ Should be able to accept/reject deliveries', () => {
     cy.log('🤝 Testing delivery acceptance');
     // Test will verify:
@@ -31,6 +34,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Delivery Status Updates
   it('📍 Should update delivery status', () => {
     cy.log('🔄 Testing status updates');
     // Test will verify:

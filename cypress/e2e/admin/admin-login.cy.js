@@ -1,4 +1,5 @@
 describe('🔐 Admin Login', () => {
+  // Sprint 7: Admin login flow tests
   it('🔑 Should login with valid credentials', () => {
     cy.log('✅ Testing successful login');
     // Test will verify:
@@ -9,6 +10,7 @@ describe('🔐 Admin Login', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 7: Admin login flow tests  
   it('⚠️ Should reject invalid credentials', () => {
     cy.log('❌ Testing failed login');
     // Test will verify:

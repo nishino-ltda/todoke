@@ -4,6 +4,7 @@ describe('🛵 Courier Dashboard', () => {
     // Will login as courier before each test
   });
 
+  // Sprint 6: Courier Dashboard Performance Metrics
   it('📊 Should display performance metrics', () => {
     cy.log('📈 Testing performance dashboard');
     // Test will verify:
@@ -14,6 +15,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Courier Availability Management
   it('📅 Should manage availability', () => {
     cy.log('⏱️ Testing availability toggle');
     // Test will verify:
@@ -24,6 +26,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Offline Functionality
   it('📱 Should work offline', () => {
     cy.log('📴 Testing offline functionality');
     // Test will verify:
@@ -33,6 +36,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Edge Case Handling
   it('⚠️ Should handle edge cases', () => {
     cy.log('⚡ Testing special scenarios');
     // Test will verify:
@@ -43,6 +47,7 @@ describe('🛵 Courier Dashboard', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 6: Mobile Responsiveness
   it('📱 Should work on mobile', () => {
     cy.log('📲 Testing mobile dashboard');
     // Test will verify:

@@ -4,6 +4,7 @@ describe('👔 Admin User Management', () => {
     // Will login as admin before each test
   });
 
+  // Sprint 7: User management tests
   it('👥 Should manage user accounts', () => {
     cy.log('👤 Testing user management');
     // Test will verify:
@@ -14,6 +15,7 @@ describe('👔 Admin User Management', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 7: User management tests
   it('🛡️ Should handle permissions', () => {
     cy.log('🔐 Testing permission management');
     // Test will verify:
@@ -24,6 +26,7 @@ describe('👔 Admin User Management', () => {
     cy.fail('Test not implemented');
   });
 
+  // Sprint 7: User management tests
   it('🔍 Should search and filter users', () => {
     cy.log('🔎 Testing user search and filtering');
     // Test will verify:
