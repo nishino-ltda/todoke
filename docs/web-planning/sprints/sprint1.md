@@ -54,12 +54,12 @@
 ## Implementation Tasks
 1. **Common Components**:
    - [x] Create AppHeader (with auth state)
-   - [ ] Create AppFooter
+   - [x] Create AppFooter
    - [x] Implement LoadingIndicator
 
 2. **State Management**:
-   - [ ] Implement Auth Store
-   - [ ] Implement Loading Store
+   - [x] Implement Auth Store (7/7 tests passing)
+   - [x] Implement Loading Store (4/4 tests passing)
 
 3. **Services**:
    - [ ] Configure API Service (Axios)

@@ -1,6 +1,13 @@
+import { createPinia, setActivePinia } from 'pinia'
 import { useLoadingStore } from '../loading'
+import { describe, it, expect, beforeEach } from 'vitest'
 
 describe('Loading Store', () => {
+  beforeEach(() => {
+    // Create a fresh Pinia instance and make it active
+    setActivePinia(createPinia())
+  })
+
   it('should initialize with default state', () => {
     const store = useLoadingStore()
     expect(store.isLoading).toBe(false)

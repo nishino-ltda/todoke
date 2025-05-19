@@ -1,10 +1,10 @@
 # Work Breakdown Structure: Stores & Services
 
 ## 1. State Management (Pinia Stores)
-- [ ] Implement Auth Store
-  - [ ] Manage authentication state
-  - [ ] Handle login/logout
-  - [ ] Persist session
+- [x] Implement Auth Store
+  - [x] Manage authentication state
+  - [x] Handle login/logout
+  - [x] Persist session
 - [ ] Implement Cart Store
   - [ ] Manage shopping cart state
   - [ ] Handle cart operations
@@ -15,9 +15,9 @@
 - [ ] Implement Notifications Store
   - [ ] Manage UI notifications
   - [ ] Handle notification display
-- [ ] Implement Loading Store
-  - [ ] Track loading states
-  - [ ] Manage loading indicators
+- [x] Implement Loading Store
+  - [x] Track loading states
+  - [x] Manage loading indicators
 
 ## 2. Frontend Services
 - [ ] Implement API Service
@@ -43,7 +43,7 @@
   - [ ] Manage map interactions
 
 ## 3. Testing
-- [ ] Unit tests for stores
+- [x] Unit tests for stores (Auth, Loading)
 - [ ] Unit tests for services
 - [ ] Integration tests with components
 - [ ] E2E testing setup
