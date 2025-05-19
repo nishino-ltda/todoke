@@ -42,6 +42,13 @@
   - Validated auth state handling
   - Added data-test attributes
   - All 8 tests now passing
+- AppFooter component tests:
+  - Added test coverage for copyright year
+  - Tested terms/privacy links
+  - Verified social media links
+  - Checked Vuetify classes
+  - Added snapshot test
+  - All 5 tests now passing
 - Partner login test fixes:
   - Credential validation (working)
   - Error message handling (working)
