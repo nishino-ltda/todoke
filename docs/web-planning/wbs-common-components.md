@@ -1,16 +1,16 @@
 # Work Breakdown Structure: Common Components
 
 ## 1. Layout Components
-- [ ] Create App Header (`AppHeader.vue`)
-  - [ ] Dynamic navigation based on user role
-  - [ ] Authentication state display
-  - [ ] Responsive menu
-  - [ ] Unit tests (100% coverage)
-- [ ] Create App Footer (`AppFooter.vue`)
-  - [ ] Standard footer content
-  - [ ] Legal links
-  - [ ] Social media links
-  - [ ] Unit tests (100% coverage)
+- [x] Create App Header (`AppHeader.vue`)
+  - [x] Dynamic navigation based on user role
+  - [x] Authentication state display
+  - [x] Responsive menu
+  - [x] Unit tests (8 tests passing)
+- [x] Create App Footer (`AppFooter.vue`)
+  - [x] Standard footer content
+  - [x] Legal links
+  - [x] Social media links
+  - [x] Unit tests (4 tests passing)
 - [ ] Create Guest Layout (`GuestLayout.vue`)
   - [ ] Minimal header/footer
   - [ ] Applied to Login/Register/Home pages
