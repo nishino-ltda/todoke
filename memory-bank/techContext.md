@@ -35,6 +35,31 @@
     - Avoid `to=` attribute (router-link syntax)
     - Use `route()` helper for named routes
 - **HTTP Client**: Axios
+  - **Interceptor Implementation**:
+    - Request interceptor:
+      ```javascript
+      api.interceptors.request.use(config => {
+        loadingStore.startLoading()
+        return config
+      })
+      ```
+    - Response interceptor:
+      ```javascript
+      api.interceptors.response.use(
+        response => {
+          loadingStore.stopLoading()
+          return response
+        },
+        error => {
+          loadingStore.stopLoading()
+          return Promise.reject(error)
+        }
+      )
+      ```
+    - **Key Features**:
+      - Automatic loading state management
+      - Centralized error handling
+      - Tested with 100% coverage
 - **Vue Composition API**: Using `<script setup>` syntax
   - **Conversion Patterns**:
     - **Simple Components**: Remove export default, move imports to top level

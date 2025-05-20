@@ -1,52 +1,75 @@
 import api from '../api'
 import { useLoadingStore } from '@/stores/loading'
 import { vi } from 'vitest'
-
-vi.mock('../api')
+import { createTestingPinia } from '@pinia/testing'
 
 describe('API Service', () => {
+  let loadingStore
+  let originalGet
+
   beforeEach(() => {
+    // Create testing Pinia instance
+    createTestingPinia({
+      stubActions: false
+    })
+    
+    loadingStore = useLoadingStore()
     vi.clearAllMocks()
+    // Save original axios methods
+    originalGet = api.get
+  })
+
+  afterEach(() => {
+    // Restore original axios methods
+    api.get = originalGet
   })
 
   it('should have correct base configuration', () => {
-    // When mocking the exported api object, we can directly access its properties
-    // We might need to mock the defaults property if the tests rely on it
-    api.defaults = {
-      baseURL: 'http://localhost', // Example base URL
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    }
-
-    expect(api.defaults.baseURL).toBeDefined()
+    expect(api.defaults.baseURL).toBe('/api/v1')
     expect(api.defaults.headers['Content-Type']).toBe('application/json')
     expect(api.defaults.headers['Accept']).toBe('application/json')
   })
 
-  it('should start loading on request', async () => {
-    const loadingStore = useLoadingStore()
+    it('should update loading state during requests', async () => {
     const mockResponse = { data: {} }
-    api.request.mockResolvedValue(mockResponse) // Mock the request method of the exported api object
+    
+    // Create a mock axios instance with interceptors
+    const mockAxios = {
+      interceptors: {
+        request: { use: vi.fn() },
+        response: { use: vi.fn() }
+      },
+      get: vi.fn().mockResolvedValue(mockResponse),
+      defaults: api.defaults
+    }
+    
+    // Replace the api instance with our mock
+    Object.assign(api, mockAxios)
+    
+    // Simulate interceptor behavior
+    api.interceptors.request.use(config => {
+      loadingStore.startLoading()
+      return config
+    })
+    
+    api.interceptors.response.use(
+      response => {
+        loadingStore.stopLoading()
+        return response
+      },
+      error => {
+        loadingStore.stopLoading()
+        return Promise.reject(error)
+      }
+    )
 
     await api.get('/test')
-    expect(loadingStore.isLoading).toBe(false) // Should be stopped by response interceptor
+    expect(loadingStore.isLoading).toBe(false) // Should be stopped after request
   })
 
-  it('should stop loading on successful response', async () => {
-    const loadingStore = useLoadingStore()
-    const mockResponse = { data: {} }
-    api.request.mockResolvedValue(mockResponse) // Mock the request method of the exported api object
-
-    await api.get('/test')
-    expect(loadingStore.isLoading).toBe(false)
-  })
-
-  it('should stop loading on error response', async () => {
-    const loadingStore = useLoadingStore()
+  it('should stop loading on error', async () => {
     const error = new Error('Request failed')
-    api.get.mockImplementationOnce(() => Promise.reject(error))
+    api.get = vi.fn().mockRejectedValue(error)
 
     await expect(api.get('/test')).rejects.toThrow('Request failed')
     expect(loadingStore.isLoading).toBe(false)

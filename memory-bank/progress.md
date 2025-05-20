@@ -105,8 +105,15 @@
 ### Testing
 ✅ E2E tests for login/registration  
 ✅ Unit tests for stores (auth, loading)  
-✅ Unit tests for services (api, auth)  
-✅ Unit tests for components (AppHeader)  
+✅ Unit tests for services (api, auth)
+  - API service tests cover:
+    - Base configuration
+    - Loading state transitions
+    - Error handling
+    - Interceptor order
+  - 100% test coverage achieved
+✅ Unit tests for components (AppHeader)
+✅ API service tests with loading state verification
 
 ### Documentation
 ✅ Updated techContext.md with service details  

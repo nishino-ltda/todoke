@@ -1,127 +1,144 @@
 import authService from '../auth'
-import { useAuthStore } from '@/stores/auth'
+import api from '../api'
+import { useAuthStore } from '../stores/auth.js'
+import { useLogStore } from '../stores/log.js'
 import { vi } from 'vitest'
-import api from '@/services/api'
-import { createPinia, setActivePinia } from 'pinia'
+import { createTestingPinia } from '@pinia/testing'
 
 describe('Auth Service', () => {
+  let authStore
+  let logStore
+  let mockResponse
+
   beforeEach(() => {
+    createTestingPinia()
+    authStore = useAuthStore()
+    logStore = useLogStore()
     vi.clearAllMocks()
-    setActivePinia(createPinia())
+    
+    mockResponse = {
+      data: {
+        token: 'test-token',
+        user: { id: 1, name: 'Test User' }
+      }
+    }
+
+    // Mock auth store methods
+    authStore.setAuth = vi.fn()
+    authStore.clearAuth = vi.fn()
+    authStore.token = null
+    authStore.user = null
   })
 
   describe('login', () => {
-    it('should call API and set auth on success', async () => {
-      const mockResponse = {
-        data: {
-          user: { id: 1, name: 'Test User' },
-          token: 'test-token'
-        }
-      }
-      vi.spyOn(api, 'post').mockResolvedValue(mockResponse)
-
-      const response = await authService.login({
-        email: 'test@example.com',
-        password: 'password'
-      })
-
-      expect(api.post).toHaveBeenCalledWith('/auth/login', {
-        email: 'test@example.com',
-        password: 'password'
-      })
-      expect(response).toEqual(mockResponse)
-      expect(useAuthStore().user).toEqual(mockResponse.data.user)
-      expect(useAuthStore().token).toBe(mockResponse.data.token)
+    it('should call API with credentials', async () => {
+      api.post = vi.fn().mockResolvedValue(mockResponse)
+      const credentials = { email: 'test@example.com', password: 'password' }
+      
+      await authService.login(credentials)
+      
+      expect(api.post).toHaveBeenCalledWith('/login', credentials)
     })
 
-    it('should clear auth on failure', async () => {
-      vi.spyOn(api, 'post').mockRejectedValue(new Error('Invalid credentials'))
+    it('should set token and user on success', async () => {
+      api.post = vi.fn().mockResolvedValue(mockResponse)
+      
+      await authService.login({})
+      
+      expect(authStore.setAuth).toHaveBeenCalledWith(mockResponse.data)
+      expect(logStore.log).toHaveBeenCalledWith('🔐 Attempting login')
+      expect(logStore.log).toHaveBeenCalledWith('✅ Login successful')
+    })
 
-      await expect(authService.login({
-        email: 'test@example.com',
-        password: 'wrong'
-      })).rejects.toThrow('Invalid credentials')
-
-      expect(useAuthStore().user).toBeNull()
-      expect(useAuthStore().token).toBeNull()
+    it('should throw error on failure', async () => {
+      const error = new Error('Login failed')
+      api.post = vi.fn().mockRejectedValue(error)
+      
+      await expect(authService.login({})).rejects.toThrow('Login failed. Please check your credentials.')
+      expect(logStore.log).toHaveBeenCalledWith('❌ Login failed', error)
     })
   })
 
   describe('register', () => {
-    it('should call API and set auth on success', async () => {
-      const mockResponse = {
-        data: {
-          user: { id: 1, name: 'Test User' },
-          token: 'test-token'
-        }
-      }
-      vi.spyOn(api, 'post').mockResolvedValue(mockResponse)
-
-      const response = await authService.register({
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password'
-      })
-
-      expect(api.post).toHaveBeenCalledWith('/auth/register', {
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password'
-      })
-      expect(response).toEqual(mockResponse)
-      expect(useAuthStore().user).toEqual(mockResponse.data.user)
-      expect(useAuthStore().token).toBe(mockResponse.data.token)
+    it('should call API with user data', async () => {
+      api.post = vi.fn().mockResolvedValue(mockResponse)
+      const userData = { name: 'New User', email: 'new@example.com', password: 'password' }
+      
+      await authService.register(userData)
+      
+      expect(api.post).toHaveBeenCalledWith('/register', userData)
     })
 
-    it('should clear auth on failure', async () => {
-      vi.spyOn(api, 'post').mockRejectedValue(new Error('Validation failed'))
+    it('should set token and user on success', async () => {
+      api.post = vi.fn().mockResolvedValue(mockResponse)
+      
+      await authService.register({})
+      
+      expect(authStore.setAuth).toHaveBeenCalledWith(mockResponse.data)
+      expect(logStore.log).toHaveBeenCalledWith('📝 Attempting registration')
+      expect(logStore.log).toHaveBeenCalledWith('✅ Registration successful')
+    })
 
-      await expect(authService.register({
-        name: 'Test User',
-        email: 'invalid',
-        password: 'password'
-      })).rejects.toThrow('Validation failed')
-
-      expect(useAuthStore().user).toBeNull()
-      expect(useAuthStore().token).toBeNull()
+    it('should throw error on failure', async () => {
+      const error = new Error('Registration failed')
+      api.post = vi.fn().mockRejectedValue(error)
+      
+      await expect(authService.register({})).rejects.toThrow('Registration failed. Please try again.')
+      expect(logStore.log).toHaveBeenCalledWith('❌ Registration failed', error)
     })
   })
 
   describe('logout', () => {
-    it('should clear auth state', () => {
-      const store = useAuthStore()
-      store.setAuth({
-        user: { id: 1, name: 'Test User' },
-        token: 'test-token'
-      })
+    it('should call API logout endpoint', async () => {
+      api.post = vi.fn().mockResolvedValue({})
+      
+      await authService.logout()
+      
+      expect(api.post).toHaveBeenCalledWith('/logout')
+      expect(logStore.log).toHaveBeenCalledWith('🚪 Attempting logout')
+      expect(logStore.log).toHaveBeenCalledWith('✅ Logout successful')
+    })
 
-      authService.logout()
-      expect(store.user).toBeNull()
-      expect(store.token).toBeNull()
+    it('should clear auth store', async () => {
+      api.post = vi.fn().mockResolvedValue({})
+      authStore.token = 'test-token'
+      authStore.user = { id: 1 }
+      
+      await authService.logout()
+      
+      expect(authStore.clearAuth).toHaveBeenCalled()
+      expect(logStore.log).toHaveBeenCalledWith('🚪 Attempting logout')
+      expect(logStore.log).toHaveBeenCalledWith('✅ Logout successful')
     })
   })
 
-  describe('getCurrentUser', () => {
-    it('should return current user', () => {
-      const store = useAuthStore()
-      store.setAuth({
-        user: { id: 1, name: 'Test User' },
-        token: 'test-token'
-      })
-
-      expect(authService.getCurrentUser()).toEqual({ id: 1, name: 'Test User' })
+  describe('refreshToken', () => {
+    it('should call API refresh endpoint', async () => {
+      api.post = vi.fn().mockResolvedValue(mockResponse)
+      
+      await authService.refreshToken()
+      
+      expect(api.post).toHaveBeenCalledWith('/refresh-token')
+      expect(logStore.log).toHaveBeenCalledWith('🔄 Attempting token refresh')
+      expect(logStore.log).toHaveBeenCalledWith('✅ Token refresh successful')
     })
-  })
 
-  describe('isAuthenticated', () => {
-    it('should return authentication state', () => {
-      const store = useAuthStore()
-      store.setAuth({
-        user: { id: 1, name: 'Test User' },
-        token: 'test-token'
-      })
+    it('should set new token on success', async () => {
+      api.post = vi.fn().mockResolvedValue(mockResponse)
+      
+      await authService.refreshToken()
+      
+      expect(authStore.setAuth).toHaveBeenCalledWith(mockResponse.data)
+      expect(logStore.log).toHaveBeenCalledWith('🔄 Attempting token refresh')
+      expect(logStore.log).toHaveBeenCalledWith('✅ Token refresh successful')
+    })
 
-      expect(authService.isAuthenticated()).toBe(true)
+    it('should throw error on failure', async () => {
+      const error = new Error('Refresh failed')
+      api.post = vi.fn().mockRejectedValue(error)
+      
+      await expect(authService.refreshToken()).rejects.toThrow('Session expired. Please login again.')
+      expect(logStore.log).toHaveBeenCalledWith('❌ Token refresh failed', error)
     })
   })
 })

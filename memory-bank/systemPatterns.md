@@ -1,3 +1,60 @@
+## API Service Patterns (Updated 2025-05-19)
+
+### Interceptor Implementation
+1. **Request Interceptor**:
+   - Sets loading state to true
+   - Can modify request config
+   - Must return config
+
+2. **Response Interceptor**:
+   - Sets loading state to false
+   - Handles successful responses
+   - Must return response
+
+3. **Error Interceptor**:
+   - Sets loading state to false
+   - Handles API errors consistently
+   - Returns rejected promise
+
+### Loading State Management
+- Centralized via Pinia store
+- Components react to isLoading state
+- Automatically managed by interceptors
+- Testable via store state
+
+### Error Handling
+- Consistent error format
+- Automatic loading state cleanup
+- Logging of errors
+- Rejection of promises for caller handling
+
+### Testing Approach
+- Mock axios instance with interceptors
+- Verify loading state transitions
+- Test error scenarios
+- Validate interceptor order
+
+### Example Implementation
+```javascript
+// Request interceptor
+api.interceptors.request.use(config => {
+  loadingStore.startLoading()
+  return config
+})
+
+// Response interceptor
+api.interceptors.response.use(
+  response => {
+    loadingStore.stopLoading()
+    return response
+  },
+  error => {
+    loadingStore.stopLoading()
+    return Promise.reject(error)
+  }
+)
+```
+
 ## Testing Patterns (Updated 2025-05-05)
 
 ### Frontend Testing Best Practices

@@ -20,10 +20,10 @@
   - [x] Manage loading indicators
 
 ## 2. Frontend Services
-- [ ] Implement API Service
-  - [ ] Configure Axios instance
-  - [ ] Set up request/response interceptors
-  - [ ] Handle error responses
+- [x] Implement API Service
+  - [x] Configure Axios instance
+  - [x] Set up request/response interceptors
+  - [x] Handle error responses
 - [ ] Implement Auth Service
   - [ ] Handle login/registration
   - [ ] Manage tokens
