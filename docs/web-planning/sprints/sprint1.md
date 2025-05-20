@@ -62,8 +62,8 @@
    - [x] Implement Loading Store (4/4 tests passing)
 
 3. **Services**:
-   - [ ] Configure API Service (Axios)
-   - [ ] Implement Auth Service
+   - [x] Configure API Service (Axios)
+   - [x] Implement Auth Service (8/8 tests passing)
 
 4. **Testing Infrastructure**:
    - [ ] Configure test environment (Vitest + Vue Test Utils)

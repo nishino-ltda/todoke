@@ -24,10 +24,10 @@
   - [x] Configure Axios instance
   - [x] Set up request/response interceptors
   - [x] Handle error responses
-- [ ] Implement Auth Service
-  - [ ] Handle login/registration
-  - [ ] Manage tokens
-  - [ ] Unit tests (100% coverage)
+- [x] Implement Auth Service
+  - [x] Handle login/registration
+  - [x] Manage tokens
+  - [x] Unit tests (8/8 passing, 100% coverage)
 - [ ] Implement User Service
   - [ ] Fetch/update user data
 - [ ] Implement Delivery Service
@@ -44,6 +44,7 @@
 
 ## 3. Testing
 - [x] Unit tests for stores (Auth, Loading)
-- [ ] Unit tests for services
+- [x] Unit tests for Auth Service
+- [ ] Unit tests for other services
 - [ ] Integration tests with components
 - [ ] E2E testing setup
