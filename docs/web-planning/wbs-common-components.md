@@ -15,10 +15,10 @@
   - [x] Minimal header/footer
   - [x] Applied to Login/Register/Home pages
   - [x] Unit tests (100% coverage)
-- [ ] Create Authenticated Layout (`AuthenticatedLayout.vue`)
-  - [ ] Full navigation header
-  - [ ] Applied to all authenticated pages
-  - [ ] Unit tests (100% coverage)
+- [x] Create Authenticated Layout (`AuthenticatedLayout.vue`)
+  - [x] Full navigation header
+  - [x] Applied to all authenticated pages
+  - [x] Unit tests (100% coverage)
 
 ## 2. Authentication Components
 - [ ] Create Auth Form (`AuthForm.vue`)
