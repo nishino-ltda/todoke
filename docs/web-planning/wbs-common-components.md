@@ -11,10 +11,10 @@
   - [x] Legal links
   - [x] Social media links
   - [x] Unit tests (4 tests passing)
-- [ ] Create Guest Layout (`GuestLayout.vue`)
-  - [ ] Minimal header/footer
-  - [ ] Applied to Login/Register/Home pages
-  - [ ] Unit tests (100% coverage)
+- [x] Create Guest Layout (`GuestLayout.vue`)
+  - [x] Minimal header/footer
+  - [x] Applied to Login/Register/Home pages
+  - [x] Unit tests (100% coverage)
 - [ ] Create Authenticated Layout (`AuthenticatedLayout.vue`)
   - [ ] Full navigation header
   - [ ] Applied to all authenticated pages

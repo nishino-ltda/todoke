@@ -1,12 +1,12 @@
 <template>
-  <v-app>
-    <AppHeader />
+  <v-app data-test="guest-layout">
+    <AppHeader minimal />
     <v-main>
       <v-container>
-        <slot />
+        <slot data-test="guest-content" />
       </v-container>
     </v-main>
-    <AppFooter />
+    <AppFooter minimal />
   </v-app>
 </template>
 
