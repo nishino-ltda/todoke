@@ -118,12 +118,13 @@
 - Add detailed assertions and test data.
 - Integrate tests into the CI/CD pipeline.
 
-## Sprint 1 Completion (2025-05-17)
+## Sprint 1 Completion (2025-05-21)
 
 ### Authentication System
 ✅ Login flow implemented and tested  
 ✅ Registration flow with role-specific fields  
 ✅ Role-based access control  
+✅ AuthForm component with comprehensive tests (19 passing)
 
 ### Core Services
 ✅ API service with interceptors  
@@ -134,6 +135,7 @@
 ✅ E2E tests for login/registration  
 ✅ Unit tests for stores (auth, loading)  
 ✅ Unit tests for services (api, auth)
+✅ Unit tests for AuthForm component (100% coverage)
   - API service tests cover:
     - Base configuration
     - Loading state transitions

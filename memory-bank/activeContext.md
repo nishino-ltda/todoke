@@ -1,3 +1,15 @@
+## AuthForm Component Implementation (2025-05-21)
+
+### Completed:
+- Implemented comprehensive AuthForm component with:
+  - Login and registration modes
+  - Role-specific form fields
+  - Form validation
+  - Loading states
+  - Error handling
+- Added 19 passing unit tests with 100% coverage
+- Updated all related documentation
+
 ## AppFooter Component Testing (2025-05-20)
 
 ### Completed:

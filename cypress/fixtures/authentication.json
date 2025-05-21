@@ -1,0 +1,32 @@
+{
+  "users": {
+    "customer": {
+      "name": "Test Customer",
+      "email": "customer@test.com",
+      "password": "password123",
+      "role": "customer"
+    },
+    "partner": {
+      "name": "Test Partner",
+      "email": "partner@test.com",
+      "password": "password123",
+      "role": "partner"
+    },
+    "courier": {
+      "name": "Test Courier",
+      "email": "courier@test.com",
+      "password": "password123",
+      "role": "courier"
+    },
+    "admin": {
+      "name": "Test Admin",
+      "email": "admin@test.com",
+      "password": "password123",
+      "role": "admin"
+    }
+  },
+  "invalidCredentials": {
+    "invalidEmail": "invalid-email",
+    "invalidPassword": "wrongpassword"
+  }
+}

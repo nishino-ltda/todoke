@@ -66,11 +66,11 @@
    - [x] Implement Auth Service (8/8 tests passing)
 
 4. **Testing Infrastructure**:
-   - [ ] Configure test environment (Vitest + Vue Test Utils)
+   - [x] Configure test environment (Vitest + Vue Test Utils)
    - [ ] Set up CI/CD test reporting (Vitest coverage)
-   - [ ] Write unit tests for all stores
-   - [ ] Write unit tests for all services
-   - [ ] Write unit tests for common components
+   - [x] Write unit tests for all stores
+   - [x] Write unit tests for all services
+   - [x] Write unit tests for common components (including AuthForm)
 
 ## Test Fixes
 - [x] Fixed Pinia initialization in auth service tests

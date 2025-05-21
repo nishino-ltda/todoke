@@ -4,6 +4,7 @@
       v-if="errors.general"
       type="error"
       data-test="auth-alert"
+      class="mb-4"
     >
       {{ errors.general }}
     </v-alert>
@@ -48,7 +49,8 @@
         type="password"
         required
         :error-messages="errors.password_confirmation"
-        data-test="password-confirm-input"
+        data-test="password-confirmation-input"
+        @blur="validateField('password_confirmation')"
       ></v-text-field>
 
       <v-select
@@ -58,10 +60,11 @@
         required
         :error-messages="errors.role"
         data-test="role-select"
+        @update:modelValue="handleRoleChange"
       ></v-select>
 
       <!-- Courier specific fields -->
-      <template v-if="form.role === 'courier'">
+      <template v-if="showCourierFields">
         <v-text-field
           v-model="form.license_number"
           label="License Number"
@@ -90,7 +93,7 @@
       </template>
 
       <!-- Partner specific fields -->
-      <template v-if="form.role === 'partner'">
+      <template v-if="showPartnerFields">
         <v-text-field
           v-model="form.business_name"
           label="Business Name"
@@ -135,19 +138,26 @@
       </template>
     </template>
 
-    <v-btn
+    <button
       type="submit"
-      color="primary"
-      :loading="loading"
-      :data-test="mode === 'login' ? 'login-button' : 'submit-button'"
+      class="v-btn"
+      :disabled="loading"
+      :data-test="mode === 'login' ? 'login-button' : 'register-button'"
     >
-      {{ mode === 'login' ? 'Login' : 'Register' }}
-    </v-btn>
+      <template v-if="!loading">
+        <span data-test="button-text">
+          {{ mode === 'login' ? 'Login' : 'Register' }}
+        </span>
+      </template>
+      <template v-if="loading">
+        <div class="v-progress-circular" data-test="button-loader"></div>
+      </template>
+    </button>
   </v-form>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
@@ -163,11 +173,20 @@ const router = useRouter()
 const authStore = useAuthStore()
 const formRef = ref(null)
 
-const validateField = (field) => {
+const validateField = async (field) => {
   if (formRef.value) {
-    formRef.value.validate()
+    await formRef.value.validate()
   }
 }
+
+const showCourierFields = ref(false)
+const showPartnerFields = ref(false)
+
+const handleRoleChange = (newRole) => {
+  showCourierFields.value = newRole === 'courier'
+  showPartnerFields.value = newRole === 'partner'
+}
+
 const form = ref({
   email: '',
   password: '',
@@ -186,7 +205,37 @@ const form = ref({
   business_document: null
 })
 const errors = ref({})
+// Make loading reactive
 const loading = computed(() => authStore.loading)
+
+// Expose properties and methods for testing
+defineExpose({
+  formRef,
+  validateField,
+  submit,
+  loading
+})
+const error = computed(() => authStore.error)
+
+watch(error, (newError) => {
+  if (newError) {
+    // Initialize errors object with empty object
+    errors.value = { ...errors.value }
+    
+    // Handle errors object if it exists
+    if (newError.errors) {
+      Object.assign(errors.value, newError.errors)
+    }
+    
+    // Set general error message if it exists
+    if (newError.message) {
+      errors.value.general = newError.message
+    }
+  } else {
+    // Clear errors when error is null
+    errors.value = {}
+  }
+})
 
 const roles = [
   { title: 'Customer', value: 'customer' },
@@ -207,46 +256,54 @@ const businessTypes = [
   { title: 'Grocery', value: 'grocery' }
 ]
 
+const emit = defineEmits(['success', 'error'])
+
 async function submit() {
   try {
+      const valid = await formRef.value?.validate()
+      if (!valid) {
+        errors.value = {
+          general: 'Please fix the validation errors'
+        }
+        return
+      }
+    
     if (props.mode === 'login') {
-      await authStore.login({
+      const credentials = {
         email: form.value.email,
         password: form.value.password
-      }, router)
+      }
+      const response = await authStore.login(credentials, router)
+      if (response?.token) {
+        emit('success', { token: response.token })
+      }
     } else {
       const formData = new FormData()
-      formData.append('name', form.value.name)
-      formData.append('email', form.value.email)
-      formData.append('password', form.value.password)
-      formData.append('password_confirmation', form.value.password_confirmation)
-      formData.append('role', form.value.role)
+      Object.entries(form.value).forEach(([key, value]) => {
+        if (value !== null && value !== undefined && value !== '') {
+          if (value instanceof File) {
+            formData.append(key, value)
+          } else {
+            formData.append(key, value.toString())
+          }
+        }
+      })
 
-      if (form.value.role === 'courier') {
-        formData.append('license_number', form.value.license_number)
-        formData.append('vehicle_type', form.value.vehicle_type)
-        if (form.value.document) {
-          formData.append('document', form.value.document)
-        }
-      } else if (form.value.role === 'partner') {
-        formData.append('business_name', form.value.business_name)
-        formData.append('business_type', form.value.business_type)
-        formData.append('tax_id', form.value.tax_id)
-        formData.append('address', form.value.address)
-        if (form.value.business_document) {
-          formData.append('business_document', form.value.business_document)
-        }
+      const response = await authStore.register(formData, router)
+      if (response?.token) {
+        emit('success', { token: response.token })
       }
-
-      await authStore.register(formData, router)
     }
-  } catch (error) {
-    errors.value = error.response?.data?.errors || {}
-    if (error.response?.data?.message) {
-      errors.value.general = error.response.data.message
-    } else if (!Object.keys(errors.value).length) {
-      errors.value.general = 'An unexpected error occurred'
-    }
+    } catch (error) {
+      errors.value = error.response?.data?.errors || {}
+      if (error.response?.data?.message) {
+        errors.value.general = error.response.data.message
+      } else if (!Object.keys(errors.value).length) {
+        errors.value.general = 'An unexpected error occurred'
+      }
+      if (error) {
+        emit('error', error)
+      }
   }
 }
 </script>
