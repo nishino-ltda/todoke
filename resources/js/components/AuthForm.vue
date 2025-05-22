@@ -247,7 +247,7 @@ const rules = {
       v => {
         if (!v) return true
         const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-        return isValid || 'Email must be valid'
+        return isValid
       }
     ],
   password: [

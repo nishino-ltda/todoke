@@ -419,15 +419,28 @@ describe('AuthForm', () => {
     })
 
     it('shows loading state during registration', async () => {
-      // Set loading state directly on authStore
-      authStore.loading = true
+      // Get the authStore instance from the component
+      const componentAuthStore = wrapper.vm.authStore
+      
+      // Set loading state on the component's store instance
+      componentAuthStore.loading = true
+      
+      // Wait for Vue reactivity to update
       await wrapper.vm.$nextTick()
+      await new Promise(resolve => setTimeout(resolve, 0))
       
-      // Find the button component
+      // Verify loading computed property is true
+      expect(wrapper.vm.loading).toBe(true)
+      
+      // Find the button component by test id
       const button = wrapper.find('[data-test="register-button"]')
+      expect(button.exists()).toBe(true)
       
-      // Check button state
+      // Check button state through attributes
       expect(button.attributes('disabled')).toBeDefined()
+      expect(button.attributes('loading')).toBeDefined()
+      
+      // Verify visual state
       expect(button.find('[data-test="button-text"]').exists()).toBe(false)
       expect(button.find('[data-test="button-loader"]').exists()).toBe(true)
     })
@@ -489,7 +502,7 @@ describe('AuthForm', () => {
       // Test invalid emails
       invalidEmails.forEach(email => {
         const result = wrapper.vm.rules.email[1](email)
-        expect(result).not.toBe(true)
+        expect(result).toBe(false)
       })
 
       // Test valid email
