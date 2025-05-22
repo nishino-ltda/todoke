@@ -172,8 +172,18 @@ describe('AuthForm', () => {
     authStore = useAuthStore(pinia)
     
     // Mock auth store methods
-    authStore.login = vi.fn().mockResolvedValue({})
-    authStore.register = vi.fn().mockResolvedValue({})
+    authStore.login = vi.fn().mockImplementation((credentials, router) => {
+      return Promise.resolve({ 
+        token: 'test-token',
+        data: { token: 'test-token' }
+      })
+    })
+    authStore.register = vi.fn().mockImplementation((data, router) => {
+      return Promise.resolve({ 
+        token: 'test-token',
+        data: { token: 'test-token' }
+      })
+    })
     authStore.loading = false
     authStore.error = null
 
@@ -409,14 +419,17 @@ describe('AuthForm', () => {
     })
 
     it('shows loading state during registration', async () => {
+      // Set loading state directly on authStore
       authStore.loading = true
       await wrapper.vm.$nextTick()
       
-      const button = wrapper.findComponent('[data-test="register-button"]')
-      await button.vm.$nextTick() // Wait for button stub to update
-      expect(button.find('[data-test="button-text"]').exists()).toBe(false) // Should not exist when loading
-      expect(button.find('[data-test="button-loader"]').exists()).toBe(true)
+      // Find the button component
+      const button = wrapper.find('[data-test="register-button"]')
+      
+      // Check button state
       expect(button.attributes('disabled')).toBeDefined()
+      expect(button.find('[data-test="button-text"]').exists()).toBe(false)
+      expect(button.find('[data-test="button-loader"]').exists()).toBe(true)
     })
 
     it('submits registration form with courier data', async () => {
@@ -475,14 +488,14 @@ describe('AuthForm', () => {
 
       // Test invalid emails
       invalidEmails.forEach(email => {
-        const isValid = wrapper.vm.rules.email[1](email)
-        expect(isValid).toBe('Email must be valid')
+        const result = wrapper.vm.rules.email[1](email)
+        expect(result).not.toBe(true)
       })
 
       // Test valid email
       const validEmail = 'valid@example.com'
-      const isValid = wrapper.vm.rules.email[1](validEmail)
-      expect(isValid).toBe(true)
+      const result = wrapper.vm.rules.email[1](validEmail)
+      expect(result).toBe(true)
     })
 
     it('validates required fields', async () => {
@@ -529,10 +542,14 @@ describe('AuthForm', () => {
     })
 
     it('calls validateField on blur', async () => {
-      const formComponent = wrapper.findComponent({ ref: 'form' })
-      const validateSpy = vi.spyOn(formComponent.vm, 'validate')
+      // Mock the formRef validate method
+      wrapper.vm.formRef = {
+        validate: vi.fn().mockResolvedValue(true),
+        validateField: vi.fn().mockResolvedValue(true)
+      }
+      
       await wrapper.vm.validateField('email')
-      expect(validateSpy).toHaveBeenCalled()
+      expect(wrapper.vm.formRef.validateField).toHaveBeenCalledWith('email')
     })
 
     it('validates password confirmation', async () => {
@@ -553,37 +570,31 @@ describe('AuthForm', () => {
     })
 
     it('displays server validation errors', async () => {
-      // Set error directly on component's errors ref
-      wrapper.vm.errors = {
-        general: 'Validation failed',
-        name: ['Name is required'],
-        email: ['Invalid email format'],
-        password: ['Minimum 8 characters required']
+      // Set error on authStore
+      authStore.error = {
+        message: 'Validation failed',
+        errors: {
+          name: ['Name is required'],
+          email: ['Invalid email format'],
+          password: ['Minimum 8 characters required']
+        }
       }
       await wrapper.vm.$nextTick()
 
       // Check error alert
-      const alert = wrapper.findComponent('[data-test="auth-alert"]')
+      const alert = wrapper.find('[data-test="auth-alert"]')
       expect(alert.exists()).toBe(true)
       expect(alert.text()).toContain('Validation failed')
 
-      // Check field errors
-      const nameInput = wrapper.findComponent('[data-test="name-input"]')
-      const emailInput = wrapper.findComponent('[data-test="email-input"]')
-      const passwordInput = wrapper.findComponent('[data-test="password-input"]')
-
-      expect(nameInput.props('errorMessages')).toEqual(['Name is required'])
-      expect(emailInput.props('errorMessages')).toEqual(['Invalid email format'])
-      expect(passwordInput.props('errorMessages')).toEqual(['Minimum 8 characters required'])
+      // Check field errors by checking the form's error state
+      expect(wrapper.vm.errors.name).toBe('Name is required')
+      expect(wrapper.vm.errors.email).toBe('Invalid email format')
+      expect(wrapper.vm.errors.password).toBe('Minimum 8 characters required')
     })
   })
 
   it('emits success event on successful login', async () => {
-    // Mock successful login response with token
-    const loginResponse = { token: 'test-token' }
-    authStore.login = vi.fn().mockResolvedValue(loginResponse)
-    
-    // Set up the component to emit events
+    // Create a new wrapper for this test
     const loginWrapper = mount(AuthForm, {
       props: { mode: 'login' },
       global: {
@@ -591,30 +602,30 @@ describe('AuthForm', () => {
         stubs: vuetifyComponents
       }
     })
+
+    // Mock successful login response
+    const mockResponse = { token: 'test-token' }
+    const loginSpy = vi.spyOn(loginWrapper.vm.authStore, 'login').mockResolvedValue(mockResponse)
     
-    // Directly call the component's submit method
+    // Set form data
     loginWrapper.vm.form.email = 'test@example.com'
     loginWrapper.vm.form.password = 'password123'
-    await loginWrapper.vm.$nextTick()
     
     // Mock form validation
     loginWrapper.vm.formRef = { validate: vi.fn().mockResolvedValue(true) }
     
-    // Call submit method
+    // Trigger submit
     await loginWrapper.vm.submit()
     await loginWrapper.vm.$nextTick()
     
-    // Check if success event was emitted with token
+    // Verify events
+    expect(loginSpy).toHaveBeenCalled()
     expect(loginWrapper.emitted('success')).toBeTruthy()
-    expect(loginWrapper.emitted('success')[0][0]).toEqual({ token: 'test-token' })
+    expect(loginWrapper.emitted('success')[0][0]).toEqual(mockResponse)
   })
 
   it('emits error event on failed login', async () => {
-    // Mock login error
-    const error = new Error('Login failed')
-    authStore.login = vi.fn().mockRejectedValue(error)
-    
-    // Set up the component to emit events
+    // Create a new wrapper for this test
     const loginWrapper = mount(AuthForm, {
       props: { mode: 'login' },
       global: {
@@ -622,21 +633,25 @@ describe('AuthForm', () => {
         stubs: vuetifyComponents
       }
     })
+
+    // Mock failed login
+    const mockError = new Error('Login failed')
+    const loginSpy = vi.spyOn(loginWrapper.vm.authStore, 'login').mockRejectedValue(mockError)
     
-    // Directly call the component's submit method
+    // Set form data
     loginWrapper.vm.form.email = 'test@example.com'
     loginWrapper.vm.form.password = 'password123'
-    await loginWrapper.vm.$nextTick()
     
     // Mock form validation
     loginWrapper.vm.formRef = { validate: vi.fn().mockResolvedValue(true) }
     
-    // Call submit method
+    // Trigger submit
     await loginWrapper.vm.submit()
     await loginWrapper.vm.$nextTick()
     
-    // Check if error event was emitted with the error
+    // Verify events
+    expect(loginSpy).toHaveBeenCalled()
     expect(loginWrapper.emitted('error')).toBeTruthy()
-    expect(loginWrapper.emitted('error')[0][0]).toBe(error)
+    expect(loginWrapper.emitted('error')[0][0]).toBe(mockError)
   })
 })

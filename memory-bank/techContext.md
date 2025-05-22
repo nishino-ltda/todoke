@@ -6,12 +6,35 @@
 - **Framework**: Laravel 12
 - **PHP Version**: 8.2+
 - **Key Packages**:
-  - Laravel Sanctum (API authentication)
-  - Laravel Tinker (REPL)
-  - Faker (Test data generation)
+  - Production:
+    - Laravel Framework (^12.0)
+    - Laravel Sanctum (^4.0) - API authentication
+    - Laravel Tinker (^2.10.1) - REPL
+    - InertiaJS Laravel (^2.0) - Frontend integration
+    - Tightenco Ziggy (^2.0) - Route generation
+  - Development:
+    - FakerPHP (^1.23) - Test data generation
+    - Laravel Breeze (^2.3) - Authentication scaffolding
+    - Laravel Pail (^1.2.2) - Log viewer
+    - Laravel Pint (^1.13) - Code style
+    - Mockery (^1.6) - Mocking library
+    - PHPUnit (^11.5.3) - Testing framework   
+  
 
 ### Frontend
-- **Build Tool**: Vite 6
+- **Build Tool**: Vite 6 (^6.2.4)
+- **Core Libraries**:
+  - Vue 3 (^3.4.0)
+  - Pinia (^3.0.2) - State management
+  - Vuetify 3 (^3.8.0-beta.0) - UI framework
+  - Axios (^1.8.2) - HTTP client
+  - MDI Font (^7.4.47) - Icons
+- **Dev Dependencies**:
+  - InertiaJS Vue3 (^2.0.0)
+  - Vue Test Utils (^2.4.6)
+  - Vitest (^3.1.3) - Testing
+  - Cypress (^14.3.3) - E2E testing
+  - Vite plugins (Vue, Laravel)
 - **File Structure**:
   - Pages organized by user role under resources/js/Pages/
   - Shared auth components in Pages/auth/

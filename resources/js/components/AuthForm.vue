@@ -1,12 +1,12 @@
 <template>
   <v-form ref="form" @submit.prevent="submit">
     <v-alert
-      v-if="errors.general"
+      v-if="errors.general || Object.keys(errors).length > 0"
       type="error"
       data-test="auth-alert"
       class="mb-4"
     >
-      {{ errors.general }}
+      {{ errors.general || 'Validation failed' }}
     </v-alert>
 
     <v-text-field
@@ -15,7 +15,25 @@
       type="email"
       :rules="[
         v => !!v || 'Email is required',
-        v => /.+@.+\..+/.test(v) || 'Email must be valid'
+        v => {
+        if (!v) return true
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) &&
+                      !v.includes('..') &&
+                      !v.startsWith('@') &&
+                      !v.endsWith('.') &&
+                      !v.includes('@.') &&
+                      !v.includes(' ') &&
+                      v.indexOf('@') > 0 &&
+                      v.indexOf('@') === v.lastIndexOf('@') &&
+                      v.split('@')[1].includes('.') &&
+                      !v.split('@')[1].startsWith('.') &&
+                      v.split('@')[1].split('.').length >= 2 &&
+                      v.split('@')[1].split('.')[1].length >= 2 &&
+                      !v.split('@')[1].endsWith('.') &&
+                      !v.split('@')[0].endsWith('.') &&
+                      !v.split('@')[0].startsWith('.')
+        return isValid ? true : 'Email must be valid'
+      }
       ]"
       required
       :error-messages="errors.email"
@@ -138,21 +156,27 @@
       </template>
     </template>
 
-    <button
+    <v-btn
       type="submit"
       class="v-btn"
-      :disabled="loading"
+      :disabled="loading || undefined"
       :data-test="mode === 'login' ? 'login-button' : 'register-button'"
+      :loading="loading"
     >
       <template v-if="!loading">
         <span data-test="button-text">
           {{ mode === 'login' ? 'Login' : 'Register' }}
         </span>
       </template>
-      <template v-if="loading">
-        <div class="v-progress-circular" data-test="button-loader"></div>
+      <template v-else>
+        <v-progress-circular
+          indeterminate
+          size="20"
+          width="2"
+          data-test="button-loader"
+        ></v-progress-circular>
       </template>
-    </button>
+    </v-btn>
   </v-form>
 </template>
 
@@ -174,9 +198,17 @@ const authStore = useAuthStore()
 const formRef = ref(null)
 
 const validateField = async (field) => {
-  if (formRef.value) {
-    await formRef.value.validate()
+  if (!formRef.value) return false
+  
+  // Validate the specific field that triggered the blur
+  const { valid } = await formRef.value.validate()
+  
+  // Also validate just the single field
+  if (formRef.value.validateField) {
+    await formRef.value.validateField(field)
   }
+  
+  return valid
 }
 
 const showCourierFields = ref(false)
@@ -205,35 +237,40 @@ const form = ref({
   business_document: null
 })
 const errors = ref({})
-// Make loading reactive
+// Make loading reactive and match test expectations
 const loading = computed(() => authStore.loading)
 
 // Define validation rules for testing
 const rules = {
-  email: [
-    v => !!v || 'Email is required',
-    v => {
-      // For invalid emails, return the exact error message expected by the test
-      if (!/.+@.+\..+/.test(v)) {
-        return 'Email must be valid';
+    email: [
+      v => !!v || 'Email is required',
+      v => {
+        if (!v) return true
+        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+        return isValid || 'Email must be valid'
       }
-      return true;
-    }
-  ],
+    ],
   password: [
-    v => !!v || 'Password is required'
+    v => !!v || 'Password is required',
+    v => {
+      if (!v) return true
+      if (v.length < 8) {
+        return 'Minimum 8 characters required'
+      }
+      return true
+    }
   ],
   name: [
     v => !!v || 'Name is required'
   ],
   password_confirmation: [
     v => !!v || 'Password confirmation is required',
-    (v) => {
-      // For mismatched passwords, return the exact error message expected by the test
+    v => {
+      if (!v) return true
       if (v !== form.value.password) {
-        return 'Password confirmation does not match';
+        return 'Password confirmation does not match'
       }
-      return true;
+      return true
     }
   ]
 }
@@ -251,12 +288,15 @@ const error = computed(() => authStore.error)
 
 watch(error, (newError) => {
   if (newError) {
-    // Initialize errors object with empty object
-    errors.value = { ...errors.value }
+    // Reset errors object
+    errors.value = {}
     
     // Handle errors object if it exists
     if (newError.errors) {
-      Object.assign(errors.value, newError.errors)
+      // Convert array errors to string
+      Object.entries(newError.errors).forEach(([key, value]) => {
+        errors.value[key] = Array.isArray(value) ? value.join(', ') : value
+      })
     }
     
     // Set general error message if it exists
@@ -292,14 +332,13 @@ const emit = defineEmits(['success', 'error'])
 
 async function submit() {
   try {
-      const valid = await formRef.value?.validate()
-      if (!valid) {
-        errors.value = {
-          general: 'Please fix the validation errors'
-        }
-        return
-      }
-    
+    const valid = await formRef.value?.validate()
+    if (!valid) {
+      errors.value = { general: 'Please fix the validation errors' }
+      emit('error', new Error('Form validation failed'))
+      return
+    }
+
     if (props.mode === 'login') {
       const credentials = {
         email: form.value.email,
@@ -308,16 +347,18 @@ async function submit() {
       const response = await authStore.login(credentials, router)
       if (response?.token) {
         emit('success', { token: response.token })
+        return response
       }
+    const error = new Error('Login failed')
+    errors.value = { general: 'Login failed' }
+    emit('error', error)
+    errors.value = { general: error.message }
+    return Promise.resolve({ error })
     } else {
-      // For testing purposes, use form.value directly if no files are present
       let registerData;
-      
-      // Check if any file inputs are used
       const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;
       
       if (hasFiles) {
-        // Create FormData for file uploads in real usage
         const formData = new FormData()
         Object.entries(form.value).forEach(([key, value]) => {
           if (value !== null && value !== undefined && value !== '') {
@@ -330,25 +371,31 @@ async function submit() {
         })
         registerData = formData;
       } else {
-        // Use form data directly for testing or when no files are present
         registerData = form.value;
       }
 
       const response = await authStore.register(registerData, router)
       if (response?.token) {
         emit('success', { token: response.token })
+        return response
       }
+      const error = new Error('Registration failed')
+      emit('error', error)
+      return Promise.resolve({ error })
     }
-    } catch (error) {
-      errors.value = error.response?.data?.errors || {}
-      if (error.response?.data?.message) {
-        errors.value.general = error.response.data.message
-      } else if (!Object.keys(errors.value).length) {
-        errors.value.general = 'An unexpected error occurred'
-      }
-      if (error) {
-        emit('error', error)
-      }
+  } catch (error) {
+    if (error.response?.data?.errors) {
+      errors.value = error.response.data.errors
+    }
+    if (error.response?.data?.message) {
+      errors.value.general = error.response.data.message
+    } else if (error.message) {
+      errors.value.general = error.message
+    } else {
+      errors.value.general = 'An unexpected error occurred'
+    }
+    emit('error', error)
+    return Promise.resolve({ error })
   }
 }
 </script>
