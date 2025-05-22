@@ -246,8 +246,21 @@ const rules = {
       v => !!v || 'Email is required',
       v => {
         if (!v) return true
-        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-        return isValid
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) &&
+               !v.includes('..') &&
+               !v.startsWith('@') &&
+               !v.endsWith('.') &&
+               !v.includes('@.') &&
+               !v.includes(' ') &&
+               v.indexOf('@') > 0 &&
+               v.indexOf('@') === v.lastIndexOf('@') &&
+               v.split('@')[1].includes('.') &&
+               !v.split('@')[1].startsWith('.') &&
+               v.split('@')[1].split('.').length >= 2 &&
+               v.split('@')[1].split('.')[1].length >= 2 &&
+               !v.split('@')[1].endsWith('.') &&
+               !v.split('@')[0].endsWith('.') &&
+               !v.split('@')[0].startsWith('.')
       }
     ],
   password: [
@@ -297,6 +310,11 @@ watch(error, (newError) => {
       Object.entries(newError.errors).forEach(([key, value]) => {
         errors.value[key] = Array.isArray(value) ? value.join(', ') : value
       })
+      
+      // Ensure general error is set if there are field errors
+      if (Object.keys(newError.errors).length > 0) {
+        errors.value.general = 'Validation failed'
+      }
     }
     
     // Set general error message if it exists
@@ -307,7 +325,7 @@ watch(error, (newError) => {
     // Clear errors when error is null
     errors.value = {}
   }
-})
+}, { immediate: true })
 
 const roles = [
   { title: 'Customer', value: 'customer' },

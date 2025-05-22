@@ -583,8 +583,17 @@ describe('AuthForm', () => {
     })
 
     it('displays server validation errors', async () => {
-      // Set error on authStore
-      authStore.error = {
+      // Create a new wrapper with error state
+      const errorWrapper = mount(AuthForm, {
+        props: { mode: 'register' },
+        global: {
+          plugins: [createPinia(), router],
+          stubs: vuetifyComponents
+        }
+      })
+      
+      // Set error directly on the component's authStore
+      errorWrapper.vm.authStore.error = {
         message: 'Validation failed',
         errors: {
           name: ['Name is required'],
@@ -592,17 +601,20 @@ describe('AuthForm', () => {
           password: ['Minimum 8 characters required']
         }
       }
-      await wrapper.vm.$nextTick()
-
-      // Check error alert
-      const alert = wrapper.find('[data-test="auth-alert"]')
+      
+      // Wait for Vue reactivity
+      await errorWrapper.vm.$nextTick()
+      await new Promise(resolve => setTimeout(resolve, 0))
+      
+      // Check error alert exists and contains text
+      const alert = errorWrapper.find('[data-test="auth-alert"]')
       expect(alert.exists()).toBe(true)
       expect(alert.text()).toContain('Validation failed')
-
-      // Check field errors by checking the form's error state
-      expect(wrapper.vm.errors.name).toBe('Name is required')
-      expect(wrapper.vm.errors.email).toBe('Invalid email format')
-      expect(wrapper.vm.errors.password).toBe('Minimum 8 characters required')
+      
+      // Check field errors
+      expect(errorWrapper.vm.errors.name).toBe('Name is required')
+      expect(errorWrapper.vm.errors.email).toBe('Invalid email format')
+      expect(errorWrapper.vm.errors.password).toBe('Minimum 8 characters required')
     })
   })
 

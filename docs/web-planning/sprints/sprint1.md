@@ -79,6 +79,8 @@
 - [x] Achieved 100% coverage on stores
 - [x] Achieved 85%+ coverage on services
 - [x] All 34 tests passing (including 8 new AppHeader tests)
+- [x] Fixed AuthForm email validation tests (19/19 passing)
+- [x] Implemented proper server validation error display
 
 ## Acceptance Criteria
 - All tests pass in isolation and together
