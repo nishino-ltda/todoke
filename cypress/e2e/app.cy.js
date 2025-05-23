@@ -64,4 +64,17 @@ describe('🚀 App Component', () => {
     cy.go('back');
     cy.url().should('eq', Cypress.config().baseUrl + '/');
   });
+
+  // Log store testing
+  it('📝 Should log messages to terminal', () => {
+    cy.log('📋 Testing log store functionality');
+    cy.visit('/');
+    
+    // Verify log message appears in terminal
+    cy.window().then((win) => {
+      const latestLog = win.logStore?.getLatest();
+      expect(latestLog).to.equal('Home page loaded');
+      cy.log(`✅ Verified log message: "${latestLog}"`);
+    });
+  });
 });

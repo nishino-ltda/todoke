@@ -11,7 +11,8 @@ const api = axios.create({
   baseURL,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
+    'Accept': 'application/json',
+    'Accept-Language': localStorage.getItem('locale') || 'en' // Default to English
   }
 })
 

@@ -39,7 +39,7 @@ const authService = {
     const logStore = useLogStore()
     try {
       logStore.log('🔐 Attempting login')
-      const response = await api.post('/login', credentials)
+      const response = await api.post('/auth/login', credentials)
       const authStore = useAuthStore()
       authStore.setAuth(response.data)
       logStore.log('✅ Login successful')
@@ -54,7 +54,7 @@ const authService = {
     const logStore = useLogStore()
     try {
       logStore.log('📝 Attempting registration')
-      const response = await api.post('/register', userData)
+      const response = await api.post('/auth/register', userData)
       const authStore = useAuthStore()
       authStore.setAuth(response.data)
       logStore.log('✅ Registration successful')
@@ -69,7 +69,7 @@ const authService = {
     const logStore = useLogStore()
     try {
       logStore.log('🚪 Attempting logout')
-      await api.post('/logout')
+      await api.post('/auth/logout')
       const authStore = useAuthStore()
       authStore.clearAuth()
       logStore.log('✅ Logout successful')

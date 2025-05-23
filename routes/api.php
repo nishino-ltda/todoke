@@ -50,6 +50,21 @@ Route::prefix('v1')->group(function () {
         
         Route::post('/login', [AuthController::class, 'login'])
             ->middleware('throttle:10,1'); // 10 tentativas por minuto
+
+        // Email verification routes
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/email/verification-notification', [AuthController::class, 'sendVerificationEmail'])
+                ->middleware('throttle:6,1');
+            
+            Route::get('/verify-email', [AuthController::class, 'verifyEmail'])
+                ->middleware('signed')
+                ->name('verification.verify');
+
+            // Password routes
+            Route::post('/confirm-password', [AuthController::class, 'confirmPassword']);
+            Route::put('/password', [AuthController::class, 'updatePassword']);
+            Route::post('/logout', [AuthController::class, 'logout']);
+        });
     });
 
     // Rotas públicas de produtos

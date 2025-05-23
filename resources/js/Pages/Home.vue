@@ -9,4 +9,8 @@
 
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
+import { useLogStore } from '@/stores/log';
+
+const logStore = useLogStore();
+logStore.log('Home page loaded');
 </script>

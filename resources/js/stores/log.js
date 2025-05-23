@@ -22,7 +22,7 @@ export const useLogStore = defineStore('log', () => {
 
     // Make available to Cypress
     if (typeof window !== 'undefined') {
-      window.logStore = window.logStore || {
+      window.logStore = {
         getLogs: () => logs.value,
         getLatest: () => logs.value[0]?.message || '',
         clear: () => { logs.value = []; }

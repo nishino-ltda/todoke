@@ -163,6 +163,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useLogStore } from '@/stores/log'
 
 const props = defineProps({
   mode: {
@@ -312,11 +313,15 @@ const emit = defineEmits(['success', 'error'])
 
 async function submit() {
   try {
+    const logStore = useLogStore()
+    logStore.log(`🔑 Attempting ${props.mode} for email: ${form.value.email}`, 'debug')
     
     const valid = await formRef.value?.validate()
     if (!valid) {
-      errors.value = { general: 'Please fix the validation errors' }
-      emit('error', new Error('Form validation failed'))
+      const errorMsg = 'Please fix the validation errors'
+      errors.value = { general: errorMsg }
+      logStore.log(`❌ Validation failed: ${errorMsg}`, 'error')
+      emit('error', new Error(errorMsg))
       return
     }
 
@@ -325,17 +330,20 @@ async function submit() {
         email: form.value.email,
         password: form.value.password
       }
+      logStore.log(`🔐 Sending login request for ${credentials.email}`, 'debug')
       const response = await authStore.login(credentials, router)
       
       if (response?.data?.token) {
+        logStore.log(`✅ Login successful for ${credentials.email}`, 'info')
         emit('success', { token: response.token })
         return response
       }
-    const error = new Error('Login failed')
-    errors.value = { general: 'Login failed' }
-    emit('error', error)
-    errors.value = { general: error.message }
-    return Promise.resolve({ error })
+      const error = new Error('Login failed')
+      logStore.log(`❌ Login failed for ${credentials.email}: ${error.message}`, 'error')
+      errors.value = { general: 'Login failed' }
+      emit('error', error)
+      errors.value = { general: error.message }
+      return Promise.resolve({ error })
     } else {
       let registerData;
       const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;
@@ -356,25 +364,33 @@ async function submit() {
         registerData = form.value;
       }
 
+      logStore.log(`📝 Sending registration request for ${form.value.email}`, 'debug')
       const response = await authStore.register(registerData, router)
       if (response?.token) {
+        logStore.log(`✅ Registration successful for ${form.value.email}`, 'info')
         emit('success', { token: response.token })
         return response
       }
       const error = new Error('Registration failed')
+      logStore.log(`❌ Registration failed for ${form.value.email}: ${error.message}`, 'error')
       emit('error', error)
       return Promise.resolve({ error })
     }
   } catch (error) {
+    const logStore = useLogStore()
     if (error.response?.data?.errors) {
       errors.value = error.response.data.errors
+      logStore.log(`❌ Form errors: ${JSON.stringify(error.response.data.errors)}`, 'error')
     }
     if (error.response?.data?.message) {
       errors.value.general = error.response.data.message
+      logStore.log(`❌ API error: ${error.response.data.message}`, 'error')
     } else if (error.message) {
       errors.value.general = error.message
+      logStore.log(`❌ Error: ${error.message}`, 'error')
     } else {
       errors.value.general = 'An unexpected error occurred'
+      logStore.log('❌ Unexpected error occurred', 'error')
     }
     emit('error', error)
     return Promise.resolve({ error })

@@ -1,36 +1,12 @@
 describe('🔑 Login Flow', () => {
   beforeEach(() => {
-    // Initialize log store before each test
-    cy.window().then((win) => {
-      if (!win.logStore) {
-        win.logStore = {
-          messages: [],
-          clear() { 
-            this.messages = []
-            console.log('🧹 Log store cleared')
-          },
-          add(message) { 
-            this.messages.push(message)
-            console.log('📝 Log added:', message)
-          },
-          dump() {
-            console.group('Log Store Dump')
-            console.log('Message count:', this.messages.length)
-            this.messages.forEach((msg, i) => {
-              console.log(`#${i}: ${msg}`)
-            })
-            console.groupEnd()
-          }
-        };
-      }
+    cy.log('🧹 Clearing log store before test');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      win.logStore.clear();
     });
-    cy.getStore('log').then(logStore => {
-      if (logStore.messages.length > 0) {
-        cy.log('ℹ️ Found existing logs:')
-        logStore.dump()
-      }
-      logStore.clear()
-    });
+
+    
   });
 
   // SPRINT 1: Core authentication testing
@@ -55,17 +31,28 @@ describe('🔑 Login Flow', () => {
     // Test form validation
     cy.get('[data-test="login-button"]').click();
     cy.log('🔍 Verifying required field validation');
-    cy.contains('Email is required').should('be.visible');
-    cy.contains('Password is required').should('be.visible');
+    cy.get('[data-test="email-error"]').should('be.visible');
+    cy.get('[data-test="password-error"]').should('be.visible');
     
-    // Check and dump logs for validation errors
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages
-      expect(logs).to.have.length(2)
-      expect(logs[0].message).to.include('Email validation failed')
-      expect(logs[1].message).to.include('Password validation failed')
-    })
+    // Check logs for validation errors
+    cy.log('🔍 Checking validation logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log('🔍 Log store contents:', logs);
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
+      expect(logs.some(log => 
+        log.message.includes('validation') && 
+        log.message.includes('email')
+      )).to.be.true;
+      expect(logs.some(log => 
+        log.message.includes('validation') && 
+        log.message.includes('password')
+      )).to.be.true;
+    });
     
     // Fill and submit form
     cy.log('📝 Filling login form');
@@ -75,18 +62,28 @@ describe('🔑 Login Flow', () => {
     
     // Verify successful login and redirect
     cy.log('✅ Verifying successful login and redirect');
-    // Wait for redirect after login
-    cy.url().should('include', '/customer/dashboard', { timeout: 10000 });
+    cy.url().should('include', '/customer/dashboard');
     cy.get('[data-testid="user-welcome"]').should('contain', 'Welcome back');
     cy.get('[data-testid="user-email"]').should('contain', customer.email);
     
-    // Check and dump logs for successful login
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages
-      expect(logs.some(log => log.message.includes('Login attempt'))).to.be.true
-      expect(logs.some(log => log.message.includes('Login successful'))).to.be.true
-    })
+    // Check logs for successful login
+    cy.log('✅ Checking success logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
+      expect(logs.some(log => 
+        log.message.includes('Login attempt') && 
+        log.message.includes(customer.email)
+      )).to.be.true;
+      expect(logs.some(log => 
+        log.message.includes('Login successful') && 
+        log.message.includes(customer.email)
+      )).to.be.true;
+    });
   });
 
   // SPRINT 1: Core authentication testing  
@@ -119,10 +116,15 @@ describe('🔑 Login Flow', () => {
     cy.url().should('include', '/courier/dashboard', { timeout: 20000 });
     cy.get('[data-testid="courier-welcome"]').should('contain', 'Courier Dashboard');
     
-    // Check and dump logs for successful login
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for successful login
+    cy.log('✅ Checking success logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(courier.email)
@@ -164,10 +166,15 @@ describe('🔑 Login Flow', () => {
     cy.url().should('include', '/partner/dashboard', { timeout: 20000 });
     cy.get('[data-testid="partner-welcome"]').should('contain', 'Partner Dashboard');
     
-    // Check and dump logs for successful login
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for successful login
+    cy.log('✅ Checking success logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(partner.email)
@@ -209,10 +216,15 @@ describe('🔑 Login Flow', () => {
     cy.url().should('include', '/admin/dashboard', { timeout: 10000 });
     cy.get('[data-testid="admin-welcome"]').should('contain', 'Admin Dashboard');
     
-    // Check and dump logs for successful login
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for successful login
+    cy.log('✅ Checking success logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(admin.email)
@@ -255,10 +267,15 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible')
       .should('contain', 'Invalid login credentials');
     
-    // Check and dump logs for failed attempt
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for failed attempt
+    cy.log('❌ Checking failure logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(validUser.email)
@@ -277,10 +294,15 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible')
       .should('contain', 'User not found');
     
-    // Check and dump logs for nonexistent account
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for nonexistent account
+    cy.log('❌ Checking nonexistent account logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(invalidUser.email)
@@ -299,10 +321,15 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible')
       .should('contain', 'Account locked');
     
-    // Check and dump logs for locked account
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for locked account
+    cy.log('❌ Checking locked account logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes('locked@todoke.test')
@@ -324,10 +351,15 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="auth-alert"]').should('be.visible')
       .should('contain', 'Too many attempts');
     
-    // Check and dump logs for rate limiting
-    cy.dumpLogs();
-    cy.getStore('log').then(logStore => {
-      const logs = logStore.messages;
+    // Check logs for rate limiting
+    cy.log('⏱️ Checking rate limit logs');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then(win => {
+      const logs = win.logStore.getLogs();
+      cy.log(`📝 Found ${logs.length} log messages`);
+      logs.forEach(log => {
+        cy.log(`ℹ️ ${log.message}`);
+      });
       expect(logs.some(log => 
         log.message.includes('Rate limiting triggered')
       )).to.be.true;
@@ -364,8 +396,9 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="email-input"]').clear().type(user.email);
     cy.get('[data-test="password-input"]').click().type(user.password);
     
-    // Submit form
+    // Submit form and verify
     cy.get('[data-test="login-button"]').click();
-    cy.url().should('include', '/customer/dashboard', { timeout: 10000 });
+    cy.wait('@loginRequest');
+    cy.url().should('include', '/customer/dashboard');
   });
 });

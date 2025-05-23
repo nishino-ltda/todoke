@@ -12,6 +12,7 @@
 
 import './commands'
 import { createPinia } from 'pinia'
+import { useLogStore } from '../../resources/js/stores/log.js'
 
 // Initialize Pinia before each test
 beforeEach(() => {
@@ -19,10 +20,15 @@ beforeEach(() => {
     
     cy.window().then((win) => {
         win.pinia = pinia
-        if (win.__logStore) {
-            win.__logStore.$pinia = pinia
+        // Create and register log store
+        const logStore = useLogStore(pinia)
+        win.logStore = {
+            getLogs: () => logStore.logs,
+            getLatest: () => logStore.logs[0]?.message || '',
+            clear: () => logStore.clear(),
+            messages: logStore.logs
         }
-  })
+    })
 })
 
 // Add global before/beforeEach/after/afterEach hooks here if needed
