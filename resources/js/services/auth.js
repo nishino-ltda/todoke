@@ -38,7 +38,7 @@ const authService = {
   async login(credentials) {
     const logStore = useLogStore()
     try {
-      logStore.log('🔐 Attempting login')
+      logStore.log(`🔐 Login attempt for ${credentials.email}`)
       // 1. Call API login to get token
       const loginResponse = await api.post('/auth/login', credentials)
       
@@ -54,11 +54,12 @@ const authService = {
       // 3. Update auth store
       const authStore = useAuthStore()
       authStore.setAuth(loginResponse.data)
-      logStore.log('✅ Login successful')
+      logStore.log(`✅ Login successful for ${credentials.email}`)
       return loginResponse.data
     } catch (error) {
-      logStore.log('❌ Login failed', error)
-      throw new Error('Login failed. Please check your credentials.')
+      const errorMsg = error.response?.data?.message || 'Invalid credentials'
+      logStore.log(`❌ Login failed for ${credentials.email}: ${errorMsg}`)
+      throw new Error(errorMsg)
     }
   },
 

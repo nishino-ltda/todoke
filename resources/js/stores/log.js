@@ -5,12 +5,38 @@ export const useLogStore = defineStore('log', () => {
   const logs = ref([]);
   const maxLogs = 100; // Prevent memory leaks
 
-  function log(message) {
+  // Expose store to window for Cypress
+  if (typeof window !== 'undefined') {
+    window.logStore = {
+      getLogs: () => logs.value,
+      getLatest: () => logs.value[0]?.message || '',
+      clear: () => { logs.value = []; },
+      log: (message, type = 'info', stack = null) => {
+        const timestamp = new Date().toISOString();
+        const logEntry = { timestamp, message, type, stack };
+        
+        const typePrefix = type === 'error' ? '❌' : 
+                        type === 'warn' ? '⚠️' : 
+                        type === 'info' ? 'ℹ️' : '📝';
+        console.log(`${typePrefix}  [${timestamp}] ${message}`);  // Added extra space after emoji
+
+        logs.value.unshift(logEntry);
+        if (logs.value.length > maxLogs) {
+          logs.value.length = maxLogs;
+        }
+      }
+    };
+  }
+
+  function log(message, type = 'info', stack = null) {
     const timestamp = new Date().toISOString();
-    const logEntry = { timestamp, message };
+    const logEntry = { timestamp, message, type, stack };
     
     // Keep console.log for visibility in terminal
-    console.log(`[${timestamp}] ${message}`);
+    const typePrefix = type === 'error' ? '❌' : 
+                      type === 'warn' ? '⚠️' : 
+                      type === 'info' ? 'ℹ️' : '📝';
+    console.log(`${typePrefix}  [${timestamp}] ${message}`);  // Added extra space after emoji
 
     // Add to logs array
     logs.value.unshift(logEntry);
@@ -20,14 +46,6 @@ export const useLogStore = defineStore('log', () => {
       logs.value.length = maxLogs;
     }
 
-    // Make available to Cypress
-    if (typeof window !== 'undefined') {
-      window.logStore = {
-        getLogs: () => logs.value,
-        getLatest: () => logs.value[0]?.message || '',
-        clear: () => { logs.value = []; }
-      };
-    }
   }
 
   function clear() {

@@ -165,6 +165,9 @@ import { router } from '@inertiajs/vue3'
 import { useAuthStore } from '@/stores/auth'
 import { useLogStore } from '@/stores/log'
 
+const logStoreInstance = useLogStore();
+logStoreInstance.log('😎 AuthForm component initialized.');
+
 const props = defineProps({
   mode: {
     type: String,
@@ -310,39 +313,59 @@ const businessTypes = [
 
 const emit = defineEmits(['success', 'error'])
 
-async function submit() {
-  try {
-    const logStore = useLogStore()
-    logStore.log(`🔑 Attempting ${props.mode} for email: ${form.value.email}`, 'debug')
-    
-    const valid = await formRef.value?.validate()
-    if (!valid) {
-      const errorMsg = 'Please fix the validation errors'
-      errors.value = { general: errorMsg }
-      logStore.log(`❌ Validation failed: ${errorMsg}`, 'error')
-      emit('error', new Error(errorMsg))
-      return
-    }
+    async function submit() {
+      try {
+        const logStore = useLogStore()
+        logStore.log(`🔑 Attempting ${props.mode} for email: ${form.value.email}`, 'debug')
+        
+        const valid = await formRef.value?.validate()
+        if (!valid) {
+          const errorMsg = 'Please fix the validation errors'
+          errors.value = { 
+            general: errorMsg,
+            email: 'Email is required',
+            password: 'Password is required'
+          }
+          logStore.log(`❌ Validation failed: ${errorMsg}`, 'error')
+          emit('error', new Error(errorMsg))
+          return
+        }
 
-    if (props.mode === 'login') {
-      const credentials = {
-        email: form.value.email,
-        password: form.value.password
-      }
-      logStore.log(`🔐 Sending login request for ${credentials.email}`, 'debug')
-      const response = await authStore.login(credentials, router)
-      
-      if (response?.data?.token) {
-        logStore.log(`✅ Login successful for ${credentials.email}`, 'info')
-        emit('success', { token: response.token })
-        return response
-      }
-      const error = new Error('Login failed')
-      logStore.log(`❌ Login failed for ${credentials.email}: ${error.message}`, 'error')
-      errors.value = { general: 'Login failed' }
-      emit('error', error)
-      errors.value = { general: error.message }
-      return Promise.resolve({ error })
+        if (props.mode === 'login') {
+          const credentials = {
+            email: form.value.email,
+            password: form.value.password
+          }
+          logStore.log(`🔐 Sending login request for ${credentials.email}`, 'debug')
+          try {
+            const response = await authStore.login(credentials, router)
+            
+            if (response?.token) {
+              logStore.log(`✅ Login successful for ${credentials.email}`, 'info')
+              emit('success', { token: response.token })
+              
+              // Redirect based on user type
+              const userType = authStore.user?.type
+              const redirectPath = 
+                userType === 'admin' ? '/admin/dashboard' :
+                userType === 'courier' ? '/courier/dashboard' :
+                userType === 'partner' ? '/partner/dashboard' :
+                '/customer/dashboard'
+              
+              logStore.log(`🛣️ Redirecting to: ${redirectPath}`)
+              router.visit(redirectPath)
+              return response
+            }
+          } catch (error) {
+            logStore.log(`❌ Login failed for ${credentials.email}: ${error.message}`, 'error')
+            errors.value = { 
+              general: error.response?.data?.message || 'Invalid login credentials',
+              email: error.response?.data?.errors?.email?.[0],
+              password: error.response?.data?.errors?.password?.[0]
+            }
+            emit('error', error)
+            return Promise.reject(error)
+          }
     } else {
       let registerData;
       const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;

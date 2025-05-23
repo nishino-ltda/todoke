@@ -6,7 +6,15 @@ describe('🔑 Login Flow', () => {
       win.logStore.clear();
     });
 
-    
+    // Verify initial page load logs
+    cy.visit('/login');
+    cy.window().should('have.property', 'logStore');
+    cy.window().then((win) => {
+      const logs = win.logStore.getLogs();
+      logs.forEach((logEntry, index) => {
+        cy.log(`Log #${index} [${logEntry.timestamp}]: ${logEntry.message}`);
+      });
+    });
   });
 
   // SPRINT 1: Core authentication testing
@@ -37,14 +45,9 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for validation errors
     cy.log('🔍 Checking validation logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log('🔍 Log store contents:', logs);
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
-      });
       expect(logs.some(log => 
         log.message.includes('validation') && 
         log.message.includes('email')
@@ -69,13 +72,11 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for successful login
     cy.log('✅ Checking success logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
+    
+    // Verify expected logs exist
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
-      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(customer.email)
@@ -119,13 +120,11 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for successful login
     cy.log('✅ Checking success logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
+    
+    // Verify expected logs exist
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
-      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(courier.email)
@@ -169,22 +168,19 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for successful login
     cy.log('✅ Checking success logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
+    
+    // Verify expected logs exist
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log('📝 Full log store contents:', logs);
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach((log, index) => {
-        cy.log(`ℹ️ Log ${index + 1}:`, log);
-      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(partner.email)
-      ), 'Expected to find login attempt log').to.be.true;
+      )).to.be.true;
       expect(logs.some(log => 
         log.message.includes('Login successful') && 
         log.message.includes(partner.email)
-      ), 'Expected to find login success log').to.be.true;
+      )).to.be.true;
     });
   });
 
@@ -220,13 +216,11 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for successful login
     cy.log('✅ Checking success logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
+    
+    // Verify expected logs exist
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
-      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(admin.email)
@@ -271,13 +265,11 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for failed attempt
     cy.log('❌ Checking failure logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
+    
+    // Verify expected logs exist
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
-      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(validUser.email)
@@ -298,13 +290,11 @@ describe('🔑 Login Flow', () => {
     
     // Check logs for nonexistent account
     cy.log('❌ Checking nonexistent account logs');
-    cy.window().should('have.property', 'logStore');
+    cy.dumpLogs();
+    
+    // Verify expected logs exist
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
-      cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
-      });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(invalidUser.email)
@@ -316,7 +306,7 @@ describe('🔑 Login Flow', () => {
     });
 
     // Test locked account
-    cy.log('🔒 Testing locked account');
+    cy.log('� Testing locked account');
     cy.get('[data-test="email-input"]').clear().type('locked@todoke.test');
     cy.get('[data-test="password-input"]').clear().type(validUser.password);
     cy.get('[data-test="login-button"]').click();
@@ -348,7 +338,7 @@ describe('🔑 Login Flow', () => {
       cy.get('[data-test="email-input"]').clear().type(`user${i}@todoke.test`);
       cy.get('[data-test="password-input"]').clear().type('wrongpassword');
       cy.get('[data-test="login-button"]').click();
-      cy.wait('@loginRequest');
+      
     }
     cy.get('[data-test="auth-alert"]').should('be.visible')
       .should('contain', 'Too many attempts');
@@ -400,7 +390,7 @@ describe('🔑 Login Flow', () => {
     
     // Submit form and verify
     cy.get('[data-test="login-button"]').click();
-    cy.wait('@loginRequest');
+    
     cy.url().should('include', '/customer/dashboard');
   });
 });

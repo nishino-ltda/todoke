@@ -114,27 +114,50 @@ Cypress.Commands.overwrite("log", function(log, ...args) {
 });
 
 /**
- * Dumps application logs to Cypress output
+ * Dumps application logs to Cypress output with enhanced formatting
  * @param {boolean} clearAfter - Whether to clear logs after dumping (default: true)
+ * @param {string} title - Optional title for the log section
  */
-Cypress.Commands.add('dumpLogs', (clearAfter = true) => {
+Cypress.Commands.add('dumpLogs', (clearAfter = true, title = 'Application logs') => {
   cy.window().then(win => {
     if (win.logStore) {
-      const logs = win.logStore.messages;
+      const logs = win.logStore.getLogs();
       if (logs && logs.length > 0) {
-        cy.log('📜 Application logs:');
+        // Start with a separator and title
+        cy.log(`\n📜📜📜 ${title.toUpperCase()} 📜📜📜`);
+        
+        // Group logs by type with emoji prefixes
+        const typeEmojis = {
+          error: '❌',
+          warn: '⚠️', 
+          info: 'ℹ️',
+          debug: '🐛',
+          default: '📝'
+        };
+
         logs.forEach(log => {
-          cy.log(`${log.timestamp} [${log.type}]: ${log.message}`);
+          const emoji = typeEmojis[log.type] || typeEmojis.default;
+          const timestamp = new Date(log.timestamp).toLocaleTimeString();
+          cy.log(`${emoji} [${timestamp}] ${log.message}`);
+          
+          // Include stack trace if available
+          if (log.stack) {
+            cy.log(`🔍 Stack: ${log.stack}`);
+          }
         });
+
+        // End with summary
+        cy.log(`📊 Total logs: ${logs.length}`);
         
         if (clearAfter) {
           win.logStore.clear();
+          cy.log('🧹 Logs cleared');
         }
       } else {
-        cy.log('ℹ️ No application logs found');
+        cy.log('🕳️ No application logs found');
       }
     } else {
-      cy.log('⚠️ Log store not available in window');
+      cy.log('🚨 Log store not available in window');
     }
   });
 });
