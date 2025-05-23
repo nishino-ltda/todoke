@@ -12,9 +12,18 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import en from '../lang/en.json';
 import ptBR from '../lang/pt-BR.json';
 
+// Detect browser language
+const browserLanguage = navigator.language || navigator.userLanguage;
+const supportedLocales = ['en', 'pt-BR'];
+const detectedLocale = supportedLocales.includes(browserLanguage) 
+    ? browserLanguage 
+    : browserLanguage.startsWith('pt') 
+        ? 'pt-BR' 
+        : 'en';
+
 const i18n = createI18n({
     legacy: false,
-    locale: 'en',
+    locale: detectedLocale,
     fallbackLocale: 'en',
     messages: {
         en,

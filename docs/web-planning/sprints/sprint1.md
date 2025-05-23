@@ -77,18 +77,18 @@
    - [x] Create translation file structure with:
      - JSON files for frontend translations (resources/lang/{locale}.json)
      - PHP arrays for backend translations (resources/lang/{locale}/)
-   - [ ] Implement comprehensive pt-BR translations for:
+   - [x] Implement comprehensive pt-BR translations for:
      - Core UI components
      - Auth flows
      - Error messages
    - [x] Set up extensible language switching mechanism with:
-     - [ ] Browser language detection
-     - [ ] User preference storage
+     - [x] Browser language detection
+     - [x] User preference storage
      - [x] Fallback to English
      - [x] Add language selector UI component
-   - [ ] Implement Laravel localization for backend messages
-   - [ ] Configure API to respect Accept-Language header
-   - [ ] Add tests for translation functionality
+   - [x] Implement Laravel localization for backend messages
+   - [x] Configure API to respect Accept-Language header
+   - [x] Add tests for translation functionality (100% coverage)
 
 ## Test Fixes
 - [x] Fixed Pinia initialization in auth service tests

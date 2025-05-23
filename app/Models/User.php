@@ -24,7 +24,8 @@ class User extends Authenticatable
         'type',
         'phone',
         'photoUrl',
-        'status'
+        'status',
+        'locale'
     ];
 
     /**

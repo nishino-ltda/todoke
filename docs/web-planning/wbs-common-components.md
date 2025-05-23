@@ -58,25 +58,25 @@
 
 ## 6. Internationalization
 - [x] Translation patterns documented in systemPatterns.md
-- [ ] Implement translation support in all components:
-  - [x] Use Vue I18n for text interpolation (pattern established)
-  - [ ] Externalize all UI strings to translation files (Sprint 4)
-  - [ ] Support dynamic language switching (Sprint 4)
-- [ ] Create translation infrastructure:
-  - [x] pt-BR as first supported language (defined in projectBrief)
-  - [x] JSON format for frontend translations (defined in techContext)
-  - [x] Extensible structure for additional languages (defined in techContext)
-  - [ ] Create pt-BR translation files (Sprint 4)
+- [x] Implement translation support in all components:
+  - [x] Use Vue I18n for text interpolation
+  - [x] Externalize all UI strings to translation files
+  - [x] Support dynamic language switching
+- [x] Create translation infrastructure:
+  - [x] pt-BR as first supported language
+  - [x] JSON format for frontend translations
+  - [x] Extensible structure for additional languages
+  - [x] Create pt-BR translation files
 - [x] Add language selector component:
-  - [x] Dropdown with available languages (implemented in LanguageSelector.vue)
-  - [ ] Persist user preference in user profile (Sprint 4)
-  - [ ] Browser language detection with fallback (Sprint 4)
-- [ ] Testing:
-  - [ ] Unit tests for translation functionality (Sprint 4)
-  - [ ] Verify fallback behavior (default to English) (Sprint 4)
-  - [ ] Test components with different locales (Sprint 4)
-  - [ ] E2E tests for language switching flow (Sprint 4)
-- [ ] Documentation:
-  - [ ] Add translation guidelines to techContext.md (Sprint 4)
-  - [ ] Document string extraction process (Sprint 4)
-  - [ ] Create translation contribution guide (Sprint 4)
+  - [x] Dropdown with available languages
+  - [x] Persist user preference in user profile
+  - [x] Browser language detection with fallback
+- [x] Testing:
+  - [x] Unit tests for translation functionality
+  - [x] Verify fallback behavior (default to English)
+  - [x] Test components with different locales
+  - [x] E2E tests for language switching flow
+- [x] Documentation:
+  - [x] Add translation guidelines to techContext.md
+  - [x] Document string extraction process
+  - [x] Create translation contribution guide

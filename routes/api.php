@@ -69,6 +69,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('users')->group(function () {
             Route::get('/me', [UserController::class, 'profile']);
             Route::patch('/me', [UserController::class, 'update']);
+            Route::patch('/locale', [\App\Http\Controllers\UserController::class, 'updateLocale']);
         });
 
         // Rotas de entregas
