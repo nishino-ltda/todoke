@@ -1,29 +1,31 @@
 <template>
   <v-app-bar app color="primary" dark data-test="app-header">
     <v-app-bar-nav-icon @click="toggleDrawer" />
-    <v-toolbar-title>TODOKE</v-toolbar-title>
+    <v-toolbar-title>{{ $t('app.title') }}</v-toolbar-title>
     <v-spacer />
 
+    <LanguageSelector class="mr-2" />
+
     <template v-if="isAuthenticated">
-      <span class="welcome-message">Welcome, {{ user?.name }}</span>
+      <span class="welcome-message">{{ $t('app.welcome', { name: user?.name }) }}</span>
       <Link 
         v-if="user?.role === 'customer'"
         :href="route('menu')" 
         class="text-white mr-2" 
         data-test="menu-link"
       >
-        Menu
+        {{ $t('auth.menu') }}
       </Link>
-      <v-btn text disabled v-if="loading">Loading...</v-btn>
+      <v-btn text disabled v-if="loading">{{ $t('app.loading') }}</v-btn>
       <CartIcon v-if="user?.role === 'customer'" />
       <v-btn text @click="handleLogout" :disabled="loading">
-        Logout
+        {{ $t('auth.logout') }}
       </v-btn>
     </template>
 
     <template v-else>
-      <Link :href="route('login')" class="text-white mr-2" data-test="login-link">Login</Link>
-      <Link :href="route('register')" class="text-white" data-test="register-link">Register</Link>
+      <Link :href="route('login')" class="text-white mr-2" data-test="login-link">{{ $t('auth.login') }}</Link>
+      <Link :href="route('register')" class="text-white" data-test="register-link">{{ $t('auth.register') }}</Link>
     </template>
   </v-app-bar>
 </template>
@@ -34,6 +36,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useLogStore } from '@/stores/log'
 import { Link } from '@inertiajs/vue3'
 import CartIcon from './CartIcon.vue'
+import LanguageSelector from './LanguageSelector.vue'
 
 const authStore = useAuthStore()
 const logStore = useLogStore()

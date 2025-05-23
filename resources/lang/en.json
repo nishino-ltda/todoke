@@ -1,0 +1,19 @@
+{
+    "app": {
+        "title": "TODOKE",
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "welcome": "Welcome, {name}"
+    },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "menu": "Menu"
+    },
+    "footer": {
+        "copyright": "© {year} TODOKE. All rights reserved.",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy"
+    }
+}

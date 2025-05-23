@@ -5,9 +5,22 @@ import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
+import { createI18n } from 'vue-i18n';
 import { useLogStore } from './stores/log';
 import vuetify from './plugins/vuetify';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import en from '../lang/en.json';
+import ptBR from '../lang/pt-BR.json';
+
+const i18n = createI18n({
+    legacy: false,
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+        en,
+        'pt-BR': ptBR
+    }
+});
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -27,6 +40,7 @@ createInertiaApp({
             .use(pinia)
             .use(vuetify)
             .use(ZiggyVue)
+            .use(i18n)
             .mount(el);
 
         // Expose stores to Cypress after initialization

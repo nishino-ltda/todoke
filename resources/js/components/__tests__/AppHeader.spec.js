@@ -83,6 +83,11 @@ const CartIcon = {
   template: '<div class="cart-icon"></div>'
 }
 
+// Mock LanguageSelector component
+const LanguageSelector = {
+  template: '<div class="language-selector"></div>'
+}
+
 // Component stubs
 const vuetifyComponents = {
   VAppBar,
@@ -93,13 +98,35 @@ const vuetifyComponents = {
   VSpacer,
   WelcomeMessage,
   Link,
-  CartIcon
+  CartIcon,
+  LanguageSelector
 }
 
-// Add route to global properties
+// Mock translation function with interpolation support
+const $t = (key, params = {}) => {
+  const translations = {
+    'app.title': 'TODOKE',
+    'app.welcome': 'Welcome, {name}',
+    'auth.login': 'Login',
+    'auth.register': 'Register',
+    'auth.logout': 'Logout',
+    'auth.menu': 'Menu',
+    'app.loading': 'Loading...'
+  }
+  let result = translations[key] || key
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => {
+      result = result.replace(new RegExp(`{${k}}`, 'g'), v)
+    })
+  }
+  return result
+}
+
+// Add route and translation to global properties
 const globalMocks = {
   $route: route,
-  route
+  route,
+  $t
 }
 
 describe('AppHeader', () => {
@@ -142,7 +169,6 @@ describe('AppHeader', () => {
   })
 
   it('shows login/register links when not authenticated', async () => {
-    // Create fresh wrapper with unauthenticated state
     const pinia = createPinia()
     const testAuthStore = useAuthStore(pinia)
     testAuthStore.isAuthenticated = false
@@ -166,7 +192,6 @@ describe('AppHeader', () => {
   })
 
   it('shows welcome message and logout button when authenticated', async () => {
-    // Create fresh wrapper with authenticated state
     const pinia = createPinia()
     const testAuthStore = useAuthStore(pinia)
     testAuthStore.isAuthenticated = true
@@ -187,7 +212,6 @@ describe('AppHeader', () => {
   })
 
   it('shows menu link when authenticated', async () => {
-    // Create fresh wrapper with authenticated customer state
     const pinia = createPinia()
     const testAuthStore = useAuthStore(pinia)
     testAuthStore.isAuthenticated = true
@@ -206,7 +230,6 @@ describe('AppHeader', () => {
   })
 
   it('calls logout and logs events when logout button is clicked', async () => {
-    // Create fresh wrapper with authenticated state
     const pinia = createPinia()
     const testAuthStore = useAuthStore(pinia)
     const testLogStore = useLogStore(pinia)
@@ -225,13 +248,12 @@ describe('AppHeader', () => {
 
     await testWrapper.vm.$nextTick()
     
-    // Find the logout button by its text content
     const logoutButton = testWrapper.findAll('.v-btn').find(btn => btn.text().includes('Logout'))
     await logoutButton.trigger('click')
     
     expect(testAuthStore.logout).toHaveBeenCalled()
     expect(testLogStore.log).toHaveBeenCalledWith('🔄 AppHeader: Logout initiated')
-    await testAuthStore.logout.mock.results[0].value // Wait for promise
+    await testAuthStore.logout.mock.results[0].value
     expect(testLogStore.log).toHaveBeenCalledWith('✅ AppHeader: Logout successful')
   })
 
@@ -283,7 +305,6 @@ describe('AppHeader', () => {
   })
 
   it('disables logout button when loading', async () => {
-    // Create fresh wrapper with loading state
     const pinia = createPinia()
     const testAuthStore = useAuthStore(pinia)
     testAuthStore.isAuthenticated = true
@@ -300,7 +321,6 @@ describe('AppHeader', () => {
 
     await testWrapper.vm.$nextTick()
     
-    // Find the logout button by its text content
     const logoutButton = testWrapper.findAll('.v-btn').find(btn => btn.text().includes('Logout'))
     expect(logoutButton.attributes('disabled')).toBeDefined()
   })

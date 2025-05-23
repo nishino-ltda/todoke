@@ -73,19 +73,19 @@
    - [x] Write unit tests for common components (including AuthForm)
 
 5. **Translation Infrastructure**:
-   - [ ] Install and configure Vue I18n
-   - [ ] Create translation file structure with:
+   - [x] Install and configure Vue I18n
+   - [x] Create translation file structure with:
      - JSON files for frontend translations (resources/lang/{locale}.json)
      - PHP arrays for backend translations (resources/lang/{locale}/)
    - [ ] Implement comprehensive pt-BR translations for:
      - Core UI components
      - Auth flows
      - Error messages
-   - [ ] Set up extensible language switching mechanism with:
-     - Browser language detection
-     - User preference storage
-     - Fallback to English
-   - [ ] Add language selector UI component
+   - [x] Set up extensible language switching mechanism with:
+     - [ ] Browser language detection
+     - [ ] User preference storage
+     - [x] Fallback to English
+     - [x] Add language selector UI component
    - [ ] Implement Laravel localization for backend messages
    - [ ] Configure API to respect Accept-Language header
    - [ ] Add tests for translation functionality

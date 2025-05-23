@@ -1,8 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 
-
+const { t } = useI18n()
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 
@@ -11,12 +12,12 @@ const currentYear = computed(() => new Date().getFullYear())
     <v-container>
       <v-row justify="space-between" align="center">
         <v-col cols="12" md="4">
-          <p>&copy; {{ currentYear }} TODOKE</p>
+          <p>{{ t('footer.copyright', { year: currentYear }) }}</p>
         </v-col>
         
         <v-col cols="12" md="4" class="text-center">
-          <Link :href="route('terms')" class="text-white mr-2" data-test="terms-link">Terms</Link>
-          <Link :href="route('privacy')" class="text-white" data-test="privacy-link">Privacy</Link>
+          <Link :href="route('terms')" class="text-white mr-2" data-test="terms-link">{{ t('footer.terms') }}</Link>
+          <Link :href="route('privacy')" class="text-white" data-test="privacy-link">{{ t('footer.privacy') }}</Link>
         </v-col>
 
         <v-col cols="12" md="4" class="text-right">

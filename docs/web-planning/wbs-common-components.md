@@ -67,8 +67,8 @@
   - [x] JSON format for frontend translations (defined in techContext)
   - [x] Extensible structure for additional languages (defined in techContext)
   - [ ] Create pt-BR translation files (Sprint 4)
-- [ ] Add language selector component:
-  - [ ] Dropdown with available languages (Sprint 4)
+- [x] Add language selector component:
+  - [x] Dropdown with available languages (implemented in LanguageSelector.vue)
   - [ ] Persist user preference in user profile (Sprint 4)
   - [ ] Browser language detection with fallback (Sprint 4)
 - [ ] Testing:
