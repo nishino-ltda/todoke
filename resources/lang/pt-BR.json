@@ -9,7 +9,19 @@
         "login": "Entrar",
         "register": "Registrar",
         "logout": "Sair",
-        "menu": "Cardápio"
+        "menu": "Menu",
+        "errors": {
+            "invalid_credentials": "Credenciais inválidas",
+            "account_locked": "Conta bloqueada - entre em contato com o suporte",
+            "user_not_found": "Usuário não encontrado",
+            "too_many_attempts": "Muitas tentativas de login - tente novamente mais tarde",
+            "email_required": "Email é obrigatório",
+            "password_required": "Senha é obrigatória"
+        },
+        "success": {
+            "login": "Login realizado com sucesso",
+            "logout": "Logout realizado com sucesso"
+        }
     },
     "footer": {
         "copyright": "© {year} TODOKE. Todos os direitos reservados.",

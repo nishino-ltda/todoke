@@ -9,7 +9,19 @@
         "login": "Login",
         "register": "Register",
         "logout": "Logout",
-        "menu": "Menu"
+        "menu": "Menu",
+        "errors": {
+            "invalid_credentials": "Invalid login credentials",
+            "account_locked": "Account locked - please contact support",
+            "user_not_found": "User not found",
+            "too_many_attempts": "Too many login attempts - please try again later",
+            "email_required": "Email is required",
+            "password_required": "Password is required"
+        },
+        "success": {
+            "login": "Login successful",
+            "logout": "Logged out successfully"
+        }
     },
     "footer": {
         "copyright": "© {year} TODOKE. All rights reserved.",
