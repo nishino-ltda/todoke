@@ -161,7 +161,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { router } from '@inertiajs/vue3'
 import { useAuthStore } from '@/stores/auth'
 import { useLogStore } from '@/stores/log'
 
@@ -173,7 +173,6 @@ const props = defineProps({
   }
 })
 
-const router = useRouter()
 const authStore = useAuthStore()
 const formRef = ref(null)
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DeliveryController;
@@ -65,6 +66,20 @@ Route::prefix('v1')->group(function () {
             Route::put('/password', [AuthController::class, 'updatePassword']);
             Route::post('/logout', [AuthController::class, 'logout']);
         });
+        
+        // Convert API token to session
+        Route::post('/token-to-session', function (Request $request) {
+            $user = $request->user();
+            
+            if ($user) {
+                // Start session and login using web guard
+                auth('web')->login($user);
+                $request->session()->regenerate();
+                return response()->json(['success' => true]);
+            }
+            
+            return response()->json(['success' => false], 401);
+        })->middleware(['auth:sanctum', 'web']);
     });
 
     // Rotas públicas de produtos

@@ -86,6 +86,44 @@ api.interceptors.response.use(
 )
 ```
 
+## Hybrid Authentication System (2025-05-23)
+
+### Key Principles
+1. **Dual Authentication**:
+   - Uses Sanctum tokens for API calls
+   - Uses web sessions for Inertia routing
+   - Tokens stored in localStorage
+   - Session cookie for web routes
+
+2. **Flow**:
+   - User logs in via API endpoint (/api/v1/auth/login)
+   - Receives authentication token
+   - Frontend converts token to web session (/api/v1/auth/token-to-session)
+   - Session cookie enables Inertia routing
+   - Token remains available for API calls
+
+3. **Implementation**:
+   - Backend:
+     - Sanctum middleware for API routes
+     - Web middleware for session routes
+     - Token-to-session conversion endpoint
+   - Frontend:
+     - Auth service handles token conversion
+     - Maintains both token and session
+     - Proper error handling for both flows
+
+4. **Security**:
+   - CSRF protection for web routes
+   - Token expiration handling
+   - Session regeneration on login
+   - Secure cookie settings
+
+5. **Testing**:
+   - Verify API token works
+   - Check session creation
+   - Test Inertia routing
+   - Validate error cases
+
 ## Testing Patterns (Updated 2025-05-05)
 
 ### Frontend Testing Best Practices

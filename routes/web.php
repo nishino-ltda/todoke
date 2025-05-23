@@ -70,7 +70,7 @@ Route::get('/privacy', [CustomerPrivacyController::class, 'index'])->name('priva
 
 
 // Authenticated Routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     // Root redirects based on user type
     Route::get('/customer', function () {
         return redirect()->route('customer.dashboard');
@@ -99,7 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Customer Routes
-    Route::prefix('customer')->name('customer.')->group(function () {
+    Route::prefix('customer')->name('customer.')->middleware('ensure.type:customer')->group(function () {
         Route::get('/dashboard', [CustomerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/menu', [CustomerMenuController::class, 'index'])->name('menu');
         Route::get('/checkout', [CustomerCheckoutController::class, 'index'])->name('checkout');
@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Partner Routes
-    Route::prefix('partner')->name('partner.')->group(function () {
+    Route::prefix('partner')->name('partner.')->middleware('ensure.type:partner')->group(function () {
         Route::get('/dashboard', [PartnerDashboardController::class, 'index'])->name('dashboard');
         
         // Partner Orders
@@ -169,7 +169,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Courier Routes
-    Route::prefix('courier')->name('courier.')->group(function () {
+    Route::prefix('courier')->name('courier.')->middleware('ensure.type:courier')->group(function () {
         Route::get('/dashboard', [CourierDashboardController::class, 'index'])->name('dashboard');
         
         // Courier Deliveries
@@ -190,7 +190,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Admin Routes
-    Route::middleware(['role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['ensure.type:admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
         
         // Admin Users

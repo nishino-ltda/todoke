@@ -31,8 +31,9 @@ describe('🔑 Login Flow', () => {
     // Test form validation
     cy.get('[data-test="login-button"]').click();
     cy.log('🔍 Verifying required field validation');
-    cy.get('[data-test="email-error"]').should('be.visible');
-    cy.get('[data-test="password-error"]').should('be.visible');
+    cy.get('[data-test="auth-alert"]').should('be.visible')
+      .should('contain', 'The email field is required')
+      .should('contain', 'The password field is required');
     
     // Check logs for validation errors
     cy.log('🔍 Checking validation logs');
@@ -61,7 +62,7 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="login-button"]').click();
     
     // Verify successful login and redirect
-    cy.log('✅ Verifying successful login and redirect');
+    cy.log('❔ Verifying successful login and redirect');
     cy.url().should('include', '/customer/dashboard');
     cy.get('[data-testid="user-welcome"]').should('contain', 'Welcome back');
     cy.get('[data-testid="user-email"]').should('contain', customer.email);
@@ -111,10 +112,10 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="login-button"]').click();
     
     // Verify successful login and redirect  
-    cy.log('✅ Verifying successful login and redirect');
+    cy.log('❔ Verifying successful login and redirect');
     // Wait for redirect after login
     cy.url().should('include', '/courier/dashboard', { timeout: 20000 });
-    cy.get('[data-testid="courier-welcome"]').should('contain', 'Courier Dashboard');
+    cy.get('[data-test="courier-dashboard"]').should('contain', 'Courier Dashboard');
     
     // Check logs for successful login
     cy.log('✅ Checking success logs');
@@ -131,7 +132,7 @@ describe('🔑 Login Flow', () => {
       )).to.be.true;
       expect(logs.some(log => 
         log.message.includes('Login successful') && 
-        log.message.includes('courier')
+        log.message.includes(courier.email)
       )).to.be.true;
     });
   });
@@ -161,7 +162,7 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="login-button"]').click();
     
     // Verify successful login and redirect
-    cy.log('✅ Verifying successful login and redirect');
+    cy.log('❔ Verifying successful login and redirect');
     // Wait for redirect after login
     cy.url().should('include', '/partner/dashboard', { timeout: 20000 });
     cy.get('[data-testid="partner-welcome"]').should('contain', 'Partner Dashboard');
@@ -171,18 +172,19 @@ describe('🔑 Login Flow', () => {
     cy.window().should('have.property', 'logStore');
     cy.window().then(win => {
       const logs = win.logStore.getLogs();
+      cy.log('📝 Full log store contents:', logs);
       cy.log(`📝 Found ${logs.length} log messages`);
-      logs.forEach(log => {
-        cy.log(`ℹ️ ${log.message}`);
+      logs.forEach((log, index) => {
+        cy.log(`ℹ️ Log ${index + 1}:`, log);
       });
       expect(logs.some(log => 
         log.message.includes('Login attempt') && 
         log.message.includes(partner.email)
-      )).to.be.true;
+      ), 'Expected to find login attempt log').to.be.true;
       expect(logs.some(log => 
         log.message.includes('Login successful') && 
-        log.message.includes('partner')
-      )).to.be.true;
+        log.message.includes(partner.email)
+      ), 'Expected to find login success log').to.be.true;
     });
   });
 
@@ -211,7 +213,7 @@ describe('🔑 Login Flow', () => {
     cy.get('[data-test="login-button"]').click();
     
     // Verify successful login and redirect
-    cy.log('✅ Verifying successful login and redirect');
+    cy.log('❔ Verifying successful login and redirect');
     // Wait for redirect after login
     cy.url().should('include', '/admin/dashboard', { timeout: 10000 });
     cy.get('[data-testid="admin-welcome"]').should('contain', 'Admin Dashboard');
@@ -231,7 +233,7 @@ describe('🔑 Login Flow', () => {
       )).to.be.true;
       expect(logs.some(log => 
         log.message.includes('Login successful') && 
-        log.message.includes('admin')
+        log.message.includes(admin.email)
       )).to.be.true;
     });
   });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
@@ -117,6 +118,9 @@ class AuthController extends Controller
         }
 
         Log::debug('Credentials validated successfully', ['user_id' => $user->id]);
+        
+        // Log the user in via session
+        Auth::login($user);
         
         // Delete any existing tokens for the user
         $user->tokens()->delete();

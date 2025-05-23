@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import api from '@/services/api'
 import { useLogStore } from './log'
+import { router } from '@inertiajs/vue3'
 
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
@@ -14,23 +15,29 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     error.value = null
     try {
-      const response = await api.post('/auth/login', credentials)
-      setAuth(response.data)
+      // Use auth service which handles token-to-session conversion
+      const authService = (await import('@/services/auth')).default
+      const authData = await authService.login(credentials)
+      
+      if (!authData?.token) {
+        throw new Error('No token received in login response')
+      }
+      
+      setAuth(authData)
+      
       if (router) {
         const logStore = useLogStore()
-        const userType = response.data.user?.type
+        const userType = authData.user?.type
         logStore.log(`🔑 Login successful, user type: ${userType}`, 'debug')
-        const redirectPath = 
+        const redirectPath =
           userType === 'admin' ? '/admin/dashboard' :
-          userType === 'courier' ? '/courier/dashboard' :
-          userType === 'partner' ? '/partner/dashboard' :
-          '/customer/dashboard'
+            userType === 'courier' ? '/courier/dashboard' :
+              userType === 'partner' ? '/partner/dashboard' :
+                '/customer/dashboard'
         logStore.log(`🛣️ Redirecting to: ${redirectPath}`, 'debug')
-        router.push(redirectPath)
-          .then(() => logStore.log('✅ Redirect successful', 'debug'))
-          .catch(err => logStore.log(`❌ Redirect failed: ${err}`, 'error'))
+        router.visit(redirectPath)
       }
-      return response
+      return authData
     } catch (err) {
       clearAuth()
       error.value = err.response?.data?.message || 'Login failed'
@@ -46,7 +53,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const endpoint = userData._endpoint || '/auth/register'
       delete userData._endpoint
-      
+
       const config = {}
       if (userData instanceof FormData) {
         config.headers = {
@@ -56,16 +63,16 @@ export const useAuthStore = defineStore('auth', () => {
 
       const response = await api.post(endpoint, userData, config)
       setAuth(response.data)
-      
+
       // Redirect based on user type
       if (router) {
         const userType = response.data.user?.type
-        const redirectPath = 
+        const redirectPath =
           userType === 'admin' ? '/admin/dashboard' :
-          userType === 'courier' ? '/courier/dashboard' :
-          userType === 'partner' ? '/partner/dashboard' :
-          '/customer/dashboard'
-        router.push(redirectPath)
+            userType === 'courier' ? '/courier/dashboard' :
+              userType === 'partner' ? '/partner/dashboard' :
+                '/customer/dashboard'
+        router.visit(redirectPath)
       }
       return response
     } catch (err) {
@@ -83,7 +90,7 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated.value = false
     error.value = null
     localStorage.removeItem('token')
-    if (router) router.push('/login')
+    if (router) router.visit('/login')
   }
 
   function setAuth(authData) {
@@ -93,12 +100,12 @@ export const useAuthStore = defineStore('auth', () => {
       logStore.log('Invalid auth data received', 'error')
       throw new Error('Invalid auth data received')
     }
-    
+
     user.value = authData.user
     token.value = authData.token
     isAuthenticated.value = true
     error.value = null
-    
+
     localStorage.setItem('token', authData.token)
     logStore.log(`Auth set successfully for user: ${authData.user.email}`, 'info')
   }

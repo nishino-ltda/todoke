@@ -39,11 +39,23 @@ const authService = {
     const logStore = useLogStore()
     try {
       logStore.log('🔐 Attempting login')
-      const response = await api.post('/auth/login', credentials)
+      // 1. Call API login to get token
+      const loginResponse = await api.post('/auth/login', credentials)
+      
+      // 2. Convert token to session
+      await api.post('/auth/token-to-session', {
+        token: loginResponse.data.token
+      }, {
+        headers: {
+          'Authorization': `Bearer ${loginResponse.data.token}`
+        }
+      })
+      
+      // 3. Update auth store
       const authStore = useAuthStore()
-      authStore.setAuth(response.data)
+      authStore.setAuth(loginResponse.data)
       logStore.log('✅ Login successful')
-      return response.data
+      return loginResponse.data
     } catch (error) {
       logStore.log('❌ Login failed', error)
       throw new Error('Login failed. Please check your credentials.')

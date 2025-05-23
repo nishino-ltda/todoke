@@ -1,3 +1,40 @@
+# Active Context (2025-05-23)
+
+## Current Work
+- Implemented hybrid authentication system
+  - Combines Sanctum tokens for API calls
+  - Uses web sessions for Inertia routing
+  - Token-to-session conversion endpoint
+
+## Modified Files
+1. **Backend**:
+   - routes/api.php (added token-to-session endpoint)
+   - config/auth.php (updated guards configuration)
+
+2. **Frontend**:
+   - resources/js/services/auth.js (updated login flow)
+   - resources/js/stores/auth.js (modified to handle hybrid auth)
+
+## Implementation Status
+- Backend implementation complete
+- Frontend integration working
+- Basic testing successful
+
+## Testing
+- API tests for token generation and conversion
+- Frontend tests for auth service
+- E2E tests for complete login flow
+
+## Next Steps
+- Monitor production performance
+- Review session timeout settings
+- Consider refresh token implementation
+
+## Key Learnings
+- Need both 'web' and 'auth:sanctum' middleware for session conversion
+- Session regeneration important for security
+- Frontend must handle both token and session states
+
 ## Internationalization Implementation (2025-05-22)
 
 ### Current Focus:

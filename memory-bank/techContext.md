@@ -19,7 +19,84 @@
     - Laravel Pint (^1.13) - Code style
     - Mockery (^1.6) - Mocking library
     - PHPUnit (^11.5.3) - Testing framework   
-  
+
+## Hybrid Authentication Implementation (2025-05-23)
+
+### Backend Configuration
+1. **Guards Setup**:
+   - Sanctum guard for API routes
+   - Web guard for session routes
+   - Configured in config/auth.php
+
+2. **Middleware**:
+   - API routes use 'auth:sanctum'
+   - Web routes use 'auth'
+   - Token-to-session endpoint uses both:
+     ```php
+     ->middleware(['auth:sanctum', 'web'])
+     ```
+
+3. **Token-to-Session Endpoint**:
+   - Route: POST /api/v1/auth/token-to-session
+   - Implementation:
+     ```php
+     Route::post('/token-to-session', function (Request $request) {
+         $user = $request->user();
+         if ($user) {
+             auth('web')->login($user);
+             $request->session()->regenerate();
+             return response()->json(['success' => true]);
+         }
+         return response()->json(['success' => false], 401);
+     })->middleware(['auth:sanctum', 'web']);
+     ```
+
+### Frontend Implementation
+1. **Auth Service**:
+   - Handles both token and session authentication
+   - Login flow:
+     ```javascript
+     async login(credentials) {
+       // 1. API login to get token
+       const loginResponse = await api.post('/auth/login', credentials);
+       
+       // 2. Convert token to session
+       await api.post('/auth/token-to-session', {
+         token: loginResponse.data.token
+       }, {
+         headers: {
+           'Authorization': `Bearer ${loginResponse.data.token}`
+         }
+       });
+       
+       // 3. Update auth store
+       authStore.setAuth(loginResponse.data);
+     }
+     ```
+
+2. **Token Storage**:
+   - Tokens stored in localStorage
+   - Added to API request headers via axios interceptor
+
+3. **Session Handling**:
+   - Session cookie automatically handled by browser
+   - Used for Inertia routing
+
+### Testing Considerations
+1. **API Tests**:
+   - Verify token generation
+   - Test token-to-session conversion
+   - Check session persistence
+
+2. **Frontend Tests**:
+   - Mock auth service responses
+   - Verify token storage
+   - Check session cookie handling
+
+3. **E2E Tests**:
+   - Complete login flow
+   - Verify Inertia routing works
+   - Check API calls still work with token
 
 ### Frontend
 - **Build Tool**: Vite 6 (^6.2.4)
