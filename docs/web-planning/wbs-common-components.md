@@ -21,11 +21,11 @@
   - [x] Unit tests (100% coverage)
 
 ## 2. Authentication Components
-- [ ] Create Auth Form (`AuthForm.vue`)
-  - [ ] Login functionality
-  - [ ] Registration functionality
-  - [ ] Form validation
-  - [ ] Error handling
+- [x] Create Auth Form (`AuthForm.vue`)
+  - [x] Login functionality
+  - [x] Registration functionality
+  - [x] Form validation
+  - [x] Error handling
 
 ## 3. Form Components
 - [ ] Create Address Input (`AddressInput.vue`)

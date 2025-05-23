@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="primary" dark>
+  <v-app-bar app color="primary" dark data-test="app-header">
     <v-app-bar-nav-icon @click="toggleDrawer" />
     <v-toolbar-title>TODOKE</v-toolbar-title>
     <v-spacer />

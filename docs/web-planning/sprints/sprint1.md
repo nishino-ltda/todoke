@@ -43,7 +43,7 @@
 - `cypress/e2e/app.cy.js`
 
 ## Testing Goals
-- [ ] Setup Cypress for E2E testing (basic configuration and test file created)
+- [x] Setup Cypress for E2E testing (basic configuration and test file created)
 - [x] Write unit tests for:
   - [x] Auth Store
   - [x] API Service
@@ -67,7 +67,7 @@
 
 4. **Testing Infrastructure**:
    - [x] Configure test environment (Vitest + Vue Test Utils)
-   - [ ] Set up CI/CD test reporting (Vitest coverage)
+   - [x] Set up CI/CD test reporting (Vitest coverage)
    - [x] Write unit tests for all stores
    - [x] Write unit tests for all services
    - [x] Write unit tests for common components (including AuthForm)
