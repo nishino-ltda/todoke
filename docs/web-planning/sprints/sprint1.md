@@ -74,10 +74,21 @@
 
 5. **Translation Infrastructure**:
    - [ ] Install and configure Vue I18n
-   - [ ] Create translation file structure
-   - [ ] Implement basic pt-BR translations
-   - [ ] Set up language switching mechanism
+   - [ ] Create translation file structure with:
+     - JSON files for frontend translations (resources/lang/{locale}.json)
+     - PHP arrays for backend translations (resources/lang/{locale}/)
+   - [ ] Implement comprehensive pt-BR translations for:
+     - Core UI components
+     - Auth flows
+     - Error messages
+   - [ ] Set up extensible language switching mechanism with:
+     - Browser language detection
+     - User preference storage
+     - Fallback to English
    - [ ] Add language selector UI component
+   - [ ] Implement Laravel localization for backend messages
+   - [ ] Configure API to respect Accept-Language header
+   - [ ] Add tests for translation functionality
 
 ## Test Fixes
 - [x] Fixed Pinia initialization in auth service tests

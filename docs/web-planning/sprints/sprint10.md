@@ -45,7 +45,15 @@
    - [ ] Improve keyboard navigation
    - [ ] Add screen reader support
 
-3. **Polish & Refinement**:
+3. **Internationalization**:
+   - [ ] Set up translation file structure
+   - [ ] Extract all UI text to translation files
+   - [ ] Implement language switching UI
+   - [ ] Add pt-BR translations
+   - [ ] Test translation fallback behavior
+   - [ ] Verify localized formatting (dates/numbers)
+
+4. **Polish & Refinement**:
    - [ ] Review all UI components
    - [ ] Standardize animations
    - [ ] Improve error states

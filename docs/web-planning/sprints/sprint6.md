@@ -28,13 +28,22 @@
   - [ ] Courier login flow
   - [ ] Delivery acceptance flow
   - [ ] Status updates
+  - [ ] Language switching
 - [ ] Write unit tests for:
   - [ ] CourierDashboard component
   - [ ] AvailableDeliveriesList component
   - [ ] DeliveryMap component
+  - [ ] Translation functionality
 
 ## Implementation Tasks
-1. **Dashboard Components**:
+1. **Internationalization**:
+   - [ ] Implement translation file structure
+   - [ ] Add pt-BR translations for all UI text
+   - [ ] Create language switcher component
+   - [ ] Configure API to respect Accept-Language header
+   - [ ] Update database models for multilingual content
+
+2. **Dashboard Components**:
    - [ ] Create CourierDashboard layout
    - [ ] Implement AvailableDeliveriesList
    - [ ] Create DeliveryMap component
@@ -55,3 +64,6 @@
 - Deliveries can be accepted/rejected
 - Status updates work correctly
 - Map shows current position and route
+- All UI text is properly translated to pt-BR
+- Language switcher works correctly
+- API responses respect Accept-Language header

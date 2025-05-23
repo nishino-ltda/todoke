@@ -57,7 +57,26 @@
 - [ ] E2E testing setup
 
 ## 6. Internationalization
-- [ ] Implement translation support in all components
-- [ ] Create pt-BR translation files
-- [ ] Add language selector component
-- [ ] Test components with different languages
+- [x] Translation patterns documented in systemPatterns.md
+- [ ] Implement translation support in all components:
+  - [x] Use Vue I18n for text interpolation (pattern established)
+  - [ ] Externalize all UI strings to translation files (Sprint 4)
+  - [ ] Support dynamic language switching (Sprint 4)
+- [ ] Create translation infrastructure:
+  - [x] pt-BR as first supported language (defined in projectBrief)
+  - [x] JSON format for frontend translations (defined in techContext)
+  - [x] Extensible structure for additional languages (defined in techContext)
+  - [ ] Create pt-BR translation files (Sprint 4)
+- [ ] Add language selector component:
+  - [ ] Dropdown with available languages (Sprint 4)
+  - [ ] Persist user preference in user profile (Sprint 4)
+  - [ ] Browser language detection with fallback (Sprint 4)
+- [ ] Testing:
+  - [ ] Unit tests for translation functionality (Sprint 4)
+  - [ ] Verify fallback behavior (default to English) (Sprint 4)
+  - [ ] Test components with different locales (Sprint 4)
+  - [ ] E2E tests for language switching flow (Sprint 4)
+- [ ] Documentation:
+  - [ ] Add translation guidelines to techContext.md (Sprint 4)
+  - [ ] Document string extraction process (Sprint 4)
+  - [ ] Create translation contribution guide (Sprint 4)

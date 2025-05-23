@@ -5,9 +5,16 @@
 - web-planning/wbs-restaurant-partner.md
 - web-planning/restaurant-partner.md
 
+### Translation Requirements
+- First language: pt-BR
+- Extensible for additional languages
+- All UI text must be in translation files
+- API responses should respect Accept-Language header
+- Database content should support multiple languages when needed
+
 ### E2E Tests
 - cypress/e2e/partner/partner-dashboard.cy.js
-- cypress/e2e/partner/order-management.cy.js
+- cypress/e2e/partner/order-management.cy.js 
 - cypress/e2e/partner/partner-flow.cy.js
 
 ### Route Controllers
@@ -50,19 +57,28 @@
 - [ ] Write E2E tests for:
   - [ ] Partner login flow
   - [ ] Order management
+  - [ ] Language switching
 - [ ] Write unit tests for:
   - [ ] PartnerDashboard component
   - [ ] OrderList component
   - [ ] OrderCard component
+  - [ ] Translation functionality
 
 ## Implementation Tasks
-1. **Frontend Foundation**:
+1. **Internationalization**:
+   - [ ] Implement translation file structure
+   - [ ] Add pt-BR translations for all UI text
+   - [ ] Create language switcher component
+   - [ ] Configure API to respect Accept-Language header
+   - [ ] Update database models for multilingual content
+
+2. **Frontend Foundation**:
    - [ ] Convert all boilerplate pages to Vuetify3
    - [ ] Replace router-links with Inertia Link
    - [ ] Add data-test attributes for testing
    - [ ] Update tech documentation
 
-2. **Dashboard Components**:
+3. **Dashboard Components**:
    - [ ] Create PartnerDashboard layout
    - [ ] Implement OrderList component
    - [ ] Create OrderCard component
@@ -82,3 +98,6 @@
 - Order status can be updated
 - Dashboard updates in real-time
 - Filtering works correctly
+- All UI text is properly translated to pt-BR
+- Language switcher works correctly
+- API responses respect Accept-Language header

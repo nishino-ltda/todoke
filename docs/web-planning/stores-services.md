@@ -9,11 +9,17 @@ Plan for frontend state management (stores) and reusable logic (services) to han
     - Stores user information (ID, name, email, type, token, language preference).
     - Handles login, registration, and logout actions (interacting with API).
     - Persists authentication state (e.g., using local storage).
-- **Translation Store:**
-    - Manages current language selection
-    - Loads translation files for selected language
-    - Provides translation lookup methods
-    - Persists language preference
+- **Translation Store (Sprint 4):**
+    - Manages current language selection and fallback logic
+    - Loads and caches translation files dynamically
+    - Provides translation lookup methods with:
+      - String interpolation support
+      - Pluralization support
+      - Fallback to default language
+    - Persists language preference in localStorage
+    - Syncs with user profile when authenticated
+    - Emits events on language change
+    - Unit tested with 100% coverage
 - **Cart Store:**
     - Manages the state of the customer's shopping cart.
     - Stores selected products, quantities, and addons.
@@ -34,13 +40,23 @@ Plan for frontend state management (stores) and reusable logic (services) to han
 ## Frontend Services
 - **API Service (Axios):**
     - Centralized service for making HTTP requests to the backend API using Axios.
-    - Handles setting authorization headers and Accept-Language header.
+    - Handles setting authorization headers and Accept-Language header (Sprint 4).
     - Provides methods for different API calls (GET, POST, PUT, PATCH, DELETE).
     - Implements error handling and potentially request interceptors.
-- **Translation Service:**
-    - Loads translation files
-    - Handles language switching
-    - Provides translation utilities
+- **Translation Service (Sprint 4):**
+    - Centralized service for all translation operations
+    - Handles language switching with:
+      - Browser language detection
+      - User preference override
+      - Fallback to English
+    - Provides translation utilities including:
+      - String interpolation
+      - Pluralization
+      - Date/number formatting
+      - Right-to-left (RTL) support
+    - Loads and caches translation files
+    - Supports hot reload of translations in development
+    - Unit tested with 100% coverage
 - **Auth Service:**
     - Encapsulates authentication logic.
     - Interacts with the Auth Store and API Service for login, registration, and logout.

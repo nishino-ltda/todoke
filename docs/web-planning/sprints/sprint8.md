@@ -38,19 +38,26 @@
    - [ ] Create AppAlert component
    - [ ] Add notification display logic
    - [ ] Implement notification dismissal
+   - [ ] Support translated notification content:
+     - [ ] Store notifications with translation keys
+     - [ ] Render notifications using Vue I18n
+     - [ ] Include dynamic values in translations
 
 2. **Real-time Updates**:
    - [ ] Set up WebSocket service
    - [ ] Connect to real-time API
    - [ ] Implement update listeners
    - [ ] Add UI update triggers
+   - [ ] Ensure real-time updates respect user language preference
 
 3. **State Management**:
    - [ ] Extend stores for real-time updates
    - [ ] Add notification history
+   - [ ] Store notification translations in history
 
 ## Acceptance Criteria
-- Notifications display correctly
-- Real-time updates work across components
+- Notifications display correctly in all supported languages
+- Real-time updates work across components and respect language preference
 - WebSocket connection is stable
-- Notification history is maintained
+- Notification history is maintained with translations
+- Notification content is externalized to translation files

@@ -36,12 +36,26 @@ Identify and plan for reusable Vue components that will be used across multiple 
 - Utilize Vuetify components as the base for common components where possible.
 - Implement proper event handling for communication between components.
 - Consider using slots for flexible content injection.
-- **Internationalization**:
-  - All text should be stored in translation files
-  - Components should use translation keys rather than hardcoded text
-  - Support for pt-BR as first translation
-  - Architecture should allow adding new languages easily
-  - Language selection should be available in user profile
+  - **Internationalization**:
+    - **Translation Files**:
+      - JSON format for frontend translations (resources/lang/{locale}.json)
+      - PHP arrays for backend translations (resources/lang/{locale}/)
+      - pt-BR as first supported language (Sprint 4)
+      - Extensible structure for additional languages
+    - **Component Implementation**:
+      - All UI text externalized to translation files (Sprint 4)
+      - Use Vue I18n for text interpolation
+      - Support dynamic language switching (Sprint 4)
+      - Include data-test attributes for translation testing
+    - **Language Selection**:
+      - Dropdown component in user profile (Sprint 4)
+      - Persist user preference in auth store (Sprint 4)
+      - Browser language detection (Sprint 4)
+      - Fallback to English when translation missing
+    - **Testing**:
+      - Unit tests for translation functionality (Sprint 4)
+      - Verify components render correctly in different languages (Sprint 4)
+      - Test fallback behavior (Sprint 4)
 
 ## Potential Components
 - `AppHeader.vue`

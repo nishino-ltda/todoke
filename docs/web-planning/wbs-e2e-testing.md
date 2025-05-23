@@ -41,7 +41,14 @@
 - [ ] Ticket viewing
 - [ ] (Future) Ticket communication
 
-## 8. CI/CD Integration
+## 8. Translation Testing
+- [ ] Verify UI text renders in correct language
+- [ ] Test language switching functionality
+- [ ] Verify fallback to English when translation missing
+- [ ] Test notifications with dynamic values in translations
+- [ ] Check date/number formatting per locale
+
+## 9. CI/CD Integration
 - [ ] Add to build pipeline
 - [ ] Configure test reporting
 - [ ] Set up test artifacts

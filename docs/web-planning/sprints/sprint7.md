@@ -3,6 +3,7 @@
 ## References
 - WBS: web-planning/wbs-admin.md
 - Planning: web-planning/admin.md
+- Translation Files: resources/lang/
 - Controllers:
   - Admin/DashboardController.php
   - Admin/UserController.php
@@ -15,6 +16,12 @@
   - admin-login.cy.js
   - user-management.cy.js
   - node-management.cy.js
+
+## Translation Requirements
+- [ ] Implement language switching in admin UI
+- [ ] Ensure all admin UI text is translatable
+- [ ] Add pt-BR translations for admin panel
+- [ ] Create translation file structure for future languages
 
 ## Testing Goals
 - [ ] Write E2E tests for:

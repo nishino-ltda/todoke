@@ -34,12 +34,18 @@
 - [ ] Write E2E tests for:
   - [ ] Login flow
   - [ ] Registration flow
+  - [ ] Language switching functionality
 - [ ] Write unit tests for:
-  - [ ] AuthForm component
-  - [ ] HomeHero component
-  - [ ] HomeFeatures component
-  - [ ] GuestLayout component
-  - [ ] AuthenticatedLayout component
+  - [ ] AuthForm component (including translation behavior)
+  - [ ] HomeHero component (including translation behavior)
+  - [ ] HomeFeatures component (including translation behavior)
+  - [ ] GuestLayout component (including translation behavior)
+  - [ ] AuthenticatedLayout component (including translation behavior)
+  - [ ] Translation utilities
+  - [ ] Language preference storage
+- [ ] Integration tests for:
+  - [ ] Component rendering with different locales
+  - [ ] Fallback language behavior
 
 ## Implementation Tasks
 1. **Layout System**:
@@ -48,25 +54,40 @@
    - [ ] Apply Layouts to all pages
    - [ ] Implement responsive design
    - [ ] Add navigation integration
+   - [ ] Add translation support to all layout text
 
 2. **Authentication**:
-   - [ ] Implement AuthForm component
+   - [ ] Implement AuthForm component with:
+     - [ ] Translation keys for all UI text
+     - [ ] Language-aware validation messages
+     - [ ] Error messages from translation files
    - [ ] Connect to Auth Service
    - [ ] Add form validation
    - [ ] Implement error handling
 
 3. **Home Page**:
-   - [ ] Create HomeHero component
-   - [ ] Create HomeFeatures component
+   - [ ] Create HomeHero component with translation support
+   - [ ] Create HomeFeatures component with translation support
    - [ ] Implement responsive design
-   - [ ] Add navigation links
+   - [ ] Add navigation links with translated labels
 
 4. **State Management**:
    - [ ] Extend Auth Store for registration
    - [ ] Add error state handling
+   - [ ] Implement language preference storage
+
+5. **Translation Infrastructure**:
+   - [ ] Set up Vue I18n integration
+   - [ ] Create pt-BR translation files
+   - [ ] Implement language switching mechanism
+   - [ ] Add translation utilities to common components
 
 ## Acceptance Criteria
-- All auth tests pass
-- Home page components render properly
-- Form validation works
-- Error states are handled gracefully
+- All auth tests pass including translation tests
+- Home page components render properly in all supported languages
+- Form validation works with localized messages
+- Error states are handled gracefully with translated messages
+- Language switching works across all components
+- Translation files are properly structured and complete
+- Fallback to default language works when translations are missing
+- All UI text is externalized to translation files

@@ -1,6 +1,13 @@
 # Work Breakdown Structure: Restaurant/Partner Dashboard
 
-## 1. Dashboard Structure
+## 1. Internationalization
+- [ ] Implement translation file structure
+- [ ] Add pt-BR translations for all UI text
+- [ ] Create language switcher component
+- [ ] Configure API to respect Accept-Language header
+- [ ] Update database models for multilingual content
+
+## 2. Dashboard Structure
 - [ ] Create protected route for partner dashboard
 - [ ] Implement dashboard layout with navigation
 - [ ] Create responsive grid for metrics widgets

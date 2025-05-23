@@ -47,6 +47,13 @@
 - [ ] Monitor deliveries
 - [ ] Update system settings
 
-## 9. Testing
+## 9. Internationalization
+- [ ] Create language selector component
+- [ ] Implement translation file structure
+- [ ] Add pt-BR translations for admin UI
+- [ ] Make all UI text translatable
+
+## 10. Testing
 - [ ] Unit tests for components
 - [ ] E2E tests for admin workflows
+- [ ] Test language switching functionality

@@ -50,16 +50,25 @@
 - [ ] E2E testing setup
 
 ## 4. Internationalization
-- [ ] Implement Translation Store
-  - [ ] Language selection persistence
-  - [ ] Translation file loading
-  - [ ] Translation lookup methods
-- [ ] Implement Translation Service
-  - [ ] Language switching
-  - [ ] Translation utilities
-- [ ] Add language support to Auth Store
+- [ ] Implement Translation Store (Sprint 4):
+  - [ ] Persist language selection in localStorage
+  - [ ] Load translation files dynamically
+  - [ ] Provide translation lookup methods
+  - [ ] Handle fallback to default language
+  - [ ] Unit tests for all functionality
+- [ ] Implement Translation Service (Sprint 4):
+  - [ ] Handle language switching
+  - [ ] Provide translation utilities
+  - [ ] Support pluralization
+  - [ ] Support interpolation
+  - [ ] Unit tests for all functionality
+- [ ] Add language support to Auth Store (Sprint 4):
   - [ ] Store user language preference
-  - [ ] Handle language selection
-- [ ] Update API Service
-  - [ ] Add Accept-Language header
-  - [ ] Handle language-specific responses
+  - [ ] Sync with user profile
+  - [ ] Handle language selection events
+  - [ ] Unit tests for all functionality
+- [ ] Update API Service (Sprint 4):
+  - [ ] Add Accept-Language header to all requests
+  - [ ] Handle language-specific error messages
+  - [ ] Support localized API responses
+  - [ ] Unit tests for all functionality

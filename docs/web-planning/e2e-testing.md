@@ -52,6 +52,12 @@ Define the strategy for implementing end-to-end (E2E) tests to ensure the web ap
 - Consider using Cypress fixtures for test data.
 - Explore using `cy.intercept()` to mock API responses for testing specific frontend behavior in isolation or simulating error conditions.
 - Integrate E2E tests into the CI/CD pipeline.
+- **Translation Testing**:
+  - Test UI text in all supported languages using `cy.contains()` with expected translations
+  - Verify language switching functionality
+  - Test fallback behavior when translations are missing
+  - Check localized formatting of dates, numbers and currencies
+  - Test notifications with dynamic values in translations
 
 ## Potential Files/Directories
 - `cypress/` (Cypress test runner directory)
