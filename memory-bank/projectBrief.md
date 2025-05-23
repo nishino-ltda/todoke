@@ -4,7 +4,13 @@
 TODOKE is an innovative delivery management platform combining traditional couriers with drone technology. It features a democratic pricing model where couriers collaboratively determine delivery prices.
 
 ## Core Features
-1. **Hybrid Delivery System**:
+1. **Internationalization**:
+   - Multi-language support with pt-BR as first translation
+   - Extensible architecture for adding new languages
+   - Language selection in user profile
+   - All UI text stored in translation files
+
+2. **Hybrid Delivery System**:
    - Integration of motorbike couriers and drones
    - Specialized status tracking for drone operations
    - Automatic stage assignments for multi-part deliveries

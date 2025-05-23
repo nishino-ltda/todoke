@@ -55,3 +55,9 @@
 - [ ] Integration tests with parent components
 - [ ] Accessibility testing
 - [ ] E2E testing setup
+
+## 6. Internationalization
+- [ ] Implement translation support in all components
+- [ ] Create pt-BR translation files
+- [ ] Add language selector component
+- [ ] Test components with different languages

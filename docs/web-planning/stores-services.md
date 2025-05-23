@@ -6,9 +6,14 @@ Plan for frontend state management (stores) and reusable logic (services) to han
 ## State Management (Stores - Pinia)
 - **Auth Store:**
     - Manages user authentication state (logged in/out).
-    - Stores user information (ID, name, email, type, token).
+    - Stores user information (ID, name, email, type, token, language preference).
     - Handles login, registration, and logout actions (interacting with API).
     - Persists authentication state (e.g., using local storage).
+- **Translation Store:**
+    - Manages current language selection
+    - Loads translation files for selected language
+    - Provides translation lookup methods
+    - Persists language preference
 - **Cart Store:**
     - Manages the state of the customer's shopping cart.
     - Stores selected products, quantities, and addons.
@@ -29,9 +34,13 @@ Plan for frontend state management (stores) and reusable logic (services) to han
 ## Frontend Services
 - **API Service (Axios):**
     - Centralized service for making HTTP requests to the backend API using Axios.
-    - Handles setting authorization headers.
+    - Handles setting authorization headers and Accept-Language header.
     - Provides methods for different API calls (GET, POST, PUT, PATCH, DELETE).
     - Implements error handling and potentially request interceptors.
+- **Translation Service:**
+    - Loads translation files
+    - Handles language switching
+    - Provides translation utilities
 - **Auth Service:**
     - Encapsulates authentication logic.
     - Interacts with the Auth Store and API Service for login, registration, and logout.

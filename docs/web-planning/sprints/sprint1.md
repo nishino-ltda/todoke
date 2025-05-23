@@ -72,6 +72,13 @@
    - [x] Write unit tests for all services
    - [x] Write unit tests for common components (including AuthForm)
 
+5. **Translation Infrastructure**:
+   - [ ] Install and configure Vue I18n
+   - [ ] Create translation file structure
+   - [ ] Implement basic pt-BR translations
+   - [ ] Set up language switching mechanism
+   - [ ] Add language selector UI component
+
 ## Test Fixes
 - [x] Fixed Pinia initialization in auth service tests
 - [x] Fixed AppHeader loading state test

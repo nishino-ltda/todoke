@@ -48,3 +48,18 @@
 - [ ] Unit tests for other services
 - [ ] Integration tests with components
 - [ ] E2E testing setup
+
+## 4. Internationalization
+- [ ] Implement Translation Store
+  - [ ] Language selection persistence
+  - [ ] Translation file loading
+  - [ ] Translation lookup methods
+- [ ] Implement Translation Service
+  - [ ] Language switching
+  - [ ] Translation utilities
+- [ ] Add language support to Auth Store
+  - [ ] Store user language preference
+  - [ ] Handle language selection
+- [ ] Update API Service
+  - [ ] Add Accept-Language header
+  - [ ] Handle language-specific responses

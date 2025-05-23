@@ -1,3 +1,34 @@
+## Translation Patterns (2025-05-22)
+
+### Key Principles
+1. **Separation of Concerns**:
+   - Keep all UI text in translation files
+   - Never hardcode strings in components
+   - Store translations in appropriate format (JSON for frontend, PHP arrays for backend)
+
+2. **Locale Handling**:
+   - Store current locale in user profile/preferences
+   - Support browser language detection
+   - Provide manual language selection
+   - Fallback to default language (English) when translation missing
+
+3. **Implementation**:
+   - Use Vue I18n for frontend translations
+   - Use Laravel's localization for backend
+   - Store database content in multiple languages when needed
+   - API responses should respect Accept-Language header
+
+### Testing Patterns
+1. **Unit Tests**:
+   - Test components with different locales
+   - Verify fallback behavior
+   - Check language switcher functionality
+
+2. **E2E Tests**:
+   - Test UI with different language settings
+   - Verify API responses respect language headers
+   - Check database content in multiple languages
+
 ## API Service Patterns (Updated 2025-05-19)
 
 ### Interceptor Implementation

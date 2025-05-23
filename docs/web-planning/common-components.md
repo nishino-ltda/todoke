@@ -36,6 +36,12 @@ Identify and plan for reusable Vue components that will be used across multiple 
 - Utilize Vuetify components as the base for common components where possible.
 - Implement proper event handling for communication between components.
 - Consider using slots for flexible content injection.
+- **Internationalization**:
+  - All text should be stored in translation files
+  - Components should use translation keys rather than hardcoded text
+  - Support for pt-BR as first translation
+  - Architecture should allow adding new languages easily
+  - Language selection should be available in user profile
 
 ## Potential Components
 - `AppHeader.vue`

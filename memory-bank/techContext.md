@@ -182,6 +182,26 @@ npm run build
   - 422: Validation error
   - 403: Forbidden
 
+## Internationalization Implementation
+- **Translation Files**:
+  - Stored in `resources/lang/{locale}/` directories
+  - JSON format for frontend translations
+  - PHP arrays for backend translations
+  - pt-BR as first supported language
+  - Easy to add new languages by creating new locale directories
+
+- **Vue Implementation**:
+  - Vue I18n library for frontend translations
+  - Language switcher component
+  - Automatic locale detection from browser/user preferences
+  - Fallback to English if translation missing
+
+- **Laravel Implementation**:
+  - Built-in localization features
+  - Translation strings in PHP arrays
+  - Locale middleware for API responses
+  - Database content can be stored in multiple languages
+
 ## Frontend Architecture
 - **Inertia.js**:
   - Version: 2.0.9
