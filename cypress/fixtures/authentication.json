@@ -2,25 +2,25 @@
   "users": {
     "customer": {
       "name": "Test Customer",
-      "email": "customer@test.com",
+      "email": "customer@todoke.test",
       "password": "password123",
       "role": "customer"
     },
     "partner": {
       "name": "Test Partner",
-      "email": "partner@test.com",
+      "email": "partner@todoke.test",
       "password": "password123",
       "role": "partner"
     },
     "courier": {
       "name": "Test Courier",
-      "email": "courier@test.com",
+      "email": "courier@todoke.test",
       "password": "password123",
       "role": "courier"
     },
     "admin": {
       "name": "Test Admin",
-      "email": "admin@test.com",
+      "email": "admin@todoke.test",
       "password": "password123",
       "role": "admin"
     }
