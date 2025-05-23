@@ -1,5 +1,5 @@
 <template>
-  <v-form ref="form" @submit.prevent="submit">
+  <v-form :ref="el => formRef = el" @submit.prevent="submit">
     <v-alert
       v-if="errors.general || Object.keys(errors).length > 0"
       type="error"
@@ -13,28 +13,7 @@
       v-model="form.email"
       label="Email"
       type="email"
-      :rules="[
-        v => !!v || 'Email is required',
-        v => {
-        if (!v) return true
-        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) &&
-                      !v.includes('..') &&
-                      !v.startsWith('@') &&
-                      !v.endsWith('.') &&
-                      !v.includes('@.') &&
-                      !v.includes(' ') &&
-                      v.indexOf('@') > 0 &&
-                      v.indexOf('@') === v.lastIndexOf('@') &&
-                      v.split('@')[1].includes('.') &&
-                      !v.split('@')[1].startsWith('.') &&
-                      v.split('@')[1].split('.').length >= 2 &&
-                      v.split('@')[1].split('.')[1].length >= 2 &&
-                      !v.split('@')[1].endsWith('.') &&
-                      !v.split('@')[0].endsWith('.') &&
-                      !v.split('@')[0].startsWith('.')
-        return isValid ? true : 'Email must be valid'
-      }
-      ]"
+      :rules="rules.email"
       required
       :error-messages="errors.email"
       data-test="email-input"
@@ -45,7 +24,7 @@
       v-model="form.password"
       label="Password"
       type="password"
-      :rules="[v => !!v || 'Password is required']"
+      :rules="rules.password"
       required
       :error-messages="errors.password"
       data-test="password-input"
@@ -244,24 +223,7 @@ const loading = computed(() => authStore.loading)
 const rules = {
     email: [
       v => !!v || 'Email is required',
-      v => {
-        if (!v) return true
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) &&
-               !v.includes('..') &&
-               !v.startsWith('@') &&
-               !v.endsWith('.') &&
-               !v.includes('@.') &&
-               !v.includes(' ') &&
-               v.indexOf('@') > 0 &&
-               v.indexOf('@') === v.lastIndexOf('@') &&
-               v.split('@')[1].includes('.') &&
-               !v.split('@')[1].startsWith('.') &&
-               v.split('@')[1].split('.').length >= 2 &&
-               v.split('@')[1].split('.')[1].length >= 2 &&
-               !v.split('@')[1].endsWith('.') &&
-               !v.split('@')[0].endsWith('.') &&
-               !v.split('@')[0].startsWith('.')
-      }
+      v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Email must be valid'
     ],
   password: [
     v => !!v || 'Password is required',
@@ -350,6 +312,7 @@ const emit = defineEmits(['success', 'error'])
 
 async function submit() {
   try {
+    console.log(formRef.value) // THIS IS NULL!
     const valid = await formRef.value?.validate()
     if (!valid) {
       errors.value = { general: 'Please fix the validation errors' }
