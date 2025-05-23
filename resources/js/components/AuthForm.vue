@@ -312,7 +312,7 @@ const emit = defineEmits(['success', 'error'])
 
 async function submit() {
   try {
-    console.log(formRef.value) // THIS IS NULL!
+    
     const valid = await formRef.value?.validate()
     if (!valid) {
       errors.value = { general: 'Please fix the validation errors' }
@@ -326,7 +326,8 @@ async function submit() {
         password: form.value.password
       }
       const response = await authStore.login(credentials, router)
-      if (response?.token) {
+      
+      if (response?.data?.token) {
         emit('success', { token: response.token })
         return response
       }
