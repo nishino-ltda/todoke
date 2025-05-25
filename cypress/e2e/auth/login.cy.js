@@ -55,6 +55,16 @@ describe('🔑 Login Flow', () => {
       expect(err.message).to.include('The email field is required');
       return false; // prevent Cypress from failing the test
     });
+
+    // Test successful login flow
+    cy.log('✅ Testing successful customer login');
+    cy.get('[data-test="email-input"]').type(customer.email);
+    cy.get('[data-test="password-input"]').type(customer.password);
+    cy.get('[data-test="login-button"]').click();
+
+    // Verify successful login and redirect  
+    cy.url().should('include', '/customer/dashboard', { timeout: 20000 });
+    cy.get('[data-test="customer-dashboard"]').should('contain', 'Customer Dashboard');
   });
 
   // SPRINT 1: Core authentication testing  
