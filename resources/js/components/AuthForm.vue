@@ -6,12 +6,12 @@
       data-test="auth-alert"
       class="mb-4"
     >
-      {{ errors.general || 'Validation failed' }}
+      {{ errors.general || t('auth.validation.general_error') }}
     </v-alert>
 
     <v-text-field
       v-model="form.email"
-      label="Email"
+      :label="t('auth.form.email')"
       type="email"
       :rules="rules.email"
       required
@@ -22,7 +22,7 @@
 
     <v-text-field
       v-model="form.password"
-      label="Password"
+      :label="t('auth.form.password')"
       type="password"
       :rules="rules.password"
       required
@@ -34,7 +34,7 @@
     <template v-if="mode === 'register'">
       <v-text-field
         v-model="form.name"
-        label="Name"
+        :label="t('auth.form.name')"
         required
         :error-messages="errors.name"
         data-test="name-input"
@@ -42,7 +42,7 @@
 
       <v-text-field
         v-model="form.password_confirmation"
-        label="Confirm Password"
+        :label="t('auth.form.confirm_password')"
         type="password"
         required
         :error-messages="errors.password_confirmation"
@@ -53,7 +53,7 @@
       <v-select
         v-model="form.role"
         :items="roles"
-        label="Account Type"
+        :label="t('auth.form.account_type')"
         required
         :error-messages="errors.role"
         data-test="role-select"
@@ -64,7 +64,7 @@
       <template v-if="showCourierFields">
         <v-text-field
           v-model="form.license_number"
-          label="License Number"
+          :label="t('auth.form.license_number')"
           required
           :error-messages="errors.license_number"
           data-test="license-input"
@@ -73,7 +73,7 @@
         <v-select
           v-model="form.vehicle_type"
           :items="vehicleTypes"
-          label="Vehicle Type"
+          :label="t('auth.form.vehicle_type')"
           required
           :error-messages="errors.vehicle_type"
           data-test="vehicle-select"
@@ -81,7 +81,7 @@
 
         <v-file-input
           v-model="form.document"
-          label="Upload License"
+          :label="t('auth.form.upload_license')"
           accept="image/*"
           required
           :error-messages="errors.document"
@@ -93,7 +93,7 @@
       <template v-if="showPartnerFields">
         <v-text-field
           v-model="form.business_name"
-          label="Business Name"
+          :label="t('auth.form.business_name')"
           required
           :error-messages="errors.business_name"
           data-test="business-name-input"
@@ -102,7 +102,7 @@
         <v-select
           v-model="form.business_type"
           :items="businessTypes"
-          label="Business Type"
+          :label="t('auth.form.business_type')"
           required
           :error-messages="errors.business_type"
           data-test="business-type-select"
@@ -110,7 +110,7 @@
 
         <v-text-field
           v-model="form.tax_id"
-          label="Tax ID"
+          :label="t('auth.form.tax_id')"
           required
           :error-messages="errors.tax_id"
           data-test="tax-id-input"
@@ -118,7 +118,7 @@
 
         <v-text-field
           v-model="form.address"
-          label="Business Address"
+          :label="t('auth.form.address')"
           required
           :error-messages="errors.address"
           data-test="address-input"
@@ -126,7 +126,7 @@
 
         <v-file-input
           v-model="form.business_document"
-          label="Business License"
+          :label="t('auth.form.upload_business_doc')"
           accept=".pdf,.jpg,.png"
           required
           :error-messages="errors.business_document"
@@ -144,7 +144,7 @@
     >
       <template v-if="!loading">
         <span data-test="button-text">
-          {{ mode === 'login' ? 'Login' : 'Register' }}
+          {{ mode === 'login' ? t('auth.login') : t('auth.register') }}
         </span>
       </template>
       <template v-else>
@@ -162,9 +162,11 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useLogStore } from '@/stores/log'
 
+const { t } = useI18n()
 const logStoreInstance = useLogStore();
 logStoreInstance.log('😎 AuthForm component initialized.');
 
@@ -225,28 +227,28 @@ const loading = computed(() => authStore.loading)
 // Define validation rules for testing
 const rules = {
     email: [
-      v => !!v || 'Email is required',
-      v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || 'Email must be valid'
+      v => !!v || t('auth.validation.required', { field: t('auth.form.email') }),
+      v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || t('auth.validation.email')
     ],
   password: [
-    v => !!v || 'Password is required',
+    v => !!v || t('auth.validation.required', { field: t('auth.form.password') }),
     v => {
       if (!v) return true
       if (v.length < 8) {
-        return 'Minimum 8 characters required'
+        return t('auth.validation.min_length', { length: 8 })
       }
       return true
     }
   ],
   name: [
-    v => !!v || 'Name is required'
+    v => !!v || t('auth.validation.required', { field: t('auth.form.name') })
   ],
   password_confirmation: [
-    v => !!v || 'Password confirmation is required',
+    v => !!v || t('auth.validation.required', { field: t('auth.form.confirm_password') }),
     v => {
       if (!v) return true
       if (v !== form.value.password) {
-        return 'Password confirmation does not match'
+        return t('auth.validation.password_match')
       }
       return true
     }
@@ -287,22 +289,22 @@ watch(error, (newError) => {
 }, { immediate: true })
 
 const roles = [
-  { title: 'Customer', value: 'customer' },
-  { title: 'Courier', value: 'courier' },
-  { title: 'Partner', value: 'partner' }
+  { title: t('auth.roles.customer'), value: 'customer' },
+  { title: t('auth.roles.courier'), value: 'courier' },
+  { title: t('auth.roles.partner'), value: 'partner' }
 ]
 
 const vehicleTypes = [
-  { title: 'Motorcycle', value: 'motorcycle' },
-  { title: 'Bicycle', value: 'bicycle' },
-  { title: 'Car', value: 'car' }
+  { title: t('auth.vehicles.motorcycle'), value: 'motorcycle' },
+  { title: t('auth.vehicles.bicycle'), value: 'bicycle' },
+  { title: t('auth.vehicles.car'), value: 'car' }
 ]
 
 const businessTypes = [
-  { title: 'Restaurant', value: 'restaurant' },
-  { title: 'Cafe', value: 'cafe' },
-  { title: 'Bakery', value: 'bakery' },
-  { title: 'Grocery', value: 'grocery' }
+  { title: t('auth.business_types.restaurant'), value: 'restaurant' },
+  { title: t('auth.business_types.cafe'), value: 'cafe' },
+  { title: t('auth.business_types.bakery'), value: 'bakery' },
+  { title: t('auth.business_types.grocery'), value: 'grocery' }
 ]
 
 const emit = defineEmits(['success', 'error'])

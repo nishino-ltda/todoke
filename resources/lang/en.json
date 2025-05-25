@@ -10,6 +10,44 @@
         "register": "Register",
         "logout": "Logout",
         "menu": "Menu",
+        "form": {
+            "email": "Email",
+            "password": "Password",
+            "name": "Name",
+            "confirm_password": "Confirm Password",
+            "account_type": "Account Type",
+            "license_number": "License Number",
+            "vehicle_type": "Vehicle Type",
+            "upload_license": "Upload License",
+            "business_name": "Business Name",
+            "business_type": "Business Type",
+            "tax_id": "Tax ID",
+            "address": "Business Address",
+            "upload_business_doc": "Business License"
+        },
+        "roles": {
+            "customer": "Customer",
+            "courier": "Courier",
+            "partner": "Partner"
+        },
+        "vehicles": {
+            "motorcycle": "Motorcycle",
+            "bicycle": "Bicycle",
+            "car": "Car"
+        },
+        "business_types": {
+            "restaurant": "Restaurant",
+            "cafe": "Cafe",
+            "bakery": "Bakery",
+            "grocery": "Grocery"
+        },
+        "validation": {
+            "required": "{field} is required",
+            "email": "Email must be valid",
+            "min_length": "Minimum {length} characters required",
+            "password_match": "Password confirmation does not match",
+            "general_error": "Validation failed"
+        },
         "errors": {
             "invalid_credentials": "Invalid login credentials",
             "account_locked": "Account locked - please contact support",

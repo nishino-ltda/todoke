@@ -10,6 +10,44 @@
         "register": "Registrar",
         "logout": "Sair",
         "menu": "Menu",
+        "form": {
+            "email": "Email",
+            "password": "Senha",
+            "name": "Nome",
+            "confirm_password": "Confirmar Senha",
+            "account_type": "Tipo de Conta",
+            "license_number": "Número da Licença",
+            "vehicle_type": "Tipo de Veículo",
+            "upload_license": "Enviar Licença",
+            "business_name": "Nome do Negócio",
+            "business_type": "Tipo de Negócio",
+            "tax_id": "CNPJ",
+            "address": "Endereço Comercial",
+            "upload_business_doc": "Licença Comercial"
+        },
+        "roles": {
+            "customer": "Cliente",
+            "courier": "Entregador",
+            "partner": "Parceiro"
+        },
+        "vehicles": {
+            "motorcycle": "Moto",
+            "bicycle": "Bicicleta",
+            "car": "Carro"
+        },
+        "business_types": {
+            "restaurant": "Restaurante",
+            "cafe": "Cafeteria",
+            "bakery": "Padaria",
+            "grocery": "Mercado"
+        },
+        "validation": {
+            "required": "{field} é obrigatório",
+            "email": "Email deve ser válido",
+            "min_length": "Mínimo de {length} caracteres necessários",
+            "password_match": "Confirmação de senha não confere",
+            "general_error": "Falha na validação"
+        },
         "errors": {
             "invalid_credentials": "Credenciais inválidas",
             "account_locked": "Conta bloqueada - entre em contato com o suporte",
