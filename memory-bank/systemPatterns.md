@@ -13,13 +13,14 @@
 - Testing infrastructure complete
 - Documentation updated across all files
 
-## Translation Patterns (2025-05-22)
+## Translation Patterns (2025-05-24)
 
 ### Key Principles
 1. **Separation of Concerns**:
    - Keep all UI text in translation files
    - Never hardcode strings in components
-   - Store translations in appropriate format (JSON for frontend, PHP arrays for backend)
+   - Store translations in JSON files (frontend) and PHP arrays (backend)
+   - Follow consistent key naming (component.purpose.field)
 
 2. **Locale Handling**:
    - Store current locale in user profile/preferences
@@ -31,18 +32,28 @@
    - Use Vue I18n for frontend translations
    - Use Laravel's localization for backend
    - Store database content in multiple languages when needed
-   - API responses should respect Accept-Language header
+   - API responses respect Accept-Language header
+   - Use interpolation for dynamic values ({variable} syntax)
 
 ### Testing Patterns
 1. **Unit Tests**:
    - Test components with different locales
    - Verify fallback behavior
    - Check language switcher functionality
+   - Mock translations in tests
 
 2. **E2E Tests**:
    - Test UI with different language settings
    - Verify API responses respect language headers
    - Check database content in multiple languages
+   - Validate form labels and error messages
+
+### AuthForm Implementation Details
+- All text replaced with translation keys
+- Validation messages use translations
+- Dynamic content (roles, vehicle types) translated
+- Maintained 100% test coverage
+- Verified through Cypress tests (6/6 passing)
 
 ## API Service Patterns (Updated 2025-05-19)
 
