@@ -65,5 +65,13 @@
         "copyright": "© {year} TODOKE. Todos os direitos reservados.",
         "terms": "Termos de Serviço",
         "privacy": "Política de Privacidade"
+    },
+    "home": {
+        "hero": {
+            "title": "Entrega Híbrida para Todos",
+            "subtitle": "Combinando entregadores tradicionais com tecnologia de drones para entregas mais rápidas e acessíveis",
+            "register_button": "Começar",
+            "login_button": "Entrar"
+        }
     }
 }

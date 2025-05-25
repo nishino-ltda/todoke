@@ -65,5 +65,13 @@
         "copyright": "© {year} TODOKE. All rights reserved.",
         "terms": "Terms of Service",
         "privacy": "Privacy Policy"
+    },
+    "home": {
+        "hero": {
+            "title": "Hybrid Delivery for Everyone",
+            "subtitle": "Combining traditional couriers with drone technology for faster, more affordable deliveries",
+            "register_button": "Get Started",
+            "login_button": "Sign In"
+        }
     }
 }

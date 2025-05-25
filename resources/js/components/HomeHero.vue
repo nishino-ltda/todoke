@@ -1,74 +1,63 @@
-<script setup>
-import { Link } from '@inertiajs/vue3'
-</script>
-
 <template>
-  <v-container fluid class="pa-0">
-    <v-row no-gutters class="fill-height" align="center">
-      <v-col cols="12" md="6" class="pa-8">
-        <div class="text-center text-md-left">
-          <h1 class="text-h3 text-md-h2 font-weight-bold mb-4">
-            Hybrid Delivery with Community Pricing
+  <section class="home-hero" data-test="home-hero">
+    <v-container>
+      <v-row>
+        <v-col cols="12" md="6" class="d-flex flex-column justify-center">
+          <h1 class="text-h3 font-weight-bold mb-4" data-test="hero-title">
+            {{ t('home.hero.title') }}
           </h1>
-          <p class="text-h6 mb-6">
-            Combining motorbike couriers and drones for fast, fair deliveries
+          <p class="text-h6 mb-6" data-test="hero-subtitle">
+            {{ t('home.hero.subtitle') }}
           </p>
-          <div class="d-flex flex-column flex-sm-row justify-center justify-md-start gap-4">
-            <Link
-              :href="route('register')"
-              class="v-btn bg-primary text-white v-btn--size-x-large"
-              data-test="hero-register-link"
+          <div class="d-flex gap-4">
+            <v-btn
+              color="primary"
+              size="x-large"
+              :to="route('register')"
+              data-test="hero-register-btn"
             >
-              Get Started
-            </Link>
-            <Link
-              :href="route('login')"
-              class="v-btn v-btn--variant-outlined v-btn--size-x-large"
-              data-test="hero-login-link"
+              {{ t('home.hero.register_button') }}
+            </v-btn>
+            <v-btn
+              variant="outlined"
+              color="primary"
+              size="x-large"
+              :to="route('login')"
+              data-test="hero-login-btn"
             >
-              Sign In
-            </Link>
+              {{ t('home.hero.login_button') }}
+            </v-btn>
           </div>
-        </div>
-      </v-col>
-      <v-col cols="12" md="6" class="hero-image">
-        <v-img
-          src="/images/hero-image.jpg"
-          alt="Hybrid delivery illustration"
-          cover
-          height="100%"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+        </v-col>
+        <v-col cols="12" md="6">
+          <v-img
+            src="/images/hero-image.png"
+            alt="Hybrid delivery illustration"
+            data-test="hero-image"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </section>
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+import { route } from '@inertiajs/vue3'
+import { useLogStore } from '@/stores/log'
+
+const { t } = useI18n()
+const logStore = useLogStore()
+logStore.log('🏠 HomeHero component initialized')
 </script>
 
 <style scoped>
-.hero-container {
-  height: 80vh;
-  min-height: 600px;
-  background: linear-gradient(to right, #ffffff 50%, #f5f5f5 50%);
+.home-hero {
+  padding: 80px 0;
+  background: linear-gradient(to right, #f5f7fa, #e4e8f0);
 }
 
-.hero-content {
-  padding: 2rem;
-}
-
-.hero-image {
-  height: 100%;
-}
-
-@media (max-width: 960px) {
-  .hero-container {
-    height: auto;
-    background: #ffffff;
-  }
-  
-  .hero-image {
-    height: 400px;
-  }
+.gap-4 {
+  gap: 16px;
 }
 </style>
