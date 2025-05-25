@@ -58,8 +58,11 @@ const authService = {
       return loginResponse.data
     } catch (error) {
       const errorMsg = error.response?.data?.message || 'Invalid credentials'
-      logStore.log(`❌ Login failed for ${credentials.email}: ${errorMsg}`)
-      throw new Error(errorMsg)
+      logStore.log(`❌ Login failed for ${credentials.email}: ${errorMsg}`, 'error')
+      logStore.log(`Full error response: ${JSON.stringify(error.response?.data)}`, 'debug')
+      const err = new Error(errorMsg)
+      err.response = error.response
+      throw err
     }
   },
 

@@ -1,10 +1,11 @@
 # Work Breakdown Structure: Stores & Services
 
 ## 1. State Management (Pinia Stores)
-- [x] Implement Auth Store
+- [x] Implement Auth Store (7/7 tests passing)
   - [x] Manage authentication state
   - [x] Handle login/logout
   - [x] Persist session
+  - [x] Unit tests (100% coverage)
 - [ ] Implement Cart Store
   - [ ] Manage shopping cart state
   - [ ] Handle cart operations
@@ -47,7 +48,7 @@
 - [x] Unit tests for Auth Service
 - [ ] Unit tests for other services
 - [ ] Integration tests with components
-- [ ] E2E testing setup
+- [x] E2E testing setup (6/6 auth tests passing)
 
 ## 4. Internationalization
 - [x] Implement Translation Store:

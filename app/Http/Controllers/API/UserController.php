@@ -60,6 +60,12 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->user()->type !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
         $query = User::query();
         
         if ($request->has('type')) {
@@ -90,6 +96,12 @@ class UserController extends Controller
      */
     public function updateStatus(Request $request, $id)
     {
+        if ($request->user()->type !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
         $request->validate([
             'status' => 'required|string|in:active,inactive',
         ]);
@@ -108,6 +120,12 @@ class UserController extends Controller
      */
     public function stats()
     {
+        if (Auth::user()->type !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
         $activeUsers = User::where('status', 'active')->count();
         
         // Aqui você pode adicionar mais estatísticas conforme necessário
@@ -121,6 +139,41 @@ class UserController extends Controller
                 'em_andamento' => 0, // Implementar contagem real
                 'concluida' => 0, // Implementar contagem real
             ]
+        ]);
+    }
+
+    /**
+     * Unlock a user account (admin only)
+     *
+     * @param string $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unlock($id)
+    {
+        if (Auth::user()->type !== 'admin') {
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $user = User::findOrFail($id);
+        
+        if (!$user->isLocked()) {
+            return response()->json([
+                'message' => 'Account is not locked'
+            ], 400);
+        }
+
+        $user->unlockAccount();
+        
+        Log::info('Account unlocked by admin', [
+            'admin_id' => Auth::id(),
+            'user_id' => $user->id
+        ]);
+
+        return response()->json([
+            'message' => 'Account unlocked successfully',
+            'locked_at' => null
         ]);
     }
 }

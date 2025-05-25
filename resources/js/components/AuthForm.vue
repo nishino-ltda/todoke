@@ -265,30 +265,24 @@ defineExpose({
 const error = computed(() => authStore.error)
 
 watch(error, (newError) => {
+  errors.value = {}
+  
   if (newError) {
-    // Reset errors object
-    errors.value = {}
-    
-    // Handle errors object if it exists
-    if (newError.errors) {
-      // Convert array errors to string
+    // Handle API error response format
+    if (typeof newError === 'string') {
+      errors.value.general = newError
+    } 
+    // Handle error object with message
+    else if (newError.message) {
+      errors.value.general = newError.message
+    }
+    // Handle error object with errors array
+    else if (newError.errors) {
       Object.entries(newError.errors).forEach(([key, value]) => {
         errors.value[key] = Array.isArray(value) ? value.join(', ') : value
       })
-      
-      // Ensure general error is set if there are field errors
-      if (Object.keys(newError.errors).length > 0) {
-        errors.value.general = 'Validation failed'
-      }
+      errors.value.general = 'Validation failed'
     }
-    
-    // Set general error message if it exists
-    if (newError.message) {
-      errors.value.general = newError.message
-    }
-  } else {
-    // Clear errors when error is null
-    errors.value = {}
   }
 }, { immediate: true })
 
@@ -359,7 +353,7 @@ const emit = defineEmits(['success', 'error'])
           } catch (error) {
             logStore.log(`❌ Login failed for ${credentials.email}: ${error.message}`, 'error')
             errors.value = { 
-              general: error.response?.data?.message || 'Invalid login credentials',
+              general: error.response?.data?.message || 'The provided credentials are incorrect',
               email: error.response?.data?.errors?.email?.[0],
               password: error.response?.data?.errors?.password?.[0]
             }

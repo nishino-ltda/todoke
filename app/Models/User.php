@@ -25,7 +25,9 @@ class User extends Authenticatable
         'phone',
         'photoUrl',
         'status',
-        'locale'
+        'locale',
+        'locked_at',
+        'failed_attempts'
     ];
 
     /**
@@ -36,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'failed_attempts'
     ];
 
     /**
@@ -49,7 +52,54 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'type' => 'string',
+            'locked_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Check if account is locked
+     */
+    public function isLocked(): bool
+    {
+        return !is_null($this->locked_at);
+    }
+
+    /**
+     * Lock the user account
+     */
+    public function lockAccount(): void
+    {
+        $this->update([
+            'locked_at' => now(),
+            'failed_attempts' => 0
+        ]);
+    }
+
+    /**
+     * Unlock the user account
+     */
+    public function unlockAccount(): void
+    {
+        $this->update([
+            'locked_at' => null,
+            'failed_attempts' => 0
+        ]);
+    }
+
+    /**
+     * Record a failed login attempt
+     */
+    public function recordFailedAttempt(): void
+    {
+        $this->increment('failed_attempts');
+    }
+
+    /**
+     * Reset failed attempts counter
+     */
+    public function resetFailedAttempts(): void
+    {
+        $this->update(['failed_attempts' => 0]);
     }
 
     /**

@@ -1,7 +1,7 @@
 <template>
     <AuthenticatedLayout>
         <div data-test="courier-dashboard">
-            <h1>Courier Dashboard</h1>
+            <h1 data-test="courier-dashboard">Courier Dashboard</h1>
             <p>Welcome to the courier dashboard.</p>
         </div>
     </AuthenticatedLayout>

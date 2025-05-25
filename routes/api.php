@@ -155,6 +155,7 @@ Route::prefix('v1')->group(function () {
             Route::patch('/users/{id}/status', [UserController::class, 'updateStatus']);
             Route::get('/stats', [UserController::class, 'stats']);
             Route::patch('/nodes/{node}/approve', [NodeController::class, 'approve']);
+            Route::post('/users/{id}/unlock', [UserController::class, 'unlock']);
         });
 
         // Rotas de parceiro

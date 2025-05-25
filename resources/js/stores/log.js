@@ -20,7 +20,7 @@ export const useLogStore = defineStore('log', () => {
                         type === 'info' ? 'ℹ️' : '📝';
         console.log(`${typePrefix}  [${timestamp}] ${message}`);  // Added extra space after emoji
 
-        logs.value.unshift(logEntry);
+        logs.value.push(logEntry);
         if (logs.value.length > maxLogs) {
           logs.value.length = maxLogs;
         }
@@ -39,7 +39,7 @@ export const useLogStore = defineStore('log', () => {
     console.log(`${typePrefix}  [${timestamp}] ${message}`);  // Added extra space after emoji
 
     // Add to logs array
-    logs.value.unshift(logEntry);
+    logs.value.push(logEntry);
     
     // Keep only the most recent logs
     if (logs.value.length > maxLogs) {

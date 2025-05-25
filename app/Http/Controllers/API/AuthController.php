@@ -99,23 +99,69 @@ class AuthController extends Controller
 
         if (!$user) {
             Log::debug('User not found for email', ['email' => $request->email]);
+            $message = $request->header('Accept-Language') === 'en' 
+                ? 'The provided credentials are incorrect'
+                : 'As credenciais fornecidas estão incorretas';
             return response()->json([
-                'message' => 'As credenciais fornecidas estão incorretas',
+                'message' => $message,
                 'errors' => [
-                    'email' => ['As credenciais fornecidas estão incorretas.']
+                    'email' => [$message]
                 ]
             ], 401);
         }
 
+        // Check if account is locked
+        if ($user->isLocked()) {
+            Log::debug('Login attempt for locked account', ['user_id' => $user->id]);
+            $message = $request->header('Accept-Language') === 'en'
+                ? 'Account locked. Please contact support.'
+                : 'Conta bloqueada. Por favor, entre em contato com o suporte.';
+            return response()->json([
+                'message' => $message,
+                'errors' => [
+                    'email' => [$message]
+                ]
+            ], 423); // 423 Locked status code
+        }
+
         if (!Hash::check($request->password, $user->password)) {
             Log::debug('Password mismatch for user', ['user_id' => $user->id]);
+            
+            // Record failed attempt
+            $user->recordFailedAttempt();
+            
+            // Lock account after 5 failed attempts
+            if ($user->failed_attempts >= 5) {
+                $user->lockAccount();
+                Log::warning('Account locked due to too many failed attempts', [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+                
+                $message = $request->header('Accept-Language') === 'en'
+                    ? 'Account locked due to too many failed attempts. Please contact support.'
+                    : 'Conta bloqueada devido a muitas tentativas falhas. Por favor, entre em contato com o suporte.';
+                return response()->json([
+                    'message' => $message,
+                    'errors' => [
+                        'email' => [$message]
+                    ]
+                ], 423);
+            }
+
+            $message = $request->header('Accept-Language') === 'en' 
+                ? 'The provided credentials are incorrect'
+                : 'As credenciais fornecidas estão incorretas';
             return response()->json([
-                'message' => 'As credenciais fornecidas estão incorretas',
+                'message' => $message,
                 'errors' => [
-                    'email' => ['As credenciais fornecidas estão incorretas.']
+                    'email' => [$message]
                 ]
             ], 401);
         }
+
+        // Reset failed attempts on successful login
+        $user->resetFailedAttempts();
 
         Log::debug('Credentials validated successfully', ['user_id' => $user->id]);
         
