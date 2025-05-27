@@ -72,6 +72,24 @@
             "subtitle": "Combinando entregadores tradicionais com tecnologia de drones para entregas mais rápidas e acessíveis",
             "register_button": "Começar",
             "login_button": "Entrar"
+        },
+        "features": {
+            "title": "Por que escolher TODOKE?",
+            "hybrid": {
+                "title": "Entrega Híbrida",
+                "subtitle": "Rápida e flexível",
+                "description": "Combinando motoqueiros e drones para rotas de entrega otimizadas. Rastreamento especializado para cada etapa da entrega."
+            },
+            "pricing": {
+                "title": "Precificação Comunitária",
+                "subtitle": "Justa e transparente",
+                "description": "Entregadores determinam democraticamente os preços através de votações mensais. Painel transparente de precificação baseada em custos."
+            },
+            "reliable": {
+                "title": "Serviço Confiável",
+                "subtitle": "Consistente e seguro",
+                "description": "Sistema abrangente de reputação garante qualidade de serviço. Funcionalidade offline para áreas com baixa conectividade."
+            }
         }
     }
 }

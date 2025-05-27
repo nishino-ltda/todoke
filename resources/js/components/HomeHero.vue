@@ -43,7 +43,6 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { route } from '@inertiajs/vue3'
 import { useLogStore } from '@/stores/log'
 
 const { t } = useI18n()

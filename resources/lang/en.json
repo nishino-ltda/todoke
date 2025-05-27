@@ -72,6 +72,24 @@
             "subtitle": "Combining traditional couriers with drone technology for faster, more affordable deliveries",
             "register_button": "Get Started",
             "login_button": "Sign In"
+        },
+        "features": {
+            "title": "Why Choose TODOKE?",
+            "hybrid": {
+                "title": "Hybrid Delivery",
+                "subtitle": "Fast and flexible",
+                "description": "Combining motorbike couriers and drones for optimal delivery routes and speed. Specialized tracking for each delivery stage."
+            },
+            "pricing": {
+                "title": "Community Pricing",
+                "subtitle": "Fair and transparent",
+                "description": "Couriers democratically determine delivery prices through monthly voting. Transparent cost-based pricing dashboard."
+            },
+            "reliable": {
+                "title": "Reliable Service",
+                "subtitle": "Consistent and secure",
+                "description": "Comprehensive reputation system ensures quality service. Offline functionality for low-connectivity areas."
+            }
         }
     }
 }
