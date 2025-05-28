@@ -72,20 +72,27 @@ export const useAuthStore = defineStore('auth', () => {
       
       // Only set auth if user is customer (others need approval)
       if (response.data.user?.type === 'customer') {
+        // Convert token to session for persistence
+        await api.post('/auth/token-to-session', {
+          token: response.data.token
+        }, {
+          headers: {
+            'Authorization': `Bearer ${response.data.token}`
+          }
+        })
+        
         setAuth(response.data)
+        
+        // For customers, let the frontend handle the redirect
+        if (response.data.user?.type === 'customer') {
+          logStore.log(`✅ Customer registered successfully`, 'info')
+          return response
+        }
+      } else {
+        // For non-customers, emit pending event
+        logStore.log(`🔄 Account pending approval for ${response.data.user?.type}`, 'info')
       }
-
-      // Redirect based on user type
-      if (router) {
-        const userType = response.data.user?.type
-        const redirectPath =
-          userType === 'admin' ? '/admin/dashboard' :
-            userType === 'courier' ? '/courier/dashboard' :
-              userType === 'partner' ? '/partner/dashboard' :
-                '/customer/dashboard'
-        logStore.log(`🛣️ Redirecting to: ${redirectPath}`, 'debug')
-        router.visit(redirectPath)
-      }
+      
       return response
     } catch (err) {
       clearAuth()

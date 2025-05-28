@@ -492,71 +492,70 @@ const emit = defineEmits(['success', 'error'])
             return Promise.reject(error)
           }
     } else {
-      let registerData;
-      const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;
-      
-      // Prepare payload with required fields and proper field names
-      const payload = {
-        name: form.value.name,
-        email: form.value.email,
-        phone: form.value.phone,
-        cpf: form.value.cpf,
-        type: form.value.role, // Map role to type for API
-        password: form.value.password,
-        password_confirmation: form.value.password_confirmation
-      };
-
-      // Add role-specific fields
-      if (form.value.role === 'courier') {
-        payload.license_number = form.value.license_number;
-        payload.vehicle_type = form.value.vehicle_type;
-        payload.license_file = form.value.document;
-      } else if (form.value.role === 'partner') {
-        payload.business_name = form.value.business_name;
-        payload.business_type = form.value.business_type;
-        payload.tax_id = form.value.tax_id;
-        payload.address = form.value.address;
-        payload.business_document = form.value.business_document;
-      }
-
-      if (hasFiles) {
-        const formData = new FormData();
-        Object.entries(payload).forEach(([key, value]) => {
-          if (value !== null && value !== undefined && value !== '') {
-            if (value instanceof File) {
-              formData.append(key, value);
-            } else {
-              formData.append(key, value.toString());
-            }
-          }
-        });
-        registerData = formData;
-      } else {
-        registerData = payload;
-      }
-
-      logStore.log(`📝 Sending registration request for ${form.value.email}`, 'debug')
-      const response = await authStore.register(registerData, router)
-      if (response?.token) {
-        logStore.log(`✅ Registration successful for ${form.value.email}`, 'info')
-        emit('success', { token: response.token })
+      try {
+        let registerData;
+        const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;
         
-        // Redirect customers immediately
-        if (form.value.role === 'customer') {
-          window.location.href = '/customer/dashboard'
-        } else {
-          // Emit pending approval for couriers/partners
-          emit('pending')
+        // Prepare payload with required fields and proper field names
+        const payload = {
+          name: form.value.name,
+          email: form.value.email,
+          phone: form.value.phone,
+          cpf: form.value.cpf,
+          type: form.value.role, // Map role to type for API
+          password: form.value.password,
+          password_confirmation: form.value.password_confirmation
+        };
+
+        // Add role-specific fields
+        if (form.value.role === 'courier') {
+          payload.license_number = form.value.license_number;
+          payload.vehicle_type = form.value.vehicle_type;
+          payload.license_file = form.value.document;
+        } else if (form.value.role === 'partner') {
+          payload.business_name = form.value.business_name;
+          payload.business_type = form.value.business_type;
+          payload.tax_id = form.value.tax_id;
+          payload.address = form.value.address;
+          payload.business_document = form.value.business_document;
         }
-        return response
-      }
-      const error = new Error('Registration failed')
-      logStore.log(`❌ Registration failed for ${form.value.email}: ${error.message}`, 'error')
-      emit('error', error)
-      return Promise.resolve({ error })
-    }
-  } catch (error) {
-    const logStore = useLogStore()
+
+        if (hasFiles) {
+          const formData = new FormData();
+          Object.entries(payload).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+              if (value instanceof File) {
+                formData.append(key, value);
+              } else {
+                formData.append(key, value.toString());
+              }
+            }
+          });
+          registerData = formData;
+        } else {
+          registerData = payload;
+        }
+
+        logStore.log(`📝 Sending registration request for ${form.value.email}`, 'debug')
+        const response = await authStore.register(registerData, router)
+        if (response?.data?.token) {
+          logStore.log(`✅ Registration successful for ${form.value.email}`, 'info')
+          emit('success', { token: response.data.token })
+          
+          // Handle customer registration
+          if (form.value.role === 'customer') {
+            logStore.log(`✅ Customer registered successfully, redirecting to dashboard`, 'info')
+            await router.visit('/customer/dashboard')
+            return response
+          } else {
+            // Emit pending approval for couriers/partners
+            emit('pending')
+            return response
+          }
+        }
+        throw new Error('Registration failed - no token received')
+      } catch (error) {
+        const logStore = useLogStore()
     if (error.response?.data?.errors) {
       errors.value = error.response.data.errors
       logStore.log(`❌ Form errors: ${JSON.stringify(error.response.data.errors)}`, 'error')
@@ -571,8 +570,16 @@ const emit = defineEmits(['success', 'error'])
       errors.value.general = 'An unexpected error occurred'
       logStore.log('❌ Unexpected error occurred', 'error')
     }
+        emit('error', error)
+        return Promise.resolve({ error })
+      }
+    }
+  } catch (error) {
+    const logStore = useLogStore()
+    logStore.log(`❌ ${props.mode} failed: ${error.message}`, 'error')
+    errors.value.general = error.message || 'An unexpected error occurred'
     emit('error', error)
-    return Promise.resolve({ error })
+    return Promise.reject(error)
   }
 }
 </script>
