@@ -16,10 +16,10 @@
 
 ### Vue Components
 - Common Components:
-  - `resources/js/components/AppHeader.vue`
-  - `resources/js/components/AppFooter.vue`
-  - `resources/js/components/LoadingIndicator.vue`
-  - `resources/js/components/AuthForm.vue`
+  - `resources/js/Components/AppHeader.vue`
+  - `resources/js/Components/AppFooter.vue`
+  - `resources/js/Components/LoadingIndicator.vue`
+  - `resources/js/Components/AuthForm.vue`
 
 ### Stores & Services
 - Stores:

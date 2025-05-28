@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import CartIcon from '@/components/CartIcon.vue'
+import CartIcon from '@/Components/CartIcon.vue'
 
 export default {
   name: 'App',

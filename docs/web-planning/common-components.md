@@ -31,7 +31,7 @@ Identify and plan for reusable Vue components that will be used across multiple 
     - Components to indicate when data is being loaded or an action is in progress.
 
 ## Implementation Considerations
-- Place common components in a dedicated directory (e.g., `src/components/common/`).
+- Place common components in a dedicated directory (e.g., `src/Components/common/`).
 - Use Vue props to make components flexible and reusable.
 - Utilize Vuetify components as the base for common components where possible.
 - Implement proper event handling for communication between components.

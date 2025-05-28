@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import HomeHero from '@/components/HomeHero.vue'
+import HomeHero from '@/Components/HomeHero.vue'
 import { createI18n } from 'vue-i18n'
 import { useLogStore } from '@/stores/log'
 import { createVuetify } from 'vuetify'

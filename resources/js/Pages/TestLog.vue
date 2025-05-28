@@ -18,7 +18,7 @@
 import { computed } from 'vue';
 import { useLogStore } from '@/stores/log';
 import { storeToRefs } from 'pinia';
-import TestComponent from '@/components/TestComponent.vue';
+import TestComponent from '@/Components/TestComponent.vue';
 
 const logStore = useLogStore();
 const { logs } = storeToRefs(logStore);

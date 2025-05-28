@@ -4,8 +4,8 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import AppHeader from '@/components/AppHeader.vue'
-import AppFooter from '@/components/AppFooter.vue'
+import AppHeader from '@/Components/AppHeader.vue'
+import AppFooter from '@/Components/AppFooter.vue'
 
 describe('AuthenticatedLayout', () => {
   const vuetify = createVuetify({ components, directives })

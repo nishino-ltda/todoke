@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import AppFooter from '@/components/AppFooter.vue'
+import AppFooter from '@/Components/AppFooter.vue'
 import { describe, it, expect, vi } from 'vitest'
 
 describe('AppFooter', () => {

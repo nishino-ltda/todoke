@@ -51,7 +51,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import LoadingIndicator from '@/components/LoadingIndicator.vue'
+import LoadingIndicator from '@/Components/LoadingIndicator.vue'
 
 const showFullLoader = ref(false)
 const showInlineLoader = ref(false)

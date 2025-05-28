@@ -181,7 +181,7 @@
     ```vue
     <script setup>
     import GuestLayout from '@/Layouts/GuestLayout.vue'
-    import HomeHero from '@/components/HomeHero.vue'
+    import HomeHero from '@/Components/HomeHero.vue'
     </script>
     ```
   - **Benefits**:

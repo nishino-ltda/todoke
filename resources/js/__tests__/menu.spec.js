@@ -1,5 +1,5 @@
 import { mount, flushPromises } from '@vue/test-utils'
-import ProductCard from '@/components/ProductCard.vue'
+import ProductCard from '@/Components/ProductCard.vue'
 import { vi } from 'vitest'
 import axios from 'axios'
 import Menu from '@/Pages/Customer/Menu.vue'

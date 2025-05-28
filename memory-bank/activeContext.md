@@ -197,7 +197,7 @@
   - Consistent logging across components
 
 ### Testing Infrastructure
-- Created TestComponent (`resources/js/components/TestComponent.vue`) demonstrating log store usage
+- Created TestComponent (`resources/js/Components/TestComponent.vue`) demonstrating log store usage
 - Updated TestLog page (`resources/js/Pages/TestLog.vue`) to:
   - Display TestComponent
   - Show latest log and full history

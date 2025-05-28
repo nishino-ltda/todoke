@@ -5,7 +5,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { setActivePinia, createPinia } from 'pinia'
-import CheckoutForm from '@/components/CheckoutForm.vue'
+import CheckoutForm from '@/Components/CheckoutForm.vue'
 import type { CheckoutFormType } from '../CheckoutForm.vue'
 import useCartStore from '@/stores/cart'
 

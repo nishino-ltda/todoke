@@ -1,8 +1,8 @@
 import { shallowMount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import GuestLayout from '@/Layouts/GuestLayout.vue'
-import AppHeader from '@/components/AppHeader.vue'
-import AppFooter from '@/components/AppFooter.vue'
+import AppHeader from '@/Components/AppHeader.vue'
+import AppFooter from '@/Components/AppFooter.vue'
 
 describe('GuestLayout', () => {
   beforeEach(() => {

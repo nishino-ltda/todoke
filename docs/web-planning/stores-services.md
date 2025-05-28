@@ -84,7 +84,7 @@ Plan for frontend state management (stores) and reusable logic (services) to han
 - Place stores in a dedicated directory (e.g., `src/stores/`).
 - Place services in a dedicated directory (e.g., `src/services/`).
 - Services should primarily interact with the API Service and relevant stores.
-- Implement proper error handling within services and propagate errors to components/stores.
+- Implement proper error handling within services and propagate errors to Components/stores.
 - Utilize environment variables for API base URL and other configuration.
 
 ## Potential Files

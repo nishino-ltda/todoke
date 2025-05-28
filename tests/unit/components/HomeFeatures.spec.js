@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import HomeFeatures from '@/components/HomeFeatures.vue'
+import HomeFeatures from '@/Components/HomeFeatures.vue'
 import { createI18n } from 'vue-i18n'
 import { useLogStore } from '@/stores/log'
 import { createVuetify } from 'vuetify'

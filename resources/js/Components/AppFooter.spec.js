@@ -4,9 +4,9 @@ import { createTestingPinia } from '@pinia/testing'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
-import { VApp } from 'vuetify/components/VApp'
-import { VMain } from 'vuetify/components/VMain'
-import { VLayout } from 'vuetify/components/VLayout'
+import { VApp } from 'vuetify/Components/VApp'
+import { VMain } from 'vuetify/Components/VMain'
+import { VLayout } from 'vuetify/Components/VLayout'
 
 const TestWrapper = {
   components: { VApp, VMain, VLayout, AppFooter },

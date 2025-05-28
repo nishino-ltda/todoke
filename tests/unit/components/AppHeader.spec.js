@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
-import AppHeader from '@/components/AppHeader.vue'
+import AppHeader from '@/Components/AppHeader.vue'
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 
 describe('AppHeader', () => {

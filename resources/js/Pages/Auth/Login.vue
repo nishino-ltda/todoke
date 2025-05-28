@@ -10,7 +10,7 @@
 
 <script setup>
 import GuestLayout from '@/Layouts/GuestLayout.vue';
-import AuthForm from '@/components/AuthForm.vue';
+import AuthForm from '@/Components/AuthForm.vue';
 import { useLogStore } from '@/stores/log';
 
 const logStore = useLogStore();

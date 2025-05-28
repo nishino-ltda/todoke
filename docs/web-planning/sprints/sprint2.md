@@ -4,12 +4,12 @@
 
 ### Components
 - Authentication:
-  - `resources/js/components/AuthForm.vue`
+  - `resources/js/Components/AuthForm.vue`
 - Home Page:
-  - `resources/js/components/HomeHero.vue`
-  - `resources/js/components/HomeFeatures.vue`
+  - `resources/js/Components/HomeHero.vue`
+  - `resources/js/Components/HomeFeatures.vue`
 - Layouts:
-  - (To be created in `resources/js/layouts/` or `resources/js/components/`)
+  - (To be created in `resources/js/layouts/` or `resources/js/Components/`)
 
 ### Stores & Services
 - Auth Store:
