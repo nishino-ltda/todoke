@@ -50,6 +50,9 @@ export const useAuthStore = defineStore('auth', () => {
   async function register(userData, router = null) {
     loading.value = true
     error.value = null
+
+    // LOG HERE
+
     try {
       const endpoint = userData._endpoint || '/auth/register'
       delete userData._endpoint
@@ -62,7 +65,15 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       const response = await api.post(endpoint, userData, config)
-      setAuth(response.data)
+      
+      // Log the response for debugging
+      const logStore = useLogStore()
+      logStore.log(`🔑 Registration response received`, 'debug', response.data)
+      
+      // Only set auth if user is customer (others need approval)
+      if (response.data.user?.type === 'customer') {
+        setAuth(response.data)
+      }
 
       // Redirect based on user type
       if (router) {
@@ -72,11 +83,13 @@ export const useAuthStore = defineStore('auth', () => {
             userType === 'courier' ? '/courier/dashboard' :
               userType === 'partner' ? '/partner/dashboard' :
                 '/customer/dashboard'
+        logStore.log(`🛣️ Redirecting to: ${redirectPath}`, 'debug')
         router.visit(redirectPath)
       }
       return response
     } catch (err) {
       clearAuth()
+      // LOG HERE
       error.value = err.response?.data?.message || 'Registration failed'
       throw err
     } finally {
@@ -137,6 +150,20 @@ export const useAuthStore = defineStore('auth', () => {
     clearAuth()
   }
 
+  async function requestPasswordReset(email) {
+    loading.value = true
+    error.value = null
+    try {
+      const response = await api.post('/auth/forgot-password', { email })
+      return response.data
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Failed to send reset link'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     user,
     token,
@@ -148,6 +175,7 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     setAuth,
     init,
-    $reset
+    $reset,
+    requestPasswordReset
   }
 })

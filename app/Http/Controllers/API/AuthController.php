@@ -26,13 +26,35 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
-            $request->validate([
+            $baseRules = [
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'phone' => 'required|string|max:20',
+                'cpf' => 'required|string|max:14|unique:users',
                 'type' => 'required|string|in:courier,customer,partner',
-                'password' => 'required|string|min:8',
-            ]);
+                'password' => 'required|string|min:8|confirmed',
+            ];
+
+            $courierRules = [
+                'license_number' => 'required_if:type,courier|string|max:50',
+                'vehicle_type' => 'required_if:type,courier|string|in:motorcycle,car,bicycle',
+                'license_file' => 'required_if:type,courier|file|mimes:jpg,png,pdf|max:2048',
+            ];
+
+            $partnerRules = [
+                'business_name' => 'required_if:type,partner|string|max:255',
+                'business_type' => 'required_if:type,partner|string|in:restaurant,market,pharmacy',
+                'tax_id' => 'required_if:type,partner|string|max:20',
+                'address' => 'required_if:type,partner|string|max:255',
+                'business_document' => 'required_if:type,partner|file|mimes:jpg,png,pdf|max:2048',
+            ];
+
+            $rules = array_merge($baseRules, 
+                $request->type === 'courier' ? $courierRules : [],
+                $request->type === 'partner' ? $partnerRules : []
+            );
+
+            $request->validate($rules);
         } catch (ValidationException $e) {
             $errors = $e->errors();
             // Retorna 409 apenas se o único erro for de email duplicado
@@ -45,14 +67,35 @@ class AuthController extends Controller
             throw $e;
         }
 
-        $user = User::create([
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+            'cpf' => $request->cpf,
             'type' => $request->type,
             'password' => Hash::make($request->password),
-            'status' => 'active',
-        ]);
+            'status' => $request->type === 'customer' ? 'active' : 'pending',
+        ];
+
+        // Handle courier specific data
+        if ($request->type === 'courier') {
+            $licensePath = $request->file('license_file')->store('licenses');
+            $userData['license_number'] = $request->license_number;
+            $userData['vehicle_type'] = $request->vehicle_type;
+            $userData['license_file_path'] = $licensePath;
+        }
+
+        // Handle partner specific data
+        if ($request->type === 'partner') {
+            $documentPath = $request->file('business_document')->store('business_documents');
+            $userData['business_name'] = $request->business_name;
+            $userData['business_type'] = $request->business_type;
+            $userData['tax_id'] = $request->tax_id;
+            $userData['address'] = $request->address;
+            $userData['business_document_path'] = $documentPath;
+        }
+
+        $user = User::create($userData);
 
         $token = $user->createToken('auth_token', [$user->type])->plainTextToken;
 

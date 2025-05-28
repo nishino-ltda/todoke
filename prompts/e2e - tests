@@ -1,0 +1,44 @@
+TASK: Proceed with sprint, and component logging
+
+
+RUN: "> storage/logs/laravel.log"
+RUN: "php artisan app:reset" 
+
+Load memory bank.
+Read docs/web-planning/sprints/sprint1.md
+Read wbs and planning docs mentioned in the sprint.
+
+Choose one unimplemented task (related to the sprint, of course) in the related wbs files. implement the task
+
+Consider reading the files mentioned in the sprint file
+
+This is a TDD environment. Controllers, Services and Vue files might exist but might be empty, read them before trying to write them from scratch
+
+Run tests headed, implement sprint, dont run all tests because the output would exceed maximum content length
+
+Focus only on tests and features relative to the sprint, you dont need to have all tests passing, only focus on the sprint
+
+INFO:
+- We need real E2E, no workarounds NO MOCKING WHATSOEVER!
+- import { useI18n } from 'vue-i18n'
+- Use data-cy in the markup, dont read from textContents because they are subject to changes
+- instead of console.log use our logstore and cy.dumpLogs
+- Expecting logs  (expect(logs.some(log =>) is not a good idea, logs are just for the developer figure out the current flow, use logs but dont expect on them.
+- when you run a test and dont get an output from the terminal, dont think it means success you MUST try again.
+- running all tests at once might not be a good idea
+- Dont remove comments in the e2e tests, stick to the planning in the comments
+- Server running on [http://127.0.0.1:8000].  
+- Npm run dev is running, dont stop them, or try to restart them, ask me. 
+- Dont try to read the whole storage/logs/laravel.log its massive, 
+- Dont ask user to look at screenshots, use logStore.log and cy.dumpLogs
+- use emojis in cy.log to differentiate from messages in the terminal
+- dont use long timeouts max 3 seconds
+- when the task is finished use espeak in the terminal to inform the user
+- use php artisan app:reset when you  need to reset the app to its original state
+
+IDEAS:
+- read database seeder?
+- A good way to check for vue errors is to npm run build
+- I like it when you say "Our project" 
+
+Please 😙

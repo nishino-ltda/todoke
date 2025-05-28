@@ -8,7 +8,7 @@ const currentYear = computed(() => new Date().getFullYear())
 </script>
 
 <template>
-  <v-footer app color="primary" dark class="app-footer" data-test="app-footer">
+  <v-footer color="primary" dark class="app-footer" data-test="app-footer">
     <v-container>
       <v-row justify="space-between" align="center">
         <v-col cols="12" md="4">

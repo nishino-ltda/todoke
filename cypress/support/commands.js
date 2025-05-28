@@ -1,3 +1,5 @@
+import 'cypress-file-upload';
+
 // Pinia store access command with test support
 Cypress.Commands.add('getStore', (storeName) => {
   return cy.window().then(win => {

@@ -23,11 +23,20 @@ class User extends Authenticatable
         'password',
         'type',
         'phone',
+        'cpf',
         'photoUrl',
         'status',
         'locale',
         'locked_at',
-        'failed_attempts'
+        'failed_attempts',
+        'license_number',
+        'vehicle_type',
+        'license_file_path',
+        'business_name',
+        'business_type',
+        'tax_id',
+        'address',
+        'business_document_path'
     ];
 
     /**
@@ -38,7 +47,9 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
-        'failed_attempts'
+        'failed_attempts',
+        'license_file_path',
+        'business_document_path'
     ];
 
     /**
@@ -53,6 +64,8 @@ class User extends Authenticatable
             'password' => 'hashed',
             'type' => 'string',
             'locked_at' => 'datetime',
+            'vehicle_type' => 'string',
+            'business_type' => 'string'
         ];
     }
 

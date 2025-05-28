@@ -36,7 +36,6 @@
 - Planning: web-planning/stores-services.md
 
 ### E2E Tests
-- `cypress/e2e/auth/authentication.cy.js`
 - `cypress/e2e/auth/login.cy.js`
 - `cypress/e2e/auth/registration.cy.js`
 - `cypress/e2e/common/components.cy.js`
@@ -100,6 +99,17 @@
 ✅ All sprint goals achieved on 2025-05-24
 ✅ All acceptance criteria met
 ✅ Ready for sprint review
+
+## Test Fixes Needed
+- **registration.cy.js**:
+  - Form elements not found (5 tests failing)
+  - Validation messages not appearing
+  - Need to review registration form implementation
+
+- **app.cy.js**:
+  - App initialization issues (4 tests failing)
+  - Auth state management problems
+  - Responsive behavior tests failing
 
 ## Acceptance Criteria
 - All tests pass in isolation and together

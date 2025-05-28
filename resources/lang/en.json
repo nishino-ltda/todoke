@@ -14,6 +14,8 @@
             "email": "Email",
             "password": "Password",
             "name": "Name",
+            "phone": "Phone Number",
+            "cpf": "CPF",
             "confirm_password": "Confirm Password",
             "account_type": "Account Type",
             "license_number": "License Number",
@@ -46,7 +48,9 @@
             "email": "Email must be valid",
             "min_length": "Minimum {length} characters required",
             "password_match": "Password confirmation does not match",
-            "general_error": "Validation failed"
+            "general_error": "Validation failed",
+            "cpf_format": "CPF must be in format 000.000.000-00",
+            "phone_format": "Phone must be in format (00) 0000-0000 or (00) 90000-0000"
         },
         "errors": {
             "invalid_credentials": "Invalid login credentials",
@@ -59,7 +63,8 @@
         "success": {
             "login": "Login successful",
             "logout": "Logged out successfully"
-        }
+        },
+        "forgot_password": "Forgot Password?"
     },
     "footer": {
         "copyright": "© {year} TODOKE. All rights reserved.",

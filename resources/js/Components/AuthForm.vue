@@ -1,43 +1,96 @@
 <template>
   <v-form :ref="el => formRef = el" @submit.prevent="submit">
-    <v-alert
-      v-if="errors.general || Object.keys(errors).length > 0"
-      type="error"
-      data-test="auth-alert"
-      class="mb-4"
-    >
-      {{ errors.general || t('auth.validation.general_error') }}
-    </v-alert>
+      <v-alert
+        v-if="errors.general"
+        type="error"
+        data-test="auth-alert"
+        class="mb-4"
+      >
+        {{ errors.general }}
+      </v-alert>
 
-    <v-text-field
-      v-model="form.email"
-      :label="t('auth.form.email')"
-      type="email"
-      :rules="rules.email"
-      required
-      :error-messages="errors.email"
-      data-test="email-input"
-      @blur="validateField('email')"
-    ></v-text-field>
+      <v-alert
+        v-if="Object.keys(errors).length > 1" 
+        type="error"
+        data-test="validation-alert"
+        class="mb-4"
+      >
+        {{ t('auth.validation.general_error') }}
+      </v-alert>
 
-    <v-text-field
-      v-model="form.password"
-      :label="t('auth.form.password')"
-      type="password"
-      :rules="rules.password"
-      required
-      :error-messages="errors.password"
-      data-test="password-input"
-      @blur="validateField('password')"
-    ></v-text-field>
+    <template v-if="mode === 'login'">
+      <v-text-field
+        v-model="form.email"
+        :label="t('auth.form.email')"
+        type="email"
+        :rules="rules.email"
+        required
+        :error-messages="errors.email"
+        data-test="email-input"
+        @blur="validateField('email')"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.password"
+        :label="t('auth.form.password')"
+        type="password"
+        :rules="rules.password"
+        required
+        :error-messages="errors.password"
+        data-test="password-input"
+        @blur="validateField('password')"
+      ></v-text-field>
+    </template>
 
     <template v-if="mode === 'register'">
       <v-text-field
         v-model="form.name"
         :label="t('auth.form.name')"
+        :rules="rules.name"
         required
         :error-messages="errors.name"
         data-test="name-input"
+        @blur="validateField('name')"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.phone"
+        :label="t('auth.form.phone')"
+        :rules="rules.phone"
+        required
+        :error-messages="errors.phone"
+        data-test="phone-input"
+        @blur="validateField('phone')"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.cpf"
+        :label="t('auth.form.cpf')"
+        required
+        :error-messages="errors.cpf"
+        data-test="cpf-input"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.email"
+        :label="t('auth.form.email')"
+        type="email"
+        :rules="rules.email"
+        required
+        :error-messages="errors.email"
+        data-test="email-input"
+        @blur="validateField('email')"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="form.password"
+        :label="t('auth.form.password')"
+        type="password"
+        :rules="rules.password"
+        required
+        :error-messages="errors.password"
+        data-test="password-input"
+        @blur="validateField('password')"
       ></v-text-field>
 
       <v-text-field
@@ -203,12 +256,14 @@ const handleRoleChange = (newRole) => {
   showPartnerFields.value = newRole === 'partner'
 }
 
-const form = ref({
-  email: '',
-  password: '',
-  name: '',
-  password_confirmation: '',
-  role: 'customer',
+  const form = ref({
+    email: '',
+    password: '',
+    name: '',
+    phone: '',
+    cpf: '',
+    password_confirmation: '',
+    role: 'customer',
   // Courier fields
   license_number: '',
   vehicle_type: '',
@@ -225,10 +280,24 @@ const errors = ref({})
 const loading = computed(() => authStore.loading)
 
 // Define validation rules for testing
-const rules = {
+  const rules = {
     email: [
       v => !!v || t('auth.validation.required', { field: t('auth.form.email') }),
       v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || t('auth.validation.email')
+    ],
+    phone: [
+      v => !!v || t('auth.validation.required', { field: t('auth.form.phone') }),
+      v => {
+        if (!v) return true
+        if (!/^\(\d{2}\) [5-9]\d{3,4}-\d{4}$/.test(v)) {
+          return t('auth.validation.phone_format')
+        }
+        return true
+      }
+    ],
+    cpf: [
+      v => !!v || t('auth.validation.required', { field: t('auth.form.cpf') }),
+      v => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(v) || t('auth.validation.cpf_format')
     ],
   password: [
     v => !!v || t('auth.validation.required', { field: t('auth.form.password') }),
@@ -289,22 +358,82 @@ watch(error, (newError) => {
 }, { immediate: true })
 
 const roles = [
-  { title: t('auth.roles.customer'), value: 'customer' },
-  { title: t('auth.roles.courier'), value: 'courier' },
-  { title: t('auth.roles.partner'), value: 'partner' }
+  { 
+    title: t('auth.roles.customer'), 
+    value: 'customer',
+    props: {
+      'data-test': 'role-customer'
+    }
+  },
+  { 
+    title: t('auth.roles.courier'), 
+    value: 'courier',
+    props: {
+      'data-test': 'role-courier'
+    }
+  },
+  { 
+    title: t('auth.roles.partner'), 
+    value: 'partner',
+    props: {
+      'data-test': 'role-partner'
+    }
+  }
 ]
 
 const vehicleTypes = [
-  { title: t('auth.vehicles.motorcycle'), value: 'motorcycle' },
-  { title: t('auth.vehicles.bicycle'), value: 'bicycle' },
-  { title: t('auth.vehicles.car'), value: 'car' }
+  { 
+    title: t('auth.vehicles.motorcycle'), 
+    value: 'motorcycle',
+    props: {
+      'data-test': 'vehicle-motorcycle'
+    }
+  },
+  { 
+    title: t('auth.vehicles.bicycle'), 
+    value: 'bicycle',
+    props: {
+      'data-test': 'vehicle-bicycle'
+    }
+  },
+  { 
+    title: t('auth.vehicles.car'), 
+    value: 'car',
+    props: {
+      'data-test': 'vehicle-car'
+    }
+  }
 ]
 
 const businessTypes = [
-  { title: t('auth.business_types.restaurant'), value: 'restaurant' },
-  { title: t('auth.business_types.cafe'), value: 'cafe' },
-  { title: t('auth.business_types.bakery'), value: 'bakery' },
-  { title: t('auth.business_types.grocery'), value: 'grocery' }
+  { 
+    title: t('auth.business_types.restaurant'), 
+    value: 'restaurant',
+    props: {
+      'data-test': 'business-restaurant'
+    }
+  },
+  { 
+    title: t('auth.business_types.cafe'), 
+    value: 'cafe',
+    props: {
+      'data-test': 'business-cafe'
+    }
+  },
+  { 
+    title: t('auth.business_types.bakery'), 
+    value: 'bakery',
+    props: {
+      'data-test': 'business-bakery'
+    }
+  },
+  { 
+    title: t('auth.business_types.grocery'), 
+    value: 'grocery',
+    props: {
+      'data-test': 'business-grocery'
+    }
+  }
 ]
 
 const emit = defineEmits(['success', 'error'])
@@ -349,7 +478,7 @@ const emit = defineEmits(['success', 'error'])
                 '/customer/dashboard'
               
               logStore.log(`🛣️ Redirecting to: ${redirectPath}`)
-              router.visit(redirectPath)
+              window.location.href = redirectPath
               return response
             }
           } catch (error) {
@@ -366,20 +495,44 @@ const emit = defineEmits(['success', 'error'])
       let registerData;
       const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;
       
+      // Prepare payload with required fields and proper field names
+      const payload = {
+        name: form.value.name,
+        email: form.value.email,
+        phone: form.value.phone,
+        cpf: form.value.cpf,
+        type: form.value.role, // Map role to type for API
+        password: form.value.password,
+        password_confirmation: form.value.password_confirmation
+      };
+
+      // Add role-specific fields
+      if (form.value.role === 'courier') {
+        payload.license_number = form.value.license_number;
+        payload.vehicle_type = form.value.vehicle_type;
+        payload.license_file = form.value.document;
+      } else if (form.value.role === 'partner') {
+        payload.business_name = form.value.business_name;
+        payload.business_type = form.value.business_type;
+        payload.tax_id = form.value.tax_id;
+        payload.address = form.value.address;
+        payload.business_document = form.value.business_document;
+      }
+
       if (hasFiles) {
-        const formData = new FormData()
-        Object.entries(form.value).forEach(([key, value]) => {
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
           if (value !== null && value !== undefined && value !== '') {
             if (value instanceof File) {
-              formData.append(key, value)
+              formData.append(key, value);
             } else {
-              formData.append(key, value.toString())
+              formData.append(key, value.toString());
             }
           }
-        })
+        });
         registerData = formData;
       } else {
-        registerData = form.value;
+        registerData = payload;
       }
 
       logStore.log(`📝 Sending registration request for ${form.value.email}`, 'debug')
@@ -387,6 +540,14 @@ const emit = defineEmits(['success', 'error'])
       if (response?.token) {
         logStore.log(`✅ Registration successful for ${form.value.email}`, 'info')
         emit('success', { token: response.token })
+        
+        // Redirect customers immediately
+        if (form.value.role === 'customer') {
+          window.location.href = '/customer/dashboard'
+        } else {
+          // Emit pending approval for couriers/partners
+          emit('pending')
+        }
         return response
       }
       const error = new Error('Registration failed')
