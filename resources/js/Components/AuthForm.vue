@@ -188,6 +188,15 @@
       </template>
     </template>
 
+    <v-alert
+      v-if="pendingAlert"
+      type="info"
+      data-test="pending-alert"
+      class="mb-4"
+    >
+      {{ t('auth.pending_approval') }}
+    </v-alert>
+
     <v-btn
       type="submit"
       class="v-btn"
@@ -233,6 +242,7 @@ const props = defineProps({
 
 const authStore = useAuthStore()
 const formRef = ref(null)
+const pendingAlert = ref(false)
 
 const validateField = async (field) => {
   if (!formRef.value) return false
@@ -550,6 +560,12 @@ const emit = defineEmits(['success', 'error'])
           } else {
             // Emit pending approval for couriers/partners
             emit('pending')
+            
+            // Show pending approval message
+            if (response.data.user.type !== 'customer') {
+              pendingAlert.value = true
+            }
+            
             return response
           }
         }

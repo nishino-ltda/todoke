@@ -6,6 +6,7 @@
         "welcome": "Welcome, {name}"
     },
     "auth": {
+        "pending_approval": "Your account is pending approval. You'll receive an email when it's approved.",
         "login": "Login",
         "register": "Register",
         "logout": "Logout",

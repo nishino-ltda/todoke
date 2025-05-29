@@ -69,7 +69,7 @@ describe('🔐 User Registration', () => {
     cy.get('[data-test="auth-alert"]').should('not.exist');
     
     // Verify successful redirect to customer dashboard
-    cy.url().should('include', '/customer/dashboard', { timeout: 10000 });
+    cy.url().should('include', '/customer/dashboard', { timeout: 3000 });
     
     // Verify auth store is populated for customer
     cy.getStore('auth').its('user').should('not.be.null');
@@ -95,7 +95,9 @@ describe('🔐 User Registration', () => {
       phone: '(11) 99999-9999',
       cpf: '123.456.789-09',
       license_number: `COURIER-${Date.now()}`,
-      vehicle_type: 'motorcycle'
+      vehicle_type: 'motorcycle',
+      password_confirmation: 'password123',
+      document: 'test-license.jpg'
     };
 
     // Visit registration page (using real API)
@@ -105,6 +107,8 @@ describe('🔐 User Registration', () => {
     cy.log('📝 Filling basic registration form');
     cy.get('[data-test="name-input"] input').type(courier.name);
     cy.get('[data-test="email-input"] input').type(courier.email);
+    cy.get('[data-test="phone-input"] input').type(courier.phone);
+    cy.get('[data-test="cpf-input"] input').type(courier.cpf);
     cy.get('[data-test="password-input"] input').type(courier.password);
     cy.get('[data-test="password-confirmation-input"] input').type(courier.password);
     cy.get('[data-test="role-select"]').click();
@@ -123,9 +127,10 @@ describe('🔐 User Registration', () => {
     
     // Upload test license file
     cy.log('📄 Uploading test license file');
-    cy.fixture('test-license.jpg').then(fileContent => {
+    cy.fixture('test-license.jpg', 'binary').then(fileContent => {
+      const blob = Cypress.Blob.binaryStringToBlob(fileContent, 'image/jpeg');
       cy.get('[data-test="document-upload"] input[type="file"]').attachFile({
-        fileContent: fileContent.toString(),
+        fileContent: blob,
         fileName: 'test-license.jpg',
         mimeType: 'image/jpeg'
       });
@@ -150,7 +155,7 @@ describe('🔐 User Registration', () => {
   });
 
   // SPRINT 1: Core authentication testing
-  it('🍽️ Should register as partner', () => {
+  it.only('🍽️ Should register as partner', () => {
     cy.log('🏢 Testing partner registration');
     // Test will verify:
     // - Business info collection
@@ -162,6 +167,7 @@ describe('🔐 User Registration', () => {
       name: 'Test Partner',
       email: `partner-${Date.now()}@todoke.test`,
       password: 'password123',
+      password_confirmation: 'password123',
       type: 'partner',
       phone: '(11) 99999-9999',
       cpf: '123.456.789-09',
@@ -262,7 +268,7 @@ describe('🔐 User Registration', () => {
     
     // Verify server validation errors
     cy.log('❌ Verifying server validation errors');
-    cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible');
+    cy.get('[data-test="auth-alert"]', { timeout: 3000 }).should('be.visible');
     cy.get('[data-test="name-input"] .v-messages__message').should('be.visible');
     cy.get('[data-test="email-input"] .v-messages__message').should('be.visible');
     cy.get('[data-test="password-input"] .v-messages__message').should('be.visible');

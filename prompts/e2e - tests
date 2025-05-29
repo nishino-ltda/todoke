@@ -1,8 +1,7 @@
 TASK: Proceed with sprint, and component logging
 
 
-RUN: "> storage/logs/laravel.log"
-RUN: "php artisan app:reset" 
+RUN: "> storage/logs/laravel.log && php artisan app:reset"
 
 Load memory bank.
 Read docs/web-planning/sprints/sprint1.md

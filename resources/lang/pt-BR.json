@@ -6,26 +6,27 @@
         "welcome": "Bem-vindo, {name}"
     },
     "auth": {
+        "pending_approval": "Sua conta está aguardando aprovação. Você receberá um e-mail quando for aprovada.",
         "login": "Entrar",
         "register": "Registrar",
         "logout": "Sair",
         "menu": "Menu",
         "form": {
-            "email": "Email",
+            "email": "E-mail",
             "password": "Senha",
             "name": "Nome",
             "phone": "Telefone",
             "cpf": "CPF",
             "confirm_password": "Confirmar Senha",
             "account_type": "Tipo de Conta",
-            "license_number": "Número da Licença",
+            "license_number": "Número da CNH",
             "vehicle_type": "Tipo de Veículo",
-            "upload_license": "Enviar Licença",
-            "business_name": "Nome do Negócio",
+            "upload_license": "Enviar CNH",
+            "business_name": "Nome do Estabelecimento",
             "business_type": "Tipo de Negócio",
             "tax_id": "CNPJ",
             "address": "Endereço Comercial",
-            "upload_business_doc": "Licença Comercial"
+            "upload_business_doc": "Documento do Estabelecimento"
         },
         "roles": {
             "customer": "Cliente",
@@ -45,25 +46,26 @@
         },
         "validation": {
             "required": "{field} é obrigatório",
-            "email": "Email deve ser válido",
-            "min_length": "Mínimo de {length} caracteres necessários",
+            "email": "E-mail deve ser válido",
+            "min_length": "Mínimo de {length} caracteres",
             "password_match": "Confirmação de senha não confere",
             "general_error": "Falha na validação",
-            "cpf_format": "CPF deve estar no formato 000.000.000-00"
+            "cpf_format": "CPF deve estar no formato 000.000.000-00",
+            "phone_format": "Telefone deve estar no formato (00) 0000-0000 ou (00) 90000-0000"
         },
         "errors": {
             "invalid_credentials": "Credenciais inválidas",
             "account_locked": "Conta bloqueada - entre em contato com o suporte",
             "user_not_found": "Usuário não encontrado",
             "too_many_attempts": "Muitas tentativas de login - tente novamente mais tarde",
-            "email_required": "Email é obrigatório",
+            "email_required": "E-mail é obrigatório",
             "password_required": "Senha é obrigatória"
         },
         "success": {
             "login": "Login realizado com sucesso",
             "logout": "Logout realizado com sucesso"
         },
-        "forgot_password": "Esqueceu a senha?"
+        "forgot_password": "Esqueceu sua senha?"
     },
     "footer": {
         "copyright": "© {year} TODOKE. Todos os direitos reservados.",
@@ -82,12 +84,12 @@
             "hybrid": {
                 "title": "Entrega Híbrida",
                 "subtitle": "Rápida e flexível",
-                "description": "Combinando motoqueiros e drones para rotas de entrega otimizadas. Rastreamento especializado para cada etapa da entrega."
+                "description": "Combinando motoboys e drones para rotas de entrega otimizadas. Rastreamento especializado para cada etapa da entrega."
             },
             "pricing": {
                 "title": "Precificação Comunitária",
                 "subtitle": "Justa e transparente",
-                "description": "Entregadores determinam democraticamente os preços através de votações mensais. Painel transparente de precificação baseada em custos."
+                "description": "Entregadores determinam democraticamente os preços das entregas através de votações mensais. Painel transparente de precificação baseada em custos."
             },
             "reliable": {
                 "title": "Serviço Confiável",
