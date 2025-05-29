@@ -27,6 +27,7 @@ INFO:
 - running all tests at once might not be a good idea
 - Dont remove comments in the e2e tests, stick to the planning in the comments
 - Server running on [http://127.0.0.1:8000].  
+- Dont write a file without reading it before
 - Npm run dev is running, dont stop them, or try to restart them, ask me. 
 - Dont try to read the whole storage/logs/laravel.log its massive, 
 - Dont ask user to look at screenshots, use logStore.log and cy.dumpLogs

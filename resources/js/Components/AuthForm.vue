@@ -506,15 +506,24 @@ const emit = defineEmits(['success', 'error'])
         let registerData;
         const hasFiles = form.value.document instanceof File || form.value.business_document instanceof File;
         
-        // Prepare payload with required fields and proper field names
+        // Prepare payload with all required fields
         const payload = {
           name: form.value.name,
           email: form.value.email,
           phone: form.value.phone,
           cpf: form.value.cpf,
-          type: form.value.role, // Map role to type for API
+          type: form.value.role,
           password: form.value.password,
-          password_confirmation: form.value.password_confirmation
+          password_confirmation: form.value.password_confirmation,
+          // Include all fields regardless of role to ensure validation passes
+          license_number: form.value.license_number,
+          vehicle_type: form.value.vehicle_type,
+          document: form.value.document,
+          business_name: form.value.business_name,
+          business_type: form.value.business_type,
+          tax_id: form.value.tax_id,
+          address: form.value.address,
+          business_document: form.value.business_document
         };
 
         // Add role-specific fields

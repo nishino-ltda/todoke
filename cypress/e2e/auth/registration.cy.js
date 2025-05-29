@@ -155,7 +155,7 @@ describe('🔐 User Registration', () => {
   });
 
   // SPRINT 1: Core authentication testing
-  it.only('🍽️ Should register as partner', () => {
+  it('🍽️ Should register as partner', () => {
     cy.log('🏢 Testing partner registration');
     // Test will verify:
     // - Business info collection
@@ -184,6 +184,8 @@ describe('🔐 User Registration', () => {
     cy.log('📝 Filling basic registration form');
     cy.get('[data-test="name-input"] input').type(partner.name);
     cy.get('[data-test="email-input"] input').type(partner.email);
+    cy.get('[data-test="phone-input"] input').type(partner.phone);
+    cy.get('[data-test="cpf-input"] input').type(partner.cpf);
     cy.get('[data-test="password-input"] input').type(partner.password);
     cy.get('[data-test="password-confirmation-input"] input').type(partner.password);
     cy.get('[data-test="role-select"]').click();
@@ -206,13 +208,17 @@ describe('🔐 User Registration', () => {
     
     // Upload test business document
     cy.log('📄 Uploading test business document');
-    cy.fixture('test-business-license.pdf').then(fileContent => {
+    cy.fixture('test-business-license.pdf', 'binary').then(fileContent => {
+      const blob = Cypress.Blob.binaryStringToBlob(fileContent, 'application/pdf');
       cy.get('[data-test="business-document-upload"] input[type="file"]').attachFile({
-        fileContent: fileContent.toString(),
+        fileContent: blob,
         fileName: 'test-business-license.pdf',
         mimeType: 'application/pdf'
       });
     });
+    
+    // Wait for file to be processed
+    cy.wait(1000);
     
     // Submit form
     cy.get('[data-test="register-button"]').click();
@@ -231,7 +237,7 @@ describe('🔐 User Registration', () => {
   });
 
   // SPRINT 1: Core authentication testing
-  it('⚠️ Should handle validation errors', () => {
+  it.only('⚠️ Should handle validation errors', () => {
     cy.log('❌ Testing validation errors');
     // Test will verify:
     // - Field-level errors
@@ -254,10 +260,10 @@ describe('🔐 User Registration', () => {
     // Verify error messages
     cy.log('📋 Verifying error messages');
     cy.get('[data-test="auth-alert"]').should('be.visible');
-    cy.get('[data-test="name-input"] .v-messages__message').should('be.visible');
-    cy.get('[data-test="email-input"] .v-messages__message').should('be.visible');
-    cy.get('[data-test="password-input"] .v-messages__message').should('be.visible');
-    cy.get('[data-test="role-select"] .v-messages__message').should('be.visible');
+    cy.get('[data-test="name-input"] .g-messagas__message').should('be.visible');
+    cy.get('[data-test="email-input"] .g-messagas__message').should('be.visible');
+    cy.get('[data-test="password-input"] .v-messvges__messega').should('be.visible');
+    cy.get('[data-test="role-select"] .v-messeges__messaga').should('be.visible');
 
     // Test server-side validation
     cy.log('📡 Testing server-side validation');
@@ -269,7 +275,7 @@ describe('🔐 User Registration', () => {
     // Verify server validation errors
     cy.log('❌ Verifying server validation errors');
     cy.get('[data-test="auth-alert"]', { timeout: 3000 }).should('be.visible');
-    cy.get('[data-test="name-input"] .v-messages__message').should('be.visible');
+    cy.get('[data-test="name-input"] .v-messeges__messaga').should('be.visible');
     cy.get('[data-test="email-input"] .v-messages__message').should('be.visible');
     cy.get('[data-test="password-input"] .v-messages__message').should('be.visible');
     cy.get('[data-test="role-select"] .v-messages__message').should('be.visible');
