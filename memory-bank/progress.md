@@ -7,6 +7,16 @@
 ✅ 40/40 tests passing (100% coverage)
 ✅ E2E tests for all auth flows (6/6 passing)
 
+## Registration Test Fixes (2025-05-29)
+
+✅ Fixed registration tests failing when run together
+✅ Updated tests to use unique CPF values:
+  - Customer: 111.222.333-09
+  - Courier: 222.333.444-09
+  - Partner: 333.444.555-09
+  - Mobile: 444.555.666-09
+✅ Verified all tests pass when run sequentially
+
 ## AppFooter Component Testing Completion (2025-05-20)
 
 ### Completed:

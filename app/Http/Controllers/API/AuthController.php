@@ -289,7 +289,26 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $user = $request->user();
+        
+        // Handle persistent tokens (those stored in database)
+        if ($token = $user->currentAccessToken()) {
+            if (method_exists($token, 'delete')) {
+                $token->delete();
+            }
+        }
+
+        // Delete all other tokens (for persistent tokens)
+        if (method_exists($user, 'tokens')) {
+            $user->tokens()->delete();
+        }
+
+        // Clear web session if exists
+        if ($request->hasSession()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         return response()->json(['message' => 'Logout realizado com sucesso']);
     }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,9 @@ class AuthTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Mock throttle middleware to disable rate limiting during tests
+        $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
     }
     public function testAuroraRegistersAndConfiguresProfile()
     {
@@ -24,8 +28,13 @@ class AuthTest extends TestCase
             'name' => 'Aurora Silva',
             'email' => 'aurora@example.com',
             'phone' => '11999999999',
+            'cpf' => '111.222.333-44',
             'type' => 'courier',
-            'password' => 'SenhaSegura123'
+            'password' => 'SenhaSegura123',
+            'password_confirmation' => 'SenhaSegura123',
+            'license_number' => 'AB123456',
+            'vehicle_type' => 'motorcycle',
+            'license_file' => UploadedFile::fake()->create('license.jpg', 1000)
         ];
 
         // 1. Test new courier registration
@@ -41,15 +50,26 @@ class AuthTest extends TestCase
         // 2. Verify required field validation
         foreach ($userData as $key => $value) {
             $invalidData = $userData;
-            unset($invalidData[$key]);
+            
+            // Special handling for password confirmation
+            if ($key === 'password_confirmation') {
+                $invalidData['password'] = 'DifferentPassword123';
+            } else {
+                unset($invalidData[$key]);
+            }
             
             $response = $this->postJson('/api/v1/auth/register', $invalidData);
-            $response->assertStatus(422)
-                ->assertJsonValidationErrors([$key]);
+            $response->assertStatus(422);
+            
+            // For password_confirmation, check for password error
+            $errorKey = $key === 'password_confirmation' ? 'password' : $key;
+            $response->assertJsonValidationErrors([$errorKey]);
         }
 
-        // 3. Test duplicate email
-        $response = $this->postJson('/api/v1/auth/register', $userData);
+        // 3. Test duplicate email with unique CPF
+        $duplicateData = $userData;
+        $duplicateData['cpf'] = '999.888.777-66'; // Different CPF to trigger only email duplicate
+        $response = $this->postJson('/api/v1/auth/register', $duplicateData);
         $response->assertStatus(409);
 
         // Find the newly registered user

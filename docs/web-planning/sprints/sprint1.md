@@ -102,9 +102,13 @@
 
 ## Test Fixes Needed
 - **registration.cy.js**:
-  - Form elements not found (5 tests failing)
-  - Validation messages not appearing
-  - Need to review registration form implementation
+  ✅ All tests now passing when run together
+  ✅ Fixed by using unique CPF values:
+    - Customer: 111.222.333-09
+    - Courier: 222.333.444-09  
+    - Partner: 333.444.555-09
+    - Mobile: 444.555.666-09
+  ✅ Verified form validation and error messages
 
 - **app.cy.js**:
   - App initialization issues (4 tests failing)

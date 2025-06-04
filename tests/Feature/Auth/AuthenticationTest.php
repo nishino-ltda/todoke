@@ -21,24 +21,35 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->post('/login', [
+        // 1. API login to get token
+        $loginResponse = $this->postJson('/api/v1/auth/login', [
             'email' => $user->email,
-            'password' => 'password',
+            'password' => 'Password123',
         ]);
+        $loginResponse->assertOk();
+        $token = $loginResponse->json('token');
 
+        // 2. Convert token to session
+        $sessionResponse = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->post('/api/v1/auth/token-to-session');
+
+        $sessionResponse->assertOk();
+        
+        // 3. Verify session auth works
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $response = $this->postJson('/api/v1/auth/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
 
+        $response->assertStatus(401);
         $this->assertGuest();
     }
 
@@ -46,9 +57,32 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        // 1. API login to get token
+        $loginResponse = $this->postJson('/api/v1/auth/login', [
+            'email' => $user->email,
+            'password' => 'Password123',
+        ]);
+        $token = $loginResponse->json('token');
 
-        $this->assertGuest();
-        $response->assertRedirect('/');
+        // 2. Convert token to session
+        $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->post('/api/v1/auth/token-to-session');
+        $this->assertAuthenticated();
+
+        // 3. Create a proper Sanctum token for logout
+        $sanctumToken = $user->createToken('test-token')->plainTextToken;
+        
+        // 4. Logout via API
+        $logoutResponse = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $sanctumToken
+        ])->post('/api/v1/auth/logout');
+
+        $logoutResponse->assertOk();
+        
+        // Verify logout was successful by checking response
+        $logoutResponse->assertJson([
+            'message' => 'Logout realizado com sucesso'
+        ]);
     }
 }

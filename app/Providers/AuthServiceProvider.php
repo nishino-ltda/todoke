@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Gate;
 use App\Models\Node;
 use App\Models\Product;
 use App\Policies\NodePolicy;
@@ -26,5 +27,10 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        // Define admin ability
+        Gate::define('admin', function ($user) {
+            return $user->tokenCan('admin');
+        });
     }
 }

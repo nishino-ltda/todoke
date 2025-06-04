@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\DeliveryController;
@@ -150,7 +151,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Rotas de admin
-        Route::prefix('admin')->middleware('admin')->group(function () {
+        Route::prefix('admin')->middleware(['auth:sanctum', 'can:admin'])->group(function () {
             Route::get('/users', [UserController::class, 'index']);
             Route::patch('/users/{id}/status', [UserController::class, 'updateStatus']);
             Route::get('/stats', [UserController::class, 'stats']);

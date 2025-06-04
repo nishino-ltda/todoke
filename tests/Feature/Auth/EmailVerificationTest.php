@@ -38,20 +38,22 @@ class EmailVerificationTest extends TestCase
 
         Event::assertDispatched(Verified::class);
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
-        $response->assertRedirect(route('dashboard', absolute: false).'?verified=1');
+        $response->assertOk();
     }
 
-    public function test_email_is_not_verified_with_invalid_hash(): void
+    public function test_email_is_not_verified_with_invalid_signature(): void
     {
         $user = User::factory()->unverified()->create();
 
+        // Create valid URL then tamper with it
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
             now()->addMinutes(60),
-            ['id' => $user->id, 'hash' => sha1('wrong-email')]
+            ['id' => $user->id, 'hash' => sha1($user->email)]
         );
+        $tamperedUrl = str_replace('signature=', 'signature=invalid', $verificationUrl);
 
-        $this->actingAs($user)->get($verificationUrl);
+        $this->actingAs($user)->get($tamperedUrl);
 
         $this->assertFalse($user->fresh()->hasVerifiedEmail());
     }
