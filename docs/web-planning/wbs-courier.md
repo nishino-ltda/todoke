@@ -30,7 +30,15 @@
 - [ ] Update delivery statuses
 - [ ] (Future) Integrate with voting endpoints
 
-## 6. Testing
+## 6. Internationalization
+- [ ] Implement translation support for all UI text
+- [ ] Use courier-specific translation files
+- [ ] Ensure status messages are translatable
+- [ ] Add language switching capability
+- [ ] Test with pt-BR and English locales
+
+## 7. Testing
 - [ ] Unit tests for components
 - [ ] E2E tests for courier workflows
 - [ ] Test real-time updates
+- [ ] Test translation functionality

@@ -42,11 +42,14 @@
 - [ ] (Future) Ticket communication
 
 ## 8. Translation Testing
-- [ ] Verify UI text renders in correct language
+- [ ] Verify UI text renders in correct language (default: pt-BR)
 - [ ] Test language switching functionality
 - [ ] Verify fallback to English when translation missing
 - [ ] Test notifications with dynamic values in translations
 - [ ] Check date/number formatting per locale
+- [ ] Verify all tests use i18n-aware selectors
+- [ ] Test with multiple language configurations
+- [ ] Validate translation key consistency across tests
 
 ## 9. CI/CD Integration
 - [ ] Add to build pipeline

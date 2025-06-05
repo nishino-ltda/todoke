@@ -52,11 +52,12 @@
    - [ ] Implement Translation Service
 
 4. **Internationalization**:
-   - [ ] Create pt-BR translation files
-   - [ ] Implement language selector component
-   - [ ] Add Accept-Language header to API requests
-   - [ ] Update components to use translations
-   - [ ] Add language preference to Auth Store
+   - [ ] Set Portuguese (pt-BR) as default language for all checkout components
+   - [ ] Create comprehensive pt-BR translation files for checkout flow
+   - [ ] Implement language selector component with pt-BR as default
+   - [ ] Add Accept-Language header to API requests (default pt-BR)
+   - [ ] Update components to use translations from external files
+   - [ ] Add language preference to Auth Store with pt-BR fallback
 
 ## Acceptance Criteria
 - Users can complete checkout in supported languages

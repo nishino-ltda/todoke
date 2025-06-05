@@ -3,6 +3,15 @@
 ## Purpose
 Display a partner's menu, allow customers to browse products, add items to a cart, and place orders.
 
+## Internationalization Requirements
+- All UI text must use translation keys from JSON files
+- Default language: pt-BR (Portuguese - Brazil)
+- Support for English via language switcher
+- Menu-specific translations should be in `menu.json` files
+- Product descriptions and addon names should support multiple languages
+- Cart and checkout messages must be translated
+- Error messages during ordering must be localized
+
 ## Key Features
 - Dynamic routing to display menus for specific partners (e.g., `/menu/:partnerId`).
 - Display partner branding (logo, colors).

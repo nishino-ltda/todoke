@@ -3,6 +3,14 @@
 ## Purpose
 Provide couriers with a web interface to manage their availability, view and accept delivery assignments, and update delivery statuses.
 
+## Internationalization Requirements
+- All UI text must use translation keys from JSON files
+- Default language: pt-BR (Portuguese - Brazil)
+- Support for English via language switcher
+- Courier-specific translations should be in `courier.json` files
+- Status update messages must be translated
+- Map interface labels should support multiple languages
+
 ## Key Features
 - Secure login for courier users.
 - Toggle online/offline status to indicate availability for deliveries.

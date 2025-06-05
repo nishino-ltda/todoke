@@ -17,11 +17,20 @@
   - user-management.cy.js
   - node-management.cy.js
 
-## Translation Requirements
-- [ ] Implement language switching in admin UI
-- [ ] Ensure all admin UI text is translatable
-- [ ] Add pt-BR translations for admin panel
-- [ ] Create translation file structure for future languages
+## Internationalization Requirements
+1. **Default Language**:
+   - [ ] Set Portuguese (pt-BR) as default language for admin panel
+   - [ ] Create comprehensive pt-BR translations for all admin components
+
+2. **Translation Infrastructure**:
+   - [ ] Implement language switching in admin UI (default pt-BR)
+   - [ ] Externalize all admin UI text to translation files
+   - [ ] Create scalable translation file structure
+   - [ ] Configure API to respect Accept-Language header (default pt-BR)
+
+3. **Database Considerations**:
+   - [ ] Ensure admin-related database content supports multilingual data
+   - [ ] Implement fallback to pt-BR when translations are missing
 
 ## Testing Goals
 - [ ] Write E2E tests for:
@@ -51,7 +60,11 @@
    - [ ] Add real-time system updates
 
 ## Acceptance Criteria
-- Admins can manage users
-- Nodes can be approved/rejected
-- System stats display correctly
-- Search/filter works as expected
+- Admin panel fully functional in pt-BR by default
+- Language switching works correctly
+- All UI text is properly externalized to translation files
+- API responses respect Accept-Language header
+- Admins can manage users with localized interfaces
+- Nodes can be approved/rejected with translated messages
+- System stats display correctly in selected language
+- Search/filter works as expected across languages

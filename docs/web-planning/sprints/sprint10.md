@@ -46,12 +46,13 @@
    - [ ] Add screen reader support
 
 3. **Internationalization**:
-   - [ ] Set up translation file structure
-   - [ ] Extract all UI text to translation files
-   - [ ] Implement language switching UI
-   - [ ] Add pt-BR translations
-   - [ ] Test translation fallback behavior
-   - [ ] Verify localized formatting (dates/numbers)
+   - [ ] Set Portuguese (pt-BR) as default language for all components
+   - [ ] Create comprehensive pt-BR translations for all UI text
+   - [ ] Implement language switching UI (default pt-BR)
+   - [ ] Configure API to respect Accept-Language header (default pt-BR)
+   - [ ] Test translation fallback behavior (pt-BR as fallback)
+   - [ ] Verify localized formatting (dates/numbers/currency)
+   - [ ] Ensure all error messages are translated
 
 4. **Polish & Refinement**:
    - [ ] Review all UI components
@@ -61,6 +62,10 @@
 
 ## Acceptance Criteria
 - Performance metrics meet targets
-- Accessibility score > 90%
-- Consistent UI across browsers
+- Accessibility score > 90% (including language support)
+- Consistent UI across browsers and languages
 - No critical security issues
+- All UI text properly externalized to translation files
+- Portuguese (pt-BR) is default language throughout
+- Language switching works correctly
+- API responses respect Accept-Language header

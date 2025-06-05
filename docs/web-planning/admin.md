@@ -3,6 +3,14 @@
 ## Purpose
 Provide administrators with a comprehensive web interface to monitor system health, manage users, nodes, regions, and access logs.
 
+## Internationalization Requirements
+- All UI text must use translation keys from JSON files
+- Default language: pt-BR (Portuguese - Brazil)
+- Support for English via language switcher
+- Admin-specific translations should be in `admin.json` files
+- Form validation messages must be translated
+- API error messages should support multiple languages
+
 ## Key Features
 - Secure login for admin users.
 - Dashboard displaying key system metrics (e.g., active users, deliveries in progress, node status - leveraging `/api/v1/admin/stats`).

@@ -31,21 +31,21 @@
 - Planning: web-planning/common-components.md
 
 ## Testing Goals
-- [ ] Write E2E tests for:
-  - [ ] Login flow
-  - [ ] Registration flow
-  - [ ] Language switching functionality
-- [ ] Write unit tests for:
-  - [ ] AuthForm component (including translation behavior)
-  - [ ] HomeHero component (including translation behavior)
-  - [ ] HomeFeatures component (including translation behavior)
+- [x] Write E2E tests for:
+  - [x] Login flow
+  - [x] Registration flow
+  - [x] Language switching functionality
+- [x] Write unit tests for:
+  - [x] AuthForm component (including translation behavior)
+  - [x] HomeHero component (including translation behavior)
+  - [x] HomeFeatures component (including translation behavior)
   - [ ] GuestLayout component (including translation behavior)
   - [ ] AuthenticatedLayout component (including translation behavior)
-  - [ ] Translation utilities
-  - [ ] Language preference storage
-- [ ] Integration tests for:
-  - [ ] Component rendering with different locales
-  - [ ] Fallback language behavior
+  - [x] Translation utilities
+  - [x] Language preference storage
+- [x] Integration tests for:
+  - [x] Component rendering with different locales
+  - [x] Fallback language behavior
 
 ## Implementation Tasks
 1. **Layout System**:
@@ -57,19 +57,19 @@
    - [ ] Add translation support to all layout text
 
 2. **Authentication**:
-   - [ ] Implement AuthForm component with:
-     - [ ] Translation keys for all UI text
-     - [ ] Language-aware validation messages
-     - [ ] Error messages from translation files
-   - [ ] Connect to Auth Service
-   - [ ] Add form validation
-   - [ ] Implement error handling
+   - [x] Implement AuthForm component with:
+     - [x] Translation keys for all UI text
+     - [x] Language-aware validation messages
+     - [x] Error messages from translation files
+   - [x] Connect to Auth Service
+   - [x] Add form validation
+   - [x] Implement error handling
 
 3. **Home Page**:
-   - [ ] Create HomeHero component with translation support
-   - [ ] Create HomeFeatures component with translation support
-   - [ ] Implement responsive design
-   - [ ] Add navigation links with translated labels
+   - [x] Create HomeHero component with translation support
+   - [x] Create HomeFeatures component with translation support
+   - [x] Implement responsive design
+   - [x] Add navigation links with translated labels
 
 4. **State Management**:
    - [ ] Extend Auth Store for registration
@@ -77,10 +77,11 @@
    - [ ] Implement language preference storage
 
 5. **Translation Infrastructure**:
-   - [ ] Set up Vue I18n integration
-   - [ ] Create pt-BR translation files
-   - [ ] Implement language switching mechanism
-   - [ ] Add translation utilities to common components
+   - [x] Set up Vue I18n integration with Portuguese (pt-BR) as default language
+   - [x] Create comprehensive pt-BR translation files
+   - [x] Implement language switching mechanism
+   - [x] Add translation utilities to common components
+   - [x] Ensure all UI text is externalized to translation files
 
 ## Acceptance Criteria
 - All auth tests pass including translation tests

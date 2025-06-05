@@ -3,6 +3,14 @@
 ## Purpose
 Introduce TODOKE, its mission, and key features to new visitors. Invite users to join and register.
 
+## Internationalization Requirements
+- All UI text must use translation keys from JSON files
+- Default language: pt-BR (Portuguese - Brazil)
+- Support for English via language switcher
+- Home page specific translations should be in `home.json` files
+- Hero section text and CTAs must be translated
+- Feature descriptions should support multiple languages
+
 ## Key Features
 - Engaging visuals and compelling copy to explain TODOKE's value proposition.
 - Highlight core features: Hybrid Delivery System and Community Pricing.

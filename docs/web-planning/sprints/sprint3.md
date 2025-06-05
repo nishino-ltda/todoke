@@ -33,11 +33,12 @@
 
 ## Implementation Tasks
 1. **Internationalization**:
-   - [ ] Set up Vue I18n with pt-BR translations
+   - [ ] Set up Vue I18n with Portuguese (pt-BR) as default language
+   - [ ] Create comprehensive pt-BR translations for all menu/cart components
    - [ ] Create language switcher component
    - [ ] Externalize all UI strings to translation files
    - [ ] Implement locale persistence in user preferences
-   - [ ] Add browser language detection
+   - [ ] Add browser language detection with pt-BR fallback
 
 2. **Menu Components**:
    - [ ] Create ProductList component (with translation support)
