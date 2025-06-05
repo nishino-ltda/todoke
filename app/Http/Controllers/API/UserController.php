@@ -41,15 +41,46 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|string|email|max:255|unique:users,email,'.$request->user()->id,
             'phone' => 'sometimes|string|max:20',
             'photoUrl' => 'sometimes|nullable|string|max:255',
         ]);
 
         $user = $request->user();
         
-        $user->update($request->only(['name', 'phone', 'photoUrl']));
+        $originalEmail = $user->email;
+        $user->update($request->only(['name', 'email', 'phone', 'photoUrl']));
 
-        return response()->json($user->only(['name', 'phone', 'photoUrl']));
+        // Reset email verification if email changed
+        if ($request->has('email') && $originalEmail !== $request->email) {
+            $user->email_verified_at = null;
+            $user->save();
+        }
+
+        return response()->json($user->only(['name', 'email', 'phone', 'photoUrl']));
+    }
+
+    /**
+     * Delete the authenticated user's account
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string|current_password:sanctum',
+        ]);
+
+        $user = $request->user();
+        
+        // Log out all tokens
+        $user->tokens()->delete();
+        
+        // Delete user
+        $user->delete();
+
+        return response()->noContent();
     }
 
     /**
