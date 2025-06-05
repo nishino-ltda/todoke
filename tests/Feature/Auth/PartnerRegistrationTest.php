@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 use App\Models\DeliveryAssignment;
 use Mockery;
@@ -36,8 +37,15 @@ class PartnerRegistrationTest extends TestCase
             'name' => 'BistroTech',
             'email' => 'contato@bistrotech.com.br',
             'password' => 'senhaSegura123',
+            'password_confirmation' => 'senhaSegura123',
             'type' => 'partner',
-            'phone' => '67999999999'
+            'phone' => '67999999999',
+            'cpf' => '333.444.555-09',
+            'business_name' => 'BistroTech Restaurant',
+            'business_type' => 'restaurant',
+            'tax_id' => '12345678901',
+            'address' => '123 Main Street',
+            'business_document' => UploadedFile::fake()->create('document.pdf', 100)
         ];
 
         // 1. Register partner using auth endpoint

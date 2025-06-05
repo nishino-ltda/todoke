@@ -13,12 +13,22 @@ class ProfileTest extends TestCase
     public function test_profile_page_is_displayed(): void
     {
         $user = User::factory()->create();
+        $token = $user->createToken('test-token')->plainTextToken;
 
         $response = $this
-            ->actingAs($user)
-            ->get('/profile');
+            ->withHeaders(['Authorization' => 'Bearer ' . $token])
+            ->getJson('/api/v1/users/me');
 
-        $response->assertOk();
+        $response->assertOk()
+            ->assertJsonStructure([
+                'id',
+                'name', 
+                'email',
+                'phone',
+                'type',
+                'photoUrl',
+                'status'
+            ]);
     }
 
     public function test_profile_information_can_be_updated(): void
