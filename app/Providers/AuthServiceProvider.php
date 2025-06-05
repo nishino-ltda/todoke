@@ -32,11 +32,6 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Define admin ability
-        Gate::define('admin', function ($user) {
-            return $user->type === 'admin';
-        });
-
         // Custom password reset configuration
         Password::resetUsing(function ($user, $password) {
             $user->forceFill([
