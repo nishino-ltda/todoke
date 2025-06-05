@@ -189,15 +189,12 @@ class NodeRegionTest extends TestCase
         $adminUser = User::factory()->create(['type' => 'admin']);
         $pendingNode = Node::factory()->create(['status' => 'pending_approval']);
         
-        // Create admin token and set Authorization header directly
+        // Create admin token and use it for the request
         $token = $adminUser->createToken('test-token', ['admin'])->plainTextToken;
-        $this->withHeaders([
+        $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $token
-        ]);
-
-        // Act: Send a request to approve the node.
-        $response = $this->patchJson("/api/v1/admin/nodes/{$pendingNode->id}/approve");
+        ])->patchJson("/api/v1/admin/nodes/{$pendingNode->id}/approve");
 
         // Assert: The API call is successful and the node status is updated.
         $response->assertOk();

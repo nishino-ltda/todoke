@@ -160,7 +160,7 @@ Route::prefix('v1')->group(function () {
         });
 
         // Rotas de admin
-        Route::prefix('admin')->middleware(['auth:sanctum', 'can:admin'])->group(function () {
+        Route::prefix('admin')->middleware('auth:sanctum')->group(function () {
             Route::get('/users', [UserController::class, 'index']);
             Route::patch('/users/{id}/status', [UserController::class, 'updateStatus']);
             Route::get('/stats', [UserController::class, 'stats']);

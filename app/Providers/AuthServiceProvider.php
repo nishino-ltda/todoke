@@ -34,7 +34,7 @@ class AuthServiceProvider extends ServiceProvider
 
         // Define admin ability
         Gate::define('admin', function ($user) {
-            return $user->tokenCan('admin');
+            return $user->type === 'admin';
         });
 
         // Custom password reset configuration
