@@ -6,17 +6,17 @@ use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 class PasswordResetTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_reset_password_link_screen_can_be_rendered(): void
+    protected function setUp(): void
     {
-        $response = $this->get('/forgot-password');
-
-        $response->assertStatus(200);
+        parent::setUp();
+        Config::set('mail.driver', 'array');
     }
 
     public function test_reset_password_link_can_be_requested(): void
@@ -25,7 +25,7 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->postJson('/api/v1/auth/forgot-password', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class);
     }
@@ -36,10 +36,10 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->postJson('/api/v1/auth/forgot-password', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) {
-            $response = $this->get('/reset-password/'.$notification->token);
+            $response = $this->getJson('/api/v1/auth/reset-password/'.$notification->token);
 
             $response->assertStatus(200);
 
@@ -53,10 +53,10 @@ class PasswordResetTest extends TestCase
 
         $user = User::factory()->create();
 
-        $this->post('/forgot-password', ['email' => $user->email]);
+        $this->postJson('/api/v1/auth/forgot-password', ['email' => $user->email]);
 
         Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
-            $response = $this->post('/reset-password', [
+            $response = $this->postJson('/api/v1/auth/reset-password', [
                 'token' => $notification->token,
                 'email' => $user->email,
                 'password' => 'password',
@@ -64,8 +64,8 @@ class PasswordResetTest extends TestCase
             ]);
 
             $response
-                ->assertSessionHasNoErrors()
-                ->assertRedirect(route('login'));
+                ->assertStatus(200)
+                ->assertJson(['message' => __('passwords.reset')]);
 
             return true;
         });

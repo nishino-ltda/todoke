@@ -53,6 +53,15 @@ Route::prefix('v1')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])
             ->middleware('throttle:10,1'); // 10 tentativas por minuto
 
+        // Password reset routes
+        Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
+            ->middleware('throttle:10,1');
+            
+        Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])
+            ->name('password.reset');
+            
+        Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
         // Email verification routes
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('/email/verification-notification', [AuthController::class, 'sendVerificationEmail'])

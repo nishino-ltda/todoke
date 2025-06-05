@@ -333,6 +333,21 @@ class AuthController extends Controller
     }
 
     /**
+     * Show password reset form
+     *
+     * @param Request $request
+     * @param string $token
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function showResetForm(Request $request, string $token)
+    {
+        return response()->json([
+            'token' => $token,
+            'email' => $request->email
+        ]);
+    }
+
+    /**
      * Send email verification notification
      *
      * @param Request $request
