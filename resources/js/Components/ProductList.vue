@@ -1,5 +1,5 @@
 <template>
-  <v-container data-test="product-list-container">
+  <v-container data-cy="product-list-container">
     <v-row class="mb-4">
       <v-col cols="12">
         <v-text-field
@@ -10,7 +10,7 @@
           outlined
           dense
           hide-details
-          data-test="product-search"
+          data-cy="product-search"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -21,17 +21,17 @@
       </v-col>
     </v-row>
     
-    <v-row data-test="product-list-row">
+    <v-row data-cy="product-list-row">
       <v-col 
         v-for="product in filteredProducts"
         :key="product.id"
         cols="12" sm="6" md="4" lg="3"
-        data-test="product-col"
+        data-cy="product-col"
       >
         <ProductCard 
           :product="product"
           @product-clicked="handleProductClicked"
-          data-test="product-card"
+          data-cy="product-card"
         />
       </v-col>
     </v-row>

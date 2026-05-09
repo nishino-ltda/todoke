@@ -23,25 +23,25 @@ const i18n = createI18n({
 // Stub Vuetify components
 const vuetifyStubs = {
   'v-img': {
-    template: '<img :src="$attrs.src" data-test="product-image"/>'
+    template: '<img :src="$attrs.src" data-cy="product-image"/>'
   },
   'v-card': {
     template: '<div @click="$emit(\'click\')"><slot/></div>'
   },
   'v-card-title': {
-    template: '<div data-test="product-name"><slot/></div>'
+    template: '<div data-cy="product-name"><slot/></div>'
   },
   'v-card-subtitle': {
-    template: '<div data-test="product-price"><slot/></div>'
+    template: '<div data-cy="product-price"><slot/></div>'
   },
   'v-card-text': {
-    template: '<div data-test="product-description"><slot/></div>'
+    template: '<div data-cy="product-description"><slot/></div>'
   },
   'v-card-actions': {
     template: '<div class="v-card-actions"><slot/></div>'
   },
   'v-btn': {
-    template: '<button @click="$emit(\'click\')" data-test="add-to-cart-button"><slot/></button>'
+    template: '<button @click="$emit(\'click\')" data-cy="add-to-cart-button"><slot/></button>'
   }
 }
 
@@ -63,10 +63,10 @@ describe('ProductCard', () => {
       }
     })
 
-    expect(wrapper.find('[data-test="product-name"]').text()).toBe(product.name)
-    expect(wrapper.find('[data-test="product-price"]').text()).toBe(`$${product.price}`)
-    expect(wrapper.find('[data-test="product-description"]').text().trim()).toBe(product.description.trim())
-    expect(wrapper.find('[data-test="product-image"]').attributes('src')).toBe(product.image)
+    expect(wrapper.find('[data-cy="product-name"]').text()).toBe(product.name)
+    expect(wrapper.find('[data-cy="product-price"]').text()).toBe(`$${product.price}`)
+    expect(wrapper.find('[data-cy="product-description"]').text().trim()).toBe(product.description.trim())
+    expect(wrapper.find('[data-cy="product-image"]').attributes('src')).toBe(product.image)
   })
 
   it('renders button text in correct language', async () => {
@@ -79,11 +79,11 @@ describe('ProductCard', () => {
       }
     })
 
-    expect(wrapper.find('[data-test="add-to-cart-button"]').text()).toBe('Adicionar ao Carrinho')
+    expect(wrapper.find('[data-cy="add-to-cart-button"]').text()).toBe('Adicionar ao Carrinho')
 
     i18n.global.locale.value = 'en'
     await nextTick()
-    expect(wrapper.find('[data-test="add-to-cart-button"]').text()).toBe('Add to Cart')
+    expect(wrapper.find('[data-cy="add-to-cart-button"]').text()).toBe('Add to Cart')
   })
 
   it('emits product-clicked event when card is clicked', async () => {
@@ -95,7 +95,7 @@ describe('ProductCard', () => {
       }
     })
 
-    await wrapper.find('[data-test="product-name"]').trigger('click')
+    await wrapper.find('[data-cy="product-name"]').trigger('click')
     
     expect(wrapper.emitted('product-clicked')).toBeTruthy()
     expect(wrapper.emitted('product-clicked')[0][0]).toEqual(product)
@@ -115,7 +115,7 @@ describe('ProductCard', () => {
       }
     })
 
-    const displayedDesc = wrapper.find('[data-test="product-description"]').text()
+    const displayedDesc = wrapper.find('[data-cy="product-description"]').text()
     expect(displayedDesc.length).toBeLessThan(110)
     expect(displayedDesc).toContain('...')
   })

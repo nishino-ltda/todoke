@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-regions-show">
+        <div data-cy="partner-regions-show">
             <h1>Partner Region Details</h1>
             <p>Details for region: {{ regionId }}</p>
         </div>

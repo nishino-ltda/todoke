@@ -123,8 +123,8 @@ describe('AppFooter', () => {
         mocks: globalMocks
       }
     })
-    expect(wrapper.find('[data-test="terms-link"]').exists()).toBe(true)
-    expect(wrapper.find('[data-test="privacy-link"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="terms-link"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="privacy-link"]').exists()).toBe(true)
   })
 })
 

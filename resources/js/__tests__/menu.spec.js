@@ -41,14 +41,14 @@ function createWrapper(locale = 'pt-BR') {
 describe('Menu.vue', () => {
   it('renders in pt-BR by default', () => {
     const wrapper = createWrapper('pt-BR')
-    expect(wrapper.find('[data-test="customer-menu"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="customer-menu"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('Menu do Cliente')
     expect(wrapper.text()).toContain('Explore os produtos disponíveis')
   })
 
   it('renders in en when locale is switched', () => {
     const wrapper = createWrapper('en')
-    expect(wrapper.find('[data-test="customer-menu"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="customer-menu"]').exists()).toBe(true)
     expect(wrapper.text()).toContain('Customer Menu')
     expect(wrapper.text()).toContain('Browse available products.')
   })

@@ -4,7 +4,7 @@
     v-if="fullPage"
     :value="isLoading"
     @update:modelValue="$emit('update:isLoading', $event)"
-    data-test="full-loader"
+    data-cy="full-loader"
     class="align-center justify-center text-center"
     persistent
   >
@@ -17,7 +17,7 @@
   </v-overlay>
 
   <!-- Inline loader -->
-  <div v-else-if="isLoading" data-test="inline-loader">
+  <div v-else-if="isLoading" data-cy="inline-loader">
     <v-progress-circular
       indeterminate
       size="24"

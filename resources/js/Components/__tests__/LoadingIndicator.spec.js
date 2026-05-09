@@ -23,8 +23,8 @@ describe('LoadingIndicator', () => {
         stubs: vuetifyComponents
       }
     })
-    expect(wrapper.find('[data-test="inline-loader"]').exists()).toBe(false)
-    expect(wrapper.find('[data-test="full-loader"]').exists()).toBe(false)
+    expect(wrapper.find('[data-cy="inline-loader"]').exists()).toBe(false)
+    expect(wrapper.find('[data-cy="full-loader"]').exists()).toBe(false)
   })
 
   it('renders inline loader when isLoading is true and fullPage is false', () => {
@@ -37,7 +37,7 @@ describe('LoadingIndicator', () => {
         stubs: vuetifyComponents
       }
     })
-    expect(wrapper.find('[data-test="inline-loader"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="inline-loader"]').exists()).toBe(true)
     expect(wrapper.find('.v-progress-circular').exists()).toBe(true)
   })
 
@@ -51,7 +51,7 @@ describe('LoadingIndicator', () => {
         stubs: vuetifyComponents
       }
     })
-    expect(wrapper.find('[data-test="full-loader"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="full-loader"]').exists()).toBe(true)
   })
 
   it('shows message when provided', () => {

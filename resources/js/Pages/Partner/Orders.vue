@@ -17,7 +17,7 @@
           :headers="headers"
           :items="orders"
           :loading="loading"
-          data-test="orders-table"
+          data-cy="orders-table"
         >
           <template v-slot:item.status="{ item }">
             <v-select
@@ -27,7 +27,7 @@
               item-value="value"
               density="compact"
               variant="outlined"
-              data-test="status-dropdown"
+              data-cy="status-dropdown"
               @update:model-value="updateStatus(item)"
             ></v-select>
           </template>
@@ -38,7 +38,7 @@
               variant="text"
               color="primary"
               @click="viewOrder(item)"
-              data-test="view-order-btn"
+              data-cy="view-order-btn"
             >
               {{ t('partner.orders.view') }}
             </v-btn>

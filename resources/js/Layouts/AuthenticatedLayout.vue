@@ -1,18 +1,18 @@
 <template>
-  <v-app data-test="authenticated-layout">
+  <v-app data-cy="authenticated-layout">
     <AppHeader />
     <v-navigation-drawer
       v-model="drawer"
       app
       temporary
-      data-test="nav-drawer"
+      data-cy="nav-drawer"
     >
       <v-list>
         <v-list-item
           v-for="(item, i) in navItems"
           :key="i"
           :to="item.to"
-          :data-test="`nav-item-${item.text.toLowerCase()}`"
+          :data-cy="`nav-item-${item.text.toLowerCase()}`"
         >
           <v-list-item-title>{{ item.text }}</v-list-item-title>
         </v-list-item>
@@ -21,7 +21,7 @@
 
     <v-main>
       <v-container>
-        <slot data-test="authenticated-content" />
+        <slot data-cy="authenticated-content" />
       </v-container>
     </v-main>
 

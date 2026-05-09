@@ -51,6 +51,13 @@
               </div>
             </div>
 
+            <DeliveryMap
+              v-if="activeDelivery.origin_lat && activeDelivery.destination_lat"
+              :origin="{ lat: activeDelivery.origin_lat, lng: activeDelivery.origin_lng }"
+              :destination="{ lat: activeDelivery.destination_lat, lng: activeDelivery.destination_lng }"
+              class="mb-4"
+            />
+
             <v-btn
               block
               color="primary"
@@ -92,15 +99,26 @@
                 <v-icon size="16" class="mr-1">mdi-store</v-icon> {{ delivery.restaurant_name }}
               </div>
 
-              <v-btn
-                block
-                color="primary"
-                variant="flat"
-                @click="acceptDelivery(delivery)"
-                data-cy="accept-delivery-btn"
-              >
-                {{ t('courier.availableDeliveries.accept') }}
-              </v-btn>
+              <div class="d-flex ga-2">
+                <v-btn
+                  class="flex-grow-1"
+                  color="primary"
+                  variant="flat"
+                  @click="acceptDelivery(delivery)"
+                  data-cy="accept-delivery-btn"
+                >
+                  {{ t('courier.availableDeliveries.accept') }}
+                </v-btn>
+                <v-btn
+                  class="flex-grow-1"
+                  color="error"
+                  variant="outlined"
+                  @click="rejectDelivery(delivery)"
+                  data-cy="reject-delivery-btn"
+                >
+                  {{ t('courier.availableDeliveries.reject', 'Reject') }}
+                </v-btn>
+              </div>
             </v-card-text>
           </v-card>
         </v-fade-transition>
@@ -123,6 +141,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import CourierLayout from '@/Layouts/CourierLayout.vue';
+import DeliveryMap from '@/Components/DeliveryMap.vue';
 import deliveryService from '@/services/delivery';
 import { useNotificationStore } from '@/stores/notification';
 
@@ -174,6 +193,16 @@ const acceptDelivery = async (delivery) => {
     fetchDeliveries();
   } catch (err) {
     notifications.error(t('courier.notifications.accept_failed'));
+  }
+};
+
+const rejectDelivery = async (delivery) => {
+  try {
+    // Mock rejection logic
+    availableDeliveries.value = availableDeliveries.value.filter(d => d.id !== delivery.id);
+    notifications.info(t('courier.notifications.reject_success', 'Delivery rejected'));
+  } catch (err) {
+    notifications.error(t('courier.notifications.reject_failed', 'Failed to reject'));
   }
 };
 

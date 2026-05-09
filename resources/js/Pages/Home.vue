@@ -1,6 +1,6 @@
 <template>
     <GuestLayout>
-        <div data-test="home-page" class="home-page">
+        <div data-cy="home-page" class="home-page">
             <HomeHero />
             <HomeFeatures />
             <HomeCTA />

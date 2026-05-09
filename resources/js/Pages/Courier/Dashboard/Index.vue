@@ -10,10 +10,10 @@ const { t } = useI18n();
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 data-test="courier-dashboard-title">{{ t('courier.dashboard.index_title') }}</h2>
+            <h2 data-cy="courier-dashboard-title">{{ t('courier.dashboard.index_title') }}</h2>
         </template>
 
-        <div data-test="courier-dashboard-container">
+        <div data-cy="courier-dashboard-container">
             <div>
                 <div>
                     <div>

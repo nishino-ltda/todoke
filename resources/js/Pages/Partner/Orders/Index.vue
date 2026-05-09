@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-orders-index">
+        <div data-cy="partner-orders-index">
             <h1>Partner Orders</h1>
             <p>List of orders for partners.</p>
         </div>

@@ -85,24 +85,24 @@ function createWrapper(locale = 'pt-BR') {
 describe('HomeCTA', () => {
   it('renders in pt-BR by default', () => {
     const wrapper = createWrapper('pt-BR')
-    expect(wrapper.find('[data-test="cta-title"]').text()).toBe('Pronto para Começar?')
-    expect(wrapper.find('[data-test="cta-customer"] h2, [data-test="cta-customer"] .text-h5').text()).toBe('Cliente')
-    expect(wrapper.find('[data-test="cta-customer-btn"]').text()).toBe('Quero Pedir')
-    expect(wrapper.find('[data-test="cta-customer-btn"]').attributes('href')).toBe('/register?type=customer')
+    expect(wrapper.find('[data-cy="cta-title"]').text()).toBe('Pronto para Começar?')
+    expect(wrapper.find('[data-cy="cta-customer"] h2, [data-cy="cta-customer"] .text-h5').text()).toBe('Cliente')
+    expect(wrapper.find('[data-cy="cta-customer-btn"]').text()).toBe('Quero Pedir')
+    expect(wrapper.find('[data-cy="cta-customer-btn"]').attributes('href')).toBe('/register?type=customer')
   })
 
   it('renders in en when locale is switched', () => {
     const wrapper = createWrapper('en')
-    expect(wrapper.find('[data-test="cta-title"]').text()).toBe('Ready to Start?')
-    expect(wrapper.find('[data-test="cta-customer"] h2, [data-test="cta-customer"] .text-h5').text()).toBe('Customer')
-    expect(wrapper.find('[data-test="cta-customer-btn"]').text()).toBe('Order Now')
-    expect(wrapper.find('[data-test="cta-customer-btn"]').attributes('href')).toBe('/register?type=customer')
+    expect(wrapper.find('[data-cy="cta-title"]').text()).toBe('Ready to Start?')
+    expect(wrapper.find('[data-cy="cta-customer"] h2, [data-cy="cta-customer"] .text-h5').text()).toBe('Customer')
+    expect(wrapper.find('[data-cy="cta-customer-btn"]').text()).toBe('Order Now')
+    expect(wrapper.find('[data-cy="cta-customer-btn"]').attributes('href')).toBe('/register?type=customer')
   })
 
   it('renders all three CTA cards', () => {
     const wrapper = createWrapper('pt-BR')
-    expect(wrapper.find('[data-test="cta-customer"]').exists()).toBe(true)
-    expect(wrapper.find('[data-test="cta-partner"]').exists()).toBe(true)
-    expect(wrapper.find('[data-test="cta-courier"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="cta-customer"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="cta-partner"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="cta-courier"]').exists()).toBe(true)
   })
 })

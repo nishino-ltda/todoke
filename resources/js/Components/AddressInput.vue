@@ -14,7 +14,7 @@
       hide-no-data
       clearable
       return-object
-      data-test="address-input-combobox"
+      data-cy="address-input-combobox"
       data-cy="address-combobox"
       @update:search="onSearch"
     >
@@ -37,7 +37,7 @@
       rows="3"
       auto-grow
       required
-      data-test="address-input"
+      data-cy="address-input"
       data-cy="address-textarea"
     />
   </div>

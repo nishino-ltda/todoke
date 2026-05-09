@@ -5,22 +5,22 @@ exports[`AppFooter > matches snapshot 1`] = `
   <div class="v-application__wrap">
     <main class="v-main" style="--v-layout-left: 0px; --v-layout-right: 0px; --v-layout-top: 0px; --v-layout-bottom: 0px; transition: none !important;">
       <div class="v-layout" style="z-index: 900; position: relative; overflow: hidden;">
-        <footer data-v-3037358e="" class="v-footer v-theme--light bg-primary app-footer" style="bottom: 0px; z-index: 904; transform: translateY(0px); position: absolute;" dark="" data-test="app-footer">
+        <footer data-v-3037358e="" class="v-footer v-theme--light bg-primary app-footer" style="bottom: 0px; z-index: 904; transform: translateY(0px); position: absolute;" dark="" data-cy="app-footer">
           <div data-v-3037358e="" class="v-container v-locale--is-ltr">
             <div data-v-3037358e="" class="v-row align-center justify-space-between">
               <div data-v-3037358e="" class="v-col-md-4 v-col-12">
                 <p data-v-3037358e="">© 2025 TODOKE</p>
               </div>
-              <div data-v-3037358e="" class="v-col-md-4 v-col-12 text-center"><a data-v-3037358e="" href="/terms" class="text-white mr-2" data-test="terms-link">Terms</a><a data-v-3037358e="" href="/privacy" class="text-white" data-test="privacy-link">Privacy</a></div>
-              <div data-v-3037358e="" class="v-col-md-4 v-col-12 text-right"><a data-v-3037358e="" class="v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text mr-2" href="https://facebook.com" data-test="facebook-link"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
+              <div data-v-3037358e="" class="v-col-md-4 v-col-12 text-center"><a data-v-3037358e="" href="/terms" class="text-white mr-2" data-cy="terms-link">Terms</a><a data-v-3037358e="" href="/privacy" class="text-white" data-cy="privacy-link">Privacy</a></div>
+              <div data-v-3037358e="" class="v-col-md-4 v-col-12 text-right"><a data-v-3037358e="" class="v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text mr-2" href="https://facebook.com" data-cy="facebook-link"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
                   <!----><span class="v-btn__content" data-no-activator=""><i data-v-3037358e="" class="mdi-facebook mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true" left=""></i> Facebook </span>
                   <!---->
                   <!---->
-                </a><a data-v-3037358e="" class="v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text mr-2" href="https://twitter.com" data-test="twitter-link"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
+                </a><a data-v-3037358e="" class="v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text mr-2" href="https://twitter.com" data-cy="twitter-link"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
                   <!----><span class="v-btn__content" data-no-activator=""><i data-v-3037358e="" class="mdi-twitter mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true" left=""></i> Twitter </span>
                   <!---->
                   <!---->
-                </a><a data-v-3037358e="" class="v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text" href="https://instagram.com" data-test="instagram-link"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
+                </a><a data-v-3037358e="" class="v-btn v-theme--light text-white v-btn--density-default v-btn--size-default v-btn--variant-text" href="https://instagram.com" data-cy="instagram-link"><span class="v-btn__overlay"></span><span class="v-btn__underlay"></span>
                   <!----><span class="v-btn__content" data-no-activator=""><i data-v-3037358e="" class="mdi-instagram mdi v-icon notranslate v-theme--light v-icon--size-default" aria-hidden="true" left=""></i> Instagram </span>
                   <!---->
                   <!---->

@@ -2,7 +2,7 @@
   <div>
     <h1>Test Log Page</h1>
     <TestComponent />
-    <p id="logged-message" data-test="logged-message">{{ latestLog }}</p>
+    <p id="logged-message" data-cy="logged-message">{{ latestLog }}</p>
     <div v-if="logs.length > 0">
       <h3>Recent Logs:</h3>
       <ul>

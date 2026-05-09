@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-addons-show">
+        <div data-cy="partner-addons-show">
             <h1>Partner Addon Details</h1>
             <p>Details for addon: {{ addonId }}</p>
         </div>

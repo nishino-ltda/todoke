@@ -1,12 +1,12 @@
 <template>
-  <section class="home-hero" data-test="home-hero">
+  <section class="home-hero" data-cy="home-hero">
     <v-container>
       <v-row>
         <v-col cols="12" md="6" class="d-flex flex-column justify-center">
-          <h1 class="text-h3 font-weight-bold mb-4" data-test="hero-title">
+          <h1 class="text-h3 font-weight-bold mb-4" data-cy="hero-title">
             {{ t('home.hero.title') }}
           </h1>
-          <p class="text-h6 mb-6" data-test="hero-subtitle">
+          <p class="text-h6 mb-6" data-cy="hero-subtitle">
             {{ t('home.hero.subtitle') }}
           </p>
           <div class="d-flex gap-4">
@@ -14,7 +14,7 @@
               color="primary"
               size="x-large"
               :to="route('register')"
-              data-test="hero-register-btn"
+              data-cy="hero-register-btn"
             >
               {{ t('home.hero.register_button') }}
             </v-btn>
@@ -23,7 +23,7 @@
               color="primary"
               size="x-large"
               :to="route('login')"
-              data-test="hero-login-btn"
+              data-cy="hero-login-btn"
             >
               {{ t('home.hero.login_button') }}
             </v-btn>
@@ -33,7 +33,7 @@
           <v-img
             src="/images/hero-image.png"
             alt="Hybrid delivery illustration"
-            data-test="hero-image"
+            data-cy="hero-image"
           />
         </v-col>
       </v-row>

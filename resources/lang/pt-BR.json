@@ -361,6 +361,15 @@
         "management": {
             "title": "Página do Entregador",
             "description": "Seção de gerenciamento do entregador."
+        },
+        "map": {
+            "distance": "Distância: {distance} km",
+            "estimatedTime": "Tempo Estimado: {time} min",
+            "loading": "Carregando mapa e rota...",
+            "error": "Falha ao calcular rota",
+            "origin": "Retirada",
+            "destination": "Entrega",
+            "current": "Sua Localização"
         }
     },
     "admin": {
@@ -489,6 +498,82 @@
                 "update_success": "Configurações atualizadas com sucesso",
                 "update_failed": "Falha ao atualizar configurações"
             }
+        }
+    },
+    "support": {
+        "dashboard": {
+            "title": "Painel de Suporte",
+            "stats": {
+                "open": "Tickets Abertos",
+                "in_progress": "Em Andamento",
+                "resolved": "Resolvidos"
+            },
+            "actions": {
+                "new_ticket": "Novo Ticket",
+                "my_tickets": "Meus Tickets",
+                "faq": "FAQ"
+            },
+            "recent_tickets": "Tickets Atualizados Recentemente"
+        },
+        "tickets": {
+            "title": "Meus Tickets de Suporte",
+            "table": {
+                "id": "ID",
+                "subject": "Assunto",
+                "category": "Categoria",
+                "status": "Status",
+                "created": "Criado em",
+                "updated": "Última Atualização"
+            },
+            "filters": {
+                "all": "Todos"
+            },
+            "search_placeholder": "Buscar por assunto..."
+        },
+        "create": {
+            "title": "Criar Novo Ticket",
+            "subject": "Assunto",
+            "category": "Categoria",
+            "message": "Mensagem",
+            "priority": "Prioridade",
+            "attachment": "Anexar Arquivo",
+            "submit": "Enviar Ticket",
+            "success": "Ticket criado com sucesso!"
+        },
+        "detail": {
+            "title": "Detalhes do Ticket",
+            "info": "Informações do Ticket",
+            "reply": "Responder",
+            "close": "Fechar Ticket",
+            "close_confirm": "Tem certeza que deseja fechar este ticket?",
+            "messages": "Histórico de Mensagens"
+        },
+        "reply": {
+            "title": "Responder ao Ticket",
+            "message_placeholder": "Digite sua resposta aqui...",
+            "submit": "Enviar Resposta",
+            "success": "Resposta enviada com sucesso!"
+        },
+        "faq": {
+            "title": "Perguntas Frequentes (FAQ)",
+            "search_placeholder": "Buscar no FAQ..."
+        },
+        "categories": {
+            "delivery_issue": "Problema na Entrega",
+            "account": "Conta",
+            "payment": "Pagamento",
+            "other": "Outro"
+        },
+        "priorities": {
+            "low": "Baixa",
+            "medium": "Média",
+            "high": "Alta"
+        },
+        "status": {
+            "open": "Aberto",
+            "in_progress": "Em Andamento",
+            "resolved": "Resolvido",
+            "closed": "Fechado"
         }
     },
     "components": {

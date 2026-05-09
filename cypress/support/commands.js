@@ -38,16 +38,16 @@ Cypress.Commands.add('getStore', (storeName) => {
 
 Cypress.Commands.add('login', (email, password) => {
   cy.visit('/login')
-  cy.get('[data-test="email-input"]').type(email)
-  cy.get('[data-test="password-input"]').type(password)
-  cy.get('[data-test="submit-btn"]').click()
+  cy.get('[data-cy="email-input"]').type(email)
+  cy.get('[data-cy="password-input"]').type(password)
+  cy.get('[data-cy="submit-btn"]').click()
 })
 
 Cypress.Commands.add('loginAsPartner', () => {
   cy.visit('/partner/login')
-  cy.get('[data-test="email-input"]').type('partner@example.com')
-  cy.get('[data-test="password-input"]').type('password123')
-  cy.get('[data-test="submit-btn"]').click()
+  cy.get('[data-cy="email-input"]').type('partner@example.com')
+  cy.get('[data-cy="password-input"]').type('password123')
+  cy.get('[data-cy="submit-btn"]').click()
 })
 
 Cypress.Commands.add('setupTestOrders', () => {

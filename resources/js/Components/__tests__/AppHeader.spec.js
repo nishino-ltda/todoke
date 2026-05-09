@@ -183,8 +183,8 @@ describe('AppHeader', () => {
 
     await testWrapper.vm.$nextTick()
     
-    const loginLink = testWrapper.find('[data-test="login-link"]')
-    const registerLink = testWrapper.find('[data-test="register-link"]')
+    const loginLink = testWrapper.find('[data-cy="login-link"]')
+    const registerLink = testWrapper.find('[data-cy="register-link"]')
     expect(loginLink.exists()).toBe(true)
     expect(loginLink.text()).toBe('Login')
     expect(registerLink.exists()).toBe(true)

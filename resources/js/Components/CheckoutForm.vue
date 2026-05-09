@@ -6,17 +6,17 @@
       v-model="address"
       :errors="errors.address"
       :rules="[required]"
-      data-test="address"
+      data-cy="address"
     />
 
     <payment-method-input 
       v-model="paymentMethod"
       :errors="errors.paymentMethod" 
       :rules="[required]"
-      data-test="payment-method-input"
+      data-cy="payment-method-input"
     />
 
-    <div v-if="errorMessage" class="error-message text-error mt-4 mb-4" data-test="checkout-form">
+    <div v-if="errorMessage" class="error-message text-error mt-4 mb-4" data-cy="checkout-form">
       {{ errorMessage }}
       <ul v-if="errors.address || errors.paymentMethod">
         <li v-if="errors.address">{{ $t('checkout.address_required') }}</li>
@@ -30,7 +30,7 @@
       :loading="isSubmitting"
       :disabled="isSubmitting"
       class="mt-4"
-      data-test="submit-order"
+      data-cy="submit-order"
     >
       {{ $t('checkout.place_order') }}
     </v-btn>

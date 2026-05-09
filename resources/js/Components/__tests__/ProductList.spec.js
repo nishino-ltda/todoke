@@ -33,12 +33,12 @@ const vuetifyStubs = {
     template: '<div><slot/></div>'
   },
   'v-text-field': {
-    template: '<input :value="modelValue" :placeholder="label" @input="$emit(\'update:modelValue\', $event.target.value)" data-test="product-search" />',
+    template: '<input :value="modelValue" :placeholder="label" @input="$emit(\'update:modelValue\', $event.target.value)" data-cy="product-search" />',
     props: ['modelValue', 'label'],
     emits: ['update:modelValue']
   },
   'ProductCard': {
-    template: '<div @click="$emit(\'product-clicked\', product)" data-test="product-card">{{ product.name }}</div>',
+    template: '<div @click="$emit(\'product-clicked\', product)" data-cy="product-card">{{ product.name }}</div>',
     props: ['product'],
     emits: ['product-clicked']
   }
@@ -60,7 +60,7 @@ describe('ProductList', () => {
       }
     })
 
-    expect(wrapper.findAll('[data-test="product-card"]')).toHaveLength(products.length)
+    expect(wrapper.findAll('[data-cy="product-card"]')).toHaveLength(products.length)
   })
 
   it('renders with correct pt-BR translations', () => {
@@ -73,7 +73,7 @@ describe('ProductList', () => {
       }
     })
 
-    expect(wrapper.find('[data-test="product-search"]').attributes('placeholder')).toBe('Buscar produtos')
+    expect(wrapper.find('[data-cy="product-search"]').attributes('placeholder')).toBe('Buscar produtos')
   })
 
   it('renders with correct en translations', async () => {
@@ -86,7 +86,7 @@ describe('ProductList', () => {
       }
     })
 
-    expect(wrapper.find('[data-test="product-search"]').attributes('placeholder')).toBe('Search products')
+    expect(wrapper.find('[data-cy="product-search"]').attributes('placeholder')).toBe('Search products')
   })
 
   it('shows empty state message in correct language', async () => {
@@ -130,7 +130,7 @@ describe('ProductList', () => {
       }
     })
     
-    await wrapper.findAll('[data-test="product-card"]')[0].trigger('click')
+    await wrapper.findAll('[data-cy="product-card"]')[0].trigger('click')
     
     expect(wrapper.emitted('product-clicked')).toBeTruthy()
     expect(wrapper.emitted('product-clicked')[0][0]).toEqual(products[0])
@@ -146,11 +146,11 @@ describe('ProductList', () => {
     })
     
     // Initial state - all products shown
-    expect(wrapper.findAll('[data-test="product-card"]')).toHaveLength(3)
+    expect(wrapper.findAll('[data-cy="product-card"]')).toHaveLength(3)
     
     // Simulate input event on the search field
-    await wrapper.find('[data-test="product-search"]').setValue('pasta')
-    await wrapper.find('[data-test="product-search"]').trigger('input')
+    await wrapper.find('[data-cy="product-search"]').setValue('pasta')
+    await wrapper.find('[data-cy="product-search"]').trigger('input')
     
     // Manually set the searchQuery ref
     wrapper.vm.searchQuery = 'pasta'

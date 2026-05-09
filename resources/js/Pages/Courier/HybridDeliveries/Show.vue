@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="courier-hybrid-deliveries-show">
+        <div data-cy="courier-hybrid-deliveries-show">
             <h1>{{ t('courier.hybrid_deliveries.show_title') }}</h1>
             <p>{{ t('courier.hybrid_deliveries.show_description', { id: hybridDeliveryId }) }}</p>
         </div>

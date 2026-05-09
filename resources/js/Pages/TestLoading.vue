@@ -3,7 +3,7 @@
     <h1>LoadingIndicator Test Page</h1>
     
     <v-btn 
-      data-test="show-full-loader"
+      data-cy="show-full-loader"
       @click="showFullLoader = true"
       class="mr-4"
     >
@@ -11,7 +11,7 @@
     </v-btn>
     
     <v-btn 
-      data-test="hide-full-loader"
+      data-cy="hide-full-loader"
       @click="showFullLoader = false"
     >
       Hide Full Loader
@@ -26,7 +26,7 @@
     <v-divider class="my-8"></v-divider>
 
     <v-btn 
-      data-test="show-inline-loader"
+      data-cy="show-inline-loader"
       @click="showInlineLoader = true"
       class="mr-4"
     >
@@ -34,7 +34,7 @@
     </v-btn>
     
     <v-btn 
-      data-test="hide-inline-loader"
+      data-cy="hide-inline-loader"
       @click="showInlineLoader = false"
     >
       Hide Inline Loader

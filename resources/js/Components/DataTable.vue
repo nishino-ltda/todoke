@@ -7,7 +7,7 @@
         v-if="showSearch"
         v-model="search"
         prepend-inner-icon="mdi-magnify"
-        label="Search"
+        :label="searchLabel"
         variant="outlined"
         density="compact"
         hide-details
@@ -70,6 +70,10 @@ const props = defineProps({
   showSearch: {
     type: Boolean,
     default: true
+  },
+  searchLabel: {
+    type: String,
+    default: 'Search'
   }
 });
 

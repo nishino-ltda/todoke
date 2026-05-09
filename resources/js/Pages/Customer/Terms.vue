@@ -1,6 +1,6 @@
 <template>
     <GuestLayout>
-        <div data-test="customer-terms">
+        <div data-cy="customer-terms">
             <h1>Customer Terms of Service</h1>
             <p>Terms and conditions for customers.</p>
         </div>

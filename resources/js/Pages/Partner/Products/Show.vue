@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-products-show">
+        <div data-cy="partner-products-show">
             <h1>Partner Product Details</h1>
             <p>Details for product: {{ productId }}</p>
         </div>

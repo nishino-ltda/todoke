@@ -3,7 +3,7 @@
       <v-alert
         v-if="errors.general"
         type="error"
-        data-test="auth-alert"
+        data-cy="auth-alert"
         class="mb-4"
       >
         {{ errors.general }}
@@ -12,7 +12,7 @@
       <v-alert
         v-if="Object.keys(errors).length > 1" 
         type="error"
-        data-test="validation-alert"
+        data-cy="validation-alert"
         class="mb-4"
       >
         {{ t('auth.validation.general_error') }}
@@ -26,7 +26,7 @@
         :rules="rules.email"
         required
         :error-messages="errors.email"
-        data-test="email-input"
+        data-cy="email-input"
         @blur="validateField('email')"
       ></v-text-field>
 
@@ -37,7 +37,7 @@
         :rules="rules.password"
         required
         :error-messages="errors.password"
-        data-test="password-input"
+        data-cy="password-input"
         @blur="validateField('password')"
       ></v-text-field>
     </template>
@@ -49,7 +49,7 @@
         :rules="rules.name"
         required
         :error-messages="errors.name"
-        data-test="name-input"
+        data-cy="name-input"
         @blur="validateField('name')"
       ></v-text-field>
 
@@ -59,7 +59,7 @@
         :rules="rules.phone"
         required
         :error-messages="errors.phone"
-        data-test="phone-input"
+        data-cy="phone-input"
         @blur="validateField('phone')"
       ></v-text-field>
 
@@ -68,7 +68,7 @@
         :label="t('auth.form.cpf')"
         required
         :error-messages="errors.cpf"
-        data-test="cpf-input"
+        data-cy="cpf-input"
       ></v-text-field>
 
       <v-text-field
@@ -78,7 +78,7 @@
         :rules="rules.email"
         required
         :error-messages="errors.email"
-        data-test="email-input"
+        data-cy="email-input"
         @blur="validateField('email')"
       ></v-text-field>
 
@@ -89,7 +89,7 @@
         :rules="rules.password"
         required
         :error-messages="errors.password"
-        data-test="password-input"
+        data-cy="password-input"
         @blur="validateField('password')"
       ></v-text-field>
 
@@ -99,7 +99,7 @@
         type="password"
         required
         :error-messages="errors.password_confirmation"
-        data-test="password-confirmation-input"
+        data-cy="password-confirmation-input"
         @blur="validateField('password_confirmation')"
       ></v-text-field>
 
@@ -109,7 +109,7 @@
         :label="t('auth.form.account_type')"
         required
         :error-messages="errors.role"
-        data-test="role-select"
+        data-cy="role-select"
         @update:modelValue="handleRoleChange"
       ></v-select>
 
@@ -120,7 +120,7 @@
           :label="t('auth.form.license_number')"
           required
           :error-messages="errors.license_number"
-          data-test="license-input"
+          data-cy="license-input"
         ></v-text-field>
 
         <v-select
@@ -129,7 +129,7 @@
           :label="t('auth.form.vehicle_type')"
           required
           :error-messages="errors.vehicle_type"
-          data-test="vehicle-select"
+          data-cy="vehicle-select"
         ></v-select>
 
         <v-file-input
@@ -138,7 +138,7 @@
           accept="image/*"
           required
           :error-messages="errors.document"
-          data-test="document-upload"
+          data-cy="document-upload"
         ></v-file-input>
       </template>
 
@@ -149,7 +149,7 @@
           :label="t('auth.form.business_name')"
           required
           :error-messages="errors.business_name"
-          data-test="business-name-input"
+          data-cy="business-name-input"
         ></v-text-field>
 
         <v-select
@@ -158,7 +158,7 @@
           :label="t('auth.form.business_type')"
           required
           :error-messages="errors.business_type"
-          data-test="business-type-select"
+          data-cy="business-type-select"
         ></v-select>
 
         <v-text-field
@@ -166,7 +166,7 @@
           :label="t('auth.form.tax_id')"
           required
           :error-messages="errors.tax_id"
-          data-test="tax-id-input"
+          data-cy="tax-id-input"
         ></v-text-field>
 
         <v-text-field
@@ -174,7 +174,7 @@
           :label="t('auth.form.address')"
           required
           :error-messages="errors.address"
-          data-test="address-input"
+          data-cy="address-input"
         ></v-text-field>
 
         <v-file-input
@@ -183,7 +183,7 @@
           accept=".pdf,.jpg,.png"
           required
           :error-messages="errors.business_document"
-          data-test="business-document-upload"
+          data-cy="business-document-upload"
         ></v-file-input>
       </template>
     </template>
@@ -191,7 +191,7 @@
     <v-alert
       v-if="pendingAlert"
       type="info"
-      data-test="pending-alert"
+      data-cy="pending-alert"
       class="mb-4"
     >
       {{ t('auth.pending_approval') }}
@@ -201,11 +201,11 @@
       type="submit"
       class="v-btn"
       :disabled="loading || undefined"
-      :data-test="mode === 'login' ? 'login-button' : 'register-button'"
+      :data-cy="mode === 'login' ? 'login-button' : 'register-button'"
       :loading="loading"
     >
       <template v-if="!loading">
-        <span data-test="button-text">
+        <span data-cy="button-text">
           {{ mode === 'login' ? t('auth.login') : t('auth.register') }}
         </span>
       </template>
@@ -214,7 +214,7 @@
           indeterminate
           size="20"
           width="2"
-          data-test="button-loader"
+          data-cy="button-loader"
         ></v-progress-circular>
       </template>
     </v-btn>
@@ -374,21 +374,21 @@ const roles = [
     title: t('auth.roles.customer'), 
     value: 'customer',
     props: {
-      'data-test': 'role-customer'
+      'data-cy': 'role-customer'
     }
   },
   { 
     title: t('auth.roles.courier'), 
     value: 'courier',
     props: {
-      'data-test': 'role-courier'
+      'data-cy': 'role-courier'
     }
   },
   { 
     title: t('auth.roles.partner'), 
     value: 'partner',
     props: {
-      'data-test': 'role-partner'
+      'data-cy': 'role-partner'
     }
   }
 ]
@@ -398,21 +398,21 @@ const vehicleTypes = [
     title: t('auth.vehicles.motorcycle'), 
     value: 'motorcycle',
     props: {
-      'data-test': 'vehicle-motorcycle'
+      'data-cy': 'vehicle-motorcycle'
     }
   },
   { 
     title: t('auth.vehicles.bicycle'), 
     value: 'bicycle',
     props: {
-      'data-test': 'vehicle-bicycle'
+      'data-cy': 'vehicle-bicycle'
     }
   },
   { 
     title: t('auth.vehicles.car'), 
     value: 'car',
     props: {
-      'data-test': 'vehicle-car'
+      'data-cy': 'vehicle-car'
     }
   }
 ]
@@ -422,28 +422,28 @@ const businessTypes = [
     title: t('auth.business_types.restaurant'), 
     value: 'restaurant',
     props: {
-      'data-test': 'business-restaurant'
+      'data-cy': 'business-restaurant'
     }
   },
   { 
     title: t('auth.business_types.cafe'), 
     value: 'cafe',
     props: {
-      'data-test': 'business-cafe'
+      'data-cy': 'business-cafe'
     }
   },
   { 
     title: t('auth.business_types.bakery'), 
     value: 'bakery',
     props: {
-      'data-test': 'business-bakery'
+      'data-cy': 'business-bakery'
     }
   },
   { 
     title: t('auth.business_types.grocery'), 
     value: 'grocery',
     props: {
-      'data-test': 'business-grocery'
+      'data-cy': 'business-grocery'
     }
   }
 ]

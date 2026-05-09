@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-product-variations-create">
+        <div data-cy="partner-product-variations-create">
             <h1>Create Product Variation</h1>
             <p>This is a placeholder page for creating product variations.</p>
         </div>

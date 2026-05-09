@@ -65,19 +65,19 @@ describe('HomeHero', () => {
     })
 
     // Check if the component renders
-    expect(wrapper.find('[data-test="home-hero"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="home-hero"]').exists()).toBe(true)
     
     // Check if the title is rendered
-    expect(wrapper.find('[data-test="hero-title"]').text()).toBe('Hybrid Delivery with Community Pricing')
+    expect(wrapper.find('[data-cy="hero-title"]').text()).toBe('Hybrid Delivery with Community Pricing')
     
     // Check if the subtitle is rendered
-    expect(wrapper.find('[data-test="hero-subtitle"]').text()).toBe('Combining motorbike couriers and drones for fast, fair deliveries')
+    expect(wrapper.find('[data-cy="hero-subtitle"]').text()).toBe('Combining motorbike couriers and drones for fast, fair deliveries')
     
     // Check if the buttons are rendered
     expect(wrapper.findAll('.v-btn').length).toBe(2)
     
     // Check if the image is rendered
-    expect(wrapper.find('[data-test="hero-image"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="hero-image"]').exists()).toBe(true)
   })
 
   it('has correct button links', () => {

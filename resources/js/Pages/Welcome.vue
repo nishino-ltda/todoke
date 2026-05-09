@@ -1,6 +1,6 @@
 <template>
     <GuestLayout>
-        <div data-test="welcome-page">
+        <div data-cy="welcome-page">
             <h1>Welcome</h1>
             <p>This is the welcome page.</p>
         </div>

@@ -1,9 +1,9 @@
 <template>
-  <v-app data-test="guest-layout">
+  <v-app data-cy="guest-layout">
     <AppHeader minimal />
     <v-main>
       <v-container>
-        <slot data-test="guest-content" />
+        <slot data-cy="guest-content" />
       </v-container>
     </v-main>
     <AppFooter minimal />

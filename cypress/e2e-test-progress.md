@@ -22,6 +22,7 @@ This document tracks progress in updating Cypress e2e tests to ensure empty test
 - [x] registration.cy.js
 
 ## Update Log
+- 2026-05-09: Implemented comprehensive E2E tests for all platform flows (Auth, Customer, Partner, Courier, Admin, Support, i18n) using data-cy selectors.
 - 2025-05-18: Created tracking document
 
 ### Checkout

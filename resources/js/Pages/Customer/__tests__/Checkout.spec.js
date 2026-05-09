@@ -44,7 +44,7 @@ describe('Checkout', () => {
         stubs
       }
     })
-    expect(wrapper.find('[data-test="customer-checkout"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="customer-checkout"]').exists()).toBe(true)
     expect(wrapper.find('h1').text()).toBe('Checkout do Cliente')
     expect(wrapper.find('p').text()).toBe('Finalize seu pedido')
   })

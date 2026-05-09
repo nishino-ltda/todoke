@@ -1,18 +1,18 @@
 <template>
-  <section class="home-cta py-12" data-test="home-cta">
+  <section class="home-cta py-12" data-cy="home-cta">
     <v-container>
       <v-row>
         <v-col cols="12">
-          <h2 class="text-h4 text-center mb-4" data-test="cta-title">
+          <h2 class="text-h4 text-center mb-4" data-cy="cta-title">
             {{ t('home.cta.title') }}
           </h2>
-          <p class="text-body-1 text-center mb-8" data-test="cta-description">
+          <p class="text-body-1 text-center mb-8" data-cy="cta-description">
             {{ t('home.cta.description') }}
           </p>
         </v-col>
       </v-row>
       <v-row>
-        <v-col v-for="cta in ctaItems" :key="cta.key" cols="12" md="4" :data-test="`cta-${cta.key}`">
+        <v-col v-for="cta in ctaItems" :key="cta.key" cols="12" md="4" :data-cy="`cta-${cta.key}`">
           <v-card height="100%" class="text-center pa-4 d-flex flex-column">
             <div class="flex-grow-1">
               <v-icon size="x-large" color="primary" class="mb-4">{{ cta.icon }}</v-icon>
@@ -25,7 +25,7 @@
                 variant="elevated" 
                 :href="cta.route" 
                 class="px-8 font-weight-bold"
-                :data-test="`cta-${cta.key}-btn`"
+                :data-cy="`cta-${cta.key}-btn`"
               >
                 {{ t(`home.cta.${cta.key}.button`) }}
               </v-btn>

@@ -3,7 +3,7 @@
     <v-alert
       v-if="error"
       type="error"
-      data-test="error-alert"
+      data-cy="error-alert"
       class="mb-4"
     >
       {{ error }}
@@ -12,7 +12,7 @@
     <v-alert
       v-if="success"
       type="success"
-      data-test="success-alert"
+      data-cy="success-alert"
       class="mb-4"
     >
       Password reset link has been sent to your email
@@ -24,14 +24,14 @@
       type="email"
       required
       :error-messages="errors.email"
-      data-test="email-input"
+      data-cy="email-input"
     ></v-text-field>
 
     <v-btn
       type="submit"
       color="primary"
       :loading="loading"
-      data-test="submit-button"
+      data-cy="submit-button"
     >
       Send Reset Link
     </v-btn>

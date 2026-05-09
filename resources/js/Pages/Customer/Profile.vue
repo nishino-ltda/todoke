@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="customer-profile">
+        <div data-cy="customer-profile">
             <h1>Customer Profile</h1>
             <p>Manage your profile information.</p>
         </div>

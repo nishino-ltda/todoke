@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="courier-settings-index">
+        <div data-cy="courier-settings-index">
             <h1>Courier Settings</h1>
             <p>Manage courier settings.</p>
         </div>

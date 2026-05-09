@@ -59,7 +59,7 @@
             color="primary"
             @click="addToCart"
             block
-            data-test="add-to-cart"
+            data-cy="add-to-cart"
           >
             {{ $t('cart.add_to_cart') }} (${{ totalPrice.toFixed(2) }})
           </v-btn>

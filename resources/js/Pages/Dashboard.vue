@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="dashboard-page">
+        <div data-cy="dashboard-page">
             <h1>Dashboard</h1>
             <p>This is the main dashboard page.</p>
         </div>

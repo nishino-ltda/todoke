@@ -361,6 +361,15 @@
         "management": {
             "title": "Courier Page",
             "description": "Courier management section."
+        },
+        "map": {
+            "distance": "Distance: {distance} km",
+            "estimatedTime": "Estimated Time: {time} mins",
+            "loading": "Loading map and route...",
+            "error": "Failed to calculate route",
+            "origin": "Pickup",
+            "destination": "Drop-off",
+            "current": "Your Location"
         }
     },
     "admin": {
@@ -489,6 +498,82 @@
                 "update_success": "Settings updated successfully",
                 "update_failed": "Failed to update settings"
             }
+        }
+    },
+    "support": {
+        "dashboard": {
+            "title": "Support Dashboard",
+            "stats": {
+                "open": "Open Tickets",
+                "in_progress": "In Progress",
+                "resolved": "Resolved"
+            },
+            "actions": {
+                "new_ticket": "New Ticket",
+                "my_tickets": "View My Tickets",
+                "faq": "FAQ"
+            },
+            "recent_tickets": "Recently Updated Tickets"
+        },
+        "tickets": {
+            "title": "My Support Tickets",
+            "table": {
+                "id": "ID",
+                "subject": "Subject",
+                "category": "Category",
+                "status": "Status",
+                "created": "Created",
+                "updated": "Last Updated"
+            },
+            "filters": {
+                "all": "All"
+            },
+            "search_placeholder": "Search by subject..."
+        },
+        "create": {
+            "title": "Create New Ticket",
+            "subject": "Subject",
+            "category": "Category",
+            "message": "Message",
+            "priority": "Priority",
+            "attachment": "Attach File",
+            "submit": "Submit Ticket",
+            "success": "Ticket created successfully!"
+        },
+        "detail": {
+            "title": "Ticket Details",
+            "info": "Ticket Information",
+            "reply": "Reply",
+            "close": "Close Ticket",
+            "close_confirm": "Are you sure you want to close this ticket?",
+            "messages": "Message History"
+        },
+        "reply": {
+            "title": "Reply to Ticket",
+            "message_placeholder": "Type your reply here...",
+            "submit": "Send Reply",
+            "success": "Reply sent successfully!"
+        },
+        "faq": {
+            "title": "Frequently Asked Questions",
+            "search_placeholder": "Search FAQ..."
+        },
+        "categories": {
+            "delivery_issue": "Delivery Issue",
+            "account": "Account",
+            "payment": "Payment",
+            "other": "Other"
+        },
+        "priorities": {
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "status": {
+            "open": "Open",
+            "in_progress": "In Progress",
+            "resolved": "Resolved",
+            "closed": "Closed"
         }
     },
     "components": {

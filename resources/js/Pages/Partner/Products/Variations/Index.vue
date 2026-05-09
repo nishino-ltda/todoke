@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-product-variations-index">
+        <div data-cy="partner-product-variations-index">
             <h1>Product Variations</h1>
             <p>This is a placeholder page for listing product variations.</p>
         </div>

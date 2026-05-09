@@ -100,12 +100,12 @@ const vuetifyComponents = {
           :value="modelValue"
           @input="$emit('update:modelValue', $event.target.value)"
           @blur="$emit('blur', $event)"
-          :data-test="dataTest"
+          :data-cy="dataTest"
           class="v-text-field__input"
           :required="required"
         />
         <div v-if="errorMessages" class="v-messages">
-          <div class="v-messages__message" data-test="error-message">{{ errorMessages }}</div>
+          <div class="v-messages__message" data-cy="error-message">{{ errorMessages }}</div>
         </div>
       </div>
     `,
@@ -124,18 +124,18 @@ const vuetifyComponents = {
     template: `
       <button 
         class="v-btn"
-        :data-test="dataTest"
+        :data-cy="dataTest"
         :disabled="loading || disabled"
         :type="type || 'button'"
         :loading="loading"
       >
-        <span v-if="!loading" data-test="button-text"><slot></slot></span>
+        <span v-if="!loading" data-cy="button-text"><slot></slot></span>
         <v-progress-circular
           v-else
           indeterminate
           size="20"
           width="2"
-          data-test="button-loader"
+          data-cy="button-loader"
         ></v-progress-circular>
       </button>
     `,
@@ -151,15 +151,15 @@ const vuetifyComponents = {
   },
   'v-alert': {
     template: `
-      <div class="v-alert" :data-test="dataTest">
-        <div data-test="alert-content"><slot></slot></div>
+      <div class="v-alert" :data-cy="dataTest">
+        <div data-cy="alert-content"><slot></slot></div>
       </div>
     `,
     props: ['type', 'dataTest']
   },
   'v-select': {
     template: `
-      <div class="v-select" :data-test="dataTest">
+      <div class="v-select" :data-cy="dataTest">
         <select 
           ref="select"
           :value="modelValue"
@@ -190,7 +190,7 @@ const vuetifyComponents = {
   },
   'v-file-input': {
     template: `
-      <div class="v-file-input" :data-test="dataTest">
+      <div class="v-file-input" :data-cy="dataTest">
         <input 
           ref="input"
           type="file"
@@ -256,14 +256,14 @@ describe('AuthForm', () => {
 
     it('renders login form correctly', () => {
       expect(wrapper.find('.v-form').exists()).toBe(true)
-      expect(wrapper.find('[data-test="email-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="password-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="login-button"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="email-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="password-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="login-button"]').exists()).toBe(true)
     })
 
     it('submits login form with correct data', async () => {
-      const emailInput = wrapper.find('[data-test="email-input"]');
-      const passwordInput = wrapper.find('[data-test="password-input"]');
+      const emailInput = wrapper.find('[data-cy="email-input"]');
+      const passwordInput = wrapper.find('[data-cy="password-input"]');
       
       // Mock the formRef validate method directly on the component instance
       wrapper.vm.formRef = {
@@ -289,7 +289,7 @@ describe('AuthForm', () => {
       authStore.loading = true
       await wrapper.vm.$nextTick()
       
-      const button = wrapper.find('[data-test="login-button"]');
+      const button = wrapper.find('[data-cy="login-button"]');
       expect(button.attributes('disabled')).toBeDefined();
     })
 
@@ -300,7 +300,7 @@ describe('AuthForm', () => {
       }
       await wrapper.vm.$nextTick()
       
-      const alert = wrapper.find('[data-test="auth-alert"]')
+      const alert = wrapper.find('[data-cy="auth-alert"]')
       expect(alert.exists()).toBe(true)
       expect(alert.text()).toContain('Invalid credentials')
     })
@@ -328,22 +328,22 @@ describe('AuthForm', () => {
 
     it('renders registration form correctly', () => {
       expect(wrapper.find('.v-form').exists()).toBe(true)
-      expect(wrapper.find('[data-test="name-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="email-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="password-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="password-confirmation-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="role-select"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="register-button"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="name-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="email-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="password-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="password-confirmation-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="role-select"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="register-button"]').exists()).toBe(true)
     })
 
     it('shows courier-specific fields when role is courier', async () => {
-      const roleSelect = wrapper.find('[data-test="role-select"] select')
+      const roleSelect = wrapper.find('[data-cy="role-select"] select')
       await roleSelect.setValue('courier')
       await wrapper.vm.$nextTick()
 
-      expect(wrapper.find('[data-test="license-input"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="vehicle-select"]').exists()).toBe(true)
-      expect(wrapper.find('[data-test="document-upload"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="license-input"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="vehicle-select"]').exists()).toBe(true)
+      expect(wrapper.find('[data-cy="document-upload"]').exists()).toBe(true)
     })
 
     it('submits registration form with customer data', async () => {
@@ -403,7 +403,7 @@ describe('AuthForm', () => {
       await errorWrapper.vm.$nextTick()
       await new Promise(resolve => setTimeout(resolve, 0))
       
-      expect(errorWrapper.find('[data-test="auth-alert"]').exists()).toBe(true)
+      expect(errorWrapper.find('[data-cy="auth-alert"]').exists()).toBe(true)
       expect(errorWrapper.vm.errors.name).toBe('Name is required')
     })
   })

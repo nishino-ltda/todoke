@@ -70,11 +70,11 @@ describe('PaymentMethodInput', () => {
       }
     })
     
-    expect(wrapper.find('[data-test="card-number-input"]').exists()).toBe(false)
+    expect(wrapper.find('[data-cy="card-number-input"]').exists()).toBe(false)
     
     await wrapper.find('.v-select-stub').setValue('credit_card')
     
-    expect(wrapper.find('[data-test="card-number-input"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="card-number-input"]').exists()).toBe(true)
   })
 
   it('formats card number with spaces', async () => {
@@ -93,7 +93,7 @@ describe('PaymentMethodInput', () => {
       }
     })
     
-    const numberInput = wrapper.find('[data-test="card-number-input"]')
+    const numberInput = wrapper.find('[data-cy="card-number-input"]')
     await numberInput.setValue('1234567812345678')
     
     // In our stub, setValue triggers update:modelValue
@@ -119,14 +119,14 @@ describe('PaymentMethodInput', () => {
       }
     })
     
-    await wrapper.find('[data-test="card-number-input"]').setValue('1111222233334444')
-    await wrapper.find('[data-test="card-number-input"]').trigger('input')
+    await wrapper.find('[data-cy="card-number-input"]').setValue('1111222233334444')
+    await wrapper.find('[data-cy="card-number-input"]').trigger('input')
     
-    await wrapper.find('[data-test="card-expiry-input"]').setValue('1225')
-    await wrapper.find('[data-test="card-expiry-input"]').trigger('input')
+    await wrapper.find('[data-cy="card-expiry-input"]').setValue('1225')
+    await wrapper.find('[data-cy="card-expiry-input"]').trigger('input')
     
-    await wrapper.find('[data-test="card-cvv-input"]').setValue('123')
-    await wrapper.find('[data-test="card-holder-input"]').setValue('John Doe')
+    await wrapper.find('[data-cy="card-cvv-input"]').setValue('123')
+    await wrapper.find('[data-cy="card-holder-input"]').setValue('John Doe')
     
     const lastEmit = wrapper.emitted('update:modelValue').slice(-1)[0][0]
     

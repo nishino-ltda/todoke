@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-regions-create">
+        <div data-cy="partner-regions-create">
             <h1>Create Region</h1>
             <p>Form to create a new region.</p>
         </div>

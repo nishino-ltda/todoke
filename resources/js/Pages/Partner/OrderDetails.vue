@@ -43,7 +43,7 @@
         <v-divider class="my-4"></v-divider>
 
         <h3 class="text-h6 mb-4">{{ t('partner.orders.items') }}</h3>
-        <v-table data-test="order-items-table">
+        <v-table data-cy="order-items-table">
           <thead>
             <tr>
               <th>{{ t('partner.orders.items') }}</th>
@@ -53,7 +53,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="item in order.items" :key="item.id" data-test="order-item">
+            <tr v-for="item in order.items" :key="item.id" data-cy="order-item">
               <td>{{ item.product_name }}</td>
               <td>{{ item.quantity }}</td>
               <td>${{ item.price }}</td>

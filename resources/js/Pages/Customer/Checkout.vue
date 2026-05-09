@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="customer-checkout">
+        <div data-cy="customer-checkout">
             <h1>{{ $t('checkout.title') }}</h1>
             <p>{{ $t('checkout.subtitle') }}</p>
         </div>

@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-addons-create">
+        <div data-cy="partner-addons-create">
             <h1>Create Addon</h1>
             <p>Form to create a new addon.</p>
         </div>

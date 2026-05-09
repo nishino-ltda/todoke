@@ -1,13 +1,13 @@
 <template>
     <GuestLayout>
-        <div data-test="auth-register">
+        <div data-cy="auth-register">
             <h1>Register</h1>
             <p>Create a new account.</p>
             
             <v-alert
                 v-if="pendingApproval"
                 type="info"
-                data-test="pending-alert"
+                data-cy="pending-alert"
                 class="mb-4"
             >
                 Your account is pending approval. You'll receive an email when your account is activated.
@@ -23,7 +23,7 @@
                 color="primary"
                 to="/login"
                 class="mt-4"
-                data-test="login-link"
+                data-cy="login-link"
             >
                 Already have an account? Login
             </v-btn>

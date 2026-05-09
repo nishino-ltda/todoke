@@ -44,7 +44,7 @@ describe('Menu Page', () => {
         stubs
       }
     })
-    expect(wrapper.find('[data-test="customer-menu"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="customer-menu"]').exists()).toBe(true)
     expect(wrapper.find('h1').text()).toBe('Menu do Cliente')
     expect(wrapper.find('p').text()).toBe('Explore os produtos disponíveis')
   })

@@ -1,13 +1,13 @@
 <template>
   <div>
-    <header data-test="app-header">
+    <header data-cy="app-header">
       <h1>Food Delivery App</h1>
       <CartIcon />
     </header>
     <main>
       <router-view />
     </main>
-    <footer data-test="app-footer">
+    <footer data-cy="app-footer">
       <p>&copy; 2025 Food Delivery</p>
     </footer>
   </div>

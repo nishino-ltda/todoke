@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="admin-users-index">
+        <div data-cy="admin-users-index">
             <h1>Admin Users</h1>
             <p>Manage users.</p>
         </div>

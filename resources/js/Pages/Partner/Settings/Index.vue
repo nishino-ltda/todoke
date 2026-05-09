@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-settings-index">
+        <div data-cy="partner-settings-index">
             <h1>Partner Settings</h1>
             <p>Manage partner settings.</p>
         </div>

@@ -155,7 +155,7 @@ describe('ProductDetailsModal', () => {
     await buttons[2].trigger('click') // Increase to 2
     await buttons[2].trigger('click') // Increase to 3
 
-    await wrapper.find('[data-test="add-to-cart"]').trigger('click')
+    await wrapper.find('[data-cy="add-to-cart"]').trigger('click')
     expect(cartStore.addItem).toHaveBeenCalledTimes(3)
     expect(wrapper.emitted()).toHaveProperty('close')
   })
@@ -215,7 +215,7 @@ describe('ProductDetailsModal', () => {
     
     // Base price (10.99) + addon (1.50) = 12.49
     expect(wrapper.vm.totalPrice).toBe(12.49)
-    expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('$12.49')
+    expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('$12.49')
 
     // Increase quantity to 2
     await wrapper.findAll('.quantity-controls .v-btn')[1].trigger('click')
@@ -223,7 +223,7 @@ describe('ProductDetailsModal', () => {
     
     // (12.49) * 2 = 24.98
     expect(wrapper.vm.totalPrice).toBe(24.98)
-    expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('$24.98')
+    expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('$24.98')
   })
 
   it('renders text in correct language', async () => {
@@ -237,12 +237,12 @@ describe('ProductDetailsModal', () => {
     })
 
     expect(wrapper.find('.addons-section h3').text()).toBe('Adicionais')
-    expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('Adicionar ao Carrinho')
+    expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('Adicionar ao Carrinho')
 
     i18n.global.locale.value = 'en'
     await nextTick()
     expect(wrapper.find('.addons-section h3').text()).toBe('Addons')
-    expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('Add to Cart')
+    expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('Add to Cart')
   })
 
   it('shows no description placeholder in correct language', async () => {

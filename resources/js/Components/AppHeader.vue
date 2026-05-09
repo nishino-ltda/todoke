@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="primary" dark data-test="app-header">
+  <v-app-bar app color="primary" dark data-cy="app-header">
     <v-app-bar-nav-icon @click="toggleDrawer" />
     <v-toolbar-title>{{ $t('app.title') }}</v-toolbar-title>
     <v-spacer />
@@ -7,25 +7,25 @@
     <LanguageSelector class="mr-2" />
 
     <template v-if="isAuthenticated">
-      <span class="welcome-message" data-test="welcome-message">{{ $t('app.welcome', { name: user?.name }) }}</span>
+      <span class="welcome-message" data-cy="welcome-message">{{ $t('app.welcome', { name: user?.name }) }}</span>
       <Link 
         v-if="user?.role === 'customer'"
         :href="route('menu')" 
         class="text-white mr-2" 
-        data-test="menu-link"
+        data-cy="menu-link"
       >
         {{ $t('auth.menu') }}
       </Link>
-      <v-btn text disabled v-if="loading" data-test="loading-indicator">{{ $t('app.loading') }}</v-btn>
+      <v-btn text disabled v-if="loading" data-cy="loading-indicator">{{ $t('app.loading') }}</v-btn>
       <CartIcon v-if="user?.role === 'customer'" />
-      <v-btn text @click="handleLogout" :disabled="loading" data-test="logout-button">
+      <v-btn text @click="handleLogout" :disabled="loading" data-cy="logout-button">
         {{ $t('auth.logout') }}
       </v-btn>
     </template>
 
     <template v-else>
-      <Link :href="route('login')" class="text-white mr-2" data-test="login-link">{{ $t('auth.login') }}</Link>
-      <Link :href="route('register')" class="text-white" data-test="register-link">{{ $t('auth.register') }}</Link>
+      <Link :href="route('login')" class="text-white mr-2" data-cy="login-link">{{ $t('auth.login') }}</Link>
+      <Link :href="route('register')" class="text-white" data-cy="register-link">{{ $t('auth.register') }}</Link>
     </template>
   </v-app-bar>
 </template>

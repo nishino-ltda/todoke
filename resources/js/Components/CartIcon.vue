@@ -4,7 +4,7 @@
     :value="cart.count > 0"
     color="error"
     overlap
-    data-test="cart-icon"
+    data-cy="cart-icon"
   >
     <v-btn icon @click="showCartDialog = true">
       <v-icon>mdi-cart</v-icon>
@@ -32,7 +32,7 @@
             <v-btn 
               icon 
               @click="removeItem(item.id)"
-              data-test="remove-item"
+              data-cy="remove-item"
             >
               <v-icon>mdi-delete</v-icon>
             </v-btn>
@@ -53,7 +53,7 @@
           color="primary" 
           :disabled="cart.items.length === 0"
           @click="checkout"
-          data-test="checkout-button"
+          data-cy="checkout-button"
         >
           {{ $t('cart.checkout') }}
         </v-btn>

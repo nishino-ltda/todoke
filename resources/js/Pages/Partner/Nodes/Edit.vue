@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-nodes-edit">
+        <div data-cy="partner-nodes-edit">
             <h1>Edit Node</h1>
             <p>Edit details for node: {{ nodeId }}</p>
         </div>

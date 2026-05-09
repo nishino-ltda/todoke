@@ -124,12 +124,12 @@ describe('CartIcon', () => {
   })
 
   it('renders correctly', () => {
-    expect(wrapper.find('[data-test="cart-icon"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="cart-icon"]').exists()).toBe(true)
   })
 
   it('shows badge with item count', async () => {
     // Test with empty cart
-    expect(wrapper.find('[data-test="cart-icon"]').exists()).toBe(true)
+    expect(wrapper.find('[data-cy="cart-icon"]').exists()).toBe(true)
     expect(wrapper.html()).not.toContain('v-badge__badge')
 
     // Test with items
@@ -140,39 +140,39 @@ describe('CartIcon', () => {
   })
 
   it('opens dialog when clicked', async () => {
-    await wrapper.find('[data-test="cart-icon"] button').trigger('click')
+    await wrapper.find('[data-cy="cart-icon"] button').trigger('click')
     expect(wrapper.vm.showCartDialog).toBe(true)
   })
 
   it('removes item when delete clicked', async () => {
     cartStore.items = [{ id: 1, name: 'Product', price: 10, quantity: 1 }]
     cartStore.removeItem = vi.fn()
-    await wrapper.find('[data-test="cart-icon"] button').trigger('click') // Open dialog
+    await wrapper.find('[data-cy="cart-icon"] button').trigger('click') // Open dialog
     
-    await wrapper.find('[data-test="remove-item"]').trigger('click')
+    await wrapper.find('[data-cy="remove-item"]').trigger('click')
     expect(cartStore.removeItem).toHaveBeenCalledWith(1)
   })
 
   it('navigates to checkout on checkout button click', async () => {
     cartStore.items = [{ id: 1, name: 'Product', price: 10, quantity: 1 }]
-    await wrapper.find('[data-test="cart-icon"] button').trigger('click') // Open dialog
+    await wrapper.find('[data-cy="cart-icon"] button').trigger('click') // Open dialog
     
-    await wrapper.find('[data-test="checkout-button"]').trigger('click')
+    await wrapper.find('[data-cy="checkout-button"]').trigger('click')
     expect(router.visit).toHaveBeenCalledWith('/checkout')
   })
 
   it('renders text in correct language', async () => {
     i18n.global.locale.value = 'pt-BR'
-    await wrapper.find('[data-test="cart-icon"] button').trigger('click') // Open dialog
+    await wrapper.find('[data-cy="cart-icon"] button').trigger('click') // Open dialog
     
     expect(wrapper.find('.v-card-title').text()).toBe('Seu Carrinho')
     expect(wrapper.find('.v-card-text').text()).toBe('Seu carrinho está vazio.')
-    expect(wrapper.find('[data-test="checkout-button"]').text()).toBe('Finalizar Compra')
+    expect(wrapper.find('[data-cy="checkout-button"]').text()).toBe('Finalizar Compra')
 
     i18n.global.locale.value = 'en'
     await nextTick()
     expect(wrapper.find('.v-card-title').text()).toBe('Your Cart')
     expect(wrapper.find('.v-card-text').text()).toBe('Your cart is empty.')
-    expect(wrapper.find('[data-test="checkout-button"]').text()).toBe('Checkout')
+    expect(wrapper.find('[data-cy="checkout-button"]').text()).toBe('Checkout')
   })
 })

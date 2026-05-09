@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-admin">
+        <div data-cy="partner-admin">
             <h1>Partner Admin</h1>
             <p>Partner administration section.</p>
         </div>

@@ -1,6 +1,6 @@
 <template>
     <AuthenticatedLayout>
-        <div data-test="partner-products-create">
+        <div data-cy="partner-products-create">
             <h1>Create Product</h1>
             <p>Form to create a new product.</p>
         </div>

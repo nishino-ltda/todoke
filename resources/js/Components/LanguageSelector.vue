@@ -34,6 +34,7 @@ watch(locale, async (newLocale) => {
     variant="outlined"
     hide-details
     class="language-selector"
+    data-cy="language-selector"
   />
 </template>
 

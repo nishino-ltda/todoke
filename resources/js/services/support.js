@@ -84,6 +84,23 @@ export const supportService = {
       logStore.log('❌ Failed to load FAQs', 'error');
       throw error;
     }
+  },
+
+  /**
+   * Close a support ticket
+   * @param {string|number} id 
+   */
+  async closeTicket(id) {
+    const logStore = useLogStore();
+    logStore.log(`🎟️ Closing ticket #${id}`);
+    try {
+      const response = await api.patch(`/support/tickets/${id}/close`);
+      logStore.log(`✅ Ticket #${id} closed`);
+      return response;
+    } catch (error) {
+      logStore.log(`❌ Failed to close ticket #${id}`, 'error');
+      throw error;
+    }
   }
 };
 
