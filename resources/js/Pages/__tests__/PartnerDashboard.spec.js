@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 import Dashboard from '../Partner/Dashboard.vue'
 import partnerService from '../../services/partner'
 import { createPinia, setActivePinia } from 'pinia'
@@ -32,15 +33,15 @@ const stubs = {
     template: '<div class="partner-layout"><slot /></div>'
   },
   MetricsWidget: {
-    template: '<div class="metrics-widget">{{ title }}: {{ value }}</div>',
+    template: '<div class="metrics-widget" :data-title="title">{{ title }}: {{ value }}</div>',
     props: ['title', 'value', 'icon', 'color']
   },
   DataTable: {
-    template: '<div class="data-table"><slot name="item.status" :item="{status: \'pending\'}" /><slot name="item.actions" :item="{id: 1, status: \'pending\'}" /></div>',
-    props: ['items', 'headers', 'loading']
+    template: '<div class="data-table"><div class="title">{{ title }}</div><slot name="item.status" :item="{status: \'pending\'}" /><slot name="item.actions" :item="{id: 1, status: \'pending\'}" /></div>',
+    props: ['items', 'headers', 'loading', 'title']
   },
   AppModal: {
-    template: '<div class="app-modal" v-if="modelValue"><slot /></div>',
+    template: '<div class="app-modal" v-if="modelValue"><div class="modal-title">{{ title }}</div><slot /><slot name="actions" /></div>',
     props: ['modelValue', 'title']
   },
   VRow: { template: '<div class="v-row"><slot /></div>' },
@@ -56,11 +57,55 @@ const stubs = {
   VListItemTitle: { template: '<div class="v-list-item-title"><slot /></div>' }
 }
 
+const ptBrMessages = {
+  partner: {
+    dashboard: {
+      recent_orders: 'Pedidos Recentes',
+      metrics: {
+        new_orders: 'Novos Pedidos',
+        preparing: 'Em Preparação',
+        today_revenue: 'Receita de Hoje',
+        completed: 'Concluídos'
+      }
+    },
+    orders: {
+      id: 'Pedido #{id}',
+      status: 'Status',
+      accepted: 'Pedido #{id} aceito'
+    },
+    status: {
+      pending: 'Pendente'
+    },
+    actions: {
+      accept: 'Aceitar Pedido'
+    }
+  }
+}
+
+const enMessages = {
+  partner: {
+    dashboard: {
+      recent_orders: 'Recent Orders'
+    }
+  }
+}
+
 describe('Partner Dashboard', () => {
+  let i18n
+
   beforeEach(() => {
     setActivePinia(createPinia())
     vi.clearAllMocks()
     
+    i18n = createI18n({
+      legacy: false,
+      locale: 'pt-BR',
+      messages: {
+        'pt-BR': ptBrMessages,
+        'en': enMessages
+      }
+    })
+
     partnerService.getDashboardStats.mockResolvedValue({
       data: {
         new_orders: 5,
@@ -79,7 +124,10 @@ describe('Partner Dashboard', () => {
 
   it('fetches dashboard data on mount', async () => {
     const wrapper = mount(Dashboard, {
-      global: { stubs }
+      global: { 
+        plugins: [i18n],
+        stubs 
+      }
     })
     
     // Wait for async operations
@@ -89,22 +137,47 @@ describe('Partner Dashboard', () => {
     expect(partnerService.getOrders).toHaveBeenCalled()
   })
 
-  it('displays metrics from service', async () => {
+  it('displays metrics from service in pt-BR', async () => {
     const wrapper = mount(Dashboard, {
-      global: { stubs }
+      global: { 
+        plugins: [i18n],
+        stubs 
+      }
     })
     
     await new Promise(resolve => setTimeout(resolve, 0))
     
-    expect(wrapper.text()).toContain('5') // New orders
-    expect(wrapper.text()).toContain('$150.50') // Revenue
+    expect(wrapper.text()).toContain('5') // New orders value
+    expect(wrapper.find('[data-title="Novos Pedidos"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Receita de Hoje')
+    expect(wrapper.text()).toContain('Pedidos Recentes')
+  })
+
+  it('updates labels when switching language', async () => {
+    const wrapper = mount(Dashboard, {
+      global: { 
+        plugins: [i18n],
+        stubs 
+      }
+    })
+    
+    await new Promise(resolve => setTimeout(resolve, 0))
+    expect(wrapper.text()).toContain('Pedidos Recentes')
+    
+    i18n.global.locale.value = 'en'
+    await wrapper.vm.$nextTick()
+    
+    expect(wrapper.text()).toContain('Recent Orders')
   })
 
   it('can accept a pending order', async () => {
     partnerService.updateOrderStatus.mockResolvedValue({ success: true })
     
     const wrapper = mount(Dashboard, {
-      global: { stubs }
+      global: { 
+        plugins: [i18n],
+        stubs 
+      }
     })
     
     await new Promise(resolve => setTimeout(resolve, 0))

@@ -97,5 +97,183 @@
                 "description": "Sistema abrangente de reputação garante qualidade de serviço. Funcionalidade offline para áreas com baixa conectividade."
             }
         }
+    },
+    "menu": {
+        "title": "Menu do Cliente",
+        "subtitle": "Explore os produtos disponíveis",
+        "search_placeholder": "Buscar produtos",
+        "no_products": "Nenhum produto encontrado para sua busca.",
+        "categories": "Categorias"
+    },
+    "cart": {
+        "title": "Seu Carrinho",
+        "empty": "Seu carrinho está vazio.",
+        "add_to_cart": "Adicionar ao Carrinho",
+        "remove": "Remover",
+        "total": "Total",
+        "checkout": "Finalizar Compra",
+        "close": "Fechar",
+        "quantity": "Quantidade",
+        "addons": "Adicionais",
+        "item_added": "Item adicionado ao carrinho",
+        "no_description": "Nenhuma descrição disponível"
+    },
+    "checkout": {
+        "title": "Checkout do Cliente",
+        "subtitle": "Finalize seu pedido",
+        "form_title": "Checkout",
+        "place_order": "Fazer Pedido",
+        "order_confirmed": "Pedido Confirmado",
+        "success_message": "Seu pedido foi realizado com sucesso!",
+        "error_submitting": "Erro ao enviar pedido",
+        "address_required": "Endereço é obrigatório",
+        "payment_method_required": "Forma de pagamento é obrigatória",
+        "validation": {
+            "required": "Este campo é obrigatório"
+        }
+    },
+    "partner": {
+        "dashboard": {
+            "title": "Painel do Parceiro",
+            "recent_orders": "Pedidos Recentes",
+            "metrics": {
+                "new_orders": "Novos Pedidos",
+                "preparing": "Em Preparação",
+                "today_revenue": "Receita de Hoje",
+                "completed": "Concluídos"
+            }
+        },
+        "orders": {
+            "title": "Gerenciamento de Pedidos",
+            "id": "Pedido #",
+            "customer": "Cliente",
+            "total": "Total",
+            "status": "Status",
+            "refresh": "Atualizar",
+            "view": "Ver",
+            "details": "Detalhes do Pedido",
+            "customer_info": "Informações do Cliente",
+            "summary": "Resumo do Pedido",
+            "items": "Itens do Pedido",
+            "subtotal": "Subtotal",
+            "delivery_fee": "Taxa de Entrega",
+            "payment_method": "Método de Pagamento",
+            "back_to_orders": "Voltar para Pedidos",
+            "accepted": "Pedido #{id} aceito",
+            "failed_load": "Falha ao carregar dados do painel",
+            "failed_accept": "Falha ao aceitar pedido"
+        },
+        "products": {
+            "title": "Gerenciamento de Produtos",
+            "add": "Adicionar Produto",
+            "edit": "Editar Produto",
+            "new": "Novo Produto",
+            "name": "Nome do Produto",
+            "price": "Preço",
+            "category": "Categoria",
+            "description": "Descrição",
+            "image_url": "URL da Imagem",
+            "select_addons": "Selecionar Adicionais",
+            "available": "Disponível",
+            "empty": "Nenhum produto encontrado.",
+            "confirm_delete": "Tem certeza que deseja excluir {name}?",
+            "success": {
+                "created": "Produto criado com sucesso",
+                "updated": "Produto atualizado com sucesso",
+                "deleted": "Produto excluído com sucesso",
+                "availability": "{name} está agora {status}"
+            },
+            "error": {
+                "load": "Falha ao carregar produtos",
+                "save": "Falha ao salvar produto",
+                "delete": "Falha ao excluir produto"
+            }
+        },
+        "addons": {
+            "title": "Gerenciamento de Adicionais",
+            "add": "Adicionar Adicional",
+            "edit": "Editar Adicional",
+            "new": "Novo Adicional",
+            "name": "Nome do Adicional",
+            "price": "Preço Adicional",
+            "empty": "Nenhum adicional encontrado.",
+            "success": {
+                "created": "Adicional criado com sucesso",
+                "updated": "Adicional atualizado com sucesso",
+                "deleted": "Adicional excluído com sucesso"
+            },
+            "error": {
+                "load": "Falha ao carregar adicionais",
+                "save": "Falha ao salvar adicional",
+                "delete": "Falha ao excluir adicional"
+            }
+        },
+        "regions": {
+            "title": "Gerenciamento de Regiões",
+            "add": "Adicionar Região",
+            "edit": "Editar Região",
+            "new": "Nova Região",
+            "name": "Nome da Região",
+            "coordinates": "Coordenadas (Limite JSON)",
+            "active": "Ativo",
+            "inactive": "Inativo",
+            "nodes_count": "Qtd de Nós",
+            "empty": "Nenhuma região encontrada.",
+            "success": {
+                "created": "Região criada com sucesso",
+                "updated": "Região atualizada com sucesso",
+                "deleted": "Região excluída com sucesso"
+            },
+            "error": {
+                "load": "Falha ao carregar regiões",
+                "save": "Falha ao salvar região",
+                "delete": "Falha ao excluir região"
+            }
+        },
+        "nodes": {
+            "title": "Gerenciamento de Nós",
+            "add": "Adicionar Nó",
+            "edit": "Editar Nó",
+            "new": "Novo Nó",
+            "name": "Nome do Nó",
+            "type": "Tipo de Nó",
+            "region": "Região",
+            "address": "Endereço",
+            "empty": "Nenhum nó encontrado.",
+            "types": {
+                "hub": "Hub",
+                "store": "Loja",
+                "locker": "Armário"
+            },
+            "success": {
+                "created": "Nó criado com sucesso",
+                "updated": "Nó atualizado com sucesso",
+                "deleted": "Nó excluído com sucesso"
+            },
+            "error": {
+                "load": "Falha ao carregar nós",
+                "save": "Falha ao salvar nó",
+                "delete": "Falha ao excluir nó"
+            }
+        },
+        "actions": {
+            "save": "Salvar",
+            "update": "Atualizar",
+            "create": "Criar",
+            "cancel": "Cancelar",
+            "delete": "Excluir",
+            "confirm_delete": "Confirmar Exclusão",
+            "close": "Fechar",
+            "accept": "Aceitar Pedido"
+        },
+        "status": {
+            "pending": "Pendente",
+            "preparing": "Preparando",
+            "ready": "Pronto",
+            "delivered": "Entregue",
+            "cancelled": "Cancelado",
+            "available": "disponível",
+            "unavailable": "indisponível"
+        }
     }
 }

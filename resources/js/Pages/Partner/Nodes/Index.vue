@@ -2,14 +2,14 @@
   <PartnerLayout>
     <div class="nodes-index">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">Nodes Management</h1>
+        <h1 class="text-h4 font-weight-bold">{{ t('partner.nodes.title') }}</h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
           @click="openCreateModal"
           data-cy="create-node-btn"
         >
-          Add Node
+          {{ t('partner.nodes.add') }}
         </v-btn>
       </div>
 
@@ -26,7 +26,7 @@
             variant="tonal"
             class="text-uppercase font-weight-bold"
           >
-            {{ item.type }}
+            {{ t('partner.nodes.types.' + item.type) }}
           </v-chip>
         </template>
 
@@ -51,7 +51,7 @@
       <!-- Node Form Modal -->
       <AppModal
         v-model="showFormModal"
-        :title="isEditing ? 'Edit Node' : 'Add New Node'"
+        :title="isEditing ? t('partner.nodes.edit') : t('partner.nodes.new')"
         maxWidth="600"
       >
         <v-form ref="nodeForm" @submit.prevent="saveNode">
@@ -59,9 +59,9 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.name"
-                label="Node Name"
+                :label="t('partner.nodes.name')"
                 required
-                :rules="[v => !!v || 'Name is required']"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.nodes.name') })]"
                 data-cy="node-name-input"
               ></v-text-field>
             </v-col>
@@ -71,17 +71,19 @@
                 :items="regions"
                 item-title="name"
                 item-value="id"
-                label="Region"
+                :label="t('partner.nodes.region')"
                 required
-                :rules="[v => !!v || 'Region is required']"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.nodes.region') })]"
                 data-cy="node-region-select"
               ></v-select>
             </v-col>
             <v-col cols="12" sm="6">
               <v-select
                 v-model="form.type"
-                :items="['hub', 'store', 'locker']"
-                label="Node Type"
+                :items="translatedNodeTypes"
+                item-title="title"
+                item-value="value"
+                :label="t('partner.nodes.type')"
                 required
                 data-cy="node-type-select"
               ></v-select>
@@ -89,7 +91,7 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.address"
-                label="Address"
+                :label="t('partner.nodes.address')"
                 required
                 data-cy="node-address-input"
               ></v-text-field>
@@ -97,19 +99,19 @@
           </v-row>
         </v-form>
         <template #actions>
-          <v-btn variant="text" @click="showFormModal = false">Cancel</v-btn>
+          <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
           <v-btn color="primary" @click="saveNode" :loading="saving" data-cy="save-node-btn">
-            {{ isEditing ? 'Update' : 'Create' }}
+            {{ isEditing ? t('partner.actions.update') : t('partner.actions.create') }}
           </v-btn>
         </template>
       </AppModal>
 
       <!-- Delete Confirmation -->
-      <AppModal v-model="showDeleteModal" title="Confirm Delete" maxWidth="400">
-        <p>Are you sure you want to delete <strong>{{ selectedNode?.name }}</strong>?</p>
+      <AppModal v-model="showDeleteModal" :title="t('partner.actions.confirm_delete')" maxWidth="400">
+        <p>{{ t('partner.products.confirm_delete', { name: selectedNode?.name }) }}</p>
         <template #actions>
-          <v-btn variant="text" @click="showDeleteModal = false">Cancel</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">Delete</v-btn>
+          <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
         </template>
       </AppModal>
     </div>
@@ -117,13 +119,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
@@ -135,13 +139,18 @@ const isEditing = ref(false);
 const selectedNode = ref(null);
 const nodeForm = ref(null);
 
-const headers = [
-  { title: 'Name', key: 'name' },
-  { title: 'Type', key: 'type' },
-  { title: 'Region', key: 'region_name' },
-  { title: 'Address', key: 'address' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-];
+const headers = computed(() => [
+  { title: t('partner.nodes.name'), key: 'name' },
+  { title: t('partner.nodes.type'), key: 'type' },
+  { title: t('partner.nodes.region'), key: 'region_name' },
+  { title: t('partner.nodes.address'), key: 'address' },
+  { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
+
+const nodeTypes = ['hub', 'store', 'locker'];
+const translatedNodeTypes = computed(() => 
+  nodeTypes.map(type => ({ title: t('partner.nodes.types.' + type), value: type }))
+);
 
 const form = ref({
   name: '',
@@ -156,7 +165,7 @@ const fetchNodes = async () => {
     const response = await partnerService.getNodes();
     nodes.value = response.data;
   } catch (err) {
-    notifications.error('Failed to load nodes');
+    notifications.error(t('partner.nodes.error.load'));
   } finally {
     loading.value = false;
   }
@@ -192,15 +201,15 @@ const saveNode = async () => {
   try {
     if (isEditing.value) {
       await partnerService.updateNode(selectedNode.value.id, form.value);
-      notifications.success('Node updated successfully');
+      notifications.success(t('partner.nodes.success.updated'));
     } else {
       await partnerService.createNode(form.value);
-      notifications.success('Node created successfully');
+      notifications.success(t('partner.nodes.success.created'));
     }
     showFormModal.value = false;
     fetchNodes();
   } catch (err) {
-    notifications.error('Failed to save node');
+    notifications.error(t('partner.nodes.error.save'));
   } finally {
     saving.value = false;
   }
@@ -215,11 +224,11 @@ const doDelete = async () => {
   saving.value = true;
   try {
     await partnerService.deleteNode(selectedNode.value.id);
-    notifications.success('Node deleted successfully');
+    notifications.success(t('partner.nodes.success.deleted'));
     showDeleteModal.value = false;
     fetchNodes();
   } catch (err) {
-    notifications.error('Failed to delete node');
+    notifications.error(t('partner.nodes.error.delete'));
   } finally {
     saving.value = false;
   }

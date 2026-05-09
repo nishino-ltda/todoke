@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
         <div data-test="customer-menu">
-            <h1>Customer Menu</h1>
-            <p>Browse available products.</p>
+            <h1>{{ $t('menu.title') }}</h1>
+            <p>{{ $t('menu.subtitle') }}</p>
         </div>
     </AuthenticatedLayout>
 </template>

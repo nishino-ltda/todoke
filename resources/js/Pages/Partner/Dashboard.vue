@@ -5,7 +5,7 @@
       <v-row class="mb-6">
         <v-col cols="12" sm="6" lg="3" v-for="metric in metrics" :key="metric.title">
           <MetricsWidget
-            :title="metric.title"
+            :title="t(metric.titleKey)"
             :value="metric.value"
             :icon="metric.icon"
             :color="metric.color.replace('bg-', '')"
@@ -18,8 +18,8 @@
       <v-row>
         <v-col cols="12">
           <DataTable
-            title="Recent Orders"
-            :headers="orderHeaders"
+            :title="t('partner.dashboard.recent_orders')"
+            :headers="translatedHeaders"
             :items="recentOrders"
             :loading="loading"
             data-cy="recent-orders-table"
@@ -30,7 +30,7 @@
                 size="small"
                 class="text-uppercase font-weight-bold"
               >
-                {{ item.status }}
+                {{ t('partner.status.' + item.status) }}
               </v-chip>
             </template>
             
@@ -62,7 +62,7 @@
       <!-- Order Detail Modal -->
       <AppModal
         v-model="showOrderModal"
-        :title="'Order #' + selectedOrder?.id"
+        :title="t('partner.orders.id', { id: selectedOrder?.id })"
         maxWidth="600"
       >
         <div v-if="selectedOrder">
@@ -73,20 +73,20 @@
               </template>
               <v-list-item-title>{{ item.name }}</v-list-item-title>
               <template #append>
-                <span>${{ (item.price * item.quantity).toFixed(2) }}</span>
+                <span>{{ t('common.currency_symbol', { value: (item.price * item.quantity).toFixed(2) }, '$' + (item.price * item.quantity).toFixed(2)) }}</span>
               </template>
             </v-list-item>
           </v-list>
           <v-divider class="my-3"></v-divider>
           <div class="d-flex justify-space-between text-h6 px-4">
-            <span>Total</span>
-            <span class="primary--text font-weight-bold">${{ selectedOrder.total?.toFixed(2) || '0.00' }}</span>
+            <span>{{ t('partner.orders.total') }}</span>
+            <span class="primary--text font-weight-bold">{{ t('common.currency_symbol', { value: selectedOrder.total?.toFixed(2) || '0.00' }, '$' + (selectedOrder.total?.toFixed(2) || '0.00')) }}</span>
           </div>
         </div>
         <template #actions>
-          <v-btn variant="text" @click="showOrderModal = false">Close</v-btn>
+          <v-btn variant="text" @click="showOrderModal = false">{{ t('partner.actions.close') }}</v-btn>
           <v-btn v-if="selectedOrder?.status === 'pending'" color="success" @click="acceptOrder(selectedOrder)">
-            Accept Order
+            {{ t('partner.actions.accept') }}
           </v-btn>
         </template>
       </AppModal>
@@ -95,7 +95,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
@@ -110,25 +111,30 @@ const props = defineProps({
   }
 });
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const showOrderModal = ref(false);
 const selectedOrder = ref(null);
 
 const metrics = ref([
-  { title: 'New Orders', value: '0', icon: 'mdi-bell-ring', color: 'bg-orange', key: 'new_orders' },
-  { title: 'In Preparation', value: '0', icon: 'mdi-silverware', color: 'bg-blue', key: 'preparing' },
-  { title: 'Total Today', value: '$0.00', icon: 'mdi-currency-usd', color: 'bg-green', key: 'today_revenue' },
-  { title: 'Completed', value: '0', icon: 'mdi-check-circle', color: 'bg-purple', key: 'completed' },
+  { titleKey: 'partner.dashboard.metrics.new_orders', value: '0', icon: 'mdi-bell-ring', color: 'bg-orange', key: 'new_orders' },
+  { titleKey: 'partner.dashboard.metrics.preparing', value: '0', icon: 'mdi-silverware', color: 'bg-blue', key: 'preparing' },
+  { titleKey: 'partner.dashboard.metrics.today_revenue', value: '$0.00', icon: 'mdi-currency-usd', color: 'bg-green', key: 'today_revenue' },
+  { titleKey: 'partner.dashboard.metrics.completed', value: '0', icon: 'mdi-check-circle', color: 'bg-purple', key: 'completed' },
 ]);
 
 const orderHeaders = [
-  { title: 'Order ID', key: 'id' },
-  { title: 'Customer', key: 'customer_name' },
-  { title: 'Total', key: 'total' },
-  { title: 'Status', key: 'status' },
-  { title: 'Actions', key: 'actions', sortable: false },
+  { titleKey: 'partner.orders.id', key: 'id' },
+  { titleKey: 'partner.orders.customer', key: 'customer_name' },
+  { titleKey: 'partner.orders.total', key: 'total' },
+  { titleKey: 'partner.orders.status', key: 'status' },
+  { titleKey: 'partner.orders.actions', key: 'actions', sortable: false },
 ];
+
+const translatedHeaders = computed(() => 
+  orderHeaders.map(h => ({ ...h, title: t(h.titleKey) }))
+);
 
 const recentOrders = ref([]);
 
@@ -164,7 +170,7 @@ const fetchDashboardData = async () => {
     recentOrders.value = ordersResponse.data || [];
   } catch (err) {
     console.error(err);
-    notifications.error('Failed to load dashboard data');
+    notifications.error(t('partner.orders.failed_load'));
   } finally {
     loading.value = false;
   }
@@ -186,11 +192,11 @@ const acceptOrder = async (order) => {
         // I'll update the service in a moment if needed
     }
     
-    notifications.success(`Order #${order.id} accepted`);
+    notifications.success(t('partner.orders.accepted', { id: order.id }));
     fetchDashboardData();
     showOrderModal.value = false;
   } catch (err) {
-    notifications.error('Failed to accept order');
+    notifications.error(t('partner.orders.failed_accept'));
   }
 };
 

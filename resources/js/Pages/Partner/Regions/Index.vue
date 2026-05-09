@@ -2,14 +2,14 @@
   <PartnerLayout>
     <div class="regions-index">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">Regions Management</h1>
+        <h1 class="text-h4 font-weight-bold">{{ t('partner.regions.title') }}</h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
           @click="openCreateModal"
           data-cy="create-region-btn"
         >
-          Add Region
+          {{ t('partner.regions.add') }}
         </v-btn>
       </div>
 
@@ -25,7 +25,7 @@
             size="small"
             class="text-uppercase font-weight-bold"
           >
-            {{ item.active ? 'Active' : 'Inactive' }}
+            {{ item.active ? t('partner.regions.active') : t('partner.regions.inactive') }}
           </v-chip>
         </template>
 
@@ -50,7 +50,7 @@
       <!-- Region Form Modal -->
       <AppModal
         v-model="showFormModal"
-        :title="isEditing ? 'Edit Region' : 'Add New Region'"
+        :title="isEditing ? t('partner.regions.edit') : t('partner.regions.new')"
         maxWidth="600"
       >
         <v-form ref="regionForm" @submit.prevent="saveRegion">
@@ -58,16 +58,16 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.name"
-                label="Region Name"
+                :label="t('partner.regions.name')"
                 required
-                :rules="[v => !!v || 'Name is required']"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.regions.name') })]"
                 data-cy="region-name-input"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
                 v-model="form.coordinates"
-                label="Coordinates (JSON Boundary)"
+                :label="t('partner.regions.coordinates')"
                 placeholder='[[lat, lng], ...]'
                 data-cy="region-coordinates-input"
               ></v-text-field>
@@ -75,7 +75,7 @@
             <v-col cols="12">
               <v-switch
                 v-model="form.active"
-                label="Active"
+                :label="t('partner.regions.active')"
                 color="success"
                 data-cy="region-active-switch"
               ></v-switch>
@@ -83,19 +83,19 @@
           </v-row>
         </v-form>
         <template #actions>
-          <v-btn variant="text" @click="showFormModal = false">Cancel</v-btn>
+          <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
           <v-btn color="primary" @click="saveRegion" :loading="saving" data-cy="save-region-btn">
-            {{ isEditing ? 'Update' : 'Create' }}
+            {{ isEditing ? t('partner.actions.update') : t('partner.actions.create') }}
           </v-btn>
         </template>
       </AppModal>
 
       <!-- Delete Confirmation -->
-      <AppModal v-model="showDeleteModal" title="Confirm Delete" maxWidth="400">
-        <p>Are you sure you want to delete <strong>{{ selectedRegion?.name }}</strong>?</p>
+      <AppModal v-model="showDeleteModal" :title="t('partner.actions.confirm_delete')" maxWidth="400">
+        <p>{{ t('partner.products.confirm_delete', { name: selectedRegion?.name }) }}</p>
         <template #actions>
-          <v-btn variant="text" @click="showDeleteModal = false">Cancel</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">Delete</v-btn>
+          <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
         </template>
       </AppModal>
     </div>
@@ -103,13 +103,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
@@ -120,12 +122,12 @@ const isEditing = ref(false);
 const selectedRegion = ref(null);
 const regionForm = ref(null);
 
-const headers = [
-  { title: 'Name', key: 'name' },
-  { title: 'Nodes Count', key: 'nodes_count' },
-  { title: 'Status', key: 'active' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-];
+const headers = computed(() => [
+  { title: t('partner.regions.name'), key: 'name' },
+  { title: t('partner.regions.nodes_count'), key: 'nodes_count' },
+  { title: t('partner.orders.status'), key: 'active' },
+  { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
 
 const form = ref({
   name: '',
@@ -139,7 +141,7 @@ const fetchRegions = async () => {
     const response = await partnerService.getRegions();
     regions.value = response.data;
   } catch (err) {
-    notifications.error('Failed to load regions');
+    notifications.error(t('partner.regions.error.load'));
   } finally {
     loading.value = false;
   }
@@ -166,15 +168,15 @@ const saveRegion = async () => {
   try {
     if (isEditing.value) {
       await partnerService.updateRegion(selectedRegion.value.id, form.value);
-      notifications.success('Region updated successfully');
+      notifications.success(t('partner.regions.success.updated'));
     } else {
       await partnerService.createRegion(form.value);
-      notifications.success('Region created successfully');
+      notifications.success(t('partner.regions.success.created'));
     }
     showFormModal.value = false;
     fetchRegions();
   } catch (err) {
-    notifications.error('Failed to save region');
+    notifications.error(t('partner.regions.error.save'));
   } finally {
     saving.value = false;
   }
@@ -189,11 +191,11 @@ const doDelete = async () => {
   saving.value = true;
   try {
     await partnerService.deleteRegion(selectedRegion.value.id);
-    notifications.success('Region deleted successfully');
+    notifications.success(t('partner.regions.success.deleted'));
     showDeleteModal.value = false;
     fetchRegions();
   } catch (err) {
-    notifications.error('Failed to delete region');
+    notifications.error(t('partner.regions.error.delete'));
   } finally {
     saving.value = false;
   }

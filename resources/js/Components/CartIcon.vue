@@ -13,10 +13,10 @@
   
   <v-dialog v-model="showCartDialog" max-width="500px">
     <v-card>
-      <v-card-title class="headline">Your Cart</v-card-title>
+      <v-card-title class="headline">{{ $t('cart.title') }}</v-card-title>
       
       <v-card-text v-if="cart.items.length === 0">
-        Your cart is empty.
+        {{ $t('cart.empty') }}
       </v-card-text>
       
       <v-list v-else>
@@ -43,19 +43,19 @@
       <v-divider v-if="cart.items.length > 0"></v-divider>
       
       <v-card-text v-if="cart.items.length > 0" class="text-right">
-        <strong>Total: ${{ cart.total.toFixed(2) }}</strong>
+        <strong>{{ $t('cart.total') }}: ${{ cart.total.toFixed(2) }}</strong>
       </v-card-text>
       
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn text @click="showCartDialog = false">Close</v-btn>
+        <v-btn text @click="showCartDialog = false">{{ $t('cart.close') }}</v-btn>
         <v-btn 
           color="primary" 
           :disabled="cart.items.length === 0"
           @click="checkout"
           data-test="checkout-button"
         >
-          Checkout
+          {{ $t('cart.checkout') }}
         </v-btn>
       </v-card-actions>
     </v-card>

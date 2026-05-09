@@ -4,7 +4,7 @@
       <v-col cols="12">
         <v-text-field
           v-model="searchQuery"
-          label="Search products"
+          :label="$t('menu.search_placeholder')"
           prepend-inner-icon="mdi-magnify"
           clearable
           outlined
@@ -17,7 +17,7 @@
     
     <v-row v-if="filteredProducts.length === 0" class="mt-4">
       <v-col cols="12" class="text-center">
-        <p>No products found matching your search.</p>
+        <p>{{ $t('menu.no_products') }}</p>
       </v-col>
     </v-row>
     

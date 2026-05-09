@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import { createPinia, setActivePinia } from 'pinia'
 import { describe, it, expect, beforeEach } from 'vitest'
-import Checkout from '@/Pages/Customer/Checkout.vue'
+import Menu from '@/Pages/Customer/Menu.vue'
 import { nextTick } from 'vue'
 
 const i18n = createI18n({
@@ -10,15 +10,15 @@ const i18n = createI18n({
   locale: 'pt-BR',
   messages: {
     'pt-BR': {
-      checkout: {
-        title: 'Checkout do Cliente',
-        subtitle: 'Finalize seu pedido'
+      menu: {
+        title: 'Menu do Cliente',
+        subtitle: 'Explore os produtos disponíveis'
       }
     },
     en: {
-      checkout: {
-        title: 'Customer Checkout',
-        subtitle: 'Complete your order'
+      menu: {
+        title: 'Customer Menu',
+        subtitle: 'Browse available products'
       }
     }
   }
@@ -31,34 +31,33 @@ const stubs = {
   }
 }
 
-describe('Checkout', () => {
+describe('Menu Page', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
   })
 
   it('renders properly in pt-BR', () => {
     i18n.global.locale.value = 'pt-BR'
-    const wrapper = mount(Checkout, {
+    const wrapper = mount(Menu, {
       global: {
         plugins: [i18n],
         stubs
       }
     })
-    expect(wrapper.find('[data-test="customer-checkout"]').exists()).toBe(true)
-    expect(wrapper.find('h1').text()).toBe('Checkout do Cliente')
-    expect(wrapper.find('p').text()).toBe('Finalize seu pedido')
+    expect(wrapper.find('[data-test="customer-menu"]').exists()).toBe(true)
+    expect(wrapper.find('h1').text()).toBe('Menu do Cliente')
+    expect(wrapper.find('p').text()).toBe('Explore os produtos disponíveis')
   })
 
   it('renders properly in en', async () => {
     i18n.global.locale.value = 'en'
-    const wrapper = mount(Checkout, {
+    const wrapper = mount(Menu, {
       global: {
         plugins: [i18n],
         stubs
       }
     })
-    expect(wrapper.find('h1').text()).toBe('Customer Checkout')
-    expect(wrapper.find('p').text()).toBe('Complete your order')
+    expect(wrapper.find('h1').text()).toBe('Customer Menu')
+    expect(wrapper.find('p').text()).toBe('Browse available products')
   })
 })
-

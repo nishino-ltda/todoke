@@ -2,14 +2,14 @@
   <PartnerLayout>
     <div class="products-index">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">Products Management</h1>
+        <h1 class="text-h4 font-weight-bold">{{ t('partner.products.title') }}</h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
           @click="openCreateModal"
           data-cy="create-product-btn"
         >
-          Add Product
+          {{ t('partner.products.add') }}
         </v-btn>
       </div>
 
@@ -26,7 +26,7 @@
         </template>
 
         <template #item.price="{ item }">
-          <span class="font-weight-bold">${{ item.price.toFixed(2) }}</span>
+          <span class="font-weight-bold">{{ t('common.currency_symbol', { value: item.price.toFixed(2) }, '$' + item.price.toFixed(2)) }}</span>
         </template>
 
         <template #item.available="{ item }">
@@ -60,7 +60,7 @@
       <!-- Product Form Modal -->
       <AppModal
         v-model="showFormModal"
-        :title="isEditing ? 'Edit Product' : 'Add New Product'"
+        :title="isEditing ? t('partner.products.edit') : t('partner.products.new')"
         maxWidth="600"
       >
         <v-form ref="productForm" @submit.prevent="saveProduct">
@@ -68,20 +68,20 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.name"
-                label="Product Name"
+                :label="t('partner.products.name')"
                 required
-                :rules="[v => !!v || 'Name is required']"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.products.name') })]"
                 data-cy="product-name-input"
               ></v-text-field>
             </v-col>
             <v-col cols="12" sm="6">
               <v-text-field
                 v-model.number="form.price"
-                label="Price"
+                :label="t('partner.products.price')"
                 type="number"
                 prefix="$"
                 required
-                :rules="[v => !!v || 'Price is required', v => v > 0 || 'Price must be positive']"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.products.price') }), v => v > 0 || 'Price must be positive']"
                 data-cy="product-price-input"
               ></v-text-field>
             </v-col>
@@ -89,14 +89,14 @@
               <v-select
                 v-model="form.category"
                 :items="categories"
-                label="Category"
+                :label="t('partner.products.category')"
                 data-cy="product-category-select"
               ></v-select>
             </v-col>
             <v-col cols="12">
               <v-textarea
                 v-model="form.description"
-                label="Description"
+                :label="t('partner.products.description')"
                 rows="3"
                 data-cy="product-description-input"
               ></v-textarea>
@@ -104,7 +104,7 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.image"
-                label="Image URL"
+                :label="t('partner.products.image_url')"
                 placeholder="https://..."
                 data-cy="product-image-input"
               ></v-text-field>
@@ -115,7 +115,7 @@
                 :items="availableAddons"
                 item-title="name"
                 item-value="id"
-                label="Select Addons"
+                :label="t('partner.products.select_addons')"
                 multiple
                 chips
                 data-cy="product-addons-select"
@@ -124,19 +124,19 @@
           </v-row>
         </v-form>
         <template #actions>
-          <v-btn variant="text" @click="showFormModal = false">Cancel</v-btn>
+          <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
           <v-btn color="primary" @click="saveProduct" :loading="saving" data-cy="save-product-btn">
-            {{ isEditing ? 'Update' : 'Create' }}
+            {{ isEditing ? t('partner.actions.update') : t('partner.actions.create') }}
           </v-btn>
         </template>
       </AppModal>
 
       <!-- Delete Confirmation -->
-      <AppModal v-model="showDeleteModal" title="Confirm Delete" maxWidth="400">
-        <p>Are you sure you want to delete <strong>{{ selectedProduct?.name }}</strong>?</p>
+      <AppModal v-model="showDeleteModal" :title="t('partner.actions.confirm_delete')" maxWidth="400">
+        <p>{{ t('partner.products.confirm_delete', { name: selectedProduct?.name }) }}</p>
         <template #actions>
-          <v-btn variant="text" @click="showDeleteModal = false">Cancel</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">Delete</v-btn>
+          <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
         </template>
       </AppModal>
     </div>
@@ -144,13 +144,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
@@ -164,14 +166,14 @@ const availableAddons = ref([]);
 
 const categories = ['Pizza', 'Burger', 'Dessert', 'Drinks', 'Sushi'];
 
-const headers = [
+const headers = computed(() => [
   { title: '', key: 'image', sortable: false, width: '60px' },
-  { title: 'Name', key: 'name' },
-  { title: 'Category', key: 'category' },
-  { title: 'Price', key: 'price' },
-  { title: 'Available', key: 'available', sortable: false },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-];
+  { title: t('partner.products.name'), key: 'name' },
+  { title: t('partner.products.category'), key: 'category' },
+  { title: t('partner.products.price'), key: 'price' },
+  { title: t('partner.products.available'), key: 'available', sortable: false },
+  { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
 
 const form = ref({
   name: '',
@@ -193,7 +195,7 @@ const fetchProducts = async () => {
       addon_ids: p.addons?.map(a => a.id) || []
     }));
   } catch (err) {
-    notifications.error('Failed to load products');
+    notifications.error(t('partner.products.error.load'));
   } finally {
     loading.value = false;
   }
@@ -229,15 +231,15 @@ const saveProduct = async () => {
   try {
     if (isEditing.value) {
       await partnerService.updateProduct(selectedProduct.value.id, form.value);
-      notifications.success('Product updated successfully');
+      notifications.success(t('partner.products.success.updated'));
     } else {
       await partnerService.createProduct(form.value);
-      notifications.success('Product created successfully');
+      notifications.success(t('partner.products.success.created'));
     }
     showFormModal.value = false;
     fetchProducts();
   } catch (err) {
-    notifications.error('Failed to save product');
+    notifications.error(t('partner.products.error.save'));
   } finally {
     saving.value = false;
   }
@@ -246,10 +248,13 @@ const saveProduct = async () => {
 const toggleAvailability = async (product) => {
   try {
     await partnerService.updateItemAvailability(product.id, product.available);
-    notifications.success(`${product.name} is now ${product.available ? 'available' : 'unavailable'}`);
+    notifications.success(t('partner.products.success.availability', { 
+      name: product.name, 
+      status: t('partner.status.' + (product.available ? 'available' : 'unavailable')) 
+    }));
   } catch (err) {
     product.available = !product.available; // Revert
-    notifications.error('Failed to update availability');
+    notifications.error(t('partner.products.error.save'));
   }
 };
 
@@ -262,11 +267,11 @@ const doDelete = async () => {
   saving.value = true;
   try {
     await partnerService.deleteProduct(selectedProduct.value.id);
-    notifications.success('Product deleted successfully');
+    notifications.success(t('partner.products.success.deleted'));
     showDeleteModal.value = false;
     fetchProducts();
   } catch (err) {
-    notifications.error('Failed to delete product');
+    notifications.error(t('partner.products.error.delete'));
   } finally {
     saving.value = false;
   }

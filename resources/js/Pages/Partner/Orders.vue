@@ -2,13 +2,13 @@
   <v-container>
     <v-card>
       <v-card-title class="d-flex justify-space-between align-center">
-        <span>Orders Management</span>
+        <span>{{ t('partner.orders.title') }}</span>
         <v-btn
           color="primary"
           prepend-icon="mdi-refresh"
           @click="refreshOrders"
         >
-          Refresh
+          {{ t('partner.orders.refresh') }}
         </v-btn>
       </v-card-title>
 
@@ -22,7 +22,9 @@
           <template v-slot:item.status="{ item }">
             <v-select
               v-model="item.status"
-              :items="statusOptions"
+              :items="translatedStatusOptions"
+              item-title="title"
+              item-value="value"
               density="compact"
               variant="outlined"
               data-test="status-dropdown"
@@ -38,7 +40,7 @@
               @click="viewOrder(item)"
               data-test="view-order-btn"
             >
-              View
+              {{ t('partner.orders.view') }}
             </v-btn>
           </template>
         </v-data-table>
@@ -48,8 +50,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { router } from '@inertiajs/vue3'
+
+const { t } = useI18n()
 
 const props = defineProps({
   orders: {
@@ -60,21 +65,28 @@ const props = defineProps({
 })
 
 const loading = ref(false)
-const headers = ref([
-  { title: 'Order #', key: 'id' },
-  { title: 'Customer', key: 'customer_name' },
-  { title: 'Total', key: 'total' },
-  { title: 'Status', key: 'status' },
-  { title: 'Actions', key: 'actions', sortable: false }
+const headers = computed(() => [
+  { title: t('partner.orders.id'), key: 'id' },
+  { title: t('partner.orders.customer'), key: 'customer_name' },
+  { title: t('partner.orders.total'), key: 'total' },
+  { title: t('partner.orders.status'), key: 'status' },
+  { title: t('partner.orders.actions'), key: 'actions', sortable: false }
 ])
 
-const statusOptions = ref([
+const statusOptions = [
   'pending',
   'preparing',
   'ready',
   'delivered',
   'cancelled'
-])
+]
+
+const translatedStatusOptions = computed(() => 
+  statusOptions.map(opt => ({
+    title: t('partner.status.' + opt),
+    value: opt
+  }))
+)
 
 function refreshOrders() {
   loading.value = true

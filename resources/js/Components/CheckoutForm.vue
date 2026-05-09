@@ -1,6 +1,6 @@
 <template>
   <v-form @submit.prevent="handleSubmit" ref="form">
-    <h2>Checkout</h2>
+    <h2>{{ $t('checkout.form_title') }}</h2>
     
     <address-input 
       v-model="address"
@@ -19,8 +19,8 @@
     <div v-if="errorMessage" class="error-message text-error mt-4 mb-4" data-test="checkout-form">
       {{ errorMessage }}
       <ul v-if="errors.address || errors.paymentMethod">
-        <li v-if="errors.address">Address is required</li>
-        <li v-if="errors.paymentMethod">Payment method is required</li>
+        <li v-if="errors.address">{{ $t('checkout.address_required') }}</li>
+        <li v-if="errors.paymentMethod">{{ $t('checkout.payment_method_required') }}</li>
       </ul>
     </div>
 
@@ -32,12 +32,12 @@
       class="mt-4"
       data-test="submit-order"
     >
-      Place Order
+      {{ $t('checkout.place_order') }}
     </v-btn>
 
     <div v-if="showConfirmation" class="mt-4">
-      <h3>Order Confirmed</h3>
-      <p>Your order has been placed successfully!</p>
+      <h3>{{ $t('checkout.order_confirmed') }}</h3>
+      <p>{{ $t('checkout.success_message') }}</p>
     </div>
   </v-form>
 </template>
@@ -45,11 +45,13 @@
 <script setup>
 import { ref } from 'vue'
 import { router } from '@inertiajs/vue3'
+import { useI18n } from 'vue-i18n'
 import AddressInput from './AddressInput.vue'
 import PaymentMethodInput from './PaymentMethodInput.vue'
 import { useCartStore } from '@/stores/cart'
 import { useOrderApi } from '@/services/order'
 
+const { t } = useI18n()
 const address = ref('')
 const paymentMethod = ref('')
 const isSubmitting = ref(false)
@@ -57,7 +59,7 @@ const errors = ref({})
 const errorMessage = ref('')
 const showConfirmation = ref(false)
 
-const required = (value) => !!value || 'This field is required'
+const required = (value) => !!value || t('checkout.validation.required')
 
 const cartStore = useCartStore()
 const orderApi = useOrderApi()
@@ -85,7 +87,7 @@ const handleSubmit = async () => {
     cartStore.clearCart()
     showConfirmation.value = true
   } catch (error) {
-    errorMessage.value = 'Error submitting order'
+    errorMessage.value = t('checkout.error_submitting')
     errors.value = {
       address: error.response?.data?.errors?.address || [],
       paymentMethod: error.response?.data?.errors?.paymentMethod || []

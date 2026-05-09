@@ -1,5 +1,25 @@
 import { mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 import ProductList from '../ProductList.vue'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'pt-BR',
+  messages: {
+    'pt-BR': {
+      menu: {
+        search_placeholder: 'Buscar produtos',
+        no_products: 'Nenhum produto encontrado para sua busca.'
+      }
+    },
+    en: {
+      menu: {
+        search_placeholder: 'Search products',
+        no_products: 'No products found matching your search.'
+      }
+    }
+  }
+})
 
 // Stub Vuetify and child components
 const vuetifyStubs = {
@@ -13,8 +33,8 @@ const vuetifyStubs = {
     template: '<div><slot/></div>'
   },
   'v-text-field': {
-    template: '<input :value="modelValue" @input="$emit(\'update:modelValue\', $event.target.value)" data-test="product-search" />',
-    props: ['modelValue'],
+    template: '<input :value="modelValue" :placeholder="label" @input="$emit(\'update:modelValue\', $event.target.value)" data-test="product-search" />',
+    props: ['modelValue', 'label'],
     emits: ['update:modelValue']
   },
   'ProductCard': {
@@ -35,6 +55,7 @@ describe('ProductList', () => {
     const wrapper = mount(ProductList, {
       props: { products },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -42,10 +63,54 @@ describe('ProductList', () => {
     expect(wrapper.findAll('[data-test="product-card"]')).toHaveLength(products.length)
   })
 
+  it('renders with correct pt-BR translations', () => {
+    i18n.global.locale.value = 'pt-BR'
+    const wrapper = mount(ProductList, {
+      props: { products },
+      global: {
+        plugins: [i18n],
+        stubs: vuetifyStubs
+      }
+    })
+
+    expect(wrapper.find('[data-test="product-search"]').attributes('placeholder')).toBe('Buscar produtos')
+  })
+
+  it('renders with correct en translations', async () => {
+    i18n.global.locale.value = 'en'
+    const wrapper = mount(ProductList, {
+      props: { products },
+      global: {
+        plugins: [i18n],
+        stubs: vuetifyStubs
+      }
+    })
+
+    expect(wrapper.find('[data-test="product-search"]').attributes('placeholder')).toBe('Search products')
+  })
+
+  it('shows empty state message in correct language', async () => {
+    i18n.global.locale.value = 'pt-BR'
+    const wrapper = mount(ProductList, {
+      props: { products: [] },
+      global: {
+        plugins: [i18n],
+        stubs: vuetifyStubs
+      }
+    })
+
+    expect(wrapper.text()).toContain('Nenhum produto encontrado para sua busca.')
+
+    i18n.global.locale.value = 'en'
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('No products found matching your search.')
+  })
+
   it('passes correct product props to each card', () => {
     const wrapper = mount(ProductList, {
       props: { products },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -60,6 +125,7 @@ describe('ProductList', () => {
     const wrapper = mount(ProductList, {
       props: { products },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -74,6 +140,7 @@ describe('ProductList', () => {
     const wrapper = mount(ProductList, {
       props: { products },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -99,6 +166,7 @@ describe('ProductList', () => {
     const wrapper = mount(ProductList, {
       props: { products },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -117,6 +185,7 @@ describe('ProductList', () => {
     const wrapper = mount(ProductList, {
       props: { products },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })

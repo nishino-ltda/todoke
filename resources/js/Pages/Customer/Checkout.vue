@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
         <div data-test="customer-checkout">
-            <h1>Customer Checkout</h1>
-            <p>Complete your order.</p>
+            <h1>{{ $t('checkout.title') }}</h1>
+            <p>{{ $t('checkout.subtitle') }}</p>
         </div>
     </AuthenticatedLayout>
 </template>

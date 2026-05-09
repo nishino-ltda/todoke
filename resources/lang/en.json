@@ -97,5 +97,183 @@
                 "description": "Comprehensive reputation system ensures quality service. Offline functionality for low-connectivity areas."
             }
         }
+    },
+    "menu": {
+        "title": "Customer Menu",
+        "subtitle": "Browse available products",
+        "search_placeholder": "Search products",
+        "no_products": "No products found matching your search.",
+        "categories": "Categories"
+    },
+    "cart": {
+        "title": "Your Cart",
+        "empty": "Your cart is empty.",
+        "add_to_cart": "Add to Cart",
+        "remove": "Remove",
+        "total": "Total",
+        "checkout": "Checkout",
+        "close": "Close",
+        "quantity": "Quantity",
+        "addons": "Addons",
+        "item_added": "Item added to cart",
+        "no_description": "No description available"
+    },
+    "checkout": {
+        "title": "Customer Checkout",
+        "subtitle": "Complete your order",
+        "form_title": "Checkout",
+        "place_order": "Place Order",
+        "order_confirmed": "Order Confirmed",
+        "success_message": "Your order has been placed successfully!",
+        "error_submitting": "Error submitting order",
+        "address_required": "Address is required",
+        "payment_method_required": "Payment method is required",
+        "validation": {
+            "required": "This field is required"
+        }
+    },
+    "partner": {
+        "dashboard": {
+            "title": "Partner Dashboard",
+            "recent_orders": "Recent Orders",
+            "metrics": {
+                "new_orders": "New Orders",
+                "preparing": "In Preparation",
+                "today_revenue": "Total Today",
+                "completed": "Completed"
+            }
+        },
+        "orders": {
+            "title": "Orders Management",
+            "id": "Order #",
+            "customer": "Customer",
+            "total": "Total",
+            "status": "Status",
+            "refresh": "Refresh",
+            "view": "View",
+            "details": "Order Details",
+            "customer_info": "Customer Information",
+            "summary": "Order Summary",
+            "items": "Order Items",
+            "subtotal": "Subtotal",
+            "delivery_fee": "Delivery Fee",
+            "payment_method": "Payment Method",
+            "back_to_orders": "Back to Orders",
+            "accepted": "Order #{id} accepted",
+            "failed_load": "Failed to load dashboard data",
+            "failed_accept": "Failed to accept order"
+        },
+        "products": {
+            "title": "Products Management",
+            "add": "Add Product",
+            "edit": "Edit Product",
+            "new": "New Product",
+            "name": "Product Name",
+            "price": "Price",
+            "category": "Category",
+            "description": "Description",
+            "image_url": "Image URL",
+            "select_addons": "Select Addons",
+            "available": "Available",
+            "empty": "No products found.",
+            "confirm_delete": "Are you sure you want to delete {name}?",
+            "success": {
+                "created": "Product created successfully",
+                "updated": "Product updated successfully",
+                "deleted": "Product deleted successfully",
+                "availability": "{name} is now {status}"
+            },
+            "error": {
+                "load": "Failed to load products",
+                "save": "Failed to save product",
+                "delete": "Failed to delete product"
+            }
+        },
+        "addons": {
+            "title": "Addons Management",
+            "add": "Add Addon",
+            "edit": "Edit Addon",
+            "new": "New Addon",
+            "name": "Addon Name",
+            "price": "Additional Price",
+            "empty": "No addons found.",
+            "success": {
+                "created": "Addon created successfully",
+                "updated": "Addon updated successfully",
+                "deleted": "Addon deleted successfully"
+            },
+            "error": {
+                "load": "Failed to load addons",
+                "save": "Failed to save addon",
+                "delete": "Failed to delete addon"
+            }
+        },
+        "regions": {
+            "title": "Regions Management",
+            "add": "Add Region",
+            "edit": "Edit Region",
+            "new": "New Region",
+            "name": "Region Name",
+            "coordinates": "Coordinates (JSON Boundary)",
+            "active": "Active",
+            "inactive": "Inactive",
+            "nodes_count": "Nodes Count",
+            "empty": "No regions found.",
+            "success": {
+                "created": "Region created successfully",
+                "updated": "Region updated successfully",
+                "deleted": "Region deleted successfully"
+            },
+            "error": {
+                "load": "Failed to load regions",
+                "save": "Failed to save region",
+                "delete": "Failed to delete region"
+            }
+        },
+        "nodes": {
+            "title": "Nodes Management",
+            "add": "Add Node",
+            "edit": "Edit Node",
+            "new": "Novo Nó",
+            "name": "Node Name",
+            "type": "Node Type",
+            "region": "Region",
+            "address": "Address",
+            "empty": "No nodes found.",
+            "types": {
+                "hub": "Hub",
+                "store": "Store",
+                "locker": "Locker"
+            },
+            "success": {
+                "created": "Node created successfully",
+                "updated": "Node updated successfully",
+                "deleted": "Node deleted successfully"
+            },
+            "error": {
+                "load": "Failed to load nodes",
+                "save": "Failed to save node",
+                "delete": "Failed to delete node"
+            }
+        },
+        "actions": {
+            "save": "Save",
+            "update": "Update",
+            "create": "Create",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "confirm_delete": "Confirm Delete",
+            "close": "Close",
+            "accept": "Accept Order"
+        },
+        "status": {
+            "pending": "Pending",
+            "preparing": "Preparing",
+            "ready": "Ready",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled",
+            "available": "available",
+            "unavailable": "unavailable"
+        }
     }
 }

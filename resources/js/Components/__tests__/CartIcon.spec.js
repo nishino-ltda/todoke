@@ -1,14 +1,41 @@
 import { mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 import { createPinia } from 'pinia'
 import { useCartStore } from '@/stores/cart'
 import CartIcon from '../CartIcon.vue'
 import { vi } from 'vitest'
 import { router } from '@inertiajs/vue3'
+import { nextTick } from 'vue'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'pt-BR',
+  messages: {
+    'pt-BR': {
+      cart: {
+        title: 'Seu Carrinho',
+        empty: 'Seu carrinho está vazio.',
+        total: 'Total',
+        checkout: 'Finalizar Compra',
+        close: 'Fechar'
+      }
+    },
+    en: {
+      cart: {
+        title: 'Your Cart',
+        empty: 'Your cart is empty.',
+        total: 'Total',
+        checkout: 'Checkout',
+        close: 'Close'
+      }
+    }
+  }
+})
 
 // Stub Vuetify components
 const vuetifyStubs = {
   'v-btn': {
-    template: '<button @click="$emit(\'click\')"><slot/></button>'
+    template: '<button class="v-btn"><slot/></button>'
   },
   'v-badge': {
     template: `
@@ -27,10 +54,10 @@ const vuetifyStubs = {
     template: '<div><slot/></div>'
   },
   'v-card-title': {
-    template: '<div><slot/></div>'
+    template: '<div class="v-card-title"><slot/></div>'
   },
   'v-card-text': {
-    template: '<div><slot/></div>'
+    template: '<div class="v-card-text"><slot/></div>'
   },
   'v-list-item': {
     template: '<div><slot/></div>'
@@ -57,18 +84,31 @@ const vuetifyStubs = {
     template: '<div><slot/></div>'
   },
   'v-card-actions': {
-    template: '<div><slot/></div>'
+    template: '<div class="v-card-actions"><slot/></div>'
   },
   'v-icon': {
     template: '<div><slot/></div>'
   }
 }
 
+// Mock localStorage
+const localStorageMock = (() => {
+  let store = {}
+  return {
+    getItem: vi.fn(key => store[key] || null),
+    setItem: vi.fn((key, value) => { store[key] = value.toString() }),
+    clear: vi.fn(() => { store = {} }),
+    removeItem: vi.fn(key => { delete store[key] })
+  }
+})()
+vi.stubGlobal('localStorage', localStorageMock)
+
 describe('CartIcon', () => {
   let wrapper
   let cartStore
 
   beforeEach(() => {
+    localStorage.clear()
     const pinia = createPinia()
     cartStore = useCartStore(pinia)
     
@@ -77,7 +117,7 @@ describe('CartIcon', () => {
     
     wrapper = mount(CartIcon, {
       global: {
-        plugins: [pinia],
+        plugins: [pinia, i18n],
         stubs: vuetifyStubs
       }
     })
@@ -119,5 +159,20 @@ describe('CartIcon', () => {
     
     await wrapper.find('[data-test="checkout-button"]').trigger('click')
     expect(router.visit).toHaveBeenCalledWith('/checkout')
+  })
+
+  it('renders text in correct language', async () => {
+    i18n.global.locale.value = 'pt-BR'
+    await wrapper.find('[data-test="cart-icon"] button').trigger('click') // Open dialog
+    
+    expect(wrapper.find('.v-card-title').text()).toBe('Seu Carrinho')
+    expect(wrapper.find('.v-card-text').text()).toBe('Seu carrinho está vazio.')
+    expect(wrapper.find('[data-test="checkout-button"]').text()).toBe('Finalizar Compra')
+
+    i18n.global.locale.value = 'en'
+    await nextTick()
+    expect(wrapper.find('.v-card-title').text()).toBe('Your Cart')
+    expect(wrapper.find('.v-card-text').text()).toBe('Your cart is empty.')
+    expect(wrapper.find('[data-test="checkout-button"]').text()).toBe('Checkout')
   })
 })

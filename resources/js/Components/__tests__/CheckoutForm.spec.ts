@@ -1,13 +1,50 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest'
 import { useRouter } from 'vue-router'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { setActivePinia, createPinia } from 'pinia'
 import CheckoutForm from '@/Components/CheckoutForm.vue'
+import { createI18n } from 'vue-i18n'
 import type { CheckoutFormType } from '../CheckoutForm.vue'
 import useCartStore from '@/stores/cart'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'pt-BR',
+  messages: {
+    'pt-BR': {
+      checkout: {
+        form_title: 'Checkout',
+        address_required: 'Endereço é obrigatório',
+        payment_method_required: 'Forma de pagamento é obrigatória',
+        place_order: 'Fazer Pedido',
+        order_confirmed: 'Pedido Confirmado',
+        success_message: 'Seu pedido foi realizado com sucesso!',
+        error_submitting: 'Erro ao enviar pedido',
+        validation: {
+          required: 'Este campo é obrigatório'
+        }
+      }
+    },
+    en: {
+      checkout: {
+        form_title: 'Checkout',
+        address_required: 'Address is required',
+        payment_method_required: 'Payment method is required',
+        place_order: 'Place Order',
+        order_confirmed: 'Order Confirmed',
+        success_message: 'Your order has been placed successfully!',
+        error_submitting: 'Error submitting order',
+        validation: {
+          required: 'This field is required'
+        }
+      }
+    }
+  }
+})
 
 const vuetify = createVuetify({ components, directives })
 
@@ -27,7 +64,7 @@ function mountWithVuetify(component: CheckoutFormType, options: any = {}) {
   return mount(component, {
     ...options,
     global: {
-      plugins: [vuetify, createPinia()],
+      plugins: [vuetify, createPinia(), i18n],
       stubs: {
         'v-dialog': {
           template: '<div v-if="modelValue"><slot /></div>',
@@ -264,8 +301,61 @@ describe('CheckoutForm', () => {
     await wrapper.vm.$nextTick()
     
     // Verify error handling
-    expect(wrapper.text()).toContain('Error submitting order')
+    expect(wrapper.text()).toContain('Erro ao enviar pedido')
     expect(cartStore.clearCart).not.toHaveBeenCalled()
+  })
+
+  it('renders text in correct language', async () => {
+    i18n.global.locale.value = 'pt-BR'
+    await wrapper.vm.$nextTick()
+    expect(wrapper.find('h2').text()).toBe('Checkout')
+    expect(wrapper.find('button[type="submit"]').text()).toBe('Fazer Pedido')
+
+    i18n.global.locale.value = 'en'
+    await nextTick()
+    expect(wrapper.find('button[type="submit"]').text()).toBe('Place Order')
+  })
+
+  it('shows validation errors in correct language', async () => {
+    mockCreateOrder.mockRejectedValueOnce({
+      response: {
+        data: {
+          errors: {
+            address: ['Endereço é obrigatório'],
+            paymentMethod: ['Forma de pagamento é obrigatória']
+          }
+        }
+      }
+    })
+
+    i18n.global.locale.value = 'pt-BR'
+    await wrapper.find('form').trigger('submit.prevent')
+    await vi.runAllTimersAsync()
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toContain('Erro ao enviar pedido')
+    expect(wrapper.text()).toContain('Endereço é obrigatório')
+    expect(wrapper.text()).toContain('Forma de pagamento é obrigatória')
+
+    mockCreateOrder.mockRejectedValueOnce({
+      response: {
+        data: {
+          errors: {
+            address: ['Address is required'],
+            paymentMethod: ['Payment method is required']
+          }
+        }
+      }
+    })
+
+    i18n.global.locale.value = 'en'
+    await wrapper.find('form').trigger('submit.prevent')
+    await vi.runAllTimersAsync()
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.text()).toContain('Error submitting order')
+    expect(wrapper.text()).toContain('Address is required')
+    expect(wrapper.text()).toContain('Payment method is required')
   })
 
   it('shows validation errors for empty fields', async () => {

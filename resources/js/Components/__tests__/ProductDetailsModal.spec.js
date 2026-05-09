@@ -1,9 +1,31 @@
 import { mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 import ProductDetailsModal from '../ProductDetailsModal.vue'
 import { useCartStore } from '../../stores/cart'
 import { createPinia, setActivePinia } from 'pinia'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { nextTick } from 'vue'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'pt-BR',
+  messages: {
+    'pt-BR': {
+      cart: {
+        add_to_cart: 'Adicionar ao Carrinho',
+        addons: 'Adicionais',
+        no_description: 'Nenhuma descrição disponível'
+      }
+    },
+    en: {
+      cart: {
+        add_to_cart: 'Add to Cart',
+        addons: 'Addons',
+        no_description: 'No description available'
+      }
+    }
+  }
+})
 
 // Mock Vuetify components
 const vuetifyComponents = {
@@ -39,31 +61,46 @@ const vuetifyComponents = {
   }
 }
 
+// Mock localStorage
+const localStorageMock = (() => {
+  let store = {}
+  return {
+    getItem: vi.fn(key => store[key] || null),
+    setItem: vi.fn((key, value) => { store[key] = value.toString() }),
+    clear: vi.fn(() => { store = {} }),
+    removeItem: vi.fn(key => { delete store[key] })
+  }
+})()
+vi.stubGlobal('localStorage', localStorageMock)
+
 describe('ProductDetailsModal', () => {
   let cartStore
+  let product
 
   beforeEach(() => {
+    localStorage.clear()
     setActivePinia(createPinia())
     cartStore = useCartStore()
     cartStore.addItem = vi.fn()
+    
+    product = {
+      id: 1,
+      name: 'Test Product',
+      price: 10.99,
+      description: 'Test description',
+      image: '/test-image.jpg',
+      addons: [
+        { id: 1, name: 'Extra Cheese', price: 1.50 },
+        { id: 2, name: 'Spicy Sauce', price: 0.75 }
+      ]
+    }
   })
-
-  const product = {
-    id: 1,
-    name: 'Test Product',
-    price: 10.99,
-    description: 'Test description',
-    image: '/test-image.jpg',
-    addons: [
-      { id: 1, name: 'Extra Cheese', price: 1.50 },
-      { id: 2, name: 'Spicy Sauce', price: 0.75 }
-    ]
-  }
 
   it('renders product details correctly', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -79,6 +116,7 @@ describe('ProductDetailsModal', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product: noImageProduct },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -90,6 +128,7 @@ describe('ProductDetailsModal', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -99,17 +138,22 @@ describe('ProductDetailsModal', () => {
   })
 
   it('adds correct quantity to cart', async () => {
+    // Reset the mock specifically for this test
+    cartStore.addItem.mockClear()
+    
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
 
     // Increase quantity to 3
-    const buttons = wrapper.findAll('.quantity-controls .v-btn')
-    await buttons[1].trigger('click') // Increase
-    await buttons[1].trigger('click') // Increase
+    const buttons = wrapper.findAll('.v-btn')
+    // buttons[0] is close, buttons[1] is minus, buttons[2] is plus
+    await buttons[2].trigger('click') // Increase to 2
+    await buttons[2].trigger('click') // Increase to 3
 
     await wrapper.find('[data-test="add-to-cart"]').trigger('click')
     expect(cartStore.addItem).toHaveBeenCalledTimes(3)
@@ -120,6 +164,7 @@ describe('ProductDetailsModal', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -133,6 +178,7 @@ describe('ProductDetailsModal', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -146,6 +192,7 @@ describe('ProductDetailsModal', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product: noAddonsProduct },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -157,6 +204,7 @@ describe('ProductDetailsModal', () => {
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyComponents
       }
     })
@@ -176,6 +224,43 @@ describe('ProductDetailsModal', () => {
     // (12.49) * 2 = 24.98
     expect(wrapper.vm.totalPrice).toBe(24.98)
     expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('$24.98')
+  })
+
+  it('renders text in correct language', async () => {
+    i18n.global.locale.value = 'pt-BR'
+    const wrapper = mount(ProductDetailsModal, {
+      props: { product },
+      global: {
+        plugins: [i18n],
+        stubs: vuetifyComponents
+      }
+    })
+
+    expect(wrapper.find('.addons-section h3').text()).toBe('Adicionais')
+    expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('Adicionar ao Carrinho')
+
+    i18n.global.locale.value = 'en'
+    await nextTick()
+    expect(wrapper.find('.addons-section h3').text()).toBe('Addons')
+    expect(wrapper.find('[data-test="add-to-cart"]').text()).toContain('Add to Cart')
+  })
+
+  it('shows no description placeholder in correct language', async () => {
+    const noDescProduct = { ...product, description: '' }
+    i18n.global.locale.value = 'pt-BR'
+    const wrapper = mount(ProductDetailsModal, {
+      props: { product: noDescProduct },
+      global: {
+        plugins: [i18n],
+        stubs: vuetifyComponents
+      }
+    })
+
+    expect(wrapper.find('.v-card-text.text-body-1').text()).toBe('Nenhuma descrição disponível')
+
+    i18n.global.locale.value = 'en'
+    await nextTick()
+    expect(wrapper.find('.v-card-text.text-body-1').text()).toBe('No description available')
   })
 })
 

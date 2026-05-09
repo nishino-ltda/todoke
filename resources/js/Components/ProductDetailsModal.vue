@@ -26,11 +26,11 @@
           ${{ product.price.toFixed(2) }}
         </v-card-subtitle>
         <v-card-text class="text-body-1">
-          {{ product.description || 'No description available' }}
+          {{ product.description || $t('cart.no_description') }}
         </v-card-text>
 
         <v-card-text v-if="product.addons && product.addons.length" class="addons-section">
-          <h3>Addons</h3>
+          <h3>{{ $t('cart.addons') }}</h3>
           <div v-for="addon in product.addons" :key="addon.id" class="addon-item">
             <input 
               type="checkbox" 
@@ -39,7 +39,7 @@
               :value="addon.id"
             >
             <label :for="'addon-' + addon.id">
-              {{ addon.name }} (+ \${{ addon.price.toFixed(2) }})
+              {{ addon.name }} (+ ${{ addon.price.toFixed(2) }})
             </label>
           </div>
         </v-card-text>
@@ -61,7 +61,7 @@
             block
             data-test="add-to-cart"
           >
-            Add to Cart (\${{ totalPrice.toFixed(2) }})
+            {{ $t('cart.add_to_cart') }} (${{ totalPrice.toFixed(2) }})
           </v-btn>
         </v-card-actions>
       </v-card-text>

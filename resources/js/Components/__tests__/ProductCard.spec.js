@@ -1,6 +1,24 @@
 import { mount } from '@vue/test-utils'
+import { createI18n } from 'vue-i18n'
 import ProductCard from '../ProductCard.vue'
 import { nextTick } from 'vue'
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'pt-BR',
+  messages: {
+    'pt-BR': {
+      cart: {
+        add_to_cart: 'Adicionar ao Carrinho'
+      }
+    },
+    en: {
+      cart: {
+        add_to_cart: 'Add to Cart'
+      }
+    }
+  }
+})
 
 // Stub Vuetify components
 const vuetifyStubs = {
@@ -18,6 +36,12 @@ const vuetifyStubs = {
   },
   'v-card-text': {
     template: '<div data-test="product-description"><slot/></div>'
+  },
+  'v-card-actions': {
+    template: '<div class="v-card-actions"><slot/></div>'
+  },
+  'v-btn': {
+    template: '<button @click="$emit(\'click\')" data-test="add-to-cart-button"><slot/></button>'
   }
 }
 
@@ -34,6 +58,7 @@ describe('ProductCard', () => {
     const wrapper = mount(ProductCard, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -44,10 +69,28 @@ describe('ProductCard', () => {
     expect(wrapper.find('[data-test="product-image"]').attributes('src')).toBe(product.image)
   })
 
+  it('renders button text in correct language', async () => {
+    i18n.global.locale.value = 'pt-BR'
+    const wrapper = mount(ProductCard, {
+      props: { product },
+      global: {
+        plugins: [i18n],
+        stubs: vuetifyStubs
+      }
+    })
+
+    expect(wrapper.find('[data-test="add-to-cart-button"]').text()).toBe('Adicionar ao Carrinho')
+
+    i18n.global.locale.value = 'en'
+    await nextTick()
+    expect(wrapper.find('[data-test="add-to-cart-button"]').text()).toBe('Add to Cart')
+  })
+
   it('emits product-clicked event when card is clicked', async () => {
     const wrapper = mount(ProductCard, {
       props: { product },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })
@@ -67,6 +110,7 @@ describe('ProductCard', () => {
     const wrapper = mount(ProductCard, {
       props: { product: longDescProduct },
       global: {
+        plugins: [i18n],
         stubs: vuetifyStubs
       }
     })

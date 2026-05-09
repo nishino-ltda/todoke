@@ -2,14 +2,14 @@
   <PartnerLayout>
     <div class="addons-index">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">Addons Management</h1>
+        <h1 class="text-h4 font-weight-bold">{{ t('partner.addons.title') }}</h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
           @click="openCreateModal"
           data-cy="create-addon-btn"
         >
-          Add Addon
+          {{ t('partner.addons.add') }}
         </v-btn>
       </div>
 
@@ -20,7 +20,7 @@
         data-cy="addons-table"
       >
         <template #item.price="{ item }">
-          <span class="font-weight-bold">+${{ item.price.toFixed(2) }}</span>
+          <span class="font-weight-bold">+{{ t('common.currency_symbol', { value: item.price.toFixed(2) }, '$' + item.price.toFixed(2)) }}</span>
         </template>
 
         <template #item.actions="{ item }">
@@ -44,7 +44,7 @@
       <!-- Addon Form Modal -->
       <AppModal
         v-model="showFormModal"
-        :title="isEditing ? 'Edit Addon' : 'Add New Addon'"
+        :title="isEditing ? t('partner.addons.edit') : t('partner.addons.new')"
         maxWidth="500"
       >
         <v-form ref="addonForm" @submit.prevent="saveAddon">
@@ -52,16 +52,16 @@
             <v-col cols="12">
               <v-text-field
                 v-model="form.name"
-                label="Addon Name"
+                :label="t('partner.addons.name')"
                 required
-                :rules="[v => !!v || 'Name is required']"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.addons.name') })]"
                 data-cy="addon-name-input"
               ></v-text-field>
             </v-col>
             <v-col cols="12">
               <v-text-field
                 v-model.number="form.price"
-                label="Additional Price"
+                :label="t('partner.addons.price')"
                 type="number"
                 prefix="$"
                 required
@@ -72,19 +72,19 @@
           </v-row>
         </v-form>
         <template #actions>
-          <v-btn variant="text" @click="showFormModal = false">Cancel</v-btn>
+          <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
           <v-btn color="primary" @click="saveAddon" :loading="saving" data-cy="save-addon-btn">
-            {{ isEditing ? 'Update' : 'Create' }}
+            {{ isEditing ? t('partner.actions.update') : t('partner.actions.create') }}
           </v-btn>
         </template>
       </AppModal>
 
       <!-- Delete Confirmation -->
-      <AppModal v-model="showDeleteModal" title="Confirm Delete" maxWidth="400">
-        <p>Are you sure you want to delete <strong>{{ selectedAddon?.name }}</strong>?</p>
+      <AppModal v-model="showDeleteModal" :title="t('partner.actions.confirm_delete')" maxWidth="400">
+        <p>{{ t('partner.products.confirm_delete', { name: selectedAddon?.name }) }}</p>
         <template #actions>
-          <v-btn variant="text" @click="showDeleteModal = false">Cancel</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">Delete</v-btn>
+          <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
         </template>
       </AppModal>
     </div>
@@ -92,13 +92,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
@@ -109,11 +111,11 @@ const isEditing = ref(false);
 const selectedAddon = ref(null);
 const addonForm = ref(null);
 
-const headers = [
-  { title: 'Name', key: 'name' },
-  { title: 'Price', key: 'price' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-];
+const headers = computed(() => [
+  { title: t('partner.addons.name'), key: 'name' },
+  { title: t('partner.addons.price'), key: 'price' },
+  { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
 
 const form = ref({
   name: '',
@@ -126,7 +128,7 @@ const fetchAddons = async () => {
     const response = await partnerService.getAddons();
     addons.value = response.data;
   } catch (err) {
-    notifications.error('Failed to load addons');
+    notifications.error(t('partner.addons.error.load'));
   } finally {
     loading.value = false;
   }
@@ -153,15 +155,15 @@ const saveAddon = async () => {
   try {
     if (isEditing.value) {
       await partnerService.updateAddon(selectedAddon.value.id, form.value);
-      notifications.success('Addon updated successfully');
+      notifications.success(t('partner.addons.success.updated'));
     } else {
       await partnerService.createAddon(form.value);
-      notifications.success('Addon created successfully');
+      notifications.success(t('partner.addons.success.created'));
     }
     showFormModal.value = false;
     fetchAddons();
   } catch (err) {
-    notifications.error('Failed to save addon');
+    notifications.error(t('partner.addons.error.save'));
   } finally {
     saving.value = false;
   }
@@ -176,11 +178,11 @@ const doDelete = async () => {
   saving.value = true;
   try {
     await partnerService.deleteAddon(selectedAddon.value.id);
-    notifications.success('Addon deleted successfully');
+    notifications.success(t('partner.addons.success.deleted'));
     showDeleteModal.value = false;
     fetchAddons();
   } catch (err) {
-    notifications.error('Failed to delete addon');
+    notifications.error(t('partner.addons.error.delete'));
   } finally {
     saving.value = false;
   }

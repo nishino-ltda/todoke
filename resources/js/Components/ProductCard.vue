@@ -23,7 +23,7 @@
         color="primary"
         data-test="add-to-cart-button"
       >
-        Add to Cart
+        {{ $t('cart.add_to_cart') }}
       </v-btn>
     </v-card-actions>
   </v-card>
