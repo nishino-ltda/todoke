@@ -7,9 +7,9 @@ use App\Models\User;
 use App\Models\Delivery;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Feature\Delivery\DeliveryBaseTest;
+use Tests\Feature\Delivery\DeliveryBase;
 
-class DeliveryCompletionTest extends DeliveryBaseTest
+class DeliveryCompletionTest extends DeliveryBase
 {
     protected function setUp(): void
     {

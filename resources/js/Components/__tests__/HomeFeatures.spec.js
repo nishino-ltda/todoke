@@ -1,54 +1,85 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import HomeFeatures from '../HomeFeatures.vue'
+import { createPinia, setActivePinia } from 'pinia'
+
+// Mock vue-i18n
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({
+    t: (key) => {
+      const translations = {
+        'home.features.title': 'Why Choose TODOKE?',
+        'home.features.hybrid.title': 'Hybrid Delivery',
+        'home.features.hybrid.subtitle': 'Fast and flexible',
+        'home.features.pricing.title': 'Community Pricing',
+        'home.features.pricing.subtitle': 'Fair and transparent',
+        'home.features.reliable.title': 'Reliable Service',
+        'home.features.reliable.subtitle': 'Consistent and secure'
+      }
+      return translations[key] || key
+    }
+  })
+}))
+
+// Mock log store
+vi.mock('@/stores/log', () => ({
+  useLogStore: () => ({
+    log: vi.fn()
+  })
+}))
 
 // Mock Vuetify components
 const vuetifyComponents = {
-  'v-container': {
-    template: '<div class="v-container" :class="className"><slot /></div>',
-    props: ['className']
+  VContainer: {
+    template: '<div class="v-container"><slot /></div>'
   },
-  'v-row': {
+  VRow: {
     template: '<div class="v-row"><slot /></div>'
   },
-  'v-col': {
+  VCol: {
     template: '<div class="v-col" :cols="cols" :md="md"><slot /></div>',
     props: ['cols', 'md']
   },
-  'v-card': {
-    template: '<div class="v-card" :height="height"><slot /></div>',
-    props: ['height']
+  VCard: {
+    template: '<div class="v-card"><slot /></div>'
   },
-  'v-card-item': {
+  VCardItem: {
     template: '<div class="v-card-item"><slot /></div>'
   },
-  'v-icon': {
-    template: '<div class="v-icon" :size="size" :color="color"><slot /></div>',
-    props: ['size', 'color']
+  VIcon: {
+    template: '<div class="v-icon"><slot /></div>'
   },
-  'v-card-title': {
+  VCardTitle: {
     template: '<div class="v-card-title"><slot /></div>'
   },
-  'v-card-subtitle': {
+  VCardSubtitle: {
     template: '<div class="v-card-subtitle"><slot /></div>'
   },
-  'v-card-text': {
+  VCardText: {
     template: '<div class="v-card-text"><slot /></div>'
   }
 }
 
 describe('HomeFeatures', () => {
-  const wrapper = mount(HomeFeatures, {
-    global: {
-      stubs: vuetifyComponents
-    }
+  beforeEach(() => {
+    setActivePinia(createPinia())
   })
 
   it('renders correctly', () => {
+    const wrapper = mount(HomeFeatures, {
+      global: {
+        stubs: vuetifyComponents
+      }
+    })
     expect(wrapper.exists()).toBe(true)
   })
 
   it('displays feature cards', () => {
+    const wrapper = mount(HomeFeatures, {
+      global: {
+        stubs: vuetifyComponents
+      }
+    })
     const cards = wrapper.findAll('.v-card')
     expect(cards.length).toBe(3)
     
@@ -59,10 +90,20 @@ describe('HomeFeatures', () => {
   })
 
   it('displays the correct section title', () => {
+    const wrapper = mount(HomeFeatures, {
+      global: {
+        stubs: vuetifyComponents
+      }
+    })
     expect(wrapper.text()).toContain('Why Choose TODOKE?')
   })
 
   it('displays the correct feature titles', () => {
+    const wrapper = mount(HomeFeatures, {
+      global: {
+        stubs: vuetifyComponents
+      }
+    })
     const titles = wrapper.findAll('.v-card-title')
     expect(titles.length).toBe(3)
     expect(titles[0].text()).toBe('Hybrid Delivery')
@@ -71,6 +112,11 @@ describe('HomeFeatures', () => {
   })
 
   it('displays the correct feature subtitles', () => {
+    const wrapper = mount(HomeFeatures, {
+      global: {
+        stubs: vuetifyComponents
+      }
+    })
     const subtitles = wrapper.findAll('.v-card-subtitle')
     expect(subtitles.length).toBe(3)
     expect(subtitles[0].text()).toBe('Fast and flexible')
@@ -78,3 +124,4 @@ describe('HomeFeatures', () => {
     expect(subtitles[2].text()).toBe('Consistent and secure')
   })
 })
+

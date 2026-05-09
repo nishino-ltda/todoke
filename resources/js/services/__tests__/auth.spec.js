@@ -1,7 +1,7 @@
 import authService from '../auth'
 import api from '../api'
-import { useAuthStore } from '../stores/auth.js'
-import { useLogStore } from '../stores/log.js'
+import { useAuthStore } from '../../stores/auth.js'
+import { useLogStore } from '../../stores/log.js'
 import { vi } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 
@@ -32,30 +32,35 @@ describe('Auth Service', () => {
 
   describe('login', () => {
     it('should call API with credentials', async () => {
-      api.post = vi.fn().mockResolvedValue(mockResponse)
+      api.post = vi.fn()
+        .mockResolvedValueOnce(mockResponse)
+        .mockResolvedValueOnce({})
       const credentials = { email: 'test@example.com', password: 'password' }
       
       await authService.login(credentials)
       
-      expect(api.post).toHaveBeenCalledWith('/login', credentials)
+      expect(api.post).toHaveBeenCalledWith('/auth/login', credentials)
     })
 
     it('should set token and user on success', async () => {
-      api.post = vi.fn().mockResolvedValue(mockResponse)
+      api.post = vi.fn()
+        .mockResolvedValueOnce(mockResponse)
+        .mockResolvedValueOnce({})
+      const credentials = { email: 'test@example.com', password: 'password' }
       
-      await authService.login({})
+      await authService.login(credentials)
       
       expect(authStore.setAuth).toHaveBeenCalledWith(mockResponse.data)
-      expect(logStore.log).toHaveBeenCalledWith('🔐 Attempting login')
-      expect(logStore.log).toHaveBeenCalledWith('✅ Login successful')
+      expect(logStore.log).toHaveBeenCalledWith(`🔐 Login attempt for ${credentials.email}`)
+      expect(logStore.log).toHaveBeenCalledWith(`✅ Login successful for ${credentials.email}`)
     })
 
     it('should throw error on failure', async () => {
       const error = new Error('Login failed')
       api.post = vi.fn().mockRejectedValue(error)
       
-      await expect(authService.login({})).rejects.toThrow('Login failed. Please check your credentials.')
-      expect(logStore.log).toHaveBeenCalledWith('❌ Login failed', error)
+      await expect(authService.login({})).rejects.toThrow('Invalid credentials')
+      expect(logStore.log).toHaveBeenCalledWith('❌ Login failed for undefined: Invalid credentials', 'error')
     })
   })
 
@@ -66,7 +71,7 @@ describe('Auth Service', () => {
       
       await authService.register(userData)
       
-      expect(api.post).toHaveBeenCalledWith('/register', userData)
+      expect(api.post).toHaveBeenCalledWith('/auth/register', userData)
     })
 
     it('should set token and user on success', async () => {
@@ -94,7 +99,7 @@ describe('Auth Service', () => {
       
       await authService.logout()
       
-      expect(api.post).toHaveBeenCalledWith('/logout')
+      expect(api.post).toHaveBeenCalledWith('/auth/logout')
       expect(logStore.log).toHaveBeenCalledWith('🚪 Attempting logout')
       expect(logStore.log).toHaveBeenCalledWith('✅ Logout successful')
     })

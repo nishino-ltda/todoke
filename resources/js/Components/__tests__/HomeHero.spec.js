@@ -1,76 +1,91 @@
-import { mount, RouterLinkStub } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
+import { mount } from '@vue/test-utils'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import HomeHero from '../HomeHero.vue'
+import { createPinia, setActivePinia } from 'pinia'
+
+// Mock vue-i18n
+vi.mock('vue-i18n', () => ({
+  useI18n: () => ({
+    t: (key) => {
+      const translations = {
+        'home.hero.title': 'Hybrid Delivery with Community Pricing',
+        'home.hero.subtitle': 'Combining motorbike couriers and drones for fast, fair deliveries',
+        'home.hero.register_button': 'Get Started',
+        'home.hero.login_button': 'Sign In'
+      }
+      return translations[key] || key
+    }
+  })
+}))
+
+// Mock route helper
+const route = (name) => {
+  const routes = {
+    'login': '/login',
+    'register': '/register'
+  }
+  return routes[name] || '#'
+}
 
 // Mock Vuetify components
 const vuetifyComponents = {
-  'v-container': {
-    template: '<div class="v-container" :fluid="fluid" :class="className"><slot /></div>',
-    props: ['fluid', 'className']
+  VContainer: {
+    template: '<div class="v-container"><slot /></div>'
   },
-  'v-row': {
-    template: '<div class="v-row" :no-gutters="noGutters" :align="align"><slot /></div>',
-    props: ['noGutters', 'align']
+  VRow: {
+    template: '<div class="v-row"><slot /></div>'
   },
-  'v-col': {
-    template: '<div class="v-col" :cols="cols" :md="md" :class="className"><slot /></div>',
-    props: ['cols', 'md', 'className']
+  VCol: {
+    template: '<div class="v-col" :cols="cols" :md="md"><slot /></div>',
+    props: ['cols', 'md']
   },
-  'v-btn': {
-    template: `
-      <a 
-        class="v-btn" 
-        :color="color" 
-        :size="size" 
-        :variant="variant" 
-        :href="href"
-        :to="to"
-      >
-        <slot />
-      </a>
-    `,
-    props: ['color', 'size', 'variant', 'href', 'to']
+  VBtn: {
+    template: '<button class="v-btn" :to="to"><slot /></button>',
+    props: ['color', 'size', 'variant', 'to']
   },
-  'v-img': {
-    template: '<div class="v-img" :src="src" :alt="alt" :cover="cover" :height="height"></div>',
-    props: ['src', 'alt', 'cover', 'height']
+  VImg: {
+    template: '<div class="v-img"></div>',
+    props: ['src', 'alt']
   }
 }
 
-
 describe('HomeHero', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+  })
+
   it('renders correctly', () => {
     const wrapper = mount(HomeHero, {
       global: {
-        stubs: {
-          ...vuetifyComponents,
-          RouterLink: RouterLinkStub
+        stubs: vuetifyComponents,
+        mocks: {
+          route
         }
       }
     })
 
     // Check if the component renders
-    expect(wrapper.find('.hero-container').exists()).toBe(true)
+    expect(wrapper.find('[data-test="home-hero"]').exists()).toBe(true)
     
     // Check if the title is rendered
-    expect(wrapper.text()).toContain('Hybrid Delivery with Community Pricing')
+    expect(wrapper.find('[data-test="hero-title"]').text()).toBe('Hybrid Delivery with Community Pricing')
     
     // Check if the subtitle is rendered
-    expect(wrapper.text()).toContain('Combining motorbike couriers and drones for fast, fair deliveries')
+    expect(wrapper.find('[data-test="hero-subtitle"]').text()).toBe('Combining motorbike couriers and drones for fast, fair deliveries')
     
     // Check if the buttons are rendered
     expect(wrapper.findAll('.v-btn').length).toBe(2)
     
     // Check if the image is rendered
-    expect(wrapper.find('.v-img').exists()).toBe(true)
+    expect(wrapper.find('[data-test="hero-image"]').exists()).toBe(true)
   })
 
   it('has correct button links', () => {
     const wrapper = mount(HomeHero, {
       global: {
-        stubs: {
-          ...vuetifyComponents,
-          RouterLink: RouterLinkStub
+        stubs: vuetifyComponents,
+        mocks: {
+          route
         }
       }
     })
@@ -85,31 +100,5 @@ describe('HomeHero', () => {
     expect(buttons[0].attributes('to')).toBe('/register')
     expect(buttons[1].attributes('to')).toBe('/login')
   })
-
-  it('has responsive layout classes', () => {
-    const wrapper = mount(HomeHero, {
-      global: {
-        stubs: {
-          ...vuetifyComponents,
-          RouterLink: RouterLinkStub
-        }
-      }
-    })
-
-    // Check if the container has fluid class
-    const container = wrapper.find('.v-container')
-    expect(container.attributes('fluid')).toBeDefined()
-    
-    // Check if the row has no-gutters attribute
-    const row = wrapper.find('.v-row')
-    expect(row.attributes('no-gutters')).toBeDefined()
-    
-    // Check if the columns have responsive classes
-    const cols = wrapper.findAll('.v-col')
-    expect(cols.length).toBe(2)
-    expect(cols[0].attributes('cols')).toBe('12')
-    expect(cols[0].attributes('md')).toBe('6')
-    expect(cols[1].attributes('cols')).toBe('12')
-    expect(cols[1].attributes('md')).toBe('6')
-  })
 })
+

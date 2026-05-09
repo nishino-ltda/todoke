@@ -7,7 +7,7 @@
     <LanguageSelector class="mr-2" />
 
     <template v-if="isAuthenticated">
-      <span class="welcome-message">{{ $t('app.welcome', { name: user?.name }) }}</span>
+      <span class="welcome-message" data-test="welcome-message">{{ $t('app.welcome', { name: user?.name }) }}</span>
       <Link 
         v-if="user?.role === 'customer'"
         :href="route('menu')" 
@@ -16,9 +16,9 @@
       >
         {{ $t('auth.menu') }}
       </Link>
-      <v-btn text disabled v-if="loading">{{ $t('app.loading') }}</v-btn>
+      <v-btn text disabled v-if="loading" data-test="loading-indicator">{{ $t('app.loading') }}</v-btn>
       <CartIcon v-if="user?.role === 'customer'" />
-      <v-btn text @click="handleLogout" :disabled="loading">
+      <v-btn text @click="handleLogout" :disabled="loading" data-test="logout-button">
         {{ $t('auth.logout') }}
       </v-btn>
     </template>

@@ -11,18 +11,16 @@ import useCartStore from '@/stores/cart'
 
 const vuetify = createVuetify({ components, directives })
 
-// Mock vue-router
-const mockRouter = {
-  push: vi.fn().mockResolvedValue(undefined),
-  currentRoute: { name: 'checkout' },
-  mock: {
-    calls: [] as any[]
+// Mock Inertia router
+vi.mock('@inertiajs/vue3', () => ({
+  router: {
+    visit: vi.fn().mockResolvedValue(undefined),
+    post: vi.fn().mockResolvedValue(undefined),
+    patch: vi.fn().mockResolvedValue(undefined),
+    put: vi.fn().mockResolvedValue(undefined),
+    delete: vi.fn().mockResolvedValue(undefined),
+    reload: vi.fn().mockResolvedValue(undefined),
   }
-}
-
-vi.mock('vue-router', () => ({
-  useRouter: vi.fn(() => mockRouter),
-  useRoute: vi.fn(() => ({ name: 'checkout' }))
 }))
 
 function mountWithVuetify(component: CheckoutFormType, options: any = {}) {
@@ -297,7 +295,7 @@ describe('CheckoutForm', () => {
 
   it('navigates home after successful order', async () => {
     // Get the mocked router instance
-    const mockRouter = useRouter()
+    const { router } = await import('@inertiajs/vue3')
     mockCreateOrder.mockResolvedValue({})
     
     // Set form data directly through component props
@@ -312,8 +310,7 @@ describe('CheckoutForm', () => {
     await wrapper.vm.$nextTick()
     
     // Verify navigation was called and confirmation shown
-    expect(mockRouter.push).toHaveBeenCalledWith({ name: 'home' })
-    expect(mockRouter.push).toHaveBeenCalledTimes(1)
+    expect(router.visit).toHaveBeenCalledWith('/')
     expect(wrapper.vm.showConfirmation).toBe(true)
   })
 })

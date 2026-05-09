@@ -1,7 +1,14 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { useAuthStore } from '../auth'
-import { vi } from 'vitest'
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 import api from '@/services/api'
+
+// Mock log store
+vi.mock('../log', () => ({
+  useLogStore: () => ({
+    log: vi.fn()
+  })
+}))
 
 describe('Auth Store', () => {
   beforeEach(() => {
@@ -87,7 +94,7 @@ describe('Auth Store', () => {
       const userData = { name: 'Test User', email: 'test@example.com', password: 'password' }
       const mockResponse = {
         data: {
-          user: { id: 1, name: 'Test User' },
+          user: { id: 1, name: 'Test User', type: 'customer' },
           token: 'test-token'
         }
       }

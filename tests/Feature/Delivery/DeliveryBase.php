@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
 
-class DeliveryBaseTest extends TestCase
+abstract class DeliveryBase extends TestCase
 {
     use RefreshDatabase {
         refreshDatabase as baseRefreshDatabase;

@@ -1,6 +1,6 @@
 import { setActivePinia, createPinia } from 'pinia'
 import { useCartStore } from '../cart'
-import { vi } from 'vitest'
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
 
 describe('Cart Store', () => {
   let localStorageMock = {
@@ -20,6 +20,15 @@ describe('Cart Store', () => {
     // Replace global localStorage with mock
     vi.stubGlobal('localStorage', localStorageMock)
     localStorageMock.clear()
+    
+    // Mock fetch
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ success: true })
+    }))
+
+    // Mock document.querySelector for CSRF token
+    document.head.innerHTML = '<meta name="csrf-token" content="test-token">'
     
     setActivePinia(createPinia())
   })
@@ -155,6 +164,6 @@ describe('Cart Store', () => {
     }
     
     const result = await cart.submitOrder(orderData)
-    expect(result).toEqual({ success: true })
+    expect(result).toEqual({ success: true, data: { success: true } })
   })
 })

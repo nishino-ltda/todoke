@@ -354,15 +354,17 @@ watch(error, (newError) => {
       errors.value.general = newError
     } 
     // Handle error object with message
-    else if (newError.message) {
+    if (newError.message) {
       errors.value.general = newError.message
     }
     // Handle error object with errors array
-    else if (newError.errors) {
+    if (newError.errors) {
       Object.entries(newError.errors).forEach(([key, value]) => {
         errors.value[key] = Array.isArray(value) ? value.join(', ') : value
       })
-      errors.value.general = 'Validation failed'
+      if (!errors.value.general) {
+        errors.value.general = t('auth.validation.general_error')
+      }
     }
   }
 }, { immediate: true })

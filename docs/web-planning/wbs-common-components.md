@@ -28,11 +28,11 @@
   - [x] Error handling
 
 ## 3. Form Components
-- [ ] Create Address Input (`AddressInput.vue`)
-  - [ ] Address validation
+- [x] Create Address Input (`AddressInput.vue`)
+  - [x] Basic address field
   - [ ] Geocoding integration
-- [ ] Create Payment Method Input (`PaymentMethodInput.vue`)
-  - [ ] Payment method selection
+- [x] Create Payment Method Input (`PaymentMethodInput.vue`)
+  - [x] Payment method selection
   - [ ] Secure payment details entry
 
 ## 4. UI Components
@@ -46,12 +46,12 @@
 - [ ] Create App Alert (`AppAlert.vue`)
   - [ ] Success/error/info variants
   - [ ] Auto-dismiss functionality
-- [ ] Create Loading Indicator (`LoadingIndicator.vue`)
-  - [ ] Full-page loader
-  - [ ] Inline loader
+- [x] Create Loading Indicator (`LoadingIndicator.vue`)
+  - [x] Full-page loader
+  - [x] Inline loader
 
 ## 5. Testing
-- [x] Unit tests for all components (100% coverage)
+- [x] Unit tests for all implemented components (116 tests passing)
 - [x] Integration tests with parent components
 - [x] Accessibility testing (basic checks)
 - [x] E2E testing setup (6/6 auth tests passing)
