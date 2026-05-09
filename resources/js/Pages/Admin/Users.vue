@@ -2,13 +2,13 @@
   <AdminLayout>
     <div class="user-management">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">User Management</h1>
+        <h1 class="text-h4 font-weight-bold">{{ t('admin.users.title') }}</h1>
         <v-btn
           color="primary"
           prepend-icon="mdi-account-plus"
           data-cy="create-user-btn"
         >
-          Add User
+          {{ t('admin.users.addUser') }}
         </v-btn>
       </div>
 
@@ -24,7 +24,7 @@
             size="small"
             class="text-uppercase font-weight-bold"
           >
-            {{ item.role }}
+            {{ t(`admin.users.roles.${item.role}`) }}
           </v-chip>
         </template>
 
@@ -34,7 +34,7 @@
             size="x-small"
             variant="flat"
           >
-            {{ item.active ? 'Active' : 'Suspended' }}
+            {{ item.active ? t('admin.users.status.active') : t('admin.users.status.suspended') }}
           </v-chip>
         </template>
 
@@ -68,24 +68,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import adminService from '@/services/admin';
 import { useNotificationStore } from '@/stores/notification';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const users = ref([]);
 
-const headers = [
-  { title: 'ID', key: 'id', width: '80px' },
-  { title: 'Name', key: 'name' },
-  { title: 'Email', key: 'email' },
-  { title: 'Role', key: 'role' },
-  { title: 'Status', key: 'status' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-];
+const headers = computed(() => [
+  { title: t('admin.users.table.id'), key: 'id', width: '80px' },
+  { title: t('admin.users.table.name'), key: 'name' },
+  { title: t('admin.users.table.email'), key: 'email' },
+  { title: t('admin.users.table.role'), key: 'role' },
+  { title: t('admin.users.table.status'), key: 'status' },
+  { title: t('admin.users.table.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
 
 const fetchUsers = async () => {
   loading.value = true;
@@ -93,7 +95,7 @@ const fetchUsers = async () => {
     const response = await adminService.getUsers();
     users.value = response.data;
   } catch (err) {
-    notifications.error('Failed to load users');
+    notifications.error(t('admin.users.notifications.load_failed'));
   } finally {
     loading.value = false;
   }
@@ -102,10 +104,13 @@ const fetchUsers = async () => {
 const toggleUserStatus = async (user, action) => {
   try {
     await adminService.manageUser(user.id, action);
-    notifications.success(`User ${user.name} has been ${action === 'activate' ? 'activated' : 'suspended'}`);
+    notifications.success(t('admin.users.notifications.update_success', { 
+      name: user.name, 
+      action: action === 'activate' ? t('admin.users.notifications.activated') : t('admin.users.notifications.suspended') 
+    }));
     fetchUsers();
   } catch (err) {
-    notifications.error('Failed to update user status');
+    notifications.error(t('admin.users.notifications.update_failed'));
   }
 };
 

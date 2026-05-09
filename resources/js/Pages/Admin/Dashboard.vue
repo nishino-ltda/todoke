@@ -16,34 +16,34 @@
       <v-row>
         <v-col cols="12" lg="8">
           <v-card border elevation="0" class="rounded-xl">
-            <v-card-title class="px-6 py-4">System Activity</v-card-title>
+            <v-card-title class="px-6 py-4">{{ t('admin.dashboard.systemActivity') }}</v-card-title>
             <v-card-text>
               <div class="py-12 text-center text-grey opacity-50">
                 <v-icon size="64" class="mb-4">mdi-chart-areaspline</v-icon>
-                <p>Real-time activity charts will be integrated here.</p>
+                <p>{{ t('admin.dashboard.chartPlaceholder') }}</p>
               </div>
             </v-card-text>
           </v-card>
         </v-col>
         <v-col cols="12" lg="4">
           <v-card border elevation="0" class="rounded-xl">
-            <v-card-title class="px-6 py-4">Quick Actions</v-card-title>
+            <v-card-title class="px-6 py-4">{{ t('admin.dashboard.quickActions') }}</v-card-title>
             <v-list density="comfortable">
               <v-list-item
                 prepend-icon="mdi-account-plus"
-                title="Review New Users"
+                :title="t('admin.dashboard.reviewNewUsers')"
                 @click="router.visit('/admin/users')"
                 link
               ></v-list-item>
               <v-list-item
                 prepend-icon="mdi-lan-check"
-                title="Approve Pending Nodes"
+                :title="t('admin.dashboard.approvePendingNodes')"
                 @click="router.visit('/admin/nodes')"
                 link
               ></v-list-item>
               <v-list-item
                 prepend-icon="mdi-alert-circle"
-                title="System Health Check"
+                :title="t('admin.dashboard.systemHealth')"
                 link
               ></v-list-item>
             </v-list>
@@ -55,31 +55,43 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import MetricsWidget from '@/Components/MetricsWidget.vue';
 import adminService from '@/services/admin';
 import { useNotificationStore } from '@/stores/notification';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
-const metrics = ref([
-  { title: 'Total Users', value: '0', icon: 'mdi-account-group', color: 'blue' },
-  { title: 'Active Deliveries', value: '0', icon: 'mdi-moped-electric', color: 'green' },
-  { title: 'System Nodes', value: '0', icon: 'mdi-lan', color: 'purple' },
-  { title: 'Issues Reported', value: '0', icon: 'mdi-alert-circle', color: 'red' },
+
+const stats = ref({
+  total_users: '0',
+  active_deliveries: '0',
+  total_nodes: '0',
+  reported_issues: '0'
+});
+
+const metrics = computed(() => [
+  { title: t('admin.dashboard.metrics.totalUsers'), value: stats.value.total_users, icon: 'mdi-account-group', color: 'blue' },
+  { title: t('admin.dashboard.metrics.activeDeliveries'), value: stats.value.active_deliveries, icon: 'mdi-moped-electric', color: 'green' },
+  { title: t('admin.dashboard.metrics.systemNodes'), value: stats.value.total_nodes, icon: 'mdi-lan', color: 'purple' },
+  { title: t('admin.dashboard.metrics.issuesReported'), value: stats.value.reported_issues, icon: 'mdi-alert-circle', color: 'red' },
 ]);
 
 const fetchStats = async () => {
   try {
     const response = await adminService.getSystemStats();
     const data = response.data || {};
-    metrics.value[0].value = data.total_users || '0';
-    metrics.value[1].value = data.active_deliveries || '0';
-    metrics.value[2].value = data.total_nodes || '0';
-    metrics.value[3].value = data.reported_issues || '0';
+    stats.value = {
+      total_users: data.total_users?.toString() || '0',
+      active_deliveries: data.active_deliveries?.toString() || '0',
+      total_nodes: data.total_nodes?.toString() || '0',
+      reported_issues: data.reported_issues?.toString() || '0'
+    };
   } catch (err) {
-    notifications.error('Failed to load system stats');
+    notifications.error(t('admin.dashboard.error_load'));
   }
 };
 

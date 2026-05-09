@@ -1,10 +1,10 @@
 # Work Breakdown Structure: Restaurant/Partner Dashboard
 
 ## 1. Internationalization
-- [ ] Implement translation file structure
-- [ ] Add pt-BR translations for all UI text
-- [ ] Create language switcher component
-- [ ] Configure API to respect Accept-Language header
+- [x] Implement translation file structure (partner namespace added to JSON files)
+- [x] Add pt-BR translations for all UI text
+- [x] Create language switcher component (shared LanguageSelector in common-components)
+- [x] Configure API to respect Accept-Language header
 - [ ] Update database models for multilingual content
 
 ## 2. Dashboard Structure
@@ -52,7 +52,7 @@
 - [ ] Manage regions/nodes (for logistics partners)
 
 ## 8. Testing
-- [ ] Unit tests for components
+- [x] Unit tests for components (PartnerDashboard, PartnerProducts, PartnerLogistics — 10 tests passing with i18n assertions)
 - [ ] E2E tests for partner workflows
   - [ ] Login flow tests
   - [ ] Order management tests

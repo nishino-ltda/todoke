@@ -1,21 +1,23 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 </script>
 
 <template>
-    <Head title="Courier Dashboard" />
+    <Head :title="t('courier.dashboard.index_title')" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 data-test="courier-dashboard-title">Courier Dashboard</h2>
+            <h2 data-test="courier-dashboard-title">{{ t('courier.dashboard.index_title') }}</h2>
         </template>
 
         <div data-test="courier-dashboard-container">
             <div>
                 <div>
                     <div>
-                        Courier Dashboard Index Page (Placeholder)
+                        {{ t('courier.dashboard.index_placeholder') }}
                     </div>
                 </div>
             </div>

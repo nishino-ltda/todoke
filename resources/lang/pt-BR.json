@@ -96,6 +96,25 @@
                 "subtitle": "Consistente e seguro",
                 "description": "Sistema abrangente de reputação garante qualidade de serviço. Funcionalidade offline para áreas com baixa conectividade."
             }
+        },
+        "cta": {
+            "title": "Pronto para Começar?",
+            "description": "Junte-se à plataforma que está revolucionando as entregas. Escolha seu perfil e comece agora.",
+            "customer": {
+                "title": "Cliente",
+                "description": "Peça de seus restaurantes favoritos com entrega rápida e preço justo.",
+                "button": "Quero Pedir"
+            },
+            "partner": {
+                "title": "Parceiro",
+                "description": "Divulgue seu cardápio e alcance mais clientes na sua região.",
+                "button": "Quero Vender"
+            },
+            "courier": {
+                "title": "Entregador",
+                "description": "Trabalhe no seu horário e ganhe dinheiro fazendo entregas.",
+                "button": "Quero Entregar"
+            }
         }
     },
     "menu": {
@@ -274,6 +293,149 @@
             "cancelled": "Cancelado",
             "available": "disponível",
             "unavailable": "indisponível"
+        }
+    },
+    "courier": {
+        "status": {
+            "title": "STATUS ATUAL",
+            "online": "Online",
+            "offline": "Offline",
+            "pending": "Pendente",
+            "accepted": "Aceita",
+            "arrived": "Chegou no local",
+            "picked_up": "Coletada",
+            "in_transit": "Em Trânsito",
+            "delivered": "Entregue",
+            "cancelled": "Cancelada"
+        },
+        "activeDelivery": {
+            "title": "ENTREGA ATIVA",
+            "id": "ID",
+            "pickup": "RETIRADA",
+            "dropoff": "ENTREGA",
+            "noDelivery": "Nenhuma entrega ativa"
+        },
+        "availableDeliveries": {
+            "title": "ENTREGAS DISPONÍVEIS",
+            "empty": "Procurando entregas na sua área...",
+            "distance": "a {distance} km",
+            "estimatedTime": "Tempo Estimado",
+            "payout": "Valor",
+            "accept": "Aceitar Pedido",
+            "reject": "Recusar"
+        },
+        "stages": {
+            "title": "ETAPAS DA ENTREGA",
+            "arrived": "Cheguei no Restaurante",
+            "picked_up": "Pedido Coletado",
+            "delivered": "Marcar como Entregue",
+            "next": "Próxima Etapa"
+        },
+        "actions": {
+            "updateStatus": "Atualizar Status",
+            "goOnline": "Fique online para começar a receber pedidos de entrega."
+        },
+        "notifications": {
+            "load_failed": "Falha ao carregar entregas",
+            "accept_success": "Entrega aceita!",
+            "accept_failed": "Falha ao aceitar entrega",
+            "update_success": "Status atualizado para {status}",
+            "update_failed": "Falha ao atualizar status"
+        },
+        "dashboard": {
+            "index_title": "Painel do Entregador",
+            "index_placeholder": "Página Inicial do Painel do Entregador (Espaço Reservado)"
+        },
+        "deliveries": {
+            "index_title": "Entregas do Entregador",
+            "index_description": "Lista de entregas para entregadores.",
+            "show_title": "Detalhes da Entrega",
+            "show_description": "Detalhes da entrega: {id}"
+        },
+        "hybrid_deliveries": {
+            "index_title": "Entregas Híbridas",
+            "index_description": "Lista de entregas híbridas para entregadores.",
+            "show_title": "Detalhes da Entrega Híbrida",
+            "show_description": "Detalhes da entrega híbrida: {id}"
+        },
+        "management": {
+            "title": "Página do Entregador",
+            "description": "Seção de gerenciamento do entregador."
+        }
+    },
+    "admin": {
+        "dashboard": {
+            "title": "Painel Administrativo",
+            "systemActivity": "Atividade do Sistema",
+            "quickActions": "Ações Rápidas",
+            "reviewNewUsers": "Revisar Novos Usuários",
+            "approvePendingNodes": "Aprovar Nós Pendentes",
+            "systemHealth": "Verificação de Saúde do Sistema",
+            "chartPlaceholder": "Gráficos de atividade em tempo real serão integrados aqui.",
+            "metrics": {
+                "totalUsers": "Total de Usuários",
+                "activeDeliveries": "Entregas Ativas",
+                "systemNodes": "Nós do Sistema",
+                "issuesReported": "Problemas Reportados"
+            },
+            "error_load": "Falha ao carregar estatísticas do sistema"
+        },
+        "users": {
+            "title": "Gerenciamento de Usuários",
+            "addUser": "Adicionar Usuário",
+            "table": {
+                "id": "ID",
+                "name": "Nome",
+                "email": "E-mail",
+                "role": "Função",
+                "status": "Status",
+                "actions": "Ações"
+            },
+            "status": {
+                "active": "Ativo",
+                "suspended": "Suspenso"
+            },
+            "roles": {
+                "admin": "Admin",
+                "partner": "Parceiro",
+                "courier": "Entregador",
+                "customer": "Cliente"
+            },
+            "notifications": {
+                "load_failed": "Falha ao carregar usuários",
+                "update_success": "Usuário {name} foi {action}",
+                "update_failed": "Falha ao atualizar status do usuário",
+                "activated": "ativado",
+                "suspended": "suspenso"
+            }
+        },
+        "nodes": {
+            "title": "Aprovação e Gerenciamento de Nós",
+            "table": {
+                "id": "ID do Nó",
+                "name": "Nome",
+                "type": "Tipo",
+                "owner": "Proprietário",
+                "status": "Status",
+                "actions": "Ações"
+            },
+            "actions": {
+                "approve": "Aprovar",
+                "reject": "Rejeitar"
+            },
+            "status": {
+                "pending": "Pendente",
+                "approved": "Aprovado",
+                "rejected": "Rejeitado",
+                "maintenance": "Manutenção"
+            },
+            "notifications": {
+                "load_failed": "Falha ao carregar nós",
+                "approve_success": "Nó {name} aprovado",
+                "approve_failed": "Falha ao aprovar nó",
+                "reject_success": "Nó {name} rejeitado",
+                "reject_failed": "Falha ao rejeitar nó"
+            }
         }
     }
 }

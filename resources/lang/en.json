@@ -96,6 +96,25 @@
                 "subtitle": "Consistent and secure",
                 "description": "Comprehensive reputation system ensures quality service. Offline functionality for low-connectivity areas."
             }
+        },
+        "cta": {
+            "title": "Ready to Start?",
+            "description": "Join the platform that is revolutionizing deliveries. Choose your profile and start now.",
+            "customer": {
+                "title": "Customer",
+                "description": "Order from your favorite restaurants with fast delivery and a fair price.",
+                "button": "Order Now"
+            },
+            "partner": {
+                "title": "Partner",
+                "description": "Showcase your menu and reach more customers in your region.",
+                "button": "Start Selling"
+            },
+            "courier": {
+                "title": "Courier",
+                "description": "Work on your schedule and earn money making deliveries.",
+                "button": "Start Delivering"
+            }
         }
     },
     "menu": {
@@ -274,6 +293,149 @@
             "cancelled": "Cancelled",
             "available": "available",
             "unavailable": "unavailable"
+        }
+    },
+    "courier": {
+        "status": {
+            "title": "CURRENT STATUS",
+            "online": "Online",
+            "offline": "Offline",
+            "pending": "Pending",
+            "accepted": "Accepted",
+            "arrived": "Arrived",
+            "picked_up": "Picked Up",
+            "in_transit": "In Transit",
+            "delivered": "Delivered",
+            "cancelled": "Cancelled"
+        },
+        "activeDelivery": {
+            "title": "ACTIVE DELIVERY",
+            "id": "ID",
+            "pickup": "PICKUP",
+            "dropoff": "DROP OFF",
+            "noDelivery": "No active delivery"
+        },
+        "availableDeliveries": {
+            "title": "AVAILABLE REQUESTS",
+            "empty": "Looking for deliveries in your area...",
+            "distance": "{distance} km away",
+            "estimatedTime": "Estimated Time",
+            "payout": "Payout",
+            "accept": "Accept Order",
+            "reject": "Reject"
+        },
+        "stages": {
+            "title": "DELIVERY STAGES",
+            "arrived": "Arrived at Restaurant",
+            "picked_up": "Order Picked Up",
+            "delivered": "Mark as Delivered",
+            "next": "Next Stage"
+        },
+        "actions": {
+            "updateStatus": "Update Status",
+            "goOnline": "Go online to start receiving delivery requests."
+        },
+        "notifications": {
+            "load_failed": "Failed to load deliveries",
+            "accept_success": "Delivery accepted!",
+            "accept_failed": "Failed to accept delivery",
+            "update_success": "Status updated to {status}",
+            "update_failed": "Failed to update status"
+        },
+        "dashboard": {
+            "index_title": "Courier Dashboard",
+            "index_placeholder": "Courier Dashboard Index Page (Placeholder)"
+        },
+        "deliveries": {
+            "index_title": "Courier Deliveries",
+            "index_description": "List of deliveries for couriers.",
+            "show_title": "Courier Delivery Details",
+            "show_description": "Details for delivery: {id}"
+        },
+        "hybrid_deliveries": {
+            "index_title": "Courier Hybrid Deliveries",
+            "index_description": "List of hybrid deliveries for couriers.",
+            "show_title": "Courier Hybrid Delivery Details",
+            "show_description": "Details for hybrid delivery: {id}"
+        },
+        "management": {
+            "title": "Courier Page",
+            "description": "Courier management section."
+        }
+    },
+    "admin": {
+        "dashboard": {
+            "title": "Admin Dashboard",
+            "systemActivity": "System Activity",
+            "quickActions": "Quick Actions",
+            "reviewNewUsers": "Review New Users",
+            "approvePendingNodes": "Approve Pending Nodes",
+            "systemHealth": "System Health Check",
+            "chartPlaceholder": "Real-time activity charts will be integrated here.",
+            "metrics": {
+                "totalUsers": "Total Users",
+                "activeDeliveries": "Active Deliveries",
+                "systemNodes": "System Nodes",
+                "issuesReported": "Issues Reported"
+            },
+            "error_load": "Failed to load system stats"
+        },
+        "users": {
+            "title": "User Management",
+            "addUser": "Add User",
+            "table": {
+                "id": "ID",
+                "name": "Name",
+                "email": "Email",
+                "role": "Role",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "status": {
+                "active": "Active",
+                "suspended": "Suspended"
+            },
+            "roles": {
+                "admin": "Admin",
+                "partner": "Partner",
+                "courier": "Courier",
+                "customer": "Customer"
+            },
+            "notifications": {
+                "load_failed": "Failed to load users",
+                "update_success": "User {name} has been {action}",
+                "update_failed": "Failed to update user status",
+                "activated": "activated",
+                "suspended": "suspended"
+            }
+        },
+        "nodes": {
+            "title": "Node Approval & Management",
+            "table": {
+                "id": "Node ID",
+                "name": "Name",
+                "type": "Type",
+                "owner": "Owner",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "actions": {
+                "approve": "Approve",
+                "reject": "Reject"
+            },
+            "status": {
+                "pending": "Pending",
+                "approved": "Approved",
+                "rejected": "Rejected",
+                "maintenance": "Maintenance"
+            },
+            "notifications": {
+                "load_failed": "Failed to load nodes",
+                "approve_success": "Node {name} approved",
+                "approve_failed": "Failed to approve node",
+                "reject_success": "Node {name} rejected",
+                "reject_failed": "Failed to reject node"
+            }
         }
     }
 }

@@ -1,8 +1,8 @@
 <template>
     <AuthenticatedLayout>
         <div data-test="courier-deliveries-show">
-            <h1>Courier Delivery Details</h1>
-            <p>Details for delivery: {{ deliveryId }}</p>
+            <h1>{{ t('courier.deliveries.show_title') }}</h1>
+            <p>{{ t('courier.deliveries.show_description', { id: deliveryId }) }}</p>
         </div>
     </AuthenticatedLayout>
 </template>
@@ -10,7 +10,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { defineProps } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const props = defineProps({
     deliveryId: String,
 });

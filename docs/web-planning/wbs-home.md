@@ -1,14 +1,14 @@
 # Work Breakdown Structure: Home Page
 
 ## 0. Internationalization Requirements
-- [ ] All text must use i18n translation system
-- [ ] Default language: pt-BR
-- [ ] Translation keys must follow naming convention: `home.section.component.text`
-- [ ] All components must import and use $t() for text
+- [x] All text must use i18n translation system
+- [x] Default language: pt-BR
+- [x] Translation keys follow naming convention: `home.section.component.text`
+- [x] All components import and use $t() for text
 
 ## 1. Page Structure
-- [ ] Create base layout (header, footer, main content area) with i18n support
-- [ ] Implement responsive design with language selector
+- [x] Create base layout (header, footer, main content area) with i18n support (GuestLayout)
+- [x] Implement responsive design with language selector
 
 ## 2. Sections
 ### 2.1 Hero Section
@@ -24,20 +24,20 @@
 - [x] Add feature cards with icons/text
 
 ### 2.3 Call-to-Action Section
-- [ ] Create CTA component (`HomeCTA.vue`) with i18n support
-- [ ] Add user-type specific CTAs (Customer, Partner, Courier)
-- [ ] Link to registration/login
+- [x] Create CTA component (`HomeCTA.vue`) with i18n support
+- [x] Add user-type specific CTAs (Customer, Partner, Courier)
+- [x] Link to registration/login
 
 ## 3. Functionality
-- [ ] Implement responsive behavior
-- [ ] Add smooth scrolling to sections
+- [x] Implement responsive behavior
+- [x] Add smooth scrolling to sections (via Vuetify)
 - [ ] Optimize for fast loading
 - [ ] Implement SEO best practices
 
 ## 4. Integration
-- [ ] Link authentication buttons to correct endpoints
-- [ ] Test all navigation links
+- [x] Link authentication buttons to correct endpoints
+- [x] Test all navigation links
 
 ## 5. Testing
-- [x] Write unit tests for components
+- [x] Write unit tests for components (HomeHero, HomeFeatures, HomeCTA)
 - [ ] Create E2E tests for user flows

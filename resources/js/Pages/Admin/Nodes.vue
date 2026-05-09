@@ -1,7 +1,7 @@
 <template>
   <AdminLayout>
     <div class="node-management">
-      <h1 class="text-h4 font-weight-bold mb-6">Node Approval & Management</h1>
+      <h1 class="text-h4 font-weight-bold mb-6">{{ t('admin.nodes.title') }}</h1>
 
       <DataTable
         :headers="headers"
@@ -15,7 +15,7 @@
             size="small"
             class="text-uppercase font-weight-bold"
           >
-            {{ item.status }}
+            {{ t(`admin.nodes.status.${item.status}`) }}
           </v-chip>
         </template>
 
@@ -29,7 +29,7 @@
             @click="approveNode(item)"
             data-cy="approve-node-btn"
           >
-            Approve
+            {{ t('admin.nodes.actions.approve') }}
           </v-btn>
           <v-btn
             v-if="item.status === 'pending'"
@@ -39,7 +39,7 @@
             @click="rejectNode(item)"
             data-cy="reject-node-btn"
           >
-            Reject
+            {{ t('admin.nodes.actions.reject') }}
           </v-btn>
           <v-btn
             v-if="item.status !== 'pending'"
@@ -55,24 +55,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import adminService from '@/services/admin';
 import { useNotificationStore } from '@/stores/notification';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const nodes = ref([]);
 
-const headers = [
-  { title: 'Node ID', key: 'id' },
-  { title: 'Name', key: 'name' },
-  { title: 'Type', key: 'type' },
-  { title: 'Owner', key: 'owner_name' },
-  { title: 'Status', key: 'status' },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'end' },
-];
+const headers = computed(() => [
+  { title: t('admin.nodes.table.id'), key: 'id' },
+  { title: t('admin.nodes.table.name'), key: 'name' },
+  { title: t('admin.nodes.table.type'), key: 'type' },
+  { title: t('admin.nodes.table.owner'), key: 'owner_name' },
+  { title: t('admin.nodes.table.status'), key: 'status' },
+  { title: t('admin.nodes.table.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
 
 const fetchNodes = async () => {
   loading.value = true;
@@ -80,7 +82,7 @@ const fetchNodes = async () => {
     const response = await adminService.getNodes();
     nodes.value = response.data;
   } catch (err) {
-    notifications.error('Failed to load nodes');
+    notifications.error(t('admin.nodes.notifications.load_failed'));
   } finally {
     loading.value = false;
   }
@@ -89,20 +91,20 @@ const fetchNodes = async () => {
 const approveNode = async (node) => {
   try {
     await adminService.updateNodeStatus(node.id, 'approved');
-    notifications.success(`Node ${node.name} approved`);
+    notifications.success(t('admin.nodes.notifications.approve_success', { name: node.name }));
     fetchNodes();
   } catch (err) {
-    notifications.error('Failed to approve node');
+    notifications.error(t('admin.nodes.notifications.approve_failed'));
   }
 };
 
 const rejectNode = async (node) => {
   try {
     await adminService.updateNodeStatus(node.id, 'rejected');
-    notifications.warning(`Node ${node.name} rejected`);
+    notifications.warning(t('admin.nodes.notifications.reject_success', { name: node.name }));
     fetchNodes();
   } catch (err) {
-    notifications.error('Failed to reject node');
+    notifications.error(t('admin.nodes.notifications.reject_failed'));
   }
 };
 

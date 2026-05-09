@@ -31,14 +31,14 @@
 - [ ] (Future) Integrate with voting endpoints
 
 ## 6. Internationalization
-- [ ] Implement translation support for all UI text
-- [ ] Use courier-specific translation files
-- [ ] Ensure status messages are translatable
-- [ ] Add language switching capability
-- [ ] Test with pt-BR and English locales
+- [x] Implement translation support for all UI text
+- [x] Use courier-specific translation keys in shared files
+- [x] Ensure status messages are translatable
+- [x] Add language switching capability (shared LanguageSelector)
+- [x] Test with pt-BR and English locales
 
 ## 7. Testing
-- [ ] Unit tests for components
+- [x] Unit tests for components (CourierDashboard — 4 tests passing with i18n assertions)
 - [ ] E2E tests for courier workflows
 - [ ] Test real-time updates
-- [ ] Test translation functionality
+- [x] Test translation functionality
