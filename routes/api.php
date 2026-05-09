@@ -167,6 +167,36 @@ Route::prefix('v1')->group(function () {
             Route::get('/stats', [UserController::class, 'stats']);
             Route::patch('/nodes/{node}/approve', [NodeController::class, 'approve']);
             Route::post('/users/{id}/unlock', [UserController::class, 'unlock']);
+
+            // Regions
+            Route::get('/regions', [RegionController::class, 'adminIndex']);
+            Route::post('/regions', [RegionController::class, 'store']);
+            Route::put('/regions/{id}', [RegionController::class, 'update']);
+            Route::delete('/regions/{id}', [RegionController::class, 'destroy']);
+
+            // Deliveries
+            Route::get('/deliveries', [DeliveryManagementController::class, 'index']); // Use existing index for admin
+            Route::get('/deliveries/monitor', [DeliveryManagementController::class, 'monitor']);
+
+            // Settings
+            Route::get('/settings', [UserController::class, 'getSettings']);
+            Route::patch('/settings', [UserController::class, 'updateSettings']);
+        });
+
+        // Support
+        Route::prefix('support')->group(function () {
+            Route::get('/tickets', [\App\Http\Controllers\API\SupportController::class, 'index']);
+            Route::post('/tickets', [\App\Http\Controllers\API\SupportController::class, 'store']);
+            Route::get('/tickets/{id}', [\App\Http\Controllers\API\SupportController::class, 'show']);
+            Route::post('/tickets/{id}/reply', [\App\Http\Controllers\API\SupportController::class, 'reply']);
+            Route::get('/faq', [\App\Http\Controllers\API\SupportController::class, 'faq']);
+        });
+
+        // Map
+        Route::prefix('map')->group(function () {
+            Route::get('/geocode', [\App\Http\Controllers\API\MapController::class, 'geocode']);
+            Route::get('/reverse-geocode', [\App\Http\Controllers\API\MapController::class, 'reverseGeocode']);
+            Route::get('/distance', [\App\Http\Controllers\API\MapController::class, 'distance']);
         });
 
         // Rotas de parceiro

@@ -59,17 +59,17 @@ const drawer = ref(true);
 
 const currentRoute = computed(() => page.url);
 
-const navItems = [
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/admin' },
-  { title: 'User Management', icon: 'mdi-account-group', route: '/admin/users' },
-  { title: 'Node Management', icon: 'mdi-lan', route: '/admin/nodes' },
-  { title: 'Region Management', icon: 'mdi-map-marker-radius', route: '/admin/regions' },
-  { title: 'Deliveries', icon: 'mdi-truck-delivery', route: '/admin/deliveries' },
-  { title: 'Settings', icon: 'mdi-cog', route: '/admin/settings' },
-];
+const navItems = computed(() => [
+  { title: t('admin.dashboard.title'), icon: 'mdi-view-dashboard', route: '/admin/dashboard' },
+  { title: t('admin.users.title'), icon: 'mdi-account-group', route: '/admin/users' },
+  { title: t('admin.nodes.title'), icon: 'mdi-lan', route: '/admin/nodes' },
+  { title: t('admin.regions.title'), icon: 'mdi-map-marker-radius', route: '/admin/regions' },
+  { title: t('admin.deliveries.title'), icon: 'mdi-truck-delivery', route: '/admin/deliveries' },
+  { title: t('admin.settings.title'), icon: 'mdi-cog', route: '/admin/settings' },
+]);
 
 const currentPageTitle = computed(() => {
-  const item = navItems.find(n => n.route === currentRoute.value);
+  const item = navItems.value.find(n => n.route === currentRoute.value);
   return item ? item.title : 'Admin Panel';
 });
 

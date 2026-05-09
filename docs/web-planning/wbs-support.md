@@ -26,6 +26,9 @@
 - [ ] (Future) Implement ticket status updates with translated notifications
 
 ## 5. API Integration
+- [x] Create SupportService frontend (`services/support.js`) with getTickets, getTicket, createTicket, addReply, getFaqs
+- [x] Create SupportController backend with mock responses for all ticket operations
+- [x] Register API routes (`/api/v1/support/tickets`, `/api/v1/support/faq`)
 - [ ] Submit new tickets with Accept-Language header
 - [ ] Fetch user's tickets with locale-specific responses
 - [ ] Get ticket details with translated content

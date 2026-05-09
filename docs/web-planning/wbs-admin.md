@@ -24,34 +24,36 @@
 - [x] Add search/filter functionality
 
 ## 5. Region Management
-- [ ] Create Region List component (`RegionList.vue`)
-- [ ] Implement region CRUD operations
-- [ ] Display region details
+- [x] Create Region List component (`Regions/Index.vue`)
+- [x] Implement region CRUD operations (create, read, update, delete)
+- [x] Display region details with partner info
+- [x] Add form validation (JSON polygon validation, required fields)
 - [ ] Add map integration for region visualization
 
 ## 6. Delivery Monitoring
-- [ ] Create Delivery List component (`AdminDeliveryList.vue`)
-- [ ] Display all system deliveries
-- [ ] Implement delivery status filtering
-- [ ] Add detailed delivery view
+- [x] Create Delivery List component (`Deliveries/Index.vue`)
+- [x] Display all system deliveries with metrics cards (active, pending, in-transit, delivered today)
+- [x] Implement status badges with color coding
+- [x] Add customer/courier info display
+- [ ] Add detailed delivery view page
 
 ## 7. System Configuration
-- [ ] Create Settings Form component (`SettingsForm.vue`)
-- [ ] Implement platform configuration options
-- [ ] Add settings persistence
+- [x] Create Settings Form component (`Settings/Index.vue`)
+- [x] Implement platform configuration options (site name, fees, maintenance mode, registration toggle)
+- [x] Add settings persistence via API
 
 ## 8. API Integration
-- [ ] Fetch system stats
-- [ ] Manage users
-- [ ] Manage nodes/regions
-- [ ] Monitor deliveries
-- [ ] Update system settings
+- [x] Fetch system stats
+- [x] Manage users
+- [x] Manage nodes/regions
+- [x] Monitor deliveries
+- [x] Update system settings
 
 ## 9. Internationalization
-- [ ] Create language selector component
-- [ ] Implement translation file structure
-- [ ] Add pt-BR translations for admin UI
-- [ ] Make all UI text translatable
+- [x] Create language selector component (shared `LanguageSelector`)
+- [x] Implement translation file structure (pt-BR + en JSON)
+- [x] Add pt-BR translations for admin UI (`admin.regions`, `admin.deliveries`, `admin.settings`)
+- [x] Make all UI text translatable via `t()` calls
 
 ## 10. Testing
 - [ ] Unit tests for components

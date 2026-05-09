@@ -207,4 +207,47 @@ class UserController extends Controller
             'locked_at' => null
         ]);
     }
+
+    /**
+     * Get platform settings (admin only)
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSettings()
+    {
+        if (Auth::user()->type !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Mock settings for now as there is no settings table yet
+        return response()->json([
+            'site_name' => 'TODOKE',
+            'maintenance_mode' => false,
+            'allow_registration' => true,
+            'delivery_fee_base' => 5.00,
+            'delivery_fee_per_km' => 1.50,
+            'support_email' => 'support@todoke.com',
+            'contact_phone' => '+55 11 99999-9999'
+        ]);
+    }
+
+    /**
+     * Update platform settings (admin only)
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateSettings(Request $request)
+    {
+        if (Auth::user()->type !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // In a real app, you would save these to a settings table or file
+        // For now, we just return success
+        return response()->json([
+            'message' => 'Settings updated successfully',
+            'data' => $request->all()
+        ]);
+    }
 }

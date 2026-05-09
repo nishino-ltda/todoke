@@ -20,11 +20,15 @@
 
 ## 4. Map Integration
 - [ ] Create Map Display component (`DeliveryMap.vue`)
+
+  *[DEPENDENCY: MapService (services/map.js) — done]*
 - [ ] Show current position
 - [ ] Display delivery route (origin to destination)
 - [ ] Implement geolocation tracking
 
 ## 5. API Integration
+- [x] Create MapService backend/API controller (`API/MapController.php`) with geocode, reverseGeocode, distance
+- [x] Register map API routes (`/api/v1/map/*`)
 - [ ] Fetch available deliveries
 - [ ] Handle delivery acceptance/rejection
 - [ ] Update delivery statuses

@@ -30,10 +30,12 @@
 ## 3. Form Components
 - [x] Create Address Input (`AddressInput.vue`)
   - [x] Basic address field
-  - [ ] Geocoding integration
+  - [x] Geocoding integration (v-combobox autocomplete via mapService.geocode(), 300ms debounce, loading spinner, error handling, emits `{address, lat, lng}`)
+  - [x] Backward compatible (textarea fallback when `geocode` prop is false)
 - [x] Create Payment Method Input (`PaymentMethodInput.vue`)
   - [x] Payment method selection
-  - [ ] Secure payment details entry
+  - [x] Secure payment details entry (card number with formatting, expiry MM/AA, CVV, holder name)
+  - [x] Masked emission (`XXXX XXXX XXXX 1234` + `last4`), full validation rules
 
 ## 4. UI Components
 - [x] Create Data Table (`DataTable.vue`)
@@ -51,7 +53,7 @@
   - [x] Inline loader
 
 ## 5. Testing
-- [x] Unit tests for all implemented components (125 tests passing)
+- [x] Unit tests for all implemented components (AddressInput: 3 existing + new geocoding tests; PaymentMethodInput: 2 existing + new secure details tests)
 - [x] Integration tests with parent components
 - [x] Accessibility testing (basic checks)
 - [x] E2E testing setup (6/6 auth tests passing)

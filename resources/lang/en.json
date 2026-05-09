@@ -436,6 +436,76 @@
                 "reject_success": "Node {name} rejected",
                 "reject_failed": "Failed to reject node"
             }
+        },
+        "regions": {
+            "title": "Regions Management",
+            "add": "Add Region",
+            "edit": "Edit Region",
+            "new": "New Region",
+            "table": {
+                "id": "ID",
+                "name": "Name",
+                "partner": "Partner",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "notifications": {
+                "load_failed": "Failed to load regions",
+                "save_success": "Region saved successfully",
+                "save_failed": "Failed to save region",
+                "delete_success": "Region deleted successfully",
+                "delete_failed": "Failed to delete region"
+            }
+        },
+        "deliveries": {
+            "title": "Deliveries Monitoring",
+            "table": {
+                "id": "ID",
+                "customer": "Customer",
+                "courier": "Courier",
+                "status": "Status",
+                "type": "Type",
+                "value": "Value",
+                "actions": "Actions"
+            },
+            "notifications": {
+                "load_failed": "Failed to load deliveries"
+            }
+        },
+        "settings": {
+            "title": "Platform Settings",
+            "general": "General Settings",
+            "fees": "Delivery Fees",
+            "site_name": "Site Name",
+            "maintenance_mode": "Maintenance Mode",
+            "allow_registration": "Allow New Registrations",
+            "base_fee": "Base Delivery Fee",
+            "km_fee": "Fee per KM",
+            "support_email": "Support Email",
+            "contact_phone": "Contact Phone",
+            "save": "Save Settings",
+            "notifications": {
+                "load_failed": "Failed to load settings",
+                "update_success": "Settings updated successfully",
+                "update_failed": "Failed to update settings"
+            }
+        }
+    },
+    "components": {
+        "address": {
+            "label": "Delivery Address",
+            "placeholder": "Start typing your address...",
+            "searching": "Searching for address...",
+            "error": "Failed to find address"
+        },
+        "payment": {
+            "label": "Payment Method",
+            "credit_card": "Credit Card",
+            "cash": "Cash on Delivery",
+            "card_number": "Card Number",
+            "expiry": "Expiry Date (MM/YY)",
+            "cvv": "CVV",
+            "holder": "Cardholder Name"
         }
     }
 }

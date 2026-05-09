@@ -39,6 +39,67 @@ export const adminService = {
    */
   async updateNodeStatus(nodeId, status) {
     return api.patch(`/admin/nodes/${nodeId}/status`, { status });
+  },
+
+  /**
+   * Get all regions
+   */
+  async getRegions() {
+    return api.get('/admin/regions');
+  },
+
+  /**
+   * Create a new region
+   * @param {Object} data 
+   */
+  async createRegion(data) {
+    return api.post('/admin/regions', data);
+  },
+
+  /**
+   * Update a region
+   * @param {string|number} regionId 
+   * @param {Object} data 
+   */
+  async updateRegion(regionId, data) {
+    return api.put(`/admin/regions/${regionId}`, data);
+  },
+
+  /**
+   * Delete a region
+   * @param {string|number} regionId 
+   */
+  async deleteRegion(regionId) {
+    return api.delete(`/admin/regions/${regionId}`);
+  },
+
+  /**
+   * Get deliveries monitoring data
+   */
+  async getDeliveriesMonitoring() {
+    return api.get('/admin/deliveries/monitor');
+  },
+
+  /**
+   * Get all deliveries
+   */
+  async getDeliveries(params = {}) {
+    return api.get('/admin/deliveries', { params });
+  },
+
+  /**
+   * Get admin settings
+   */
+  async getSettings() {
+    return api.get('/admin/settings');
+  },
+
+  /**
+   * Update admin settings
+   * @param {Object} data 
+   */
+  async updateSettings(data) {
+    return api.patch('/admin/settings', data);
   }
 };
 

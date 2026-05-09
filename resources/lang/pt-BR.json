@@ -436,6 +436,76 @@
                 "reject_success": "Nó {name} rejeitado",
                 "reject_failed": "Falha ao rejeitar nó"
             }
+        },
+        "regions": {
+            "title": "Gerenciamento de Regiões",
+            "add": "Adicionar Região",
+            "edit": "Editar Região",
+            "new": "Nova Região",
+            "table": {
+                "id": "ID",
+                "name": "Nome",
+                "partner": "Parceiro",
+                "status": "Status",
+                "actions": "Ações"
+            },
+            "notifications": {
+                "load_failed": "Falha ao carregar regiões",
+                "save_success": "Região salva com sucesso",
+                "save_failed": "Falha ao salvar região",
+                "delete_success": "Região excluída com sucesso",
+                "delete_failed": "Falha ao excluir região"
+            }
+        },
+        "deliveries": {
+            "title": "Monitoramento de Entregas",
+            "table": {
+                "id": "ID",
+                "customer": "Cliente",
+                "courier": "Entregador",
+                "status": "Status",
+                "type": "Tipo",
+                "value": "Valor",
+                "actions": "Ações"
+            },
+            "notifications": {
+                "load_failed": "Falha ao carregar entregas"
+            }
+        },
+        "settings": {
+            "title": "Configurações da Plataforma",
+            "general": "Configurações Gerais",
+            "fees": "Taxas de Entrega",
+            "site_name": "Nome do Site",
+            "maintenance_mode": "Modo de Manutenção",
+            "allow_registration": "Permitir Novos Registros",
+            "base_fee": "Taxa Base de Entrega",
+            "km_fee": "Taxa por KM",
+            "support_email": "E-mail de Suporte",
+            "contact_phone": "Telefone de Contato",
+            "save": "Salvar Configurações",
+            "notifications": {
+                "load_failed": "Falha ao carregar configurações",
+                "update_success": "Configurações atualizadas com sucesso",
+                "update_failed": "Falha ao atualizar configurações"
+            }
+        }
+    },
+    "components": {
+        "address": {
+            "label": "Endereço de Entrega",
+            "placeholder": "Comece a digitar seu endereço...",
+            "searching": "Buscando endereço...",
+            "error": "Falha ao encontrar o endereço"
+        },
+        "payment": {
+            "label": "Método de Pagamento",
+            "credit_card": "Cartão de Crédito",
+            "cash": "Dinheiro na Entrega",
+            "card_number": "Número do Cartão",
+            "expiry": "Validade (MM/AA)",
+            "cvv": "CVV",
+            "holder": "Nome no Cartão"
         }
     }
 }

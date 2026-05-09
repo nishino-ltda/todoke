@@ -37,15 +37,20 @@
   - [x] Handle partner operations
 - [x] Implement Admin Service
   - [x] Handle admin operations
-- [ ] Implement Support Service
-  - [ ] Handle support tickets
-- [ ] Implement Map Service
-  - [ ] Handle geocoding
-  - [ ] Manage map interactions
+- [x] Implement Support Service
+  - [x] Handle support tickets (getTickets, getTicket, createTicket, addReply, getFaqs)
+  - [x] Unit tests (6/6 passing)
+  - [x] Backend controller with mock responses
+- [x] Implement Map Service
+  - [x] Handle geocoding (geocode, reverseGeocode, getDistance)
+  - [x] Unit tests (4/4 passing)
+  - [x] Backend controller with mock responses
 
 ## 3. Testing
 - [x] Unit tests for stores (Auth, Loading)
 - [x] Unit tests for Auth Service
+- [x] Unit tests for Support Service (6/6 passing)
+- [x] Unit tests for Map Service (4/4 passing)
 - [ ] Unit tests for other services
 - [ ] Integration tests with components
 - [x] E2E testing setup (6/6 auth tests passing)

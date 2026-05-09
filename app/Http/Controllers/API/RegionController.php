@@ -8,23 +8,72 @@ use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {
+    public function index(Request $request)
+    {
+        // Public list or partner's list?
+        // If partner, filter by partner_id
+        if ($request->user()->type === 'partner') {
+            return response()->json([
+                'data' => Region::where('partner_id', $request->user()->id)->get()
+            ]);
+        }
+        
+        return response()->json([
+            'data' => Region::all()
+        ]);
+    }
+
+    public function adminIndex()
+    {
+        return response()->json([
+            'data' => Region::with('partner')->get()
+        ]);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'polygon' => 'required|array',
-            'polygon.type' => 'required|string|in:Polygon',
-            'polygon.coordinates' => 'required|array'
+            'partner_id' => 'sometimes|exists:users,id',
+            'status' => 'sometimes|in:active,inactive',
         ]);
 
         $region = Region::create([
             'name' => $validated['name'],
             'polygon' => $validated['polygon'],
-            'partner_id' => $request->user()->id
+            'partner_id' => $validated['partner_id'] ?? $request->user()->id,
+            'status' => $validated['status'] ?? 'active'
         ]);
 
         return response()->json([
             'data' => $region
         ], 201);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $region = Region::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'polygon' => 'sometimes|array',
+            'partner_id' => 'sometimes|exists:users,id',
+            'status' => 'sometimes|in:active,inactive',
+        ]);
+
+        $region->update($validated);
+
+        return response()->json([
+            'data' => $region
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $region = Region::findOrFail($id);
+        $region->delete();
+
+        return response()->json(null, 204);
     }
 }

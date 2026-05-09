@@ -25,15 +25,38 @@ class DeliveryManagementController extends Controller
         } elseif ($user->type === 'courier') {
             $query->where('courier_id', $user->id);
         }
+        // Admins don't get filtered
 
         $limit = $request->input('limit', 15);
-        $deliveries = $query->orderBy('created_at', 'desc')->paginate($limit);
+        $deliveries = $query->with(['customer', 'logisticsPartner', 'courier', 'node'])
+                            ->orderBy('created_at', 'desc')
+                            ->paginate($limit);
 
         return response()->json([
             'deliveries' => $deliveries->items(),
             'total' => $deliveries->total(),
             'per_page' => $deliveries->perPage(),
-            'current_page' => $deliveries->currentPage()
+            'current_page' => $deliveries->currentPage(),
+            'last_page' => $deliveries->lastPage()
+        ]);
+    }
+
+    public function monitor(Request $request)
+    {
+        $bearerToken = $request->bearerToken();
+        $user = $this->getUserFromToken($bearerToken, $request);
+
+        if ($user->type !== 'admin') {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Monitoring returns active deliveries with current positions
+        $activeDeliveries = Delivery::whereNotIn('status', ['delivered', 'canceled', 'failed'])
+            ->with(['customer', 'courier'])
+            ->get();
+
+        return response()->json([
+            'data' => $activeDeliveries
         ]);
     }
 
