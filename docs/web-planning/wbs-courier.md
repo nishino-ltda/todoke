@@ -1,22 +1,22 @@
 # Work Breakdown Structure: Courier Dashboard
 
 ## 1. Dashboard Structure
-- [ ] Create protected route for courier dashboard
-- [ ] Implement dashboard layout with navigation
-- [ ] Create responsive design for mobile use
+- [x] Create protected route for courier dashboard
+- [x] Implement dashboard layout with navigation
+- [x] Create responsive design for mobile use
 
 ## 2. Availability Management
-- [ ] Create Availability Toggle component (`AvailabilityToggle.vue`)
-- [ ] Implement online/offline status toggle
-- [ ] Persist availability state
+- [x] Create Availability Toggle component (`AvailabilityToggle.vue`)
+- [x] Implement online/offline status toggle
+- [x] Persist availability state
 
 ## 3. Delivery Management
-- [ ] Create Available Deliveries List (`AvailableDeliveriesList.vue`)
-- [ ] Display real-time available delivery requests
-- [ ] Implement accept/reject functionality
-- [ ] Create Assigned Delivery Details (`AssignedDeliveryDetails.vue`)
-- [ ] Display delivery stages and current status
-- [ ] Implement status update buttons (`StatusUpdateButtons.vue`)
+- [x] Create Available Deliveries List (`AvailableDeliveriesList.vue`)
+- [x] Display real-time available delivery requests
+- [x] Implement accept/reject functionality
+- [x] Create Assigned Delivery Details (`AssignedDeliveryDetails.vue`)
+- [x] Display delivery stages and current status
+- [x] Implement status update buttons (`StatusUpdateButtons.vue`)
 
 ## 4. Map Integration
 - [ ] Create Map Display component (`DeliveryMap.vue`)

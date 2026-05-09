@@ -6,16 +6,16 @@
   - [x] Handle login/logout
   - [x] Persist session
   - [x] Unit tests (100% coverage)
-- [ ] Implement Cart Store
-  - [ ] Manage shopping cart state
-  - [ ] Handle cart operations
-  - [ ] Persist cart
-- [ ] Implement User Data Store
-  - [ ] Manage user profile data
-  - [ ] Handle profile updates
-- [ ] Implement Notifications Store
-  - [ ] Manage UI notifications
-  - [ ] Handle notification display
+- [x] Implement Cart Store
+  - [x] Manage shopping cart state
+  - [x] Handle cart operations
+  - [x] Persist cart
+- [x] Implement User Data Store
+  - [x] Manage user profile data
+  - [x] Handle profile updates
+- [x] Implement Notifications Store
+  - [x] Manage UI notifications
+  - [x] Handle notification display
 - [x] Implement Loading Store
   - [x] Track loading states
   - [x] Manage loading indicators
@@ -29,14 +29,14 @@
   - [x] Handle login/registration
   - [x] Manage tokens
   - [x] Unit tests (8/8 passing, 100% coverage)
-- [ ] Implement User Service
-  - [ ] Fetch/update user data
-- [ ] Implement Delivery Service
-  - [ ] Handle delivery operations
-- [ ] Implement Partner Service
-  - [ ] Handle partner operations
-- [ ] Implement Admin Service
-  - [ ] Handle admin operations
+- [x] Implement User Service
+  - [x] Fetch/update user data
+- [x] Implement Delivery Service
+  - [x] Handle delivery operations
+- [x] Implement Partner Service
+  - [x] Handle partner operations
+- [x] Implement Admin Service
+  - [x] Handle admin operations
 - [ ] Implement Support Service
   - [ ] Handle support tickets
 - [ ] Implement Map Service
