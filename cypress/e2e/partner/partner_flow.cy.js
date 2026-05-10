@@ -18,14 +18,14 @@ describe('🏢 Partner Flow', () => {
     
     // View an order
     cy.get('[data-cy="view-order-btn"]').first().click();
-    cy.get('.v-dialog').should('be.visible');
-    cy.get('.v-btn').contains('Close').click();
+    cy.url().should('match', /\/partner\/orders\/\d+/);
+    cy.get('[data-cy="back-btn"]').click();
     
     // Accept an order (if any pending)
     cy.get('body').then(($body) => {
       if ($body.find('[data-cy="accept-order-btn"]').length > 0) {
         cy.get('[data-cy="accept-order-btn"]').first().click();
-        cy.get('.v-snackbar').should('contain', 'accepted');
+        cy.get('[data-cy="app-alert"]').should('contain', 'accepted');
       }
     });
   });

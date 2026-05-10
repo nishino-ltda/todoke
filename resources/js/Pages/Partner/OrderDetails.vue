@@ -72,18 +72,71 @@
         </v-table>
       </v-card-text>
 
-      <v-card-actions>
-        <v-btn color="primary" @click="goBack">{{ t('partner.orders.back_to_orders') }}</v-btn>
+      <v-card-actions class="pa-4 flex-wrap gap-2">
+        <v-btn
+          variant="outlined"
+          prepend-icon="mdi-arrow-left"
+          @click="goBack"
+          data-cy="back-btn"
+        >
+          {{ t('partner.orders.back_to_orders') }}
+        </v-btn>
+        
+        <v-spacer></v-spacer>
+
+        <v-btn
+          v-if="['confirmed', 'preparing', 'pending'].includes(order.status)"
+          color="primary"
+          prepend-icon="mdi-moped-electric"
+          :loading="requestingCourier"
+          @click="handleRequestCourier"
+          data-cy="request-courier-btn"
+        >
+          {{ t('partner.orders.request_courier') }}
+        </v-btn>
+
+        <v-btn
+          color="secondary"
+          prepend-icon="mdi-printer"
+          @click="printLabel"
+          data-cy="print-label-btn"
+        >
+          {{ t('partner.orders.print_label') }}
+        </v-btn>
       </v-card-actions>
     </v-card>
+
+    <!-- Printable Label (Hidden) -->
+    <div id="printable-label" class="d-none">
+      <div class="label-content pa-4" style="font-family: monospace; border: 2px solid black; width: 80mm; margin: 0 auto; color: black; background: white;">
+        <h2 style="text-align: center; border-bottom: 1px dashed black; padding-bottom: 5px; margin-top: 0;">TODOKE</h2>
+        <p style="margin: 5px 0;"><strong>ORDER:</strong> #{{ order.id }}</p>
+        <p style="margin: 5px 0;"><strong>CUSTOMER:</strong> {{ order.customer_name }}</p>
+        <p style="margin: 5px 0;"><strong>ADDRESS:</strong> {{ order.delivery_address }}</p>
+        <p style="margin: 5px 0;"><strong>PHONE:</strong> {{ order.customer_phone }}</p>
+        <hr style="border-top: 1px dashed black; margin: 10px 0;">
+        <div v-for="item in order.items" :key="item.id" style="margin: 2px 0;">
+          {{ item.quantity }}x {{ item.product_name }}
+        </div>
+        <hr style="border-top: 1px dashed black; margin: 10px 0;">
+        <p style="text-align: right; font-size: 1.2em; margin: 5px 0;"><strong>TOTAL: {{ t('common.currency_symbol', { value: order.total }, '$' + order.total) }}</strong></p>
+        <div style="text-align: center; margin-top: 20px; font-size: 24px; letter-spacing: 4px; border: 1px solid #ccc; padding: 10px;">
+          ||||| {{ order.id }} |||||
+        </div>
+      </div>
+    </div>
   </v-container>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { router } from '@inertiajs/vue3'
+import partnerService from '@/services/partner'
+import { useNotificationStore } from '@/stores/notification'
 
 const { t } = useI18n()
+const notifications = useNotificationStore()
 
 const props = defineProps({
   order: {
@@ -92,7 +145,49 @@ const props = defineProps({
   }
 })
 
+const requestingCourier = ref(false)
+
 function goBack() {
   router.visit('/partner/orders')
 }
+
+async function handleRequestCourier() {
+  requestingCourier.value = true
+  try {
+    await partnerService.requestCourier(props.order.id)
+    notifications.success(t('partner.orders.courier_requested'))
+    // Refresh order data if needed, or just let realtime handle it
+  } catch (err) {
+    notifications.error(t('partner.orders.courier_request_failed'))
+  } finally {
+    requestingCourier.value = false
+  }
+}
+
+function printLabel() {
+  window.print()
+}
 </script>
+
+<style scoped>
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-label, #printable-label * {
+    visibility: visible;
+  }
+  #printable-label {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+    z-index: 9999;
+  }
+}
+
+.gap-2 {
+  gap: 8px;
+}
+</style>

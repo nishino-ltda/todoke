@@ -14,6 +14,58 @@
         </v-col>
       </v-row>
 
+      <!-- Charts Section -->
+      <v-row class="mb-6">
+        <v-col cols="12" lg="8">
+          <v-card border elevation="0" class="rounded-xl">
+            <v-card-title class="px-6 py-4 d-flex align-center justify-space-between">
+              <span>{{ t('partner.dashboard.charts.order_volume') }}</span>
+              <v-btn-toggle
+                v-model="activePeriod"
+                mandatory
+                color="primary"
+                density="compact"
+                rounded="lg"
+                data-cy="chart-period-filter"
+              >
+                <v-btn value="today" size="small" data-cy="filter-today">
+                  {{ t('partner.dashboard.filters.today') }}
+                </v-btn>
+                <v-btn value="7days" size="small" data-cy="filter-7days">
+                  {{ t('partner.dashboard.filters.7days') }}
+                </v-btn>
+                <v-btn value="30days" size="small" data-cy="filter-30days">
+                  {{ t('partner.dashboard.filters.30days') }}
+                </v-btn>
+              </v-btn-toggle>
+            </v-card-title>
+            <v-card-text>
+              <div v-if="loading" class="py-12 text-center">
+                <v-progress-circular indeterminate color="primary" />
+              </div>
+              <div v-else class="chart-wrapper" data-cy="order-volume-chart">
+                <Line :data="lineChartData" :options="chartOptions" />
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="12" lg="4">
+          <v-card border elevation="0" class="rounded-xl h-100">
+             <v-card-title class="px-6 py-4">
+              {{ t('partner.dashboard.charts.revenue_share') }}
+            </v-card-title>
+            <v-card-text>
+               <div v-if="loading" class="py-12 text-center">
+                <v-progress-circular indeterminate color="primary" />
+              </div>
+              <div v-else class="chart-wrapper" data-cy="revenue-chart">
+                <Bar :data="barChartData" :options="chartOptions" />
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+
       <!-- Recent Orders Section -->
       <v-row>
         <v-col cols="12">
@@ -43,7 +95,7 @@
                 variant="text"
                 color="primary"
                 icon="mdi-eye"
-                @click="viewOrder(item)"
+                @click="router.visit(`/partner/orders/${item.id}`)"
                 data-cy="view-order-btn"
               ></v-btn>
               <v-btn
@@ -95,8 +147,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { router } from '@inertiajs/vue3';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+} from 'chart.js';
+import { Line, Bar } from 'vue-chartjs';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
@@ -104,6 +170,18 @@ import MetricsWidget from '@/Components/MetricsWidget.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
 import { useRealtime } from '@/composables/useRealtime';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const props = defineProps({
   initialMetrics: {
@@ -119,6 +197,7 @@ const realtime = useRealtime();
 const loading = ref(false);
 const showOrderModal = ref(false);
 const selectedOrder = ref(null);
+const activePeriod = ref('7days');
 
 const metrics = ref([
   { titleKey: 'partner.dashboard.metrics.new_orders', value: '0', icon: 'mdi-bell-ring', color: 'bg-orange', key: 'new_orders' },
@@ -150,6 +229,69 @@ const getStatusColor = (status) => {
     'cancelled': 'red'
   };
   return colors[status] || 'grey';
+};
+
+// ── Chart data ────────────────────────────────────────────────────────────────
+
+const getLabels = (period) => {
+  const today = new Date();
+  const labels = [];
+  const count = period === 'today' ? 12 : period === '7days' ? 7 : 30;
+  const fmt = period === 'today'
+    ? (i) => `${(today.getHours() - (count - 1 - i) + 24) % 24}h`
+    : (i) => {
+        const d = new Date(today); d.setDate(d.getDate() - (count - 1 - i));
+        return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      };
+  for (let i = 0; i < count; i++) labels.push(fmt(i));
+  return labels;
+};
+
+const makeData = (base, count) =>
+  Array.from({ length: count }, (_, i) =>
+    Math.max(0, Math.round(base * 0.5 + Math.sin(i * 0.7) * base * 0.3 + Math.random() * base * 0.2))
+  );
+
+const chartLabels = computed(() => getLabels(activePeriod.value));
+
+const lineChartData = computed(() => ({
+  labels: chartLabels.value,
+  datasets: [
+    {
+      label: t('partner.dashboard.charts.orders'),
+      data: makeData(15, chartLabels.value.length),
+      borderColor: '#1976D2',
+      backgroundColor: 'rgba(25, 118, 210, 0.1)',
+      tension: 0.4,
+      fill: true,
+    }
+  ]
+}));
+
+const barChartData = computed(() => ({
+  labels: chartLabels.value,
+  datasets: [
+    {
+      label: t('partner.dashboard.charts.revenue'),
+      data: makeData(500, chartLabels.value.length),
+      backgroundColor: 'rgba(76, 175, 80, 0.7)',
+      borderColor: '#4CAF50',
+      borderWidth: 1,
+      borderRadius: 4,
+    }
+  ]
+}));
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: { mode: 'index', intersect: false }
+  },
+  scales: {
+    y: { beginAtZero: true }
+  }
 };
 
 const fetchDashboardData = async () => {
@@ -208,7 +350,6 @@ onMounted(() => {
   fetchDashboardData();
 });
 
-import { onUnmounted, watch } from 'vue';
 onUnmounted(() => {
   realtime.leaveChannels();
   recentOrders.value.forEach(order => {
@@ -257,6 +398,11 @@ watch(recentOrders, (newOrders, oldOrders) => {
 
 .partner-dashboard {
   animation: fadeIn 0.5s ease-out;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
 }
 
 @keyframes fadeIn {

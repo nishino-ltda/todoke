@@ -16,6 +16,13 @@ export const partnerService = {
   },
 
   /**
+   * Get single order details
+   */
+  async getOrder(orderId) {
+    return api.get(`/partner/orders/${orderId}`);
+  },
+
+  /**
    * Get partner menu items
    */
   async getMenu() {
@@ -41,8 +48,14 @@ export const partnerService = {
   },
 
   /**
+   * Get partner products
+   */
+  async getProducts() {
+    return api.get('/partner/products');
+  },
+
+  /**
    * Create a new product
-   * @param {Object} data 
    */
   async createProduct(data) {
     return api.post('/partner/products', data);
@@ -123,7 +136,14 @@ export const partnerService = {
    */
   async createNode(data) { return api.post('/partner/nodes', data); },
   async updateNode(id, data) { return api.put(`/partner/nodes/${id}`, data); },
-  async deleteNode(id) { return api.delete(`/partner/nodes/${id}`); }
+  async deleteNode(id) { return api.delete(`/partner/nodes/${id}`); },
+
+  /**
+   * Request a courier for an order
+   */
+  async requestCourier(orderId) {
+    return api.post('/deliveries', { order_id: orderId });
+  }
 };
 
 export default partnerService;

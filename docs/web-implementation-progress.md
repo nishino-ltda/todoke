@@ -1,62 +1,61 @@
 # Web Interface Implementation Progress
 
+## Partner Dashboard (Complete) — 2026-05-10
+
+### Dashboard Metrics
+- [x] Chart.js metrics on Dashboard.vue with period filtering (Today, 7d, 30d)
+- [x] Reactive data fetching with real-time updates via Reverb
+
+### Order Management
+- [x] Order List with status-based actions (Accept, View)
+- [x] Order Details with customer info, itemized summary, addons
+- [x] Courier/Drone request functionality
+- [x] Print label functionality
+- [x] Real-time order status updates
+
+### API Integration
+- [x] Fetch partner metrics
+- [x] Fetch/update orders via partner.js service
+- [x] Manage products/addons CRUD
+- [x] Manage regions/nodes CRUD
+
+### E2E Tests
+- [x] `partner-dashboard.cy.js` — metrics, chart interactions
+- [x] `order-management.cy.js` — order actions with API mocks
+- [x] `partner_flow.cy.js` — full partner workflow
+
+---
+
 ## Sprint 8 — Notifications & Real-time (Complete) — 2026-05-09
-
-### Laravel Reverb (Backend)
-- [x] Installed `laravel/reverb` — first-party WebSocket server
-- [x] Broadcasting configured with reverb driver
-- [x] 4 broadcast events: OrderStatusChanged, DeliveryStatusChanged, NewDeliveryAvailable, NewSupportReply
-- [x] Channel authorization in routes/channels.php (Sanctum-compatible)
-
-### Laravel Echo (Frontend)
-- [x] `resources/js/echo.js` — Echo initialized with Reverb connector
-- [x] `resources/js/composables/useRealtime.js` — WebSocket listener management
-- [x] `resources/js/Components/NotificationCenter.vue` — notification stack UI
-- [x] All 4 layouts (Authenticated, Courier, Partner, Admin) have NotificationCenter
-- [x] All 4 dashboards use useRealtime with auto-cleanup
-
-### Testing
-- [x] 243 unit tests passing (Echo + Inertia mocks updated)
-- [x] `notification-system.cy.js` — real-time UI behavior + locale switching
-
-### Dev Experience
-- [x] `composer dev` starts Reverb alongside Vite + Laravel
+- Laravel Reverb (4 events), Laravel Echo, NotificationCenter.vue
+- Real-time on all 4 dashboards, composer dev auto-starts Reverb
+- E2E: notification-system.cy.js
 
 ---
 
 ## Sprint 9 — Support System E2E (Complete) — 2026-05-09
-- Support Store, data-cy attributes, 3 E2E files with real logic
+- Support Store, data-cy, 3 E2E files
 
 ---
 
 ## Sprint 7 — Admin Panel (Complete) — 2026-05-09
-- Charts (Chart.js), region map (Leaflet), delivery detail modal
-- 7 E2E files with real logic, 3 new unit test files
+- Chart.js, Leaflet, delivery detail, 7 E2E files, 3 unit tests
 
 ---
 
 ## Sprint 6 — Courier Dashboard (Complete) — 2026-05-09
-- delivery.js (6 methods), full dashboard data flow, 15 unit tests, 12 E2E tests
+- delivery.js, 15 unit tests, 12 E2E tests
 
 ---
 
 ## Sprint 5 — Menu System (Complete) — 2026-05-09
-- Dual routing, Cart component, API endpoint, Auth integration, Order submission
+- Dual routing, Cart, API, Auth, E2E
 
 ---
 
-## Remaining Tasks
-
-### Partner Dashboard Completion ← NEXT
-- Charts for metrics dashboard
-- Courier request functionality
-- Print label functionality
-- OrderDetail component verification
-- E2E tests for partner workflows (replace placeholders)
-- Verify API integration completeness for orders, products, addons
-
+## Remaining
 ### Sprint 10: Performance & Polish
 - Lazy loading, bundle optimization, caching
 - Accessibility audits (ARIA, keyboard nav, screen reader)
 - Cross-browser compatibility, security scans
-- Documentation finalization
+- Documentation finalization (in progress)

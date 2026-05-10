@@ -177,6 +177,17 @@
                 "preparing": "Em Preparação",
                 "today_revenue": "Receita de Hoje",
                 "completed": "Concluídos"
+            },
+            "charts": {
+                "order_volume": "Volume de Pedidos",
+                "revenue_share": "Receita por Período",
+                "orders": "Pedidos",
+                "revenue": "Receita"
+            },
+            "filters": {
+                "today": "Hoje",
+                "7days": "7 Dias",
+                "30days": "30 Dias"
             }
         },
         "orders": {
@@ -185,6 +196,7 @@
             "customer": "Cliente",
             "total": "Total",
             "status": "Status",
+            "actions": "Ações",
             "refresh": "Atualizar",
             "view": "Ver",
             "details": "Detalhes do Pedido",
@@ -197,7 +209,14 @@
             "back_to_orders": "Voltar para Pedidos",
             "accepted": "Pedido #{id} aceito",
             "failed_load": "Falha ao carregar dados do painel",
-            "failed_accept": "Falha ao aceitar pedido"
+            "failed_accept": "Falha ao aceitar pedido",
+            "not_found": "Pedido não encontrado",
+            "status_updated": "Status do pedido atualizado",
+            "failed_update": "Falha ao atualizar status",
+            "request_courier": "Solicitar Entregador",
+            "courier_requested": "Entregador solicitado com sucesso",
+            "courier_request_failed": "Falha ao solicitar entregador",
+            "print_label": "Imprimir Etiqueta"
         },
         "products": {
             "title": "Gerenciamento de Produtos",

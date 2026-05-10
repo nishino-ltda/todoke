@@ -1,57 +1,36 @@
 describe('🍽️ Partner Dashboard', () => {
   beforeEach(() => {
-    cy.log('🔑 Logging in as partner');
-    // Will login as partner before each test
+    cy.visit('/login');
+    cy.get('[data-cy="email-input"] input').type('partner@todoke.test');
+    cy.get('[data-cy="password-input"] input').type('password123');
+    cy.get('[data-cy="login-button"]').click();
+    cy.url().should('include', '/partner/dashboard');
   });
 
-  // Sprint 5: Partner Dashboard Implementation
-  it('📊 Should display business metrics', () => {
-    cy.log('📈 Testing business dashboard');
-    // Test will verify:
-    // - Sales data shows
-    // - Popular items highlighted
-    // - Earnings calculated
-    // - Charts render
-    cy.fail('Test not implemented');
+  it('📊 Should display metrics and charts', () => {
+    // Metrics
+    cy.get('[data-cy="dashboard-metric"]').should('have.length', 4);
+    
+    // Charts
+    cy.get('[data-cy="order-volume-chart"]').should('be.visible');
+    cy.get('[data-cy="revenue-chart"]').should('be.visible');
   });
 
-  // Sprint 5: Order Management Implementation  
-  it('📦 Should manage orders', () => {
-    cy.log('📦 Testing order management');
-    // Test will verify:
-    // - New orders appear
-    // - Can accept/reject
-    // - Status updates
-    // - Preparation time accurate
-    cy.fail('Test not implemented');
+  it('📅 Should filter charts by period', () => {
+    cy.get('[data-cy="chart-period-filter"]').should('be.visible');
+    
+    // Today
+    cy.get('[data-cy="filter-today"]').click();
+    cy.get('[data-cy="order-volume-chart"]').should('be.visible');
+
+    // 30 days
+    cy.get('[data-cy="filter-30days"]').click();
+    cy.get('[data-cy="order-volume-chart"]').should('be.visible');
   });
 
-  it('📅 Should handle scheduling', () => {
-    cy.log('⏱️ Testing schedule management');
-    // Test will verify:
-    // - Can set operating hours
-    // - Special hours work
-    // - Affects order availability
-    // - Capacity limits enforced
-    cy.fail('Test not implemented');
-  });
-
-  it('⚠️ Should handle issues', () => {
-    cy.log('🚨 Testing problem scenarios');
-    // Test will verify:
-    // - Ingredient shortages
-    // - Courier delays
-    // - Customer complaints
-    // - Support access
-    cy.fail('Test not implemented');
-  });
-
-  it('📱 Should work on mobile', () => {
-    cy.log('📲 Testing mobile dashboard');
-    // Test will verify:
-    // - Order cards usable
-    // - Buttons accessible
-    // - No horizontal scrolling
-    cy.fail('Test not implemented');
+  it('📦 Should show recent orders and link to details', () => {
+    cy.get('[data-cy="recent-orders-table"]').should('be.visible');
+    cy.get('[data-cy="view-order-btn"]').first().click();
+    cy.url().should('match', /\/partner\/orders\/\d+/);
   });
 });

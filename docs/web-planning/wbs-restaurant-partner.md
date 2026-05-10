@@ -15,16 +15,16 @@
 ## 2. Metrics Dashboard
 - [x] Create Metrics Widget component (`MetricsWidget.vue`)
 - [x] Display key metrics (active orders, pending deliveries)
-- [ ] Add charts/graphs for visual representation
-- [ ] Implement real-time updates (polling/WebSockets)
+- [x] Add charts/graphs for visual representation
+- [x] Implement real-time updates (Echo/Reverb connected)
 
 ## 3. Order Management
 - [x] Create Order List component (`OrderList.vue`)
-- [ ] Create Order Detail component (`OrderDetail.vue`)
+- [x] Create Order Detail component (`OrderDetails.vue`)
 - [x] Display real-time order status
 - [x] Implement status update functionality
-- [ ] Add courier request functionality
-- [ ] Implement print label functionality
+- [x] Add courier request functionality
+- [x] Implement print label functionality
 
 ## 4. Product Management
 - [x] Create Product List component (`ProductList.vue`)
@@ -46,13 +46,13 @@
 - [x] Implement CRUD operations for regions/nodes
 
 ## 7. API Integration
-- [ ] Fetch partner metrics
-- [ ] Fetch/update orders
-- [ ] Manage products/addons
-- [ ] Manage regions/nodes (for logistics partners)
+- [x] Fetch partner metrics
+- [x] Fetch/update orders
+- [x] Manage products/addons
+- [x] Manage regions/nodes (for logistics partners)
 
 ## 8. Testing
 - [x] Unit tests for components (PartnerDashboard, PartnerProducts, PartnerLogistics — 10 tests passing with i18n assertions)
-- [ ] E2E tests for partner workflows
-  - [ ] Login flow tests
-  - [ ] Order management tests
+- [x] E2E tests for partner workflows
+  - [x] Login flow tests
+  - [x] Order management tests

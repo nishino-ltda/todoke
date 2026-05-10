@@ -12,6 +12,7 @@
     - Laravel Tinker (^2.10.1) - REPL
     - InertiaJS Laravel (^2.0) - Frontend integration
     - Tightenco Ziggy (^2.0) - Route generation
+    - Laravel Reverb (^1.x) - WebSocket server
   - Development:
     - FakerPHP (^1.23) - Test data generation
     - Laravel Breeze (^2.3) - Authentication scaffolding
@@ -325,3 +326,9 @@ npm run build
 
 ## Known API Endpoints
 - Restaurant details: GET /api/v1/restaurants/{slug}
+- Partner details: GET /api/v1/partners/{slug}
+- Orders: POST /api/v1/orders, PATCH /api/v1/orders/{id}/status
+- Deliveries: GET /api/v1/deliveries, PATCH /api/v1/deliveries/{id}/accept, PATCH /api/v1/deliveries/{id}/status
+- Support: GET/POST /api/v1/support/tickets, GET/POST /api/v1/support/faq
+- Map: GET /api/v1/map/geocode, GET /api/v1/map/distance
+- Notifications: Broadcast via Laravel Reverb WebSocket channels
