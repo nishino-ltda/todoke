@@ -37,19 +37,20 @@
               :id="'addon-' + addon.id" 
               v-model="selectedAddons" 
               :value="addon.id"
+              :data-cy="'addon-checkbox-' + addon.id"
             >
-            <label :for="'addon-' + addon.id">
+            <label :for="'addon-' + addon.id" :data-cy="'addon-label-' + addon.id">
               {{ addon.name }} (+ ${{ addon.price.toFixed(2) }})
             </label>
           </div>
         </v-card-text>
         
         <v-card-actions class="quantity-controls">
-          <v-btn @click="quantity > 1 ? quantity-- : null" icon>
+          <v-btn @click="quantity > 1 ? quantity-- : null" icon data-cy="decrease-quantity">
             <v-icon>mdi-minus</v-icon>
           </v-btn>
-          <span class="mx-2">{{ quantity }}</span>
-          <v-btn @click="quantity++" icon>
+          <span class="mx-2" data-cy="quantity-display">{{ quantity }}</span>
+          <v-btn @click="quantity++" icon data-cy="increase-quantity">
             <v-icon>mdi-plus</v-icon>
           </v-btn>
         </v-card-actions>
@@ -96,9 +97,13 @@ const totalPrice = computed(() => {
 })
 
 const addToCart = () => {
+  const addons = selectedAddons.value.map(addonId => 
+    props.product.addons.find(a => a.id === addonId)
+  ).filter(Boolean)
+
   const item = {
     ...props.product,
-    selectedAddons: [...selectedAddons.value]
+    selectedAddons: addons
   }
   for (let i = 0; i < quantity.value; i++) {
     cart.addItem(item)

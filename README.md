@@ -101,6 +101,19 @@ npm run test:e2e:local      # Testes E2E (Cypress)
 - Aumenta segurança para parceiros e entregadores através do sistema de reputação
 
 
+## Contas de Teste
+
+| Papel | Email | Senha |
+|-------|-------|-------|
+| Admin | admin@todoke.test | password123 |
+| Suporte | support@todoke.test | password123 |
+| Parceiro (Restaurante) | partner@todoke.test | password123 |
+| Entregador | courier@todoke.test | password123 |
+| Cliente | customer@todoke.test | password123 |
+| Usuário Bloqueado | locked@todoke.test | password123 |
+
+Para re-seed o banco de dados: `php artisan db:seed`
+
 ## Status do Projeto — MVP Completo ✅
 
 | Área | Status |

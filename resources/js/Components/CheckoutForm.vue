@@ -6,6 +6,7 @@
       v-model="address"
       :errors="errors"
       :rules="[requiredField]"
+      :geocode="true"
       data-cy="address-input"
     />
 

@@ -43,6 +43,12 @@ class DatabaseSeeder extends Seeder
                 'type' => 'customer',
                 'password' => Hash::make('password123')
             ],
+            'support' => [
+                'name' => 'Support Agent',
+                'email' => 'support@todoke.test',
+                'type' => 'admin',
+                'password' => Hash::make('password123')
+            ],
             'locked' => [
                 'name' => 'Locked User',
                 'email' => 'locked@todoke.test',

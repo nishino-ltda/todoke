@@ -1,92 +1,203 @@
 describe('🛒 Checkout Flow', () => {
-  // SPRINT 3: Add to cart flow & cart persistence test
-  it('📦 Should add items to cart', () => {
-    cy.log('🛍️ Testing cart functionality');
-    // Test will verify:
-    // - Can add items
-    // - Quantity updates
-    // - Price calculates correctly
-    // - Cart updates in real-time
-    cy.fail('Test not implemented');
+  const mockPartner = {
+    id: 1,
+    name: 'Test Restaurant',
+    slug: 'test-restaurant',
+    type: 'Restaurant'
+  };
+
+  const mockProducts = [
+    {
+      id: 1,
+      name: 'Pizza Margherita',
+      price: 10.0,
+      description: 'Fresh mozzarella, tomatoes, basil',
+      addons: [
+        { id: 101, name: 'Extra Cheese', price: 2.0 },
+        { id: 102, name: 'Mushrooms', price: 1.5 }
+      ]
+    }
+  ];
+
+  beforeEach(() => {
+    // Intercept essential APIs
+    cy.intercept('GET', '**/api/v1/partners/test-restaurant', {
+      statusCode: 200,
+      body: {
+        partner: mockPartner,
+        products: mockProducts
+      }
+    }).as('getPartner');
+
+    cy.intercept('POST', '**/api/v1/orders', {
+      statusCode: 201,
+      body: { id: 123, status: 'pending' }
+    }).as('submitOrder');
+
+    cy.intercept('GET', '**/api/v1/map/geocode*', {
+      statusCode: 200,
+      body: [{ address: 'Test Address 123', lat: -23.5505, lng: -46.6333 }]
+    }).as('geocode');
+
+    // Mock auth check
+    cy.intercept('GET', '**/api/v1/users/me', {
+      statusCode: 200,
+      body: { id: 1, name: 'Test Customer', email: 'customer@todoke.test', role: 'customer' }
+    }).as('getMe');
+
+    // Clear state
+    cy.window().then((win) => {
+      win.localStorage.clear();
+    });
   });
 
-  it('🏠 Should handle address selection', () => {
-    cy.log('📍 Testing address handling');
-    // Test will verify:
-    // - Can select saved addresses
-    // - Can add new address
-    // - Validation works
-    // - Affects delivery options
-    cy.fail('Test not implemented');
+  it('📦 Should add items to cart and update quantities', () => {
+    cy.visit('/menu/test-restaurant');
+    cy.wait('@getPartner');
+
+    // Click on product card to open modal
+    cy.get('[data-cy="product-card"]').first().click();
+
+    // Verify modal is open
+    cy.get('[data-cy="add-to-cart"]').should('be.visible');
+
+    // Increase quantity
+    cy.get('[data-cy="increase-quantity"]').click();
+    cy.get('[data-cy="quantity-display"]').should('contain', '2');
+
+    // Add to cart
+    cy.get('[data-cy="add-to-cart"]').click();
+
+    // Verify cart count in badge
+    cy.get('[data-cy="cart-icon"]').should('contain', '2');
   });
 
-  it('💳 Should process payments', () => {
-    cy.log('💵 Testing payment processing');
-    // Test will verify:
-    // - Can select payment method
-    // - Card validation works
-    // - Payment succeeds/fails appropriately
-    // - Receipt generates
-    cy.fail('Test not implemented');
+  it('🏠 Should handle address selection with geocoding', () => {
+    cy.login('customer@todoke.test', 'password123');
+    
+    // Add item to cart
+    cy.visit('/menu/test-restaurant');
+    cy.get('[data-cy="product-card"]').first().click();
+    cy.get('[data-cy="add-to-cart"]').click();
+
+    // Go to checkout
+    cy.visit('/customer/checkout');
+
+    // Type address and select from combobox
+    cy.get('[data-cy="address-combobox"]').find('input').clear().type('Test Address', { delay: 100 });
+    cy.wait('@geocode');
+    
+    // Wait for the menu to appear and select the first item
+    cy.get('.v-overlay-container').should('be.visible');
+    cy.get('.v-list-item').first().click();
+
+    // Verify value was set
+    cy.get('[data-cy="address-combobox"]').find('input').should('have.value', 'Test Address 123');
   });
 
-  it('⏱️ Should handle scheduled deliveries', () => {
-    cy.log('⏰ Testing delivery scheduling');
-    // Test will verify:
-    // - Can select future time
-    // - Availability checks work
-    // - Confirmation shows correct time
-    cy.fail('Test not implemented');
+  it('💳 Should handle payment method selection', () => {
+    cy.login('customer@todoke.test', 'password123');
+    
+    // Add item and go to checkout
+    cy.visit('/menu/test-restaurant');
+    cy.get('[data-cy="product-card"]').first().click();
+    cy.get('[data-cy="add-to-cart"]').click();
+    cy.visit('/customer/checkout');
+
+    // Default should be cash (based on component logic)
+    cy.get('[data-cy="payment-method-select"]').should('contain', 'Cash');
+
+    // Change to Credit Card
+    cy.get('[data-cy="payment-method-select"]').click();
+    cy.get('.v-list-item').contains('Credit Card').click();
+
+    // Verify CC fields appear
+    cy.get('[data-cy="card-number-input"]').should('be.visible');
+    cy.get('[data-cy="card-expiry-input"]').should('be.visible');
+    cy.get('[data-cy="card-cvv-input"]').should('be.visible');
+    cy.get('[data-cy="card-holder-input"]').should('be.visible');
   });
 
-  it('📱 Should be mobile friendly', () => {
-    cy.log('📲 Testing mobile checkout');
-    // Test will verify:
-    // - Forms are usable
-    // - Keyboard works properly
-    // - No horizontal scrolling
-    cy.fail('Test not implemented');
+  it('➕ Should calculate totals correctly with addons', () => {
+    cy.visit('/menu/test-restaurant');
+    cy.wait('@getPartner');
+
+    // Open modal
+    cy.get('[data-cy="product-card"]').first().click();
+
+    // Base price $10.00. Add "Extra Cheese" (+$2.00)
+    cy.get('[data-cy="addon-checkbox-101"]').click();
+    
+    // Total in button should be $12.00
+    cy.get('[data-cy="add-to-cart"]').should('contain', '$12.00');
+
+    // Add to cart
+    cy.get('[data-cy="add-to-cart"]').click();
+
+    // Check cart summary in checkout
+    cy.login('customer@todoke.test', 'password123');
+    cy.visit('/customer/checkout');
+    
+    // Subtotal $12.00 + Delivery Fee $5.00 = $17.00
+    cy.get('[data-cy="checkout-order-summary"]').within(() => {
+      cy.contains('R$ 12.00'); // Subtotal (formatted as R$)
+      cy.contains('R$ 17.00'); // Total
+    });
   });
 
-  // SPRINT 4: Checkout flow test case
   it('✅ Should successfully place an order', () => {
-    cy.log('👍 Testing successful order placement');
-    // Test will verify:
-    // - Can complete all checkout steps
-    // - Order is submitted to the API
-    // - Redirects to order confirmation page
-    // - Cart is cleared after order
-    cy.fail('Test not implemented');
+    cy.login('customer@todoke.test', 'password123');
+    
+    // Add item
+    cy.visit('/menu/test-restaurant');
+    cy.get('[data-cy="product-card"]').first().click();
+    cy.get('[data-cy="add-to-cart"]').click();
+
+    // Checkout
+    cy.visit('/customer/checkout');
+
+    // Fill details
+    cy.get('[data-cy="address-combobox"]').find('input').type('Test Address 123');
+    cy.get('[data-cy="payment-method-select"]').click();
+    cy.get('.v-list-item').contains('Cash').click();
+
+    // Submit
+    cy.get('[data-cy="submit-order"]').click();
+
+    // Verify API call
+    cy.wait('@submitOrder').then((interception) => {
+      expect(interception.request.body.partner_id).to.equal(1);
+      expect(interception.request.body.items[0].product_id).to.equal(1);
+    });
+
+    // Verify redirect to confirmation
+    cy.url().should('include', '/customer/orders/123');
+    
+    // Verify cart is cleared
+    cy.get('[data-cy="cart-icon"]').should('not.contain', '1');
   });
 
-  // SPRINT 4: Checkout flow test case  
-  it('👁️ Should view order confirmation', () => {
-    cy.log('📄 Testing order confirmation display');
-    // Test will verify:
-    // - Order details are displayed correctly
-    // - Confirmation number is visible
-    // - Next steps are clear
-    cy.fail('Test not implemented');
-  });
-
-  // SPRINT 4: Checkout flow test case
-  it('➕ Should handle addons during checkout', () => {
-    cy.log('🧩 Testing addon selection in checkout');
-    // Test will verify:
-    // - Selected addons are reflected in the cart
-    // - Addon prices are included in the total
-    // - Addons are included in the order submission
-    cy.fail('Test not implemented');
-  });
-
-  // SPRINT 4: Checkout flow test case
   it('❌ Should handle checkout error cases', () => {
-    cy.log('🔥 Testing checkout error handling');
-    // Test will verify:
-    // - Validation errors are displayed
-    // - API errors during order submission are handled
-    // - User is informed of the error
-    // - Cart state is maintained appropriately on error
-    cy.fail('Test not implemented');
+    cy.login('customer@todoke.test', 'password123');
+    
+    // Mock validation error
+    cy.intercept('POST', '/api/v1/orders', {
+      statusCode: 422,
+      body: { message: 'The selected delivery address is invalid.' }
+    }).as('submitOrderError');
+
+    // Add item and go to checkout
+    cy.visit('/menu/test-restaurant');
+    cy.get('[data-cy="product-card"]').first().click();
+    cy.get('[data-cy="add-to-cart"]').click();
+    cy.visit('/customer/checkout');
+
+    // Fill and submit
+    cy.get('[data-cy="address-combobox"]').find('input').type('Invalid Address');
+    cy.get('[data-cy="submit-order"]').click();
+
+    // Verify error message
+    cy.wait('@submitOrderError');
+    cy.get('[data-cy="checkout-form-error"]').should('contain', 'The selected delivery address is invalid.');
   });
 });

@@ -88,6 +88,14 @@ export const adminService = {
   },
 
   /**
+   * Get a single delivery
+   * @param {string|number} deliveryId
+   */
+  async getDelivery(deliveryId) {
+    return api.get(`/admin/deliveries/${deliveryId}`);
+  },
+
+  /**
    * Get admin settings
    */
   async getSettings() {

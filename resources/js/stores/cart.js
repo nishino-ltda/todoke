@@ -25,7 +25,12 @@ export const useCartStore = defineStore('cart', () => {
 
   const count = computed(() => items.value.length)
   const total = computed(() =>
-    items.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    items.value.reduce((sum, item) => {
+      const addonsPrice = (item.selectedAddons || []).reduce((addonSum, addon) => {
+        return addonSum + (addon.price || 0)
+      }, 0)
+      return sum + ((item.price + addonsPrice) * item.quantity)
+    }, 0)
   )
 
   const subtotal = computed(() => total.value)

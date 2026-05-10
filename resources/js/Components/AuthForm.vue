@@ -201,7 +201,7 @@
       type="submit"
       class="v-btn"
       :disabled="loading || undefined"
-      :data-cy="mode === 'login' ? 'login-button' : 'register-button'"
+      :data-cy="(mode === 'login' ? 'login-button' : 'register-button') + ' submit-btn'"
       :loading="loading"
     >
       <template v-if="!loading">

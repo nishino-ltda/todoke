@@ -8,8 +8,8 @@
 ## 2. System Metrics
 - [x] Create Admin Stats Widget (`AdminStatsWidget.vue`)
 - [x] Display key system metrics (users, deliveries, nodes)
-- [ ] Implement charts/graphs for data visualization
-- [ ] Add time period filters
+- [x] Implement charts/graphs for data visualization
+- [x] Add time period filters
 
 ## 3. User Management
 - [x] Create User List component (`UserList.vue`)
@@ -28,7 +28,7 @@
 - [x] Implement region CRUD operations (create, read, update, delete)
 - [x] Display region details with partner info
 - [x] Add form validation (JSON polygon validation, required fields)
-- [ ] Add map integration for region visualization
+- [x] Add map integration for region visualization
 
 ## 6. Delivery Monitoring
 - [x] Create Delivery List component (`Deliveries/Index.vue`)

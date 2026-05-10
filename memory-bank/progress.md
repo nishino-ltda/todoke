@@ -1,5 +1,11 @@
 # TODOKE Project Progress — Final Status (2026-05-10)
 
+## Recent Updates
+- **Added Support User**: `support@todoke.test` added to seeders and README.
+- **Updated WBS**: Admin charts, filters, and map integration marked as complete.
+- **Sprint 11 Planning**: Focused on E2E coverage of critical flows (Checkout, Home, Admin).
+
+
 ## Overall Status by Area
 | Area | Completion | Status |
 |------|-----------|--------|

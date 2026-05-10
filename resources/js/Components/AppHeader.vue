@@ -17,13 +17,14 @@
         {{ $t('auth.menu') }}
       </Link>
       <v-btn text disabled v-if="loading" data-cy="loading-indicator">{{ $t('app.loading') }}</v-btn>
-      <CartIcon v-if="user?.role === 'customer'" />
+      <CartIcon v-if="user?.role === 'customer' && !minimal" />
       <v-btn text @click="handleLogout" :disabled="loading" data-cy="logout-button">
         {{ $t('auth.logout') }}
       </v-btn>
     </template>
-
+    
     <template v-else>
+      <CartIcon v-if="!minimal" />
       <Link :href="route('login')" class="text-white mr-2" data-cy="login-link">{{ $t('auth.login') }}</Link>
       <Link :href="route('register')" class="text-white" data-cy="register-link">{{ $t('auth.register') }}</Link>
     </template>
@@ -37,6 +38,13 @@ import { useLogStore } from '@/stores/log'
 import { Link } from '@inertiajs/vue3'
 import CartIcon from './CartIcon.vue'
 import LanguageSelector from './LanguageSelector.vue'
+
+const props = defineProps({
+  minimal: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const authStore = useAuthStore()
 const logStore = useLogStore()

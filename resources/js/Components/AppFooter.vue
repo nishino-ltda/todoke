@@ -4,12 +4,19 @@ import { Link } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
+const props = defineProps({
+  minimal: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 
 <template>
   <v-footer color="primary" dark class="app-footer" data-cy="app-footer">
-    <v-container>
+    <v-container v-if="!minimal">
       <v-row justify="space-between" align="center">
         <v-col cols="12" md="4">
           <p>{{ t('footer.copyright', { year: currentYear }) }}</p>
@@ -33,6 +40,13 @@ const currentYear = computed(() => new Date().getFullYear())
             <v-icon left>mdi-instagram</v-icon>
             Instagram
           </v-btn>
+        </v-col>
+      </v-row>
+    </v-container>
+    <v-container v-else>
+      <v-row justify="center">
+        <v-col cols="12" class="text-center">
+          <p>{{ t('footer.copyright', { year: currentYear }) }}</p>
         </v-col>
       </v-row>
     </v-container>

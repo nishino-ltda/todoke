@@ -12,4 +12,16 @@ class DeliveryController extends Controller
     {
         return Inertia::render('Admin/Deliveries/Index');
     }
+
+    public function show($id)
+    {
+        return Inertia::render('Admin/Deliveries/Show', [
+            'deliveryId' => $id
+        ]);
+    }
+
+    public function monitor()
+    {
+        return Inertia::render('Admin/Deliveries/Monitor');
+    }
 }

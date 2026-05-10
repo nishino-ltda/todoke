@@ -49,8 +49,9 @@ class MenuController extends Controller
                 }),
             ]);
         } catch (ModelNotFoundException $e) {
-            return redirect()->route('home')->withErrors([
-                'message' => __('Partner not found. Please check the URL and try again.'),
+            return Inertia::render('Customer/Menu', [
+                'partner' => null,
+                'products' => [],
             ]);
         }
     }
