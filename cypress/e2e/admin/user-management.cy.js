@@ -1,68 +1,78 @@
-describe('👔 Admin User Management', () => {
+/**
+ * Admin User Management E2E Tests — Sprint 7
+ */
+
+const ADMIN_EMAIL = 'admin@todoke.test';
+const ADMIN_PASSWORD = 'password123';
+
+const mockUsers = [
+  { id: 1, name: 'João Silva', email: 'joao@example.com', role: 'customer', active: true },
+  { id: 2, name: 'Ana Ferreira', email: 'ana@example.com', role: 'courier', active: false },
+  { id: 3, name: 'Carlos Lima', email: 'carlos@example.com', role: 'partner', active: true },
+];
+
+const loginAsAdmin = () => {
+  cy.intercept('GET', '**/api/v1/admin/users*', { statusCode: 200, body: mockUsers }).as('getUsers');
+  cy.visit('/login');
+  cy.get('[data-cy="email-input"] input, [data-cy="email-input"]').type(ADMIN_EMAIL);
+  cy.get('[data-cy="password-input"] input, [data-cy="password-input"]').type(ADMIN_PASSWORD);
+  cy.get('[data-cy="login-button"], [data-cy="submit-btn"]').click();
+  cy.url().should('include', '/admin');
+};
+
+describe('👥 Admin User Management', () => {
   beforeEach(() => {
-    cy.log('🔑 Logging in as admin');
-    // Will login as admin before each test
+    loginAsAdmin();
+    cy.visit('/admin/users');
+    cy.wait('@getUsers');
   });
 
-  // Sprint 7: User management tests
-  it('👥 Should manage user accounts', () => {
-    cy.log('👤 Testing user management');
-    // Test will verify:
-    // - Can view user list
-    // - Can edit user details
-    // - Can disable/enable accounts
-    // - Changes persist
-    cy.fail('Test not implemented');
+  it('📋 Should display user list with roles and status badges', () => {
+    cy.get('[data-cy="users-table"]').should('be.visible');
+    cy.get('[data-cy="deactivate-user-btn"]').should('exist');
+    cy.get('[data-cy="activate-user-btn"]').should('exist');
   });
 
-  // Sprint 7: User management tests
-  it('🛡️ Should handle permissions', () => {
-    cy.log('🔐 Testing permission management');
-    // Test will verify:
-    // - Roles can be assigned
-    // - Permissions update
-    // - Access controls work
-    // - Changes take effect immediately
-    cy.fail('Test not implemented');
+  it('🔴 Should deactivate an active user', () => {
+    cy.intercept('POST', '**/api/v1/admin/users/1/deactivate', {
+      statusCode: 200, body: { success: true }
+    }).as('deactivate');
+    cy.intercept('GET', '**/api/v1/admin/users*', {
+      statusCode: 200,
+      body: mockUsers.map(u => u.id === 1 ? { ...u, active: false } : u)
+    }).as('getUsersRefresh');
+
+    cy.get('[data-cy="deactivate-user-btn"]').first().click();
+    cy.wait('@deactivate');
+    cy.wait('@getUsersRefresh');
   });
 
-  // Sprint 7: User management tests
-  it('🔍 Should search and filter users', () => {
-    cy.log('🔎 Testing user search and filtering');
-    // Test will verify:
-    // - Can search users by name, email, etc.
-    // - Can filter users by role, status, etc.
-    // - Search/filter results are accurate
-    // - Pagination works with filters
-    cy.fail('Test not implemented');
+  it('🟢 Should activate a suspended user', () => {
+    cy.intercept('POST', '**/api/v1/admin/users/2/activate', {
+      statusCode: 200, body: { success: true }
+    }).as('activate');
+    cy.intercept('GET', '**/api/v1/admin/users*', {
+      statusCode: 200,
+      body: mockUsers.map(u => u.id === 2 ? { ...u, active: true } : u)
+    }).as('getUsersRefresh');
+
+    cy.get('[data-cy="activate-user-btn"]').first().click();
+    cy.wait('@activate');
+    cy.wait('@getUsersRefresh');
   });
 
-  it('📊 Should view user analytics', () => {
-    cy.log('📈 Testing user analytics');
-    // Test will verify:
-    // - Activity metrics show
-    // - Filters work
-    // - Data exports work
-    // - Charts render
-    cy.fail('Test not implemented');
+  it('⚠️ Should show error notification when user management API fails', () => {
+    cy.intercept('POST', '**/api/v1/admin/users/1/deactivate', {
+      statusCode: 500, body: { message: 'Server Error' }
+    }).as('deactivateFail');
+
+    cy.get('[data-cy="deactivate-user-btn"]').first().click();
+    cy.wait('@deactivateFail');
+    cy.get('body').should('contain.text', 'Falha');
   });
 
-  it('⚠️ Should handle bulk actions', () => {
-    cy.log('⚡ Testing bulk operations');
-    // Test will verify:
-    // - Can select multiple users
-    // - Bulk updates work
-    // - Confirmations appear
-    // - Errors handled gracefully
-    cy.fail('Test not implemented');
-  });
-
-  it('📱 Should work on mobile', () => {
-    cy.log('📲 Testing mobile admin');
-    // Test will verify:
-    // - Tables are scrollable
-    // - Forms are usable
-    // - No horizontal scrolling
-    cy.fail('Test not implemented');
+  it('📱 Should be usable on mobile viewport with scrollable table', () => {
+    cy.viewport(375, 812);
+    cy.get('[data-cy="users-table"]').should('be.visible');
   });
 });

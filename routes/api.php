@@ -103,6 +103,11 @@ Route::prefix('v1')->group(function () {
         Route::get('/{slug}', [\App\Http\Controllers\API\RestaurantController::class, 'show']);
     });
 
+    // Rotas públicas de parceiros (public partner/menu data)
+    Route::prefix('partners')->group(function () {
+        Route::get('/{slug}', [\App\Http\Controllers\API\PartnerController::class, 'show']);
+    });
+
     // Rotas protegidas por autenticação
     Route::middleware('auth:sanctum')->group(function () {
         // Rotas de usuário

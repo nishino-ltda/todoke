@@ -3,54 +3,56 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Delivery;
-use App\Models\DeliveryAssignment;
+use App\Models\Node;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PartnerController extends Controller
 {
-    /**
-     * Get partner metrics
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function metrics(Request $request)
+    public function show($slug)
     {
-        $partner = $request->user();
+        $node = Node::where('identifier', $slug)
+            ->where('type', 'partner')
+            ->where('status', 'active')
+            ->with(['partner', 'products' => function ($query) {
+                $query->where('status', 'available');
+            }])
+            ->first();
 
-        // Total deliveries assigned to this partner
-        $totalDeliveries = Delivery::where('logistics_partner_id', $partner->id)
-            ->count();
+        if (!$node) {
+            return response()->json([
+                'message' => __('Partner not found.')
+            ], 404);
+        }
 
-        // Average delivery time (in minutes)
-        $avgDeliveryTime = Delivery::where('logistics_partner_id', $partner->id)
-            ->where('status', 'delivered')
-            ->select(DB::raw('AVG(estimated_time) as avg_time'))
-            ->value('avg_time');
-
-        // Average rating
-        $avgRating = \App\Models\Rating::where('rated_id', $partner->id)
-            ->select(DB::raw('AVG(rating) as avg_rating'))
-            ->value('avg_rating');
-
-        // Deliveries per day (last 7 days)
-        $deliveriesPerDay = Delivery::where('logistics_partner_id', $partner->id)
-            ->where('created_at', '>=', now()->subDays(7))
-            ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get()
-            ->pluck('count', 'date');
+        $products = $node->products->load('addons');
 
         return response()->json([
-            'data' => [
-                'totalDeliveries' => $totalDeliveries,
-                'averageDeliveryTime' => round($avgDeliveryTime, 2),
-                'averageRating' => round($avgRating, 1),
-                'deliveriesPerDay' => $deliveriesPerDay
-            ]
+            'partner' => [
+                'id' => $node->partner->id,
+                'name' => $node->partner->business_name ?: $node->partner->name,
+                'slug' => $node->identifier,
+                'type' => $node->partner->business_type,
+            ],
+            'products' => $products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'price' => (float) $product->price,
+                    'category' => $product->category,
+                    'image' => $product->imageUrl,
+                    'status' => $product->status,
+                    'addons' => $product->addons->map(function ($addon) {
+                        return [
+                            'id' => $addon->id,
+                            'name' => $addon->name,
+                            'description' => $addon->description,
+                            'price' => (float) $addon->price,
+                        ];
+                    }),
+                ];
+            }),
+            'metrics' => $node->partner->metrics()->count() ? $node->partner->metrics : null,
         ]);
     }
 }

@@ -1,12 +1,12 @@
 # Work Breakdown Structure: Menu
 
 ## 1. Page Structure
-- [ ] Implement dual routing:
-  - [ ] Traditional `/menu/:partnerSlug` route
-  - [ ] Direct `/:partnerSlug` route support
-  - [ ] Error handling for invalid slugs (with translated messages)
+- [x] Implement dual routing:
+  - [x] Traditional `/menu/:partnerSlug` route
+  - [x] Direct `/:partnerSlug` route support
+  - [x] Error handling for invalid slugs (with translated messages)
 - [ ] Implement partner-specific layout (header with branding)
-- [ ] Create responsive product grid with translation support
+- [x] Create responsive product grid with translation support
 
 ## 2. Product Display
 - [x] Create Product List component (`ProductList.vue`) with translation support
@@ -23,10 +23,14 @@
 
 ## 4. Shopping Cart
 - [x] Create Cart Icon component (`CartIcon.vue`) with translated aria-labels
-- [ ] Create Cart modal/page (`Cart.vue`) with full translation support
+- [x] Create Cart modal/page (`Cart.vue`) with full translation support
 - [x] Implement cart state management (Pinia store with localStorage persistence)
 - [x] Add/remove items functionality with translated confirmation messages
 - [x] Calculate and display subtotal with translated labels
+- [x] Quantity adjustment (+/-) buttons per item
+- [x] Subtotal, delivery fee, total display
+- [x] Empty cart state with friendly message
+- [x] `data-test` attributes for testing
 
 ## 5. Checkout Flow
 - [x] Create Checkout Form component (`CheckoutForm.vue`) with full translation support
@@ -34,19 +38,23 @@
 - [x] Implement payment method selection with translated options
 - [x] Add form validation with translated error messages
 - [x] Handle order submission with translated success/error messages
+- [x] Auth check on mount with login/register prompt
+- [x] Order summary sidebar on checkout page
 
 ## 6. Authentication Integration
-- [ ] Add login/registration prompts when needed (translated)
-- [ ] Link to auth endpoints with translated error handling
+- [x] Add login/registration prompts when needed (translated)
+- [x] Link to auth endpoints with translated error handling
+- [x] Redirect back to checkout after login with cart preserved
 
 ## 7. API Integration
-- [ ] Fetch partner details with locale parameter
-- [ ] Fetch product list with translated content
-- [ ] Fetch product addons with translated names/descriptions
-- [ ] Submit orders with locale context
+- [x] Fetch partner details with locale parameter
+- [x] Fetch product list with translated content
+- [x] Fetch product addons with translated names/descriptions
+- [x] Submit orders with locale context
+- [x] API endpoint `GET /api/v1/partners/{slug}`
 
 ## 8. Testing
 - [x] Unit tests for components (ProductList, ProductCard, CartStore, CartIcon, ProductDetailsModal, CheckoutForm, Menu, Checkout) including translation tests (43 tests passing)
-- [ ] E2E tests for ordering flow (browsing, cart, persistence) with locale switching
+- [x] E2E tests for ordering flow (browsing, cart, persistence) with locale switching
 - [x] Verify all UI text is externalized to translation files
 - [x] Test fallback behavior when translations are missing

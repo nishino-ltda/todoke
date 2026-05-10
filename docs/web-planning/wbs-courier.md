@@ -34,17 +34,10 @@
 - [x] Create MapService backend/API controller (`API/MapController.php`) with geocode, reverseGeocode, distance
 - [x] Register map API routes (`/api/v1/map/*`)
 - [x] DeliveryMap integrated into Courier Dashboard (visible on accepted delivery)
-- [ ] Fetch available deliveries
-- [ ] Handle delivery acceptance/rejection
-- [ ] Update delivery statuses
-- [ ] (Future) Integrate with voting endpoints
-
-## 5. API Integration
-- [x] Create MapService backend/API controller (`API/MapController.php`) with geocode, reverseGeocode, distance
-- [x] Register map API routes (`/api/v1/map/*`)
-- [ ] Fetch available deliveries
-- [ ] Handle delivery acceptance/rejection
-- [ ] Update delivery statuses
+- [x] Fetch available deliveries (`delivery.js.getAvailableDeliveries()`)
+- [x] Handle delivery acceptance/rejection (`delivery.js.acceptDelivery()` / local reject)
+- [x] Update delivery statuses (`delivery.js.updateDeliveryStatus()`)
+- [x] Fetch active delivery details (`delivery.js.getMyActiveDelivery()`, `getDeliveryDetails()`)
 - [ ] (Future) Integrate with voting endpoints
 
 ## 6. Internationalization
@@ -55,7 +48,8 @@
 - [x] Test with pt-BR and English locales
 
 ## 7. Testing
-- [x] Unit tests for components (CourierDashboard — 4 tests, DeliveryMap — 5 tests)
-- [ ] E2E tests for courier workflows
+- [x] Unit tests for components (CourierDashboard — 5 tests, DeliveryMap — 5 tests)
+- [x] Unit tests for delivery service (15 tests, all passing)
+- [x] E2E tests for courier workflows (courier-flow.cy.js: 7 tests, courier-dashboard.cy.js: 5 tests)
 - [ ] Test real-time updates
 - [x] Test translation functionality

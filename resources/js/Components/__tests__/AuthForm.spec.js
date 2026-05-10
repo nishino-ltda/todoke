@@ -262,8 +262,8 @@ describe('AuthForm', () => {
     })
 
     it('submits login form with correct data', async () => {
-      const emailInput = wrapper.find('[data-cy="email-input"]');
-      const passwordInput = wrapper.find('[data-cy="password-input"]');
+      const emailInput = wrapper.find('[data-cy="email-input"] input');
+      const passwordInput = wrapper.find('[data-cy="password-input"] input');
       
       // Mock the formRef validate method directly on the component instance
       wrapper.vm.formRef = {

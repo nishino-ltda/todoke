@@ -1,196 +1,69 @@
-## Sprint 2 Completion (2025-05-06)
+# TODOKE Project Progress
 
-### Authentication
-✅ AuthForm component fully implemented with:
-  - Translation support for all UI text
-  - Language-aware validation messages
-  - Error handling with translated messages
-✅ Login and registration E2E tests completed (100% coverage)
-✅ Form validation and error handling implemented
+## Overall Status by Area
+| Area | Completion | Status |
+|------|-----------|--------|
+| Authentication | 100% | ✅ Done |
+| Home Page | ~90% | ✅ Done (minor: SEO) |
+| Common Components | 100% | ✅ Done |
+| Stores & Services | ~90% | ✅ Done (minor service tests) |
+| Menu / Ordering | ~95% | ✅ Done (minor: variations, gallery) |
+| Courier Dashboard | ~95% | ✅ Done |
+| Admin Panel | ~95% | ✅ Done |
+| Partner Dashboard | ~75% | 🟡 Built (OrderDetail, API integration, E2E pending) |
+| Support System | ~95% | ✅ Built (E2E pending) |
+| Notifications/Real-time | ~30% | 🔴 Not started |
+| Performance & Polish | 0% | 🔴 Not started |
 
-### Home Page
-✅ HomeHero component implemented with:
-  - Translation support
-  - Responsive design
-  - Navigation links
-✅ HomeFeatures component implemented with:
-  - Three feature cards
-  - Translation support
-  - Hover effects
-✅ Comprehensive test coverage for both components
+**Test Suite: 49 files, 238 tests, ALL PASSING** ✅
 
-### Translation Infrastructure
-✅ Vue I18n fully integrated
-✅ Complete pt-BR and en translation files
-✅ Language switching mechanism implemented
-✅ All UI text externalized to translation files
+---
 
-### Testing
-✅ E2E tests for login/registration flows
-✅ Unit tests for all components (100% coverage)
-✅ Integration tests for locale rendering
-✅ Fallback language behavior verified
+## Sprint 7: Admin Panel — Completed 2026-05-09
 
-## Sprint 1 Final Completion (2025-05-24)
+### What was delivered
+- **Charts**: Chart.js on Dashboard (deliveries/users over time) with time period filters
+- **Region map**: Leaflet map with region polygons + partner nodes
+- **Delivery detail**: Modal with full info + route map
+- **7 E2E tests**: All admin flows with real test logic (replaced placeholders)
+- **3 new unit tests**: AdminRegions, AdminDeliveries, AdminSettings
+- **3 bug fixes**: AppFooter (data-cy), AuthForm (setValue), AdminDashboard (Chart.js mock)
 
-✅ All sprint goals achieved
-✅ Authentication system: 100% complete
-✅ Testing infrastructure: 100% complete
-✅ Translation system: 100% complete
-✅ 40/40 tests passing (100% coverage)
-✅ E2E tests for all auth flows (6/6 passing)
+### Test Results
+- **49 test files, 238 tests, ALL PASSING** — all pre-existing failures resolved
 
-## Registration Test Fixes (2025-05-29)
+---
 
-✅ Fixed registration tests failing when run together
-✅ Updated tests to use unique CPF values:
-  - Customer: 111.222.333-09
-  - Courier: 222.333.444-09
-  - Partner: 333.444.555-09
-  - Mobile: 444.555.666-09
-✅ Verified all tests pass when run sequentially
+## Sprint 6: Courier Dashboard — Completed 2026-05-09
 
-## AppFooter Component Testing Completion (2025-05-20)
+### What was delivered
+- **Delivery service**: 6 methods connected to real API endpoints
+- **Dashboard data flow**: Availability toggle, accept/reject, status updates
+- **15 unit tests** for delivery service
+- **12 E2E tests**: courier-flow (7) + courier-dashboard (5, incl. mobile 375px)
+- **Fixed**: formatCurrency locale detection
 
-### Completed:
-- Implemented and verified 4 unit tests for AppFooter component covering:
-  - Basic rendering
-  - Copyright year display
-  - Terms/privacy links
-  - Social media links
-- Achieved 100% test coverage
-- Updated all related documentation:
-  - sprint1.md
-  - wbs-common-components.md
-  - activeContext.md
+### Test Results
+- Unit: 216 pass (2 pre-existing failures, later fixed in Sprint 7)
 
-## Auth Service Testing Completion (2025-05-20)
+---
 
-### Completed:
-- Implemented and verified 8 unit tests for Auth Service covering:
-  - Successful login/registration flows
-  - Token management
-  - Error handling scenarios
-  - Store integration
-- Achieved 100% test coverage
-- Updated all related documentation:
-  - sprint1.md
-  - wbs-stores-services.md
-  - activeContext.md
+## Sprint 5: Menu System — Completed 2026-05-09
 
-## Route/Controller Implementation (2025-05-17)
+### What was delivered
+- **Dual routing**: `/menu/{slug}` and `/{slug}`
+- **Cart component**: items, +/-, remove, totals, empty state, i18n
+- **API integration**: GET /api/v1/partners/{slug}
+- **Auth integration**: checkout login prompt, cart preserved
+- **Order submission**: POST /api/v1/orders, clear cart, redirect
 
-### Completed:
-- Migrated from Vue-router to Inertia.js routing
-- Customer routes and controllers
-- Partner routes and controllers  
-- Courier routes and controllers
-- Clear separation between:
-  - Web routes (Inertia rendering)
-  - API routes (business logic)
-- Documentation updated in:
-  - techContext.md (Inertia configuration details)
-  - systemPatterns.md (routing architecture)
+### Key files
+- `Cart.vue`, `Menu.vue`, `Checkout.vue`, `cart.js`, `order.js`
+- `MenuController.php`, `API/PartnerController.php`
+- `customer_flow.cy.js`, `ordering.cy.js`
 
-### Key Changes:
-- Removed Vue-router dependency
-- All navigation now handled via Inertia's Link component
-- Server-side routing through Laravel
-- Simplified frontend routing logic
+---
 
-## Frontend Updates (2025-05-13)
-
-### Completed:
-- Converted all boilerplate pages to use Vuetify3 components
-- Replaced router-links with Inertia Link components
-- Added data-test attributes for testing:
-  - Login/Register forms
-  - Navigation buttons
-  - Form submissions
-- Updated techContext.md with integration details
-
-### Testing Progress:
-- AppFooter component:
-  - Implemented footer with copyright year
-  - Added terms/privacy links
-  - Added social media links
-  - Added data-test attributes
-  - All 3 tests now passing
-- AppHeader component tests:
-  - Added comprehensive test coverage for all states (8 tests total)
-  - Fixed route mocking issues
-  - Validated auth state handling
-  - Added data-test attributes
-  - Implemented proper translation mocking with interpolation
-  - Verified event logging for all actions
-  - All 8 tests now passing with 100% coverage
-- AppFooter component tests:
-  - Added test coverage for copyright year
-  - Tested terms/privacy links
-  - Verified social media links
-  - Checked Vuetify classes
-  - Added snapshot test
-  - All 5 tests now passing
-- Partner login test fixes:
-  - Credential validation (working)
-  - Error message handling (working)
-  - Redirect behavior (fixed with router.visit)
-  - Added comprehensive test logging
-  - Fixed test selectors to match current UI
-  - Added data-test attribute to dashboard
-  - Verified API response handling
-  - All tests now passing
-- Partner orders test alignment with login flow
-
-### Remaining:
-- Implement full partner dashboard functionality
-- Add order management components
-- Complete real-time updates
-
-## E2E Test File Creation (2025-05-16)
-
-### Completed:
-- Initial placeholder E2E test files created/updated for all major web areas based on planning documents and use cases.
-- Basic test structure with `describe` and `it` blocks outlining test concepts implemented.
-- Emojis included in `cy.log` calls for better terminal visibility.
-
-### Completed:
-- Implemented centralized logging and integrated with Cypress tests.
-- Created a test page and controller for the log store.
-- Added a route for the test page.
-- Created a Cypress test file for the log store.
-
-### Completed:
-- Implemented centralized logging and integrated with Cypress tests.
-- Created a test page and controller for the log store.
-- Added a route for the test page.
-- Created a Cypress test file for the log store.
-- Validated the log store implementation by running the Cypress test `cypress/e2e/common/log-store.cy.js`, which passed successfully.
-
-### Remaining:
-- Implement the actual test logic within the placeholder files.
-- Add detailed assertions and test data.
-- Integrate tests into the CI/CD pipeline.
-
-## Internationalization Implementation (2025-05-24)
-
-### Completed:
-✅ Translation requirements documented in project brief
-✅ Technical implementation details added to tech context
-✅ Translation patterns documented in system patterns
-✅ Active context updated with current focus
-✅ Initial translation files for en/pt-BR created
-✅ Vue I18n setup implemented with browser detection
-✅ Language switcher component with user preference saving
-✅ Backend localization with user locale storage
-✅ Comprehensive tests for translation functionality
-✅ AuthForm translations implemented with 100% coverage
-✅ pt-BR translations for all auth-related UI elements
-✅ Verified translations through Cypress tests (6/6 passing)
-
-### Implementation Details:
-- Browser language detection with fallback to English
-- User preference stored in database and persisted across sessions
-- API endpoint for updating user locale
-- Language selector component with visual feedback
-- Tests covering all critical paths (100% coverage)
+## Previous Sprints (1-4)
+- Sprint 1/2: Auth system, Home page, i18n infrastructure ✅
+- Sprint 3/4: All common components, stores, services, checkout flow ✅

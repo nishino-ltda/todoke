@@ -158,7 +158,7 @@ describe('CartIcon', () => {
     await wrapper.find('[data-cy="cart-icon"] button').trigger('click') // Open dialog
     
     await wrapper.find('[data-cy="checkout-button"]').trigger('click')
-    expect(router.visit).toHaveBeenCalledWith('/checkout')
+    expect(router.visit).toHaveBeenCalledWith('/customer/checkout')
   })
 
   it('renders text in correct language', async () => {

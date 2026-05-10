@@ -122,15 +122,26 @@
         "subtitle": "Explore os produtos disponíveis",
         "search_placeholder": "Buscar produtos",
         "no_products": "Nenhum produto encontrado para sua busca.",
-        "categories": "Categorias"
+        "categories": "Categorias",
+        "loading": "Carregando cardápio...",
+        "error_title": "Não foi possível carregar o cardápio",
+        "retry": "Tentar Novamente",
+        "not_found": "Parceiro não encontrado",
+        "partner_type": "Parceiro"
     },
     "cart": {
         "title": "Seu Carrinho",
         "empty": "Seu carrinho está vazio.",
+        "empty_title": "Seu carrinho está vazio",
+        "empty_message": "Navegue pelo cardápio e adicione itens para começar!",
         "add_to_cart": "Adicionar ao Carrinho",
         "remove": "Remover",
+        "unit_price": "Preço unitário",
+        "subtotal": "Subtotal",
+        "delivery_fee": "Taxa de Entrega",
         "total": "Total",
         "checkout": "Finalizar Compra",
+        "proceed_to_checkout": "Ir para o Checkout",
         "close": "Fechar",
         "quantity": "Quantidade",
         "addons": "Adicionais",
@@ -147,6 +158,12 @@
         "error_submitting": "Erro ao enviar pedido",
         "address_required": "Endereço é obrigatório",
         "payment_method_required": "Forma de pagamento é obrigatória",
+        "login_required_title": "Login Necessário",
+        "login_required_message": "Faça login ou crie uma conta para finalizar seu pedido.",
+        "empty_cart_title": "Seu carrinho está vazio",
+        "empty_cart_message": "Adicione itens ao carrinho antes de ir para o checkout.",
+        "browse_menu": "Ver Cardápio",
+        "order_summary": "Resumo do Pedido",
         "validation": {
             "required": "Este campo é obrigatório"
         }
@@ -322,7 +339,8 @@
             "estimatedTime": "Tempo Estimado",
             "payout": "Valor",
             "accept": "Aceitar Pedido",
-            "reject": "Recusar"
+            "reject": "Recusar",
+            "unknown_partner": "Parceiro Desconhecido"
         },
         "stages": {
             "title": "ETAPAS DA ENTREGA",
@@ -339,6 +357,8 @@
             "load_failed": "Falha ao carregar entregas",
             "accept_success": "Entrega aceita!",
             "accept_failed": "Falha ao aceitar entrega",
+            "reject_success": "Entrega recusada",
+            "reject_failed": "Falha ao recusar entrega",
             "update_success": "Status atualizado para {status}",
             "update_failed": "Falha ao atualizar status"
         },
@@ -387,7 +407,19 @@
                 "systemNodes": "Nós do Sistema",
                 "issuesReported": "Problemas Reportados"
             },
-            "error_load": "Falha ao carregar estatísticas do sistema"
+            "error_load": "Falha ao carregar estatísticas do sistema",
+            "filters": {
+                "today": "Hoje",
+                "7days": "7 Dias",
+                "30days": "30 Dias",
+                "all": "Todo Período"
+            },
+            "chart": {
+                "title": "Atividade do Sistema",
+                "deliveries": "Entregas",
+                "registrations": "Cadastros",
+                "revenue": "Receita (R$)"
+            }
         },
         "users": {
             "title": "Gerenciamento de Usuários",
@@ -468,6 +500,9 @@
         },
         "deliveries": {
             "title": "Monitoramento de Entregas",
+            "pending": "Pendente",
+            "in_transit": "Em Trânsito",
+            "delivered_today": "Entregues Hoje",
             "table": {
                 "id": "ID",
                 "customer": "Cliente",
@@ -476,6 +511,14 @@
                 "type": "Tipo",
                 "value": "Valor",
                 "actions": "Ações"
+            },
+            "detail": {
+                "title": "Detalhes da Entrega",
+                "customer": "Cliente",
+                "courier": "Entregador",
+                "not_assigned": "Não Atribuído",
+                "status_history": "Histórico de Status",
+                "route_map": "Rota de Entrega"
             },
             "notifications": {
                 "load_failed": "Falha ao carregar entregas"

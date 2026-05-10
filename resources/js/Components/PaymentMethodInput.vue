@@ -6,7 +6,6 @@
       :label="t('components.payment.label')"
       :error-messages="errors"
       required
-      data-cy="payment-method-input"
       data-cy="payment-method-select"
     />
 
@@ -17,7 +16,6 @@
           :label="t('components.payment.card_number')"
           maxlength="19"
           :rules="[rules.required]"
-          data-cy="card-number-input"
           data-cy="card-number-input"
           @input="formatCardNumber"
         />
@@ -31,7 +29,6 @@
               maxlength="5"
               :rules="[rules.required]"
               data-cy="card-expiry-input"
-              data-cy="card-expiry-input"
               @input="formatExpiry"
             />
           </v-col>
@@ -43,7 +40,6 @@
               maxlength="4"
               :rules="[rules.required]"
               data-cy="card-cvv-input"
-              data-cy="card-cvv-input"
             />
           </v-col>
         </v-row>
@@ -52,7 +48,6 @@
           v-model="card.holder"
           :label="t('components.payment.holder')"
           :rules="[rules.required]"
-          data-cy="card-holder-input"
           data-cy="card-holder-input"
         />
       </div>

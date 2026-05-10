@@ -122,15 +122,26 @@
         "subtitle": "Browse available products",
         "search_placeholder": "Search products",
         "no_products": "No products found matching your search.",
-        "categories": "Categories"
+        "categories": "Categories",
+        "loading": "Loading menu...",
+        "error_title": "Unable to load menu",
+        "retry": "Try Again",
+        "not_found": "Partner not found",
+        "partner_type": "Partner"
     },
     "cart": {
         "title": "Your Cart",
         "empty": "Your cart is empty.",
+        "empty_title": "Your cart is empty",
+        "empty_message": "Browse the menu and add items to get started!",
         "add_to_cart": "Add to Cart",
         "remove": "Remove",
+        "unit_price": "Unit price",
+        "subtotal": "Subtotal",
+        "delivery_fee": "Delivery Fee",
         "total": "Total",
         "checkout": "Checkout",
+        "proceed_to_checkout": "Proceed to Checkout",
         "close": "Close",
         "quantity": "Quantity",
         "addons": "Addons",
@@ -147,6 +158,12 @@
         "error_submitting": "Error submitting order",
         "address_required": "Address is required",
         "payment_method_required": "Payment method is required",
+        "login_required_title": "Login Required",
+        "login_required_message": "Please log in or create an account to complete your order.",
+        "empty_cart_title": "Your cart is empty",
+        "empty_cart_message": "Add items to your cart before proceeding to checkout.",
+        "browse_menu": "Browse Menu",
+        "order_summary": "Order Summary",
         "validation": {
             "required": "This field is required"
         }
@@ -322,7 +339,8 @@
             "estimatedTime": "Estimated Time",
             "payout": "Payout",
             "accept": "Accept Order",
-            "reject": "Reject"
+            "reject": "Reject",
+            "unknown_partner": "Unknown Partner"
         },
         "stages": {
             "title": "DELIVERY STAGES",
@@ -339,6 +357,8 @@
             "load_failed": "Failed to load deliveries",
             "accept_success": "Delivery accepted!",
             "accept_failed": "Failed to accept delivery",
+            "reject_success": "Delivery rejected",
+            "reject_failed": "Failed to reject delivery",
             "update_success": "Status updated to {status}",
             "update_failed": "Failed to update status"
         },
@@ -387,7 +407,19 @@
                 "systemNodes": "System Nodes",
                 "issuesReported": "Issues Reported"
             },
-            "error_load": "Failed to load system stats"
+            "error_load": "Failed to load system stats",
+            "filters": {
+                "today": "Today",
+                "7days": "7 Days",
+                "30days": "30 Days",
+                "all": "All Time"
+            },
+            "chart": {
+                "title": "System Activity",
+                "deliveries": "Deliveries",
+                "registrations": "Registrations",
+                "revenue": "Revenue (R$)"
+            }
         },
         "users": {
             "title": "User Management",
@@ -468,6 +500,9 @@
         },
         "deliveries": {
             "title": "Deliveries Monitoring",
+            "pending": "Pending",
+            "in_transit": "In Transit",
+            "delivered_today": "Delivered Today",
             "table": {
                 "id": "ID",
                 "customer": "Customer",
@@ -476,6 +511,14 @@
                 "type": "Type",
                 "value": "Value",
                 "actions": "Actions"
+            },
+            "detail": {
+                "title": "Delivery Details",
+                "customer": "Customer",
+                "courier": "Courier",
+                "not_assigned": "Not Assigned",
+                "status_history": "Status History",
+                "route_map": "Delivery Route"
             },
             "notifications": {
                 "load_failed": "Failed to load deliveries"

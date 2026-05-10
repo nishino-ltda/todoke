@@ -106,14 +106,14 @@ describe('AppFooter', () => {
     expect(wrapper.text()).toContain(`© ${currentYear} TODOKE`)
   })
 
-  it('has data-test attribute', () => {
+  it('has data-cy attribute', () => {
     const wrapper = mount(AppFooter, {
       global: {
         stubs: vuetifyComponents,
         mocks: globalMocks
       }
     })
-    expect(wrapper.attributes('data-test')).toBe('app-footer')
+    expect(wrapper.attributes('data-cy')).toBe('app-footer')
   })
 
   it('contains links to terms and privacy', () => {

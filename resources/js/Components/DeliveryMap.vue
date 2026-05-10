@@ -10,16 +10,16 @@
     </v-alert>
 
     <div v-show="!loading" class="map-wrapper">
-      <div id="map" ref="mapElement" style="height: 300px; width: 100%;" data-cy="delivery-map" data-cy="delivery-map"></div>
+      <div id="map" ref="mapElement" style="height: 300px; width: 100%;" data-cy="delivery-map"></div>
       
       <v-row v-if="distanceInfo" class="mt-2 px-2">
         <v-col cols="6">
-          <v-chip color="secondary" label data-cy="map-distance" data-cy="map-distance">
+          <v-chip color="secondary" label data-cy="map-distance">
             {{ t('courier.map.distance', { distance: distanceInfo.distance }) }}
           </v-chip>
         </v-col>
         <v-col cols="6" class="text-right">
-          <v-chip color="primary" label data-cy="map-time" data-cy="map-time">
+          <v-chip color="primary" label data-cy="map-time">
             {{ t('courier.map.estimatedTime', { time: distanceInfo.time }) }}
           </v-chip>
         </v-col>

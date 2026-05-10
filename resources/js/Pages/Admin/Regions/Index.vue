@@ -1,6 +1,6 @@
 <template>
   <AdminLayout>
-    <div class="regions-management">
+    <div class="regions-management" data-cy="regions-management">
       <div class="d-flex align-center justify-space-between mb-6">
         <h1 class="text-h4 font-weight-bold">{{ t('admin.regions.title') }}</h1>
         <v-btn
@@ -13,6 +13,24 @@
         </v-btn>
       </div>
 
+      <!-- Regions Map -->
+      <v-card border elevation="0" class="rounded-xl mb-6">
+        <v-card-title class="px-4 py-3">
+          <v-icon start>mdi-map</v-icon>
+          {{ t('admin.regions.title') }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <div
+            id="regions-map"
+            ref="mapEl"
+            class="regions-map"
+            data-cy="regions-map"
+            style="height: 360px; width: 100%;"
+          ></div>
+        </v-card-text>
+      </v-card>
+
+      <!-- Regions Table -->
       <DataTable
         :headers="headers"
         :items="regions"
@@ -71,7 +89,7 @@
                 data-cy="region-name-input"
               ></v-text-field>
             </v-col>
-            
+
             <v-col cols="12">
               <v-select
                 v-model="form.partner_id"
@@ -120,7 +138,9 @@
         <p>{{ t('partner.products.confirm_delete', { name: selectedRegion?.name }) }}</p>
         <template #actions>
           <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
+          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">
+            {{ t('partner.actions.delete') }}
+          </v-btn>
         </template>
       </AppModal>
     </div>
@@ -128,8 +148,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
@@ -147,7 +169,11 @@ const showDeleteModal = ref(false);
 const isEditing = ref(false);
 const selectedRegion = ref(null);
 const regionForm = ref(null);
+const mapEl = ref(null);
+let map = null;
+const polygonLayers = [];
 
+// ── Table ─────────────────────────────────────────────────────────────────────
 const headers = computed(() => [
   { title: t('admin.regions.table.id'), key: 'id', width: '80px' },
   { title: t('admin.regions.table.name'), key: 'name' },
@@ -156,32 +182,74 @@ const headers = computed(() => [
   { title: t('admin.regions.table.actions'), key: 'actions', sortable: false, align: 'end' },
 ]);
 
-const statusOptions = [
+const statusOptions = computed(() => [
   { title: t('partner.regions.active'), value: 'active' },
   { title: t('partner.regions.inactive'), value: 'inactive' },
-];
+]);
 
-const form = ref({
-  name: '',
-  partner_id: null,
-  polygon_json: '',
-  status: 'active'
-});
+const form = ref({ name: '', partner_id: null, polygon_json: '', status: 'active' });
 
 const validateJson = (v) => {
-  try {
-    JSON.parse(v);
-    return true;
-  } catch (e) {
-    return 'Invalid JSON format';
+  try { JSON.parse(v); return true; }
+  catch (e) { return 'Invalid JSON format'; }
+};
+
+// ── Map ───────────────────────────────────────────────────────────────────────
+
+const initMap = () => {
+  if (!mapEl.value || map) return;
+  map = L.map(mapEl.value).setView([-15.78, -47.93], 5); // Brazil center
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+};
+
+const renderRegionsOnMap = () => {
+  if (!map) return;
+  // Clear existing layers
+  polygonLayers.forEach(l => map.removeLayer(l));
+  polygonLayers.length = 0;
+
+  const bounds = [];
+  regions.value.forEach(region => {
+    if (!region.polygon) return;
+    try {
+      const geoJson = typeof region.polygon === 'string'
+        ? JSON.parse(region.polygon)
+        : region.polygon;
+
+      const layer = L.geoJSON(geoJson, {
+        style: {
+          color: region.status === 'active' ? '#4CAF50' : '#9E9E9E',
+          weight: 2,
+          fillOpacity: 0.15,
+        }
+      }).addTo(map);
+
+      layer.bindTooltip(region.name, { permanent: false });
+      layer.on('click', () => editRegion(region));
+      polygonLayers.push(layer);
+
+      const layerBounds = layer.getBounds();
+      if (layerBounds.isValid()) bounds.push(layerBounds);
+    } catch (e) {
+      console.warn(`Invalid polygon for region ${region.id}`, e);
+    }
+  });
+
+  if (bounds.length > 0) {
+    const combined = bounds.reduce((acc, b) => acc.extend(b));
+    map.fitBounds(combined.pad(0.1));
   }
 };
 
+// ── Data ──────────────────────────────────────────────────────────────────────
 const fetchRegions = async () => {
   loading.value = true;
   try {
     const response = await adminService.getRegions();
-    regions.value = response.data;
+    regions.value = response.data?.regions || response.data || [];
+    renderRegionsOnMap();
   } catch (err) {
     notifications.error(t('admin.regions.notifications.load_failed'));
   } finally {
@@ -192,20 +260,16 @@ const fetchRegions = async () => {
 const fetchPartners = async () => {
   try {
     const response = await adminService.getUsers({ type: 'partner' });
-    partners.value = response.data;
+    partners.value = response.data?.users || response.data || [];
   } catch (err) {
     console.error('Failed to load partners', err);
   }
 };
 
+// ── CRUD ──────────────────────────────────────────────────────────────────────
 const openCreateModal = () => {
   isEditing.value = false;
-  form.value = {
-    name: '',
-    partner_id: null,
-    polygon_json: '{"type": "Polygon", "coordinates": [[]]}',
-    status: 'active'
-  };
+  form.value = { name: '', partner_id: null, polygon_json: '{"type": "Polygon", "coordinates": [[]]}', status: 'active' };
   showFormModal.value = true;
 };
 
@@ -215,7 +279,7 @@ const editRegion = (region) => {
   form.value = {
     name: region.name,
     partner_id: region.partner_id,
-    polygon_json: JSON.stringify(region.polygon),
+    polygon_json: JSON.stringify(region.polygon || {}),
     status: region.status
   };
   showFormModal.value = true;
@@ -224,22 +288,16 @@ const editRegion = (region) => {
 const saveRegion = async () => {
   const { valid } = await regionForm.value.validate();
   if (!valid) return;
-
   saving.value = true;
   try {
-    const payload = {
-      ...form.value,
-      polygon: JSON.parse(form.value.polygon_json)
-    };
+    const payload = { ...form.value, polygon: JSON.parse(form.value.polygon_json) };
     delete payload.polygon_json;
-
     if (isEditing.value) {
       await adminService.updateRegion(selectedRegion.value.id, payload);
-      notifications.success(t('admin.regions.notifications.save_success'));
     } else {
       await adminService.createRegion(payload);
-      notifications.success(t('admin.regions.notifications.save_success'));
     }
+    notifications.success(t('admin.regions.notifications.save_success'));
     showFormModal.value = false;
     fetchRegions();
   } catch (err) {
@@ -268,15 +326,28 @@ const doDelete = async () => {
   }
 };
 
+// ── Lifecycle ─────────────────────────────────────────────────────────────────
 onMounted(() => {
+  initMap();
   fetchRegions();
   fetchPartners();
 });
+
+onUnmounted(() => {
+  if (map) { map.remove(); map = null; }
+});
+
+watch(regions, renderRegionsOnMap, { deep: true });
 </script>
 
 <style scoped>
 .regions-management {
   animation: fadeIn 0.5s ease-out;
+}
+
+.regions-map {
+  border-radius: 0 0 8px 8px;
+  z-index: 1;
 }
 
 @keyframes fadeIn {

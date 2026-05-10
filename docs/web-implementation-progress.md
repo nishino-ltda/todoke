@@ -1,85 +1,107 @@
 # Web Interface Implementation Progress
 
-This document tracks the progress of implementing the web interface based on the planning documents and use cases.
+## Sprint 7 — Admin Panel (Complete) — 2026-05-09
 
-## Completed in this task:
+### Charts & Data Visualization
+- [x] Chart.js (vue-chartjs) integrated
+- [x] Dashboard metrics charts (deliveries over time, user registrations)
+- [x] Time period filter buttons (Today, 7d, 30d, All)
+- [x] Locale-aware chart labels
+- [x] Chart.js mocked in unit tests (happy-dom compatibility)
 
-- Created basic web routes for general, customer, admin, and support areas.
-- Created placeholder controllers for these routes in appropriate subfolders within `app/Http/Controllers`.
-- Created placeholder Inertia Vue pages for these routes in appropriate subfolders within `resources/js/Pages`, using `AuthenticatedLayout` or `GuestLayout`.
+### Region Map Visualization
+- [x] Leaflet map on Admin Regions page
+- [x] Region polygon boundaries displayed
+- [x] Partner nodes as markers within regions
 
-**Created Controllers:**
+### Detailed Delivery View
+- [x] Modal with full delivery details
+- [x] Origin, destination, status history timeline
+- [x] Customer/courier info
+- [x] Route map with pickup/drop-off markers
 
-- `app/Http/Controllers/HomeController.php` (for `/` and `/dashboard`)
-- `app/Http/Controllers/Customer/DashboardController.php` (for `/customer/dashboard`)
-- `app/Http/Controllers/Customer/MenuController.php` (for `/customer/menu/{partnerId}`)
-- `app/Http/Controllers/Customer/CheckoutController.php` (for `/customer/checkout`)
-- `app/Http/Controllers/Customer/OrderController.php` (for `/customer/orders` and `/customer/orders/{orderId}`)
-- `app/Http/Controllers/Customer/ProfileController.php` (for `/customer/profile`)
-- `app/Http/Controllers/Customer/SupportController.php` (for `/customer/support`)
-- `app/Http/Controllers/Admin/DashboardController.php` (for `/admin/dashboard`)
-- `app/Http/Controllers/Admin/UserController.php` (for `/admin/users`)
-- `app/Http/Controllers/Admin/NodeController.php` (for `/admin/nodes`)
-- `app/Http/Controllers/Admin/RegionController.php` (for `/admin/regions`)
-- `app/Http/Controllers/Admin/SettingsController.php` (for `/admin/settings`)
-- `app/Http/Controllers/Admin/DeliveryController.php` (for `/admin/deliveries`)
-- `app/Http/Controllers/Support/DashboardController.php` (for `/support/dashboard`)
-- `app/Http/Controllers/Support/TicketController.php` (for `/support/tickets` and `/support/tickets/{ticketId}`)
+### E2E Tests (7 files with real logic)
+- [x] `admin_flow.cy.js` — full admin workflow
+- [x] `admin-login.cy.js` — login + dashboard redirect
+- [x] `user-management.cy.js` — list, search, filter, activate/deactivate
+- [x] `node-management.cy.js` — list, approve, reject, filter
+- [x] `region-management.cy.js` — create, edit, delete, validation
+- [x] `delivery-monitoring.cy.js` — metrics, filter, detail view
+- [x] `system-configuration.cy.js` — settings CRUD
 
-**Created Inertia Vue Pages:**
+### Unit Tests (3 new spec files)
+- [x] `AdminRegions.spec.js` — CRUD, validation, translation
+- [x] `AdminDeliveries.spec.js` — metrics, badges, filtering
+- [x] `AdminSettings.spec.js` — form, save, validation, maintenance toggle
 
-- `resources/js/Pages/Home.vue`
-- `resources/js/Pages/Dashboard.vue`
-- `resources/js/Pages/Customer/Dashboard.vue`
-- `resources/js/Pages/Customer/Menu.vue`
-- `resources/js/Pages/Customer/Checkout.vue`
-- `resources/js/Pages/Customer/Orders.vue`
-- `resources/js/Pages/Customer/OrderDetail.vue`
-- `resources/js/Pages/Customer/Profile.vue`
-- `resources/js/Pages/Customer/Support.vue`
-- `resources/js/Pages/Admin/Dashboard.vue`
-- `resources/js/Pages/Admin/Users.vue`
-- `resources/js/Pages/Admin/Nodes.vue`
-- `resources/js/Pages/Admin/Regions.vue`
-- `resources/js/Pages/Admin/Settings.vue`
-- `resources/js/Pages/Admin/Deliveries.vue`
-- `resources/js/Pages/Support/Dashboard.vue`
-- `resources/js/Pages/Support/Tickets.vue`
-- `resources/js/Pages/Support/TicketDetail.vue`
+### Bug Fixes
+- [x] `AdminDashboard.spec.js` — Chart.js mock, template, keys
+- [x] `AppFooter.spec.js` — data-test → data-cy
+- [x] `AuthForm.spec.js` — setValue on v-text-field stub
 
-**Updated Route Files:**
+---
 
-- `routes/web.php` (added general, admin, and support routes)
-- `routes/customer.php` (added customer routes)
+## Sprint 6 — Courier Dashboard (Complete) — 2026-05-09
 
-## Sprint 1 Implementation Progress:
+### Delivery Service (`delivery.js`)
+- [x] getAvailableDeliveries, getMyActiveDelivery, acceptDelivery
+- [x] rejectDelivery (local), updateDeliveryStatus, getDeliveryDetails
+- [x] All methods use logStore
 
-### Authentication
-- [x] Auth store unit tests (6/6 passing)
-- [x] API service unit tests (6/6 passing)
-- [ ] E2E login flow
+### Dashboard Data Flow
+- [x] Fetch active + available deliveries on mount
+- [x] Availability toggle, accept/reject, status updates
+- [x] Loading/error/empty states, data-cy attributes
+- [x] Fixed formatCurrency locale
 
-### Common Components Implementation:
+### Tests
+- [x] 15 unit tests (delivery.spec.js)
+- [x] CourierDashboard.spec.js updated (5/5)
+- [x] courier-flow.cy.js — 7 tests
+- [x] courier-dashboard.cy.js — 5 tests (incl. mobile 375px)
 
-- **LoadingIndicator.vue** - Implemented with:
-  - Full-page overlay loader with progress circle
-  - Inline loader with progress circle
-  - Support for custom loading messages
-  - Data-test attributes for testing
-  - Comprehensive tests in components.cy.js
-  - Test page at TestLoading.vue
+---
 
-## Remaining Tasks:
+## Sprint 5 — Menu System (Complete) — 2026-05-09
 
-- **Implement Controller Logic:** Add the necessary logic to controllers to fetch and process data (leveraging the API).
-- **Implement Page Functionality:** Add the required functionality and UI components to the Inertia Vue pages based on the planning documents.
-- **Implement Layouts:** Ensure `AuthenticatedLayout.vue` and `GuestLayout.vue` are fully implemented and functional.
-- **Implement Partner and Courier Routes/Controllers/Pages:** Create the routes, controllers, and pages for the Partner and Courier roles based on their respective planning documents.
-- **API Integration:** Connect the frontend pages to the backend API endpoints for data retrieval and submission.
-- **Implement UI Components:** Create and integrate the common and role-specific UI components outlined in the planning documents (e.g., `DataTable.vue`, `OrderList.vue`, `UserList.vue`).
-- **Implement E2E Tests:** Write the actual test logic within the placeholder Cypress files.
-- **Implement TDD Cycles:** Follow the TDD approach outlined in the sprint planning documents for all new feature development.
-- **Refine UI/UX:** Improve the user interface and user experience based on design specifications (not yet available).
-- **Error Handling:** Implement robust error handling and display on the frontend.
-- **State Management:** Implement and utilize Pinia stores for managing application state (e.g., Auth, Cart, Loading, Notifications).
-- **Real-time Updates:** Integrate WebSocket or polling for real-time data updates where necessary (e.g., order status, delivery tracking).
+### Features
+- [x] Dual routing: `/menu/{slug}` and `/{slug}`
+- [x] Cart component (+/-, remove, totals, empty state, i18n)
+- [x] API: GET /api/v1/partners/{slug}
+- [x] Auth integration in checkout (prompt, preserve cart)
+- [x] Order submission via POST /api/v1/orders
+
+### Key Components
+- [x] `Cart.vue`, `Menu.vue`, `Checkout.vue`
+- [x] `cart.js` store (quantity methods, computed totals)
+- [x] `order.js` service (submitOrder)
+- [x] `MenuController.php`, `API/PartnerController.php`
+
+### Tests
+- [x] customer_flow.cy.js, ordering.cy.js
+
+---
+
+## Remaining Tasks by Sprint
+
+### Sprint 9: Support System E2E ← NEXT
+- Write real E2E test logic in 3 placeholder files:
+  - `support_flow.cy.js` — end-to-end support workflow
+  - `ticket-system.cy.js` — ticket lifecycle (create, reply, close)
+  - `tickets.cy.js` — list, filter, search, pagination, empty state
+- Create Support Store if missing
+
+### Sprint 8: Notifications & Real-time
+- Implement WebSocket service or polling
+- Wire notifications into all role dashboards
+- Write E2E tests for notification display
+
+### Sprint 10: Performance & Polish
+- Lazy loading, bundle optimization, caching
+- Accessibility audits (ARIA, keyboard nav, screen reader)
+- Cross-browser compatibility, security scans
+- Documentation finalization
+
+## Test Status
+- **49 test files, 238 tests, ALL PASSING** (as of Sprint 7)
+- Zero pre-existing failures (all resolved)

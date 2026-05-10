@@ -24,23 +24,43 @@ export const useCartStore = defineStore('cart', () => {
   })
 
   const count = computed(() => items.value.length)
-  const total = computed(() => 
+  const total = computed(() =>
     items.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   )
 
+  const subtotal = computed(() => total.value)
+  const deliveryFee = computed(() => 5.00)
+  const totalWithDelivery = computed(() => subtotal.value + deliveryFee.value)
+
   function addItem(product) {
-    const existing = items.value.find(item => 
-      item.id === product.id && 
+    const existing = items.value.find(item =>
+      item.id === product.id &&
       JSON.stringify(item.selectedAddons) === JSON.stringify(product.selectedAddons)
     )
     if (existing) {
       existing.quantity++
     } else {
-      items.value.push({ 
-        ...product, 
+      items.value.push({
+        ...product,
         quantity: 1,
         selectedAddons: product.selectedAddons || []
       })
+    }
+  }
+
+  function incrementQuantity(index) {
+    if (items.value[index]) {
+      items.value[index].quantity++
+    }
+  }
+
+  function decrementQuantity(index) {
+    if (items.value[index]) {
+      if (items.value[index].quantity > 1) {
+        items.value[index].quantity--
+      } else {
+        items.value.splice(index, 1)
+      }
     }
   }
 
@@ -87,13 +107,18 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
-  return { 
+  return {
     items,
     count,
     total,
+    subtotal,
+    deliveryFee,
+    totalWithDelivery,
     addItem,
+    incrementQuantity,
+    decrementQuantity,
     removeItem,
     clearCart,
-    submitOrder
+    submitOrder,
   }
 })

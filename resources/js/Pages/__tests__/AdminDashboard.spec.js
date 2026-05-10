@@ -5,6 +5,26 @@ import { createPinia, setActivePinia } from 'pinia'
 import Dashboard from '../Admin/Dashboard.vue'
 import adminService from '../../services/admin'
 
+// Mock vue-chartjs to avoid Chart.js DOM errors in happy-dom test environment
+vi.mock('vue-chartjs', () => ({
+  Line: { template: '<canvas data-cy="activity-chart"></canvas>', props: ['data', 'options'] },
+  Bar: { template: '<canvas data-cy="registrations-chart"></canvas>', props: ['data', 'options'] }
+}))
+
+// Mock chart.js registration
+vi.mock('chart.js', () => ({
+  Chart: { register: vi.fn() },
+  CategoryScale: {},
+  LinearScale: {},
+  PointElement: {},
+  LineElement: {},
+  BarElement: {},
+  Title: {},
+  Tooltip: {},
+  Legend: {},
+  Filler: {}
+}))
+
 // Mock admin service
 vi.mock('../../services/admin', () => ({
   default: {
@@ -22,12 +42,30 @@ const messages = {
     admin: {
       dashboard: {
         title: 'Painel Administrativo',
-        systemActivity: 'Atividade do Sistema',
         quickActions: 'Ações Rápidas',
+        chart: {
+          title: 'Atividade do Sistema',
+          registrations: 'Novos Registros',
+          deliveries: 'Entregas'
+        },
+        filters: {
+          today: 'Hoje',
+          '7days': '7 dias',
+          '30days': '30 dias',
+          all: 'Tudo'
+        },
         metrics: {
           totalUsers: 'Total de Usuários',
-          activeDeliveries: 'Entregas Ativas'
-        }
+          activeDeliveries: 'Entregas Ativas',
+          systemNodes: 'Nós do Sistema',
+          issuesReported: 'Problemas Relatados'
+        },
+        reviewNewUsers: 'Revisar Novos Usuários',
+        approvePendingNodes: 'Aprovar Nós Pendentes',
+        systemHealth: 'Saúde do Sistema'
+      },
+      regions: {
+        title: 'Gerenciar Regiões'
       }
     }
   },
@@ -35,12 +73,30 @@ const messages = {
     admin: {
       dashboard: {
         title: 'Admin Dashboard',
-        systemActivity: 'System Activity',
         quickActions: 'Quick Actions',
+        chart: {
+          title: 'System Activity',
+          registrations: 'New Registrations',
+          deliveries: 'Deliveries'
+        },
+        filters: {
+          today: 'Today',
+          '7days': '7 Days',
+          '30days': '30 Days',
+          all: 'All'
+        },
         metrics: {
           totalUsers: 'Total Users',
-          activeDeliveries: 'Active Deliveries'
-        }
+          activeDeliveries: 'Active Deliveries',
+          systemNodes: 'System Nodes',
+          issuesReported: 'Issues Reported'
+        },
+        reviewNewUsers: 'Review New Users',
+        approvePendingNodes: 'Approve Pending Nodes',
+        systemHealth: 'System Health'
+      },
+      regions: {
+        title: 'Manage Regions'
       }
     }
   }
@@ -48,7 +104,7 @@ const messages = {
 
 const stubs = {
   AdminLayout: { template: '<div class="admin-layout"><slot /></div>' },
-  MetricsWidget: { template: '<div class="metric">{{ title }}: {{ value }}</div>', props: ['title', 'value', 'icon', 'color'] },
+  MetricsWidget: { template: '<div class="metric" :data-cy="$attrs[\'data-cy\']">{{ title }}: {{ value }}</div>', props: ['title', 'value', 'icon', 'color'] },
   VRow: { template: '<div><slot /></div>' },
   VCol: { template: '<div><slot /></div>' },
   VCard: { template: '<div class="v-card"><slot /></div>' },
@@ -56,7 +112,10 @@ const stubs = {
   VCardText: { template: '<div><slot /></div>' },
   VIcon: { template: '<i></i>' },
   VList: { template: '<div><slot /></div>' },
-  VListItem: { template: '<div class="v-list-item" @click="$emit(\'click\')">{{ title }}</div>', props: ['title'] }
+  VListItem: { template: '<div class="v-list-item" @click="$emit(\'click\')">{{ title }}</div>', props: ['title'] },
+  VBtnToggle: { template: '<div data-cy="chart-period-filter"><slot /></div>', props: ['modelValue'], emits: ['update:modelValue'] },
+  VBtn: { template: '<button :data-cy="$attrs[\'data-cy\']" @click="$emit(\'click\')"><slot /></button>' },
+  VProgressCircular: { template: '<div></div>' },
 }
 
 function createWrapper(locale = 'pt-BR') {

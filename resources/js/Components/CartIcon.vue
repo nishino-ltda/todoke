@@ -74,8 +74,8 @@ function removeItem(id) {
   cart.removeItem(id)
 }
 
-  function checkout() {
+function checkout() {
     showCartDialog.value = false
-    router.visit('/checkout')
-  }
+    router.visit('/customer/checkout')
+}
 </script>

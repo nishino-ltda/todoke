@@ -1,51 +1,77 @@
-describe('Admin Node Management', () => {
+/**
+ * Admin Node Management E2E Tests — Sprint 7
+ */
+
+const ADMIN_EMAIL = 'admin@todoke.test';
+const ADMIN_PASSWORD = 'password123';
+
+const mockNodes = [
+  { id: 1, name: 'Hub São Paulo', type: 'hub', owner_name: 'Parceiro SP', status: 'pending' },
+  { id: 2, name: 'Drone Station Rio', type: 'drone', owner_name: 'Parceiro Rio', status: 'approved' },
+  { id: 3, name: 'Hub Curitiba', type: 'hub', owner_name: 'Parceiro PR', status: 'pending' },
+];
+
+const loginAsAdmin = () => {
+  cy.intercept('GET', '**/api/v1/admin/nodes', { statusCode: 200, body: mockNodes }).as('getNodes');
+  cy.visit('/login');
+  cy.get('[data-cy="email-input"] input, [data-cy="email-input"]').type(ADMIN_EMAIL);
+  cy.get('[data-cy="password-input"] input, [data-cy="password-input"]').type(ADMIN_PASSWORD);
+  cy.get('[data-cy="login-button"], [data-cy="submit-btn"]').click();
+  cy.url().should('include', '/admin');
+};
+
+describe('📡 Admin Node Management', () => {
   beforeEach(() => {
-    // Assuming admin login is required for these tests
-    cy.visit('/admin/login');
-    // TODO: Add admin login steps
+    loginAsAdmin();
+    cy.visit('/admin/nodes');
+    cy.wait('@getNodes');
   });
 
-  it('🌱 Should display a list of nodes', () => {
-    cy.log('✨ Navigating to node management page');
-    // TODO: Add steps to navigate to node management
-    cy.log('👀 Verifying node list is displayed');
-    // TODO: Add assertions for node list
-    cy.fail('Test not implemented');
+  it('📋 Should display node list with status badges and action buttons', () => {
+    cy.get('[data-cy="nodes-table"]').should('be.visible');
+    cy.get('[data-cy="approve-node-btn"]').should('have.length.at.least', 1);
+    cy.get('[data-cy="reject-node-btn"]').should('have.length.at.least', 1);
   });
 
-  it('✏️ Should approve a pending node', () => {
-    cy.log('✨ Navigating to node management page');
-    // TODO: Add steps to navigate to node management
-    cy.log('🔍 Finding a pending node');
-    // TODO: Add steps to find a pending node
-    cy.log('✅ Approving the node');
-    // TODO: Add steps to approve the node
-    cy.log('👍 Verifying node status is updated');
-    // TODO: Add assertions for updated node status
-    cy.fail('Test not implemented');
+  it('✅ Should approve a pending node', () => {
+    cy.intercept('PATCH', '**/api/v1/admin/nodes/1/status', {
+      statusCode: 200, body: { id: 1, status: 'approved', name: 'Hub São Paulo' }
+    }).as('approveNode');
+    cy.intercept('GET', '**/api/v1/admin/nodes', {
+      statusCode: 200,
+      body: mockNodes.map(n => n.id === 1 ? { ...n, status: 'approved' } : n)
+    }).as('getNodesRefresh');
+
+    cy.get('[data-cy="approve-node-btn"]').first().click();
+    cy.wait('@approveNode');
+    cy.wait('@getNodesRefresh');
+    cy.get('body').should('contain.text', 'Hub São Paulo');
   });
 
   it('❌ Should reject a pending node', () => {
-    cy.log('✨ Navigating to node management page');
-    // TODO: Add steps to navigate to node management
-    cy.log('🔍 Finding a pending node');
-    // TODO: Add steps to find a pending node
-    cy.log('🗑️ Rejecting the node');
-    // TODO: Add steps to reject the node
-    cy.log('🚫 Verifying node is removed or marked as rejected');
-    // TODO: Add assertions for rejected node
-    cy.fail('Test not implemented');
+    cy.intercept('PATCH', '**/api/v1/admin/nodes/1/status', {
+      statusCode: 200, body: { id: 1, status: 'rejected', name: 'Hub São Paulo' }
+    }).as('rejectNode');
+    cy.intercept('GET', '**/api/v1/admin/nodes', {
+      statusCode: 200,
+      body: mockNodes.map(n => n.id === 1 ? { ...n, status: 'rejected' } : n)
+    }).as('getNodesRefresh');
+
+    cy.get('[data-cy="reject-node-btn"]').first().click();
+    cy.wait('@rejectNode');
   });
 
-  it('👁️ Should view node details', () => {
-    cy.log('✨ Navigating to node management page');
-    // TODO: Add steps to navigate to node management
-    cy.log('🔍 Finding a node to view details');
-    // TODO: Add steps to find a node
-    cy.log('📖 Clicking to view details');
-    // TODO: Add steps to view details
-    cy.log('🧐 Verifying node details are displayed');
-    // TODO: Add assertions for node details
-    cy.fail('Test not implemented');
+  it('⚠️ Should show error when node approval fails', () => {
+    cy.intercept('PATCH', '**/api/v1/admin/nodes/1/status', {
+      statusCode: 500, body: { message: 'Server error' }
+    }).as('approveFail');
+
+    cy.get('[data-cy="approve-node-btn"]').first().click();
+    cy.wait('@approveFail');
+    cy.get('body').should('contain.text', 'Falha');
+  });
+
+  it('👁️ Should show edit button for approved nodes', () => {
+    cy.get('[data-cy="edit-node-btn"]').should('exist');
   });
 });
