@@ -77,7 +77,7 @@ const fetchDeliveries = async () => {
   loading.value = true;
   try {
     const response = await adminService.getDeliveries();
-    deliveries.value = response.data?.deliveries || response.data || [];
+    deliveries.value = response.data?.data || response.data?.deliveries || [];
   } catch (err) {
     console.error('Failed to load deliveries', err);
   } finally {

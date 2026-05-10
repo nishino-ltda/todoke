@@ -187,6 +187,10 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/settings', [CourierSettingsController::class, 'index'])->name('settings.index');
+
+        // Courier Service Area
+        Route::get('/service-area', [App\Http\Controllers\Courier\ServiceAreaController::class, 'index'])->name('service-area.index');
+        Route::post('/service-area', [App\Http\Controllers\Courier\ServiceAreaController::class, 'update'])->name('service-area.update');
     });
 
     // Admin Routes
@@ -210,6 +214,8 @@ Route::middleware(['auth'])->group(function () {
         // Admin Regions
         Route::prefix('regions')->name('regions.')->group(function () {
             Route::get('/', [AdminRegionController::class, 'index'])->name('index');
+            Route::get('/create', [AdminRegionController::class, 'create'])->name('create');
+            Route::get('/{id}/edit', [AdminRegionController::class, 'edit'])->name('edit');
             Route::get('/{id}', [AdminRegionController::class, 'show'])->name('show');
         });
 

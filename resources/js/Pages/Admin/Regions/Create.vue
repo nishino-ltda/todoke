@@ -1,16 +1,16 @@
 <template>
-  <PartnerLayout>
-    <div class="region-create-page" data-cy="partner-region-create">
+  <AdminLayout>
+    <div class="region-create-page" data-cy="admin-region-create">
       <div class="d-flex align-center mb-6">
         <v-btn
           icon="mdi-arrow-left"
           variant="text"
           class="mr-4"
-          @click="router.visit(route('partner.regions.index'))"
+          @click="router.visit(route('admin.regions.index'))"
         ></v-btn>
         <div>
-          <h1 class="text-h4 font-weight-bold">{{ t('partner.regions.new') }}</h1>
-          <p class="text-subtitle-1 text-grey">{{ t('partner.regions.create_subtitle', 'Define your delivery coverage area') }}</p>
+          <h1 class="text-h4 font-weight-bold">{{ t('admin.regions.new') }}</h1>
+          <p class="text-subtitle-1 text-grey">{{ t('admin.regions.create_subtitle', 'Define a new delivery area') }}</p>
         </div>
       </div>
 
@@ -25,27 +25,40 @@
 
         <v-col cols="12" md="4">
           <v-card border elevation="0" class="rounded-xl pa-6">
-            <h2 class="text-h6 font-weight-bold mb-6">{{ t('partner.regions.details', 'Region Details') }}</h2>
+            <h2 class="text-h6 font-weight-bold mb-6">{{ t('admin.regions.details', 'Region Details') }}</h2>
             
             <v-form ref="formRef" @submit.prevent="submit">
               <v-text-field
                 v-model="form.name"
-                :label="t('partner.regions.name')"
+                :label="t('admin.regions.table.name')"
                 variant="outlined"
                 class="mb-4"
                 required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.regions.name') })]"
+                :rules="[v => !!v || t('auth.validation.required', { field: t('admin.regions.table.name') })]"
                 data-cy="region-name-input"
               ></v-text-field>
 
-              <v-switch
-                v-model="form.active"
-                :label="t('partner.regions.active')"
-                color="success"
+              <v-select
+                v-model="form.partner_id"
+                :items="partners"
+                item-title="name"
+                item-value="id"
+                :label="t('admin.regions.table.partner')"
+                variant="outlined"
+                class="mb-4"
+                required
+                :rules="[v => !!v || t('auth.validation.required', { field: t('admin.regions.table.partner') })]"
+                data-cy="region-partner-select"
+              ></v-select>
+
+              <v-select
+                v-model="form.status"
+                :items="statusOptions"
+                :label="t('admin.regions.table.status')"
+                variant="outlined"
                 class="mb-6"
-                hide-details
-                data-cy="region-active-switch"
-              ></v-switch>
+                data-cy="region-status-select"
+              ></v-select>
 
               <v-divider class="mb-6"></v-divider>
 
@@ -66,7 +79,7 @@
                 block
                 size="large"
                 class="rounded-lg mt-2"
-                @click="router.visit(route('partner.regions.index'))"
+                @click="router.visit(route('admin.regions.index'))"
               >
                 {{ t('partner.actions.cancel') }}
               </v-btn>
@@ -75,27 +88,37 @@
         </v-col>
       </v-row>
     </div>
-  </PartnerLayout>
+  </AdminLayout>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useForm, router } from '@inertiajs/vue3';
-import PartnerLayout from '@/Layouts/PartnerLayout.vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import MapRegionEditor from '@/Components/MapRegionEditor.vue';
-import partnerService from '@/services/partner';
+import adminService from '@/services/admin';
 import { useNotificationStore } from '@/stores/notification';
 
 const { t } = useI18n();
 const notifications = useNotificationStore();
 
+const props = defineProps({
+  partners: Array
+});
+
 const formRef = ref(null);
 const form = useForm({
   name: '',
+  partner_id: null,
   polygon: { type: 'Polygon', coordinates: [[]] },
-  active: true
+  status: 'active'
 });
+
+const statusOptions = computed(() => [
+  { title: t('partner.regions.active'), value: 'active' },
+  { title: t('partner.regions.inactive'), value: 'inactive' },
+]);
 
 const submit = async () => {
   const { valid } = await formRef.value.validate();
@@ -108,16 +131,11 @@ const submit = async () => {
 
   form.processing = true;
   try {
-    const payload = {
-      name: form.name,
-      polygon: form.polygon,
-      status: form.active ? 'active' : 'inactive'
-    };
-    await partnerService.createRegion(payload);
-    notifications.success(t('partner.regions.success.created'));
-    router.visit(route('partner.regions.index'));
+    await adminService.createRegion(form.data());
+    notifications.success(t('admin.regions.notifications.save_success'));
+    router.visit(route('admin.regions.index'));
   } catch (err) {
-    notifications.error(t('partner.regions.error.save'));
+    notifications.error(t('admin.regions.notifications.save_failed'));
   } finally {
     form.processing = false;
   }

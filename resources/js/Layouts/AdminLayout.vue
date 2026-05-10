@@ -53,9 +53,11 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import LanguageSelector from '../Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
 
+const { t } = useI18n();
 const page = usePage();
 const drawer = ref(true);
 

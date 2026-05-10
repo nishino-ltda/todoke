@@ -254,6 +254,8 @@
             "active": "Active",
             "inactive": "Inactive",
             "nodes_count": "Nodes Count",
+            "create_subtitle": "Define your delivery coverage area",
+            "details": "Region Details",
             "empty": "No regions found.",
             "success": {
                 "created": "Region created successfully",
@@ -390,6 +392,16 @@
             "origin": "Pickup",
             "destination": "Drop-off",
             "current": "Your Location"
+        },
+        "service_area": {
+            "title": "My Service Area",
+            "description": "Define the area where you want to receive delivery requests.",
+            "settings": "Settings",
+            "active": "Active",
+            "save": "Save Area",
+            "hint": "You need to draw a polygon on the map to define your service area.",
+            "success": "Service area updated successfully",
+            "error": "Failed to update service area"
         }
     },
     "admin": {
@@ -496,7 +508,14 @@
                 "save_failed": "Failed to save region",
                 "delete_success": "Region deleted successfully",
                 "delete_failed": "Failed to delete region"
-            }
+            },
+            "editor_hint": "Click on the map to start drawing a region",
+            "create_subtitle": "Define a new delivery area",
+            "details": "Region Details",
+            "overview": "Coverage Map",
+            "count": "Regions",
+            "delete_warning": "This action cannot be undone.",
+            "no_polygon": "Please draw a region on the map"
         },
         "deliveries": {
             "title": "Deliveries Monitoring",

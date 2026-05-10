@@ -163,12 +163,16 @@ class UserController extends Controller
         // Por exemplo, contagem de entregas por status, etc.
         
         return response()->json([
-            'usuariosAtivos' => $activeUsers,
-            'entregasHoje' => 0, // Implementar contagem real
-            'entregasStatus' => [
-                'pending' => 0, // Implementar contagem real
-                'em_andamento' => 0, // Implementar contagem real
-                'concluida' => 0, // Implementar contagem real
+            'total_users' => User::count(),
+            'active_users' => $activeUsers,
+            'active_deliveries' => 0, // Implementar contagem real
+            'total_nodes' => \App\Models\Node::count(),
+            'reported_issues' => 0,
+            'deliveries_today' => 0,
+            'deliveries_status' => [
+                'pending' => 0,
+                'in_transit' => 0,
+                'delivered' => 0,
             ]
         ]);
     }

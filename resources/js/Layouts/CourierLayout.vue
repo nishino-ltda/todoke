@@ -46,6 +46,11 @@
         <v-icon>mdi-cash-multiple</v-icon>
         Earnings
       </v-btn>
+
+      <v-btn value="service-area" @click="goTo('/courier/service-area')">
+        <v-icon>mdi-map-marker-path</v-icon>
+        Area
+      </v-btn>
     </v-bottom-navigation>
   </v-app>
 </template>
@@ -60,6 +65,7 @@ const page = usePage();
 const activeTab = computed(() => {
   if (page.url.includes('/history')) return 'history';
   if (page.url.includes('/earnings')) return 'earnings';
+  if (page.url.includes('/service-area')) return 'service-area';
   return 'dashboard';
 });
 

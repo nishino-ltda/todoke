@@ -2,11 +2,16 @@
   <AdminLayout>
     <div class="regions-management" data-cy="regions-management">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">{{ t('admin.regions.title') }}</h1>
+        <div>
+          <h1 class="text-h4 font-weight-bold">{{ t('admin.regions.title') }}</h1>
+          <p class="text-subtitle-1 text-grey">{{ t('admin.regions.description', 'Manage delivery regions and service areas') }}</p>
+        </div>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
-          @click="openCreateModal"
+          size="large"
+          class="rounded-lg shadow-sm"
+          @click="router.visit(route('admin.regions.create'))"
           data-cy="create-region-btn"
         >
           {{ t('admin.regions.add') }}
@@ -14,10 +19,14 @@
       </div>
 
       <!-- Regions Map -->
-      <v-card border elevation="0" class="rounded-xl mb-6">
-        <v-card-title class="px-4 py-3">
-          <v-icon start>mdi-map</v-icon>
-          {{ t('admin.regions.title') }}
+      <v-card border elevation="0" class="rounded-xl mb-8 overflow-hidden">
+        <v-card-title class="px-6 py-4 border-b bg-grey-lighten-5 d-flex align-center">
+          <v-icon start color="primary">mdi-map</v-icon>
+          <span class="text-h6 font-weight-bold">{{ t('admin.regions.overview', 'Coverage Map') }}</span>
+          <v-spacer></v-spacer>
+          <v-chip size="small" variant="flat" color="primary" class="font-weight-bold">
+            {{ regions.length }} {{ t('admin.regions.count', 'Regions') }}
+          </v-chip>
         </v-card-title>
         <v-card-text class="pa-0">
           <div
@@ -25,120 +34,77 @@
             ref="mapEl"
             class="regions-map"
             data-cy="regions-map"
-            style="height: 360px; width: 100%;"
+            style="height: 450px; width: 100%;"
           ></div>
         </v-card-text>
       </v-card>
 
       <!-- Regions Table -->
-      <DataTable
-        :headers="headers"
-        :items="regions"
-        :loading="loading"
-        data-cy="regions-table"
-      >
-        <template #item.status="{ item }">
-          <v-chip
-            :color="item.status === 'active' ? 'success' : 'grey'"
-            size="small"
-            class="text-uppercase font-weight-bold"
-          >
-            {{ item.status === 'active' ? t('partner.regions.active') : t('partner.regions.inactive') }}
-          </v-chip>
-        </template>
+      <v-card border elevation="0" class="rounded-xl overflow-hidden">
+        <DataTable
+          :headers="headers"
+          :items="regions"
+          :loading="loading"
+          data-cy="regions-table"
+        >
+          <template #item.status="{ item }">
+            <v-chip
+              :color="item.status === 'active' ? 'success' : 'grey'"
+              size="small"
+              variant="flat"
+              class="text-uppercase font-weight-bold"
+            >
+              {{ item.status === 'active' ? t('partner.regions.active') : t('partner.regions.inactive') }}
+            </v-chip>
+          </template>
 
-        <template #item.partner="{ item }">
-          <div class="d-flex flex-column">
-            <span class="font-weight-medium">{{ item.partner?.name || 'N/A' }}</span>
-            <span class="text-caption text-grey">{{ item.partner?.email }}</span>
-          </div>
-        </template>
+          <template #item.partner="{ item }">
+            <div class="d-flex align-center">
+              <v-avatar size="32" color="primary-lighten-5" class="mr-3">
+                <span class="text-primary text-caption font-weight-bold">{{ item.partner?.name?.charAt(0) }}</span>
+              </v-avatar>
+              <div class="d-flex flex-column">
+                <span class="font-weight-medium text-body-2">{{ item.partner?.name || 'N/A' }}</span>
+                <span class="text-caption text-grey">{{ item.partner?.email }}</span>
+              </div>
+            </div>
+          </template>
 
-        <template #item.actions="{ item }">
-          <v-btn
-            variant="text"
-            color="primary"
-            icon="mdi-pencil"
-            @click="editRegion(item)"
-            data-cy="edit-region-btn"
-          ></v-btn>
-          <v-btn
-            variant="text"
-            color="error"
-            icon="mdi-delete"
-            @click="confirmDelete(item)"
-            data-cy="delete-region-btn"
-          ></v-btn>
-        </template>
-      </DataTable>
-
-      <!-- Region Form Modal -->
-      <AppModal
-        v-model="showFormModal"
-        :title="isEditing ? t('admin.regions.edit') : t('admin.regions.new')"
-        maxWidth="600"
-      >
-        <v-form ref="regionForm" @submit.prevent="saveRegion">
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="form.name"
-                :label="t('admin.regions.table.name')"
-                required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('admin.regions.table.name') })]"
-                data-cy="region-name-input"
-              ></v-text-field>
-            </v-col>
-
-            <v-col cols="12">
-              <v-select
-                v-model="form.partner_id"
-                :items="partners"
-                item-title="name"
-                item-value="id"
-                :label="t('admin.regions.table.partner')"
-                required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('admin.regions.table.partner') })]"
-                data-cy="region-partner-select"
-              ></v-select>
-            </v-col>
-
-            <v-col cols="12">
-              <v-textarea
-                v-model="form.polygon_json"
-                :label="t('partner.regions.coordinates')"
-                placeholder='{"type": "Polygon", "coordinates": [[[lng, lat], ...]]}'
-                rows="4"
-                required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.regions.coordinates') }), validateJson]"
-                data-cy="region-coordinates-input"
-              ></v-textarea>
-            </v-col>
-
-            <v-col cols="12">
-              <v-select
-                v-model="form.status"
-                :items="statusOptions"
-                :label="t('admin.regions.table.status')"
-                data-cy="region-status-select"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-form>
-        <template #actions>
-          <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
-          <v-btn color="primary" @click="saveRegion" :loading="saving" data-cy="save-region-btn">
-            {{ isEditing ? t('partner.actions.update') : t('partner.actions.create') }}
-          </v-btn>
-        </template>
-      </AppModal>
+          <template #item.actions="{ item }">
+            <v-btn
+              variant="tonal"
+              color="primary"
+              size="small"
+              icon="mdi-pencil"
+              class="mr-2"
+              @click="router.visit(route('admin.regions.edit', { id: item.id }))"
+              data-cy="edit-region-btn"
+            ></v-btn>
+            <v-btn
+              variant="tonal"
+              color="error"
+              size="small"
+              icon="mdi-delete"
+              @click="confirmDelete(item)"
+              data-cy="delete-region-btn"
+            ></v-btn>
+          </template>
+        </DataTable>
+      </v-card>
 
       <!-- Delete Confirmation -->
       <AppModal v-model="showDeleteModal" :title="t('partner.actions.confirm_delete')" maxWidth="400">
-        <p>{{ t('partner.products.confirm_delete', { name: selectedRegion?.name }) }}</p>
+        <div class="text-center pa-4">
+          <v-icon color="error" size="64" class="mb-4">mdi-alert-circle-outline</v-icon>
+          <p class="text-body-1 mb-6">
+            {{ t('partner.products.confirm_delete', { name: selectedRegion?.name }) }}
+            <br>
+            <span class="text-caption text-grey">{{ t('admin.regions.delete_warning', 'This action cannot be undone.') }}</span>
+          </p>
+        </div>
         <template #actions>
-          <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">
+          <v-btn variant="text" block @click="showDeleteModal = false" class="mb-2">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="error" block @click="doDelete" :loading="saving" data-cy="confirm-delete-btn" class="rounded-lg">
             {{ t('partner.actions.delete') }}
           </v-btn>
         </template>
@@ -150,6 +116,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { router } from '@inertiajs/vue3';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
@@ -163,12 +130,8 @@ const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
 const regions = ref([]);
-const partners = ref([]);
-const showFormModal = ref(false);
 const showDeleteModal = ref(false);
-const isEditing = ref(false);
 const selectedRegion = ref(null);
-const regionForm = ref(null);
 const mapEl = ref(null);
 let map = null;
 const polygonLayers = [];
@@ -182,25 +145,18 @@ const headers = computed(() => [
   { title: t('admin.regions.table.actions'), key: 'actions', sortable: false, align: 'end' },
 ]);
 
-const statusOptions = computed(() => [
-  { title: t('partner.regions.active'), value: 'active' },
-  { title: t('partner.regions.inactive'), value: 'inactive' },
-]);
-
-const form = ref({ name: '', partner_id: null, polygon_json: '', status: 'active' });
-
-const validateJson = (v) => {
-  try { JSON.parse(v); return true; }
-  catch (e) { return 'Invalid JSON format'; }
-};
-
 // ── Map ───────────────────────────────────────────────────────────────────────
 
 const initMap = () => {
   if (!mapEl.value || map) return;
-  map = L.map(mapEl.value).setView([-15.78, -47.93], 5); // Brazil center
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
+  map = L.map(mapEl.value, {
+    zoomControl: false
+  }).setView([-15.78, -47.93], 5);
+  
+  L.control.zoom({ position: 'topright' }).addTo(map);
+
+  L.tileLayer('https://{s}.tile.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO'
   }).addTo(map);
 };
 
@@ -227,7 +183,7 @@ const renderRegionsOnMap = () => {
       }).addTo(map);
 
       layer.bindTooltip(region.name, { permanent: false });
-      layer.on('click', () => editRegion(region));
+      layer.on('click', () => router.visit(route('admin.regions.edit', { id: region.id })));
       polygonLayers.push(layer);
 
       const layerBounds = layer.getBounds();
@@ -248,7 +204,7 @@ const fetchRegions = async () => {
   loading.value = true;
   try {
     const response = await adminService.getRegions();
-    regions.value = response.data?.regions || response.data || [];
+    regions.value = response.data?.data || response.data?.regions || [];
     renderRegionsOnMap();
   } catch (err) {
     notifications.error(t('admin.regions.notifications.load_failed'));
@@ -257,56 +213,7 @@ const fetchRegions = async () => {
   }
 };
 
-const fetchPartners = async () => {
-  try {
-    const response = await adminService.getUsers({ type: 'partner' });
-    partners.value = response.data?.users || response.data || [];
-  } catch (err) {
-    console.error('Failed to load partners', err);
-  }
-};
-
 // ── CRUD ──────────────────────────────────────────────────────────────────────
-const openCreateModal = () => {
-  isEditing.value = false;
-  form.value = { name: '', partner_id: null, polygon_json: '{"type": "Polygon", "coordinates": [[]]}', status: 'active' };
-  showFormModal.value = true;
-};
-
-const editRegion = (region) => {
-  isEditing.value = true;
-  selectedRegion.value = region;
-  form.value = {
-    name: region.name,
-    partner_id: region.partner_id,
-    polygon_json: JSON.stringify(region.polygon || {}),
-    status: region.status
-  };
-  showFormModal.value = true;
-};
-
-const saveRegion = async () => {
-  const { valid } = await regionForm.value.validate();
-  if (!valid) return;
-  saving.value = true;
-  try {
-    const payload = { ...form.value, polygon: JSON.parse(form.value.polygon_json) };
-    delete payload.polygon_json;
-    if (isEditing.value) {
-      await adminService.updateRegion(selectedRegion.value.id, payload);
-    } else {
-      await adminService.createRegion(payload);
-    }
-    notifications.success(t('admin.regions.notifications.save_success'));
-    showFormModal.value = false;
-    fetchRegions();
-  } catch (err) {
-    notifications.error(t('admin.regions.notifications.save_failed'));
-  } finally {
-    saving.value = false;
-  }
-};
-
 const confirmDelete = (region) => {
   selectedRegion.value = region;
   showDeleteModal.value = true;
@@ -330,7 +237,6 @@ const doDelete = async () => {
 onMounted(() => {
   initMap();
   fetchRegions();
-  fetchPartners();
 });
 
 onUnmounted(() => {
@@ -346,8 +252,11 @@ watch(regions, renderRegionsOnMap, { deep: true });
 }
 
 .regions-map {
-  border-radius: 0 0 8px 8px;
   z-index: 1;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
 @keyframes fadeIn {

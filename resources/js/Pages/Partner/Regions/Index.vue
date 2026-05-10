@@ -1,101 +1,76 @@
 <template>
   <PartnerLayout>
-    <div class="regions-index">
+    <div class="regions-index" data-cy="regions-index">
       <div class="d-flex align-center justify-space-between mb-6">
-        <h1 class="text-h4 font-weight-bold">{{ t('partner.regions.title') }}</h1>
+        <div>
+          <h1 class="text-h4 font-weight-bold">{{ t('partner.regions.title') }}</h1>
+          <p class="text-subtitle-1 text-grey">{{ t('partner.regions.description', 'Manage your delivery areas') }}</p>
+        </div>
         <v-btn
           color="primary"
           prepend-icon="mdi-plus"
-          @click="openCreateModal"
+          size="large"
+          class="rounded-lg shadow-sm"
+          @click="router.visit(route('partner.regions.create'))"
           data-cy="create-region-btn"
         >
           {{ t('partner.regions.add') }}
         </v-btn>
       </div>
 
-      <DataTable
-        :headers="headers"
-        :items="regions"
-        :loading="loading"
-        data-cy="regions-table"
-      >
-        <template #item.active="{ item }">
-          <v-chip
-            :color="item.active ? 'success' : 'grey'"
-            size="small"
-            class="text-uppercase font-weight-bold"
-          >
-            {{ item.active ? t('partner.regions.active') : t('partner.regions.inactive') }}
-          </v-chip>
-        </template>
+      <v-card border elevation="0" class="rounded-xl overflow-hidden">
+        <DataTable
+          :headers="headers"
+          :items="regions"
+          :loading="loading"
+          data-cy="regions-table"
+        >
+          <template #item.active="{ item }">
+            <v-chip
+              :color="item.status === 'active' ? 'success' : 'grey'"
+              size="small"
+              variant="flat"
+              class="text-uppercase font-weight-bold"
+            >
+              {{ item.status === 'active' ? t('partner.regions.active') : t('partner.regions.inactive') }}
+            </v-chip>
+          </template>
 
-        <template #item.actions="{ item }">
-          <v-btn
-            variant="text"
-            color="primary"
-            icon="mdi-pencil"
-            @click="editRegion(item)"
-            data-cy="edit-region-btn"
-          ></v-btn>
-          <v-btn
-            variant="text"
-            color="error"
-            icon="mdi-delete"
-            @click="confirmDelete(item)"
-            data-cy="delete-region-btn"
-          ></v-btn>
-        </template>
-      </DataTable>
-
-      <!-- Region Form Modal -->
-      <AppModal
-        v-model="showFormModal"
-        :title="isEditing ? t('partner.regions.edit') : t('partner.regions.new')"
-        maxWidth="600"
-      >
-        <v-form ref="regionForm" @submit.prevent="saveRegion">
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="form.name"
-                :label="t('partner.regions.name')"
-                required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.regions.name') })]"
-                data-cy="region-name-input"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-text-field
-                v-model="form.coordinates"
-                :label="t('partner.regions.coordinates')"
-                placeholder='[[lat, lng], ...]'
-                data-cy="region-coordinates-input"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12">
-              <v-switch
-                v-model="form.active"
-                :label="t('partner.regions.active')"
-                color="success"
-                data-cy="region-active-switch"
-              ></v-switch>
-            </v-col>
-          </v-row>
-        </v-form>
-        <template #actions>
-          <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
-          <v-btn color="primary" @click="saveRegion" :loading="saving" data-cy="save-region-btn">
-            {{ isEditing ? t('partner.actions.update') : t('partner.actions.create') }}
-          </v-btn>
-        </template>
-      </AppModal>
+          <template #item.actions="{ item }">
+            <v-btn
+              variant="tonal"
+              color="primary"
+              size="small"
+              icon="mdi-pencil"
+              class="mr-2"
+              @click="router.visit(route('partner.regions.edit', { id: item.id }))"
+              data-cy="edit-region-btn"
+            ></v-btn>
+            <v-btn
+              variant="tonal"
+              color="error"
+              size="small"
+              icon="mdi-delete"
+              @click="confirmDelete(item)"
+              data-cy="delete-region-btn"
+            ></v-btn>
+          </template>
+        </DataTable>
+      </v-card>
 
       <!-- Delete Confirmation -->
       <AppModal v-model="showDeleteModal" :title="t('partner.actions.confirm_delete')" maxWidth="400">
-        <p>{{ t('partner.products.confirm_delete', { name: selectedRegion?.name }) }}</p>
+        <div class="text-center pa-4">
+          <v-icon color="error" size="64" class="mb-4">mdi-alert-circle-outline</v-icon>
+          <p class="text-body-1 mb-6">
+            {{ t('partner.products.confirm_delete', { name: selectedRegion?.name }) }}
+          </p>
+        </div>
         <template #actions>
-          <v-btn variant="text" @click="showDeleteModal = false">{{ t('partner.actions.cancel') }}</v-btn>
-          <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
+          <v-btn variant="text" block @click="showDeleteModal = false" class="mb-2">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="error" block @click="doDelete" :loading="saving" data-cy="confirm-delete-btn" class="rounded-lg">
+            {{ t('partner.actions.delete') }}
+          </v-btn>
         </template>
       </AppModal>
     </div>
@@ -105,6 +80,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { router } from '@inertiajs/vue3';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
@@ -116,11 +92,8 @@ const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
 const regions = ref([]);
-const showFormModal = ref(false);
 const showDeleteModal = ref(false);
-const isEditing = ref(false);
 const selectedRegion = ref(null);
-const regionForm = ref(null);
 
 const headers = computed(() => [
   { title: t('partner.regions.name'), key: 'name' },
@@ -128,12 +101,6 @@ const headers = computed(() => [
   { title: t('partner.orders.status'), key: 'active' },
   { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
 ]);
-
-const form = ref({
-  name: '',
-  coordinates: '',
-  active: true
-});
 
 const fetchRegions = async () => {
   loading.value = true;
@@ -144,41 +111,6 @@ const fetchRegions = async () => {
     notifications.error(t('partner.regions.error.load'));
   } finally {
     loading.value = false;
-  }
-};
-
-const openCreateModal = () => {
-  isEditing.value = false;
-  form.value = { name: '', coordinates: '', active: true };
-  showFormModal.value = true;
-};
-
-const editRegion = (region) => {
-  isEditing.value = true;
-  selectedRegion.value = region;
-  form.value = { ...region };
-  showFormModal.value = true;
-};
-
-const saveRegion = async () => {
-  const { valid } = await regionForm.value.validate();
-  if (!valid) return;
-
-  saving.value = true;
-  try {
-    if (isEditing.value) {
-      await partnerService.updateRegion(selectedRegion.value.id, form.value);
-      notifications.success(t('partner.regions.success.updated'));
-    } else {
-      await partnerService.createRegion(form.value);
-      notifications.success(t('partner.regions.success.created'));
-    }
-    showFormModal.value = false;
-    fetchRegions();
-  } catch (err) {
-    notifications.error(t('partner.regions.error.save'));
-  } finally {
-    saving.value = false;
   }
 };
 
@@ -207,6 +139,10 @@ onMounted(fetchRegions);
 <style scoped>
 .regions-index {
   animation: fadeIn 0.5s ease-out;
+}
+
+.shadow-sm {
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
 }
 
 @keyframes fadeIn {

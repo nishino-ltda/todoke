@@ -273,6 +273,8 @@
             "active": "Ativo",
             "inactive": "Inativo",
             "nodes_count": "Qtd de Nós",
+            "create_subtitle": "Defina sua área de cobertura de entrega",
+            "details": "Detalhes da Região",
             "empty": "Nenhuma região encontrada.",
             "success": {
                 "created": "Região criada com sucesso",
@@ -409,6 +411,16 @@
             "origin": "Retirada",
             "destination": "Entrega",
             "current": "Sua Localização"
+        },
+        "service_area": {
+            "title": "Minha Área de Atuação",
+            "description": "Defina a área onde você deseja receber solicitações de entrega.",
+            "settings": "Configurações",
+            "active": "Ativo",
+            "save": "Salvar Área",
+            "hint": "Você precisa desenhar um polígono no mapa para definir sua área de atuação.",
+            "success": "Área de atuação atualizada com sucesso",
+            "error": "Falha ao atualizar área de atuação"
         }
     },
     "admin": {
@@ -515,7 +527,14 @@
                 "save_failed": "Falha ao salvar região",
                 "delete_success": "Região excluída com sucesso",
                 "delete_failed": "Falha ao excluir região"
-            }
+            },
+            "editor_hint": "Clique no mapa para começar a desenhar uma região",
+            "create_subtitle": "Defina uma nova área de entrega",
+            "details": "Detalhes da Região",
+            "overview": "Mapa de Cobertura",
+            "count": "Regiões",
+            "delete_warning": "Esta ação não pode ser desfeita.",
+            "no_polygon": "Por favor, desenhe uma região no mapa"
         },
         "deliveries": {
             "title": "Monitoramento de Entregas",

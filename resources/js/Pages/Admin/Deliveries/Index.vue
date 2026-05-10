@@ -294,7 +294,7 @@ const fetchDeliveries = async () => {
   loading.value = true;
   try {
     const response = await adminService.getDeliveries();
-    deliveries.value = response.data?.deliveries || response.data || [];
+    deliveries.value = response.data?.data || response.data?.deliveries || [];
   } catch (err) {
     notifications.error(t('admin.deliveries.notifications.load_failed'));
   } finally {

@@ -76,7 +76,7 @@ onMounted(async () => {
   loading.value = true
   try {
     const response = await adminService.getDeliveries()
-    deliveries.value = response.data || []
+    deliveries.value = response.data?.deliveries || response.data?.data || []
     
     // Update stats based on fetched data
     deliveryStats.value[0].value = deliveries.value.filter(d => ['accepted', 'picked_up'].includes(d.status)).length
