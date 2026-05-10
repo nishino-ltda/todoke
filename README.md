@@ -12,8 +12,8 @@ O TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada para
   - Reputação do cliente para segurança de parceiros/entregadores
   - Mecanismos de avaliação e feedback
   - Detecção de atividades suspeitas
-- **Funcionalidades offline** para áreas com conectividade limitada
 - **Notificações em tempo real** via Laravel Reverb para atualizações instantâneas de pedidos e entregas
+- **Funcionalidades offline** para áreas com conectividade limitada
 - **Precificação comunitária** com participação democrática dos entregadores
 - **Ecossistema completo:** API + App + Painel Administrativo
 
@@ -74,18 +74,11 @@ A plataforma utiliza **Laravel Reverb** para comunicação via WebSockets em tem
 - **Suporte**: Chat e respostas de tickets em tempo real.
 - **Painel Admin**: Monitoramento live de atividades do sistema.
 
-## Stack Tecnológica
-- **Backend**: Laravel 12, PHP 8.2+
-- **Frontend**: Vue.js 3, Vuetify, Inertia.js
-- **Real-time**: Laravel Reverb, Laravel Echo
-- **Banco de Dados**: SQLite (MVP) / PostgreSQL (Produção)
-- **Estado**: Pinia
-
 ## Testes
 A suíte de testes inclui:
 - **Unitários & Feature (PHP)**: Testes de modelos e API usando PHPUnit.
-- **E2E (Frontend)**: Testes de fluxo completo usando Cypress.
-- **Unitários (JS)**: Testes de componentes usando Vitest.
+- **E2E (Frontend)**: Testes de fluxo completo usando Cypress (12 arquivos para todos os papéis).
+- **Unitários (JS)**: 243+ testes de componentes e stores usando Vitest.
 
 **Execução:**
 ```bash
@@ -108,6 +101,23 @@ npm run test:e2e:local      # Testes E2E (Cypress)
 - Aumenta segurança para parceiros e entregadores através do sistema de reputação
 
 
-Ideia de propaganda: aquele audio 'pronto querem me comer, aquii nãão'
+## Status do Projeto — MVP Completo ✅
 
-Todo: Celular pra quem nao tem
+| Área | Status |
+|------|--------|
+| Autenticação multi-role | ✅ Completo |
+| Home Page (hero, features, CTA) | ✅ Completo |
+| Cardápio / Carrinho / Checkout | ✅ Completo |
+| Painel do Entregador (delivery map, aceitar/rejeitar) | ✅ Completo |
+| Painel Admin (gráficos, gestão, monitoramento) | ✅ Completo |
+| Painel Parceiro (métricas, pedidos, produtos, etiqueta) | ✅ Completo |
+| Sistema de Suporte (tickets, FAQ) | ✅ Completo |
+| Notificações Real-time (Laravel Reverb) | ✅ Completo |
+| Internacionalização (pt-BR + en) | ✅ Completo |
+| Testes (Unitários + E2E + Backend) | ✅ 243+ testes passando |
+
+### Próximos Passos (Sprint 10)
+- Otimização de performance (lazy loading, bundle)
+- Auditoria de acessibilidade (ARIA, keyboard nav)
+- Compatibilidade cross-browser
+- Scans de segurança
