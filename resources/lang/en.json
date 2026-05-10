@@ -10,6 +10,8 @@
         "login": "Login",
         "register": "Register",
         "logout": "Logout",
+        "already_have_account": "Already have an account? Login",
+        "no_account": "No account? Register",
         "menu": "Menu",
         "form": {
             "email": "Email",
@@ -65,7 +67,11 @@
             "login": "Login successful",
             "logout": "Logged out successfully"
         },
-        "forgot_password": "Forgot Password?"
+        "forgot_password": "Forgot Password?",
+        "forgot_password_instructions": "Enter your email to receive a password reset link.",
+        "send_reset_link": "Send Reset Link",
+        "back_to_login": "Back to Login",
+        "reset_link_sent": "Password reset link has been sent to your email"
     },
     "footer": {
         "copyright": "© {year} TODOKE. All rights reserved.",
@@ -115,6 +121,13 @@
                 "description": "Work on your schedule and earn money making deliveries.",
                 "button": "Start Delivering"
             }
+        },
+        "nearby": {
+            "title": "Featured Partners",
+            "subtitle": "Discover the best products near you",
+            "locate_me": "Locate Me",
+            "view_details": "View Details",
+            "your_location": "Your Location"
         }
     },
     "menu": {

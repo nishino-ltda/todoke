@@ -52,6 +52,8 @@
       </v-container>
       <NotificationCenter />
     </v-main>
+
+    <AppFooter />
   </v-app>
 </template>
 
@@ -63,6 +65,7 @@ import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
 import LanguageSelector from '../Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
+import AppFooter from '../Components/AppFooter.vue';
 
 const { t } = useI18n();
 const page = usePage();

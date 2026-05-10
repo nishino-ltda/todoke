@@ -1,7 +1,7 @@
 <template>
   <v-badge
     :content="cart.count"
-    :value="cart.count > 0"
+    :model-value="cart.count > 0"
     color="error"
     overlap
     data-cy="cart-icon"

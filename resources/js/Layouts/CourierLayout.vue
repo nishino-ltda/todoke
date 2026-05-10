@@ -51,6 +51,8 @@
       </v-container>
       <NotificationCenter />
     </v-main>
+
+    <AppFooter />
   </v-app>
 </template>
 
@@ -61,6 +63,7 @@ import { usePage, router } from '@inertiajs/vue3';
 import { useAuthStore } from '@/stores/auth';
 import LanguageSelector from '../Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
+import AppFooter from '../Components/AppFooter.vue';
 
 const page = usePage();
 const authStore = useAuthStore();

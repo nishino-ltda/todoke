@@ -1,2 +1,6 @@
 @import 'vuetify/styles/main.sass';
 @import '@mdi/font/css/materialdesignicons.min.css';
+
+.v-toolbar__content {
+  padding-right: 10px;
+}

@@ -10,6 +10,8 @@
         "login": "Entrar",
         "register": "Registrar",
         "logout": "Sair",
+        "already_have_account": "Já tem uma conta? Entrar",
+        "no_account": "Não tem conta? Registre-se",
         "menu": "Menu",
         "form": {
             "email": "E-mail",
@@ -65,7 +67,11 @@
             "login": "Login realizado com sucesso",
             "logout": "Logout realizado com sucesso"
         },
-        "forgot_password": "Esqueceu sua senha?"
+        "forgot_password": "Esqueceu sua senha?",
+        "forgot_password_instructions": "Digite seu e-mail para receber um link de redefinição de senha.",
+        "send_reset_link": "Enviar Link de Redefinição",
+        "back_to_login": "Voltar para o Login",
+        "reset_link_sent": "O link de redefinição de senha foi enviado para o seu e-mail"
     },
     "footer": {
         "copyright": "© {year} TODOKE. Todos os direitos reservados.",
@@ -115,6 +121,13 @@
                 "description": "Trabalhe no seu horário e ganhe dinheiro fazendo entregas.",
                 "button": "Quero Entregar"
             }
+        },
+        "nearby": {
+            "title": "Parceiros em Operação",
+            "subtitle": "Descubra os melhores produtos perto de você",
+            "locate_me": "Me Localizar",
+            "view_details": "Ver Detalhes",
+            "your_location": "Sua Localização"
         }
     },
     "menu": {

@@ -40,11 +40,11 @@ const vuetifyStubs = {
   'v-badge': {
     template: `
       <div>
-        <div class="v-badge__badge" v-if="value">{{ content }}</div>
+        <div class="v-badge__badge" v-if="modelValue">{{ content }}</div>
         <slot/>
       </div>
     `,
-    props: ['content', 'value']
+    props: ['content', 'modelValue']
   },
   'v-dialog': {
     template: '<div v-if="modelValue"><slot/></div>',

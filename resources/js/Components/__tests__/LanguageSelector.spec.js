@@ -3,16 +3,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import LanguageSelector from '../LanguageSelector.vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
 import axios from '@/services/api'
 
-// Mock axios
 vi.mock('@/services/api', () => ({
   default: {
     patch: vi.fn(() => Promise.resolve({}))
   }
 }))
 
-// Mock auth store
 const mockAuthStore = {
   isAuthenticated: false
 }
@@ -20,20 +21,9 @@ vi.mock('@/stores/auth', () => ({
   useAuthStore: () => mockAuthStore
 }))
 
-// Mock Vuetify v-select
-const VSelectStub = {
-  template: `
-    <select :value="modelValue" @input="$emit('update:modelValue', $event.target.value)">
-      <option v-for="item in items" :key="item.code" :value="item.code">
-        {{ item.name }}
-      </option>
-    </select>
-  `,
-  props: ['modelValue', 'items']
-}
-
 describe('LanguageSelector', () => {
   let i18n
+  let vuetify
 
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -45,41 +35,41 @@ describe('LanguageSelector', () => {
         'pt-BR': {}
       }
     })
+    vuetify = createVuetify({ components, directives })
     mockAuthStore.isAuthenticated = false
     vi.clearAllMocks()
   })
 
-  it('renders correctly with language options', () => {
+  it('renders current language code', () => {
     const wrapper = mount(LanguageSelector, {
       global: {
-        plugins: [i18n],
-        stubs: {
-          'v-select': VSelectStub
-        }
+        plugins: [i18n, vuetify]
       }
     })
 
-    const select = wrapper.find('select')
-    expect(select.exists()).toBe(true)
-    const options = select.findAll('option')
-    expect(options.length).toBe(2)
-    expect(options[0].text()).toBe('English')
-    expect(options[1].text()).toBe('Português (BR)')
+    expect(wrapper.text()).toBe('EN')
   })
 
-  it('updates locale when selection changes', async () => {
+  it('renders PT when locale is pt-BR', () => {
+    i18n.global.locale.value = 'pt-BR'
     const wrapper = mount(LanguageSelector, {
       global: {
-        plugins: [i18n],
-        stubs: {
-          'v-select': VSelectStub
-        }
+        plugins: [i18n, vuetify]
       }
     })
 
-    const select = wrapper.find('select')
-    await select.setValue('pt-BR')
-    
+    expect(wrapper.text()).toBe('PT')
+  })
+
+  it('toggles locale on click', async () => {
+    const wrapper = mount(LanguageSelector, {
+      global: {
+        plugins: [i18n, vuetify]
+      }
+    })
+
+    expect(i18n.global.locale.value).toBe('en')
+    await wrapper.find('[data-cy="language-selector"]').trigger('click')
     expect(i18n.global.locale.value).toBe('pt-BR')
   })
 
@@ -87,15 +77,11 @@ describe('LanguageSelector', () => {
     mockAuthStore.isAuthenticated = true
     const wrapper = mount(LanguageSelector, {
       global: {
-        plugins: [i18n],
-        stubs: {
-          'v-select': VSelectStub
-        }
+        plugins: [i18n, vuetify]
       }
     })
 
-    const select = wrapper.find('select')
-    await select.setValue('pt-BR')
+    await wrapper.find('[data-cy="language-selector"]').trigger('click')
 
     expect(axios.patch).toHaveBeenCalledWith('/api/v1/user/locale', { locale: 'pt-BR' })
   })
@@ -104,15 +90,11 @@ describe('LanguageSelector', () => {
     mockAuthStore.isAuthenticated = false
     const wrapper = mount(LanguageSelector, {
       global: {
-        plugins: [i18n],
-        stubs: {
-          'v-select': VSelectStub
-        }
+        plugins: [i18n, vuetify]
       }
     })
 
-    const select = wrapper.find('select')
-    await select.setValue('pt-BR')
+    await wrapper.find('[data-cy="language-selector"]').trigger('click')
 
     expect(axios.patch).not.toHaveBeenCalled()
   })

@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 
@@ -10,53 +9,31 @@ const props = defineProps({
     default: false
   }
 })
-
-const currentYear = computed(() => new Date().getFullYear())
 </script>
 
 <template>
-  <v-footer color="primary" dark class="app-footer" data-cy="app-footer">
-    <v-container v-if="!minimal">
-      <v-row justify="space-between" align="center">
-        <v-col cols="12" md="4">
-          <p>{{ t('footer.copyright', { year: currentYear }) }}</p>
-        </v-col>
-        
-        <v-col cols="12" md="4" class="text-center">
-          <Link :href="route('terms')" class="text-white mr-2" data-cy="terms-link">{{ t('footer.terms') }}</Link>
-          <Link :href="route('privacy')" class="text-white" data-cy="privacy-link">{{ t('footer.privacy') }}</Link>
-        </v-col>
-
-        <v-col cols="12" md="4" class="text-right">
-          <v-btn variant="text" color="white" href="https://facebook.com" class="mr-2" data-cy="facebook-link">
-            <v-icon left>mdi-facebook</v-icon>
-            Facebook
-          </v-btn>
-          <v-btn variant="text" color="white" href="https://twitter.com" class="mr-2" data-cy="twitter-link">
-            <v-icon left>mdi-twitter</v-icon>
-            Twitter
-          </v-btn>
-          <v-btn variant="text" color="white" href="https://instagram.com" data-cy="instagram-link">
-            <v-icon left>mdi-instagram</v-icon>
-            Instagram
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-container v-else>
-      <v-row justify="center">
-        <v-col cols="12" class="text-center">
-          <p>{{ t('footer.copyright', { year: currentYear }) }}</p>
-        </v-col>
-      </v-row>
-    </v-container>
+  <v-footer app color="primary" dark class="app-footer" data-cy="app-footer">
+    <div class="d-flex align-center w-100" v-if="!minimal">
+      <div>
+        <Link :href="route('terms')" class="text-white mr-2" data-cy="terms-link">{{ t('footer.terms') }}</Link>
+        <Link :href="route('privacy')" class="text-white" data-cy="privacy-link">{{ t('footer.privacy') }}</Link>
+      </div>
+      <div class="flex-grow-1"></div>
+      <div>
+        <v-btn variant="text" color="white" href="https://github.com/nishino-ltda" target="_blank" data-cy="github-link">
+          <v-icon>mdi-github</v-icon>
+        </v-btn>
+      </div>
+    </div>
   </v-footer>
 </template>
 
-
 <style scoped>
-.social-link {
-  color: white;
-  text-decoration: none;
+.app-footer {
+  font-size: 0.75rem;
+  padding: 0px 16px;
+  background-color: #1a237e !important;
+  opacity: 0.85;
 }
 </style>
+

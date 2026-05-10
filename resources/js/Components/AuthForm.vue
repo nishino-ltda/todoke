@@ -10,14 +10,16 @@
       </v-alert>
 
       <v-alert
-        v-if="Object.keys(errors).length > 1" 
+        v-if="Object.keys(errors).length > 0" 
         type="error"
+        variant="tonal"
         data-cy="validation-alert"
         class="mb-4"
       >
-        {{ t('auth.validation.general_error') }}
+        {{ errors.general || t('auth.validation.general_error') }}
       </v-alert>
 
+    <div class="auth-fields">
     <template v-if="mode === 'login'">
       <v-text-field
         v-model="form.email"
@@ -26,6 +28,9 @@
         :rules="rules.email"
         required
         :error-messages="errors.email"
+        prepend-inner-icon="mdi-email-outline"
+        variant="outlined"
+        density="comfortable"
         data-cy="email-input"
         @blur="validateField('email')"
       ></v-text-field>
@@ -33,164 +38,261 @@
       <v-text-field
         v-model="form.password"
         :label="t('auth.form.password')"
-        type="password"
+        :type="showPassword ? 'text' : 'password'"
         :rules="rules.password"
         required
         :error-messages="errors.password"
+        prepend-inner-icon="mdi-lock-outline"
+        :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+        variant="outlined"
+        density="comfortable"
         data-cy="password-input"
+        @click:append-inner="showPassword = !showPassword"
         @blur="validateField('password')"
       ></v-text-field>
     </template>
 
     <template v-if="mode === 'register'">
-      <v-text-field
-        v-model="form.name"
-        :label="t('auth.form.name')"
-        :rules="rules.name"
-        required
-        :error-messages="errors.name"
-        data-cy="name-input"
-        @blur="validateField('name')"
-      ></v-text-field>
+      <v-row dense>
+        <v-col cols="12">
+          <v-text-field
+            v-model="form.name"
+            :label="t('auth.form.name')"
+            :rules="rules.name"
+            required
+            :error-messages="errors.name"
+            prepend-inner-icon="mdi-account-outline"
+            variant="outlined"
+            density="comfortable"
+            data-cy="name-input"
+            @blur="validateField('name')"
+          ></v-text-field>
+        </v-col>
 
-      <v-text-field
-        v-model="form.phone"
-        :label="t('auth.form.phone')"
-        :rules="rules.phone"
-        required
-        :error-messages="errors.phone"
-        data-cy="phone-input"
-        @blur="validateField('phone')"
-      ></v-text-field>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="form.phone"
+            :label="t('auth.form.phone')"
+            :rules="rules.phone"
+            required
+            :error-messages="errors.phone"
+            prepend-inner-icon="mdi-phone-outline"
+            variant="outlined"
+            density="comfortable"
+            placeholder="(00) 00000-0000"
+            data-cy="phone-input"
+            @blur="validateField('phone')"
+            @input="form.phone = maskPhone($event.target.value)"
+          ></v-text-field>
+        </v-col>
 
-      <v-text-field
-        v-model="form.cpf"
-        :label="t('auth.form.cpf')"
-        required
-        :error-messages="errors.cpf"
-        data-cy="cpf-input"
-      ></v-text-field>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="form.cpf"
+            :label="t('auth.form.cpf')"
+            :rules="rules.cpf"
+            required
+            :error-messages="errors.cpf"
+            prepend-inner-icon="mdi-card-account-details-outline"
+            variant="outlined"
+            density="comfortable"
+            placeholder="000.000.000-00"
+            data-cy="cpf-input"
+            @blur="validateField('cpf')"
+            @input="form.cpf = maskCPF($event.target.value)"
+          ></v-text-field>
+        </v-col>
 
-      <v-text-field
-        v-model="form.email"
-        :label="t('auth.form.email')"
-        type="email"
-        :rules="rules.email"
-        required
-        :error-messages="errors.email"
-        data-cy="email-input"
-        @blur="validateField('email')"
-      ></v-text-field>
+        <v-col cols="12">
+          <v-text-field
+            v-model="form.email"
+            :label="t('auth.form.email')"
+            type="email"
+            :rules="rules.email"
+            required
+            :error-messages="errors.email"
+            prepend-inner-icon="mdi-email-outline"
+            variant="outlined"
+            density="comfortable"
+            data-cy="email-input"
+            @blur="validateField('email')"
+          ></v-text-field>
+        </v-col>
 
-      <v-text-field
-        v-model="form.password"
-        :label="t('auth.form.password')"
-        type="password"
-        :rules="rules.password"
-        required
-        :error-messages="errors.password"
-        data-cy="password-input"
-        @blur="validateField('password')"
-      ></v-text-field>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="form.password"
+            :label="t('auth.form.password')"
+            :type="showPassword ? 'text' : 'password'"
+            :rules="rules.password"
+            required
+            :error-messages="errors.password"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            density="comfortable"
+            data-cy="password-input"
+            @click:append-inner="showPassword = !showPassword"
+            @blur="validateField('password')"
+          ></v-text-field>
+        </v-col>
 
-      <v-text-field
-        v-model="form.password_confirmation"
-        :label="t('auth.form.confirm_password')"
-        type="password"
-        required
-        :error-messages="errors.password_confirmation"
-        data-cy="password-confirmation-input"
-        @blur="validateField('password_confirmation')"
-      ></v-text-field>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="form.password_confirmation"
+            :label="t('auth.form.confirm_password')"
+            :type="showPasswordConfirmation ? 'text' : 'password'"
+            required
+            :error-messages="errors.password_confirmation"
+            prepend-inner-icon="mdi-lock-check-outline"
+            :append-inner-icon="showPasswordConfirmation ? 'mdi-eye-off' : 'mdi-eye'"
+            variant="outlined"
+            density="comfortable"
+            data-cy="password-confirmation-input"
+            @click:append-inner="showPasswordConfirmation = !showPasswordConfirmation"
+            @blur="validateField('password_confirmation')"
+          ></v-text-field>
+        </v-col>
 
-      <v-select
-        v-model="form.role"
-        :items="roles"
-        :label="t('auth.form.account_type')"
-        required
-        :error-messages="errors.role"
-        data-cy="role-select"
-        @update:modelValue="handleRoleChange"
-      ></v-select>
+        <v-col cols="12">
+          <v-select
+            v-model="form.role"
+            :items="roles"
+            :label="t('auth.form.account_type')"
+            required
+            :error-messages="errors.role"
+            prepend-inner-icon="mdi-account-cog-outline"
+            variant="outlined"
+            density="comfortable"
+            data-cy="role-select"
+            @update:modelValue="handleRoleChange"
+          ></v-select>
+        </v-col>
 
-      <!-- Courier specific fields -->
-      <template v-if="showCourierFields">
-        <v-text-field
-          v-model="form.license_number"
-          :label="t('auth.form.license_number')"
-          required
-          :error-messages="errors.license_number"
-          data-cy="license-input"
-        ></v-text-field>
+        <!-- Courier specific fields -->
+        <template v-if="showCourierFields">
+          <v-col cols="12">
+            <v-text-field
+              v-model="form.license_number"
+              :label="t('auth.form.license_number')"
+              required
+              :error-messages="errors.license_number"
+              prepend-inner-icon="mdi-card-bulleted-outline"
+              variant="outlined"
+              density="comfortable"
+              data-cy="license-input"
+            ></v-text-field>
+          </v-col>
 
-        <v-select
-          v-model="form.vehicle_type"
-          :items="vehicleTypes"
-          :label="t('auth.form.vehicle_type')"
-          required
-          :error-messages="errors.vehicle_type"
-          data-cy="vehicle-select"
-        ></v-select>
+          <v-col cols="12">
+            <v-select
+              v-model="form.vehicle_type"
+              :items="vehicleTypes"
+              :label="t('auth.form.vehicle_type')"
+              required
+              :error-messages="errors.vehicle_type"
+              prepend-inner-icon="mdi-moped-outline"
+              variant="outlined"
+              density="comfortable"
+              data-cy="vehicle-select"
+            ></v-select>
+          </v-col>
 
-        <v-file-input
-          v-model="form.document"
-          :label="t('auth.form.upload_license')"
-          accept="image/*"
-          required
-          :error-messages="errors.document"
-          data-cy="document-upload"
-        ></v-file-input>
-      </template>
+          <v-col cols="12">
+            <v-file-input
+              v-model="form.document"
+              :label="t('auth.form.upload_license')"
+              accept="image/*"
+              required
+              :error-messages="errors.document"
+              prepend-inner-icon="mdi-file-document-outline"
+              variant="outlined"
+              density="comfortable"
+              data-cy="document-upload"
+            ></v-file-input>
+          </v-col>
+        </template>
 
-      <!-- Partner specific fields -->
-      <template v-if="showPartnerFields">
-        <v-text-field
-          v-model="form.business_name"
-          :label="t('auth.form.business_name')"
-          required
-          :error-messages="errors.business_name"
-          data-cy="business-name-input"
-        ></v-text-field>
+        <!-- Partner specific fields -->
+        <template v-if="showPartnerFields">
+          <v-col cols="12">
+            <v-text-field
+              v-model="form.business_name"
+              :label="t('auth.form.business_name')"
+              required
+              :error-messages="errors.business_name"
+              prepend-inner-icon="mdi-store-outline"
+              variant="outlined"
+              density="comfortable"
+              data-cy="business-name-input"
+            ></v-text-field>
+          </v-col>
 
-        <v-select
-          v-model="form.business_type"
-          :items="businessTypes"
-          :label="t('auth.form.business_type')"
-          required
-          :error-messages="errors.business_type"
-          data-cy="business-type-select"
-        ></v-select>
+          <v-col cols="12">
+            <v-select
+              v-model="form.business_type"
+              :items="businessTypes"
+              :label="t('auth.form.business_type')"
+              required
+              :error-messages="errors.business_type"
+              prepend-inner-icon="mdi-silverware-fork-knife"
+              variant="outlined"
+              density="comfortable"
+              data-cy="business-type-select"
+            ></v-select>
+          </v-col>
 
-        <v-text-field
-          v-model="form.tax_id"
-          :label="t('auth.form.tax_id')"
-          required
-          :error-messages="errors.tax_id"
-          data-cy="tax-id-input"
-        ></v-text-field>
+          <v-col cols="12">
+            <v-text-field
+              v-model="form.tax_id"
+              :label="t('auth.form.tax_id')"
+              required
+              :error-messages="errors.tax_id"
+              prepend-inner-icon="mdi-identifier"
+              variant="outlined"
+              density="comfortable"
+              data-cy="tax-id-input"
+            ></v-text-field>
+          </v-col>
 
-        <v-text-field
-          v-model="form.address"
-          :label="t('auth.form.address')"
-          required
-          :error-messages="errors.address"
-          data-cy="address-input"
-        ></v-text-field>
+          <v-col cols="12">
+            <v-text-field
+              v-model="form.address"
+              :label="t('auth.form.address')"
+              required
+              :error-messages="errors.address"
+              prepend-inner-icon="mdi-map-marker-outline"
+              variant="outlined"
+              density="comfortable"
+              data-cy="address-input"
+            ></v-text-field>
+          </v-col>
 
-        <v-file-input
-          v-model="form.business_document"
-          :label="t('auth.form.upload_business_doc')"
-          accept=".pdf,.jpg,.png"
-          required
-          :error-messages="errors.business_document"
-          data-cy="business-document-upload"
-        ></v-file-input>
-      </template>
+          <v-col cols="12">
+            <v-file-input
+              v-model="form.business_document"
+              :label="t('auth.form.upload_business_doc')"
+              accept=".pdf,.jpg,.png"
+              required
+              :error-messages="errors.business_document"
+              prepend-inner-icon="mdi-file-document-outline"
+              variant="outlined"
+              density="comfortable"
+              data-cy="business-document-upload"
+            ></v-file-input>
+          </v-col>
+        </template>
+      </v-row>
     </template>
+    </div>
 
     <v-btn
       type="submit"
-      class="v-btn"
+      color="primary"
+      size="large"
+      block
+      elevation="2"
+      class="mt-4"
       :disabled="loading || undefined"
       :data-cy="(mode === 'login' ? 'login-button' : 'register-button') + ' submit-btn'"
       :loading="loading"
@@ -213,7 +315,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
@@ -222,6 +324,9 @@ import { useLogStore } from '@/stores/log'
 const { t } = useI18n()
 const logStoreInstance = useLogStore();
 logStoreInstance.log('😎 AuthForm component initialized.');
+
+const showPassword = ref(false)
+const showPasswordConfirmation = ref(false)
 
 const props = defineProps({
   mode: {
@@ -254,6 +359,35 @@ const showPartnerFields = ref(false)
 const handleRoleChange = (newRole) => {
   showCourierFields.value = newRole === 'courier'
   showPartnerFields.value = newRole === 'partner'
+}
+
+onMounted(() => {
+  const params = new URLSearchParams(window.location.search)
+  const type = params.get('type')
+  if (type && ['customer', 'courier', 'partner'].includes(type)) {
+    form.value.role = type
+    handleRoleChange(type)
+  }
+})
+
+const maskCPF = (val) => {
+  if (!val) return ''
+  let v = val.replace(/\D/g, '')
+  if (v.length > 11) v = v.substring(0, 11)
+  if (v.length <= 3) return v
+  if (v.length <= 6) return `${v.substring(0, 3)}.${v.substring(3)}`
+  if (v.length <= 9) return `${v.substring(0, 3)}.${v.substring(3, 6)}.${v.substring(6)}`
+  return `${v.substring(0, 3)}.${v.substring(3, 6)}.${v.substring(6, 9)}-${v.substring(9)}`
+}
+
+const maskPhone = (val) => {
+  if (!val) return ''
+  let v = val.replace(/\D/g, '')
+  if (v.length > 11) v = v.substring(0, 11)
+  if (v.length <= 2) return v
+  if (v.length <= 6) return `(${v.substring(0, 2)}) ${v.substring(2)}`
+  if (v.length <= 10) return `(${v.substring(0, 2)}) ${v.substring(2, 6)}-${v.substring(6)}`
+  return `(${v.substring(0, 2)}) ${v.substring(2, 7)}-${v.substring(7)}`
 }
 
   const form = ref({
