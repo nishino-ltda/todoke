@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import './echo';
 
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
@@ -7,19 +8,24 @@ import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n';
 import { useLogStore } from './stores/log';
+import { useNotificationStore } from './stores/notification';
 import vuetify from './plugins/vuetify';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
 import en from '../lang/en.json';
 import ptBR from '../lang/pt-BR.json';
 
-// Detect browser language
+// Detect browser language or use stored preference
+const storedLocale = localStorage.getItem('locale');
 const browserLanguage = navigator.language || navigator.userLanguage;
 const supportedLocales = ['en', 'pt-BR'];
-const detectedLocale = supportedLocales.includes(browserLanguage) 
-    ? browserLanguage 
-    : browserLanguage.startsWith('pt') 
-        ? 'pt-BR' 
-        : 'en';
+
+const detectedLocale = (storedLocale && supportedLocales.includes(storedLocale))
+    ? storedLocale
+    : supportedLocales.includes(browserLanguage) 
+        ? browserLanguage 
+        : browserLanguage.startsWith('pt') 
+            ? 'pt-BR' 
+            : 'en';
 
 const i18n = createI18n({
     legacy: false,
@@ -55,8 +61,10 @@ createInertiaApp({
         // Expose stores to Cypress after initialization
         if (window.Cypress) {
             const logStore = useLogStore();
+            const notificationStore = useNotificationStore();
             window.__appStores = {
-                logStore
+                logStore,
+                notificationStore
             };
         }
 

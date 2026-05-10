@@ -23,7 +23,7 @@ vi.mock('../../services/delivery', () => ({
 
 // Mock Inertia
 vi.mock('@inertiajs/vue3', () => ({
-  usePage: () => ({ url: '/courier' }),
+  usePage: () => ({ url: '/courier', props: { auth: { user: { id: 1, role: 'courier' } } } }),
   router: { visit: vi.fn(), post: vi.fn() },
   Head: { template: '<div><slot /></div>' }
 }))

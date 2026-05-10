@@ -200,6 +200,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRealtime } from '@/composables/useRealtime';
 import CourierLayout from '@/Layouts/CourierLayout.vue';
 import DeliveryMap from '@/Components/DeliveryMap.vue';
 import deliveryService from '@/services/delivery';
@@ -207,6 +208,8 @@ import { useNotificationStore } from '@/stores/notification';
 
 const { t, locale } = useI18n();
 const notifications = useNotificationStore();
+const realtime = useRealtime();
+
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const isOnline = ref(true);
@@ -360,9 +363,27 @@ const updateStatus = async () => {
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 
 onMounted(async () => {
+  realtime.setupListeners();
   await fetchActiveDelivery();
   if (!activeDelivery.value) {
     await fetchDeliveries();
+  }
+});
+
+import { onUnmounted } from 'vue';
+onUnmounted(() => {
+  realtime.leaveChannels();
+  if (activeDelivery.value) {
+    realtime.leaveDelivery(activeDelivery.value.id);
+  }
+});
+
+watch(activeDelivery, (newVal, oldVal) => {
+  if (oldVal && (!newVal || newVal.id !== oldVal.id)) {
+    realtime.leaveDelivery(oldVal.id);
+  }
+  if (newVal && (!oldVal || newVal.id !== oldVal.id)) {
+    realtime.listenToDelivery(newVal.id);
   }
 });
 </script>

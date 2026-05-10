@@ -16,15 +16,8 @@ vi.mock('../../services/partner', () => ({
 
 // Mock Inertia usePage
 vi.mock('@inertiajs/vue3', () => ({
-  usePage: () => ({
-    url: '/partner',
-    props: {
-      auth: { user: { name: 'Partner User' } }
-    }
-  }),
-  router: {
-    visit: vi.fn()
-  }
+  router: { visit: vi.fn() },
+  usePage: () => ({ props: { auth: { user: { id: 1, role: 'partner' } } } })
 }))
 
 // Mock Vuetify and generic components

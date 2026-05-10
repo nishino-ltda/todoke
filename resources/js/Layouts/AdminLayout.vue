@@ -45,6 +45,7 @@
       <v-container fluid class="pa-6">
         <slot />
       </v-container>
+      <NotificationCenter />
     </v-main>
   </v-app>
 </template>
@@ -53,6 +54,7 @@
 import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import LanguageSelector from '../Components/LanguageSelector.vue';
+import NotificationCenter from '@/Components/NotificationCenter.vue';
 
 const page = usePage();
 const drawer = ref(true);

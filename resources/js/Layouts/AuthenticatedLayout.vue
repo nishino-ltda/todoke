@@ -23,6 +23,7 @@
       <v-container>
         <slot data-cy="authenticated-content" />
       </v-container>
+      <NotificationCenter />
     </v-main>
 
     <AppFooter />
@@ -33,6 +34,7 @@
 import { ref } from 'vue'
 import AppHeader from '@/Components/AppHeader.vue'
 import AppFooter from '@/Components/AppFooter.vue'
+import NotificationCenter from '@/Components/NotificationCenter.vue'
 
 const drawer = ref(false)
 const navItems = [

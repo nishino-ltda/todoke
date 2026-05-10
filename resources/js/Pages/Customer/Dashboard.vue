@@ -8,5 +8,18 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted } from 'vue';
+import { useRealtime } from '@/composables/useRealtime';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
+const realtime = useRealtime();
+
+onMounted(() => {
+    realtime.setupListeners();
+});
+
+onUnmounted(() => {
+    realtime.leaveChannels();
+});
 </script>
+

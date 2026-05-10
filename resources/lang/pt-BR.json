@@ -635,5 +635,15 @@
             "cvv": "CVV",
             "holder": "Nome no Cartão"
         }
+    },
+    "notifications": {
+        "new_notification": "Nova Notificação",
+        "new_delivery": "Nova Entrega Disponível",
+        "order_update": "Atualização do Pedido",
+        "delivery_update": "Atualização da Entrega",
+        "order_status_changed": "O status do pedido #{id} mudou para {status}",
+        "delivery_status_changed": "O status da entrega #{id} mudou para {status}",
+        "new_delivery_available": "Uma nova entrega está disponível na sua área",
+        "new_support_reply": "Nova resposta no ticket de suporte #{id}"
     }
 }

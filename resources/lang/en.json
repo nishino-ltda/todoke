@@ -635,5 +635,15 @@
             "cvv": "CVV",
             "holder": "Cardholder Name"
         }
+    },
+    "notifications": {
+        "new_notification": "New Notification",
+        "new_delivery": "New Delivery Available",
+        "order_update": "Order Update",
+        "delivery_update": "Delivery Update",
+        "order_status_changed": "Order #{id} status changed to {status}",
+        "delivery_status_changed": "Delivery #{id} status changed to {status}",
+        "new_delivery_available": "A new delivery is available in your area",
+        "new_support_reply": "New reply on support ticket #{id}"
     }
 }

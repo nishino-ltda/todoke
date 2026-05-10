@@ -5,8 +5,8 @@
 
       <v-row class="mb-6">
         <v-col cols="12" md="4" v-for="(count, status) in stats" :key="status">
-          <v-card border elevation="0" class="text-center py-4">
-            <div class="text-h3 font-weight-bold" :class="getStatusColor(status)">{{ count }}</div>
+          <v-card border elevation="0" class="text-center py-4" data-cy="stat-card">
+            <div class="text-h3 font-weight-bold" :class="getStatusColor(status)" data-cy="stat-count">{{ count }}</div>
             <div class="text-subtitle-1 text-grey">{{ t(`support.dashboard.stats.${status}`) }}</div>
           </v-card>
         </v-col>

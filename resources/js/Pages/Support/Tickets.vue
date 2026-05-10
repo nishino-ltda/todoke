@@ -2,7 +2,7 @@
   <SupportLayout>
     <div data-cy="support-tickets-index">
       <div class="d-flex justify-space-between align-center mb-6">
-        <h1 class="text-h4">{{ t('support.tickets.title') }}</h1>
+        <h1 class="text-h4" data-cy="tickets-index-title">{{ t('support.tickets.title') }}</h1>
         <v-btn color="primary" prepend-icon="mdi-plus" @click="router.visit('/support/tickets/create')" data-cy="create-ticket-btn">
           {{ t('support.dashboard.actions.new_ticket') }}
         </v-btn>
@@ -47,6 +47,10 @@
           {{ formatDate(item.updated_at) }}
         </template>
       </DataTable>
+      <div v-if="filteredTickets.length === 0 && !loading" class="text-center py-12" data-cy="empty-state">
+        <v-icon size="64" class="mb-4" color="grey">mdi-ticket-outline</v-icon>
+        <p class="text-grey">{{ t('support.tickets.no_tickets') || 'No tickets found.' }}</p>
+      </div>
     </div>
   </SupportLayout>
 </template>

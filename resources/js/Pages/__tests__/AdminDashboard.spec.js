@@ -34,7 +34,8 @@ vi.mock('../../services/admin', () => ({
 
 // Mock Inertia
 vi.mock('@inertiajs/vue3', () => ({
-  router: { visit: vi.fn() }
+  router: { visit: vi.fn() },
+  usePage: () => ({ props: { auth: { user: { id: 1, role: 'admin' } } } })
 }))
 
 const messages = {

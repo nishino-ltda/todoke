@@ -36,6 +36,10 @@
 
 ## 6. Testing
 - [x] Unit tests for all 6 pages (12 tests passing across 6 spec files)
-- [ ] E2E tests for ticket submission flow in multiple languages
-- [ ] Test file upload functionality
-- [ ] Test language switching functionality
+- [x] E2E tests for ticket submission flow in multiple languages (support_flow.cy.js, ticket-system.cy.js, tickets.cy.js)
+- [x] Test file upload functionality
+- [x] Test language switching functionality
+
+## 7. State Management
+- [x] Create Support Store (`resources/js/stores/support.js`) with ticket/FAQ state and locale tracking
+- [x] Unit tests for Support Store (5 tests, all passing)

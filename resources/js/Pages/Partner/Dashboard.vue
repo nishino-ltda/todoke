@@ -103,6 +103,7 @@ import AppModal from '@/Components/AppModal.vue';
 import MetricsWidget from '@/Components/MetricsWidget.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
+import { useRealtime } from '@/composables/useRealtime';
 
 const props = defineProps({
   initialMetrics: {
@@ -113,6 +114,8 @@ const props = defineProps({
 
 const { t } = useI18n();
 const notifications = useNotificationStore();
+const realtime = useRealtime();
+
 const loading = ref(false);
 const showOrderModal = ref(false);
 const selectedOrder = ref(null);
@@ -201,8 +204,36 @@ const acceptOrder = async (order) => {
 };
 
 onMounted(() => {
+  realtime.setupListeners();
   fetchDashboardData();
 });
+
+import { onUnmounted, watch } from 'vue';
+onUnmounted(() => {
+  realtime.leaveChannels();
+  recentOrders.value.forEach(order => {
+    realtime.leaveOrder(order.id);
+  });
+});
+
+watch(recentOrders, (newOrders, oldOrders) => {
+  const oldIds = new Set(oldOrders?.map(o => o.id) || []);
+  const newIds = new Set(newOrders?.map(o => o.id) || []);
+
+  // Listen to new orders
+  newOrders.forEach(order => {
+    if (!oldIds.has(order.id)) {
+      realtime.listenToOrder(order.id);
+    }
+  });
+
+  // Leave old orders that are no longer in the list
+  oldOrders?.forEach(order => {
+    if (!newIds.has(order.id)) {
+      realtime.leaveOrder(order.id);
+    }
+  });
+}, { deep: true });
 </script>
 
 <style scoped>

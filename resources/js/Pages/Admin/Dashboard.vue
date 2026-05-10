@@ -141,6 +141,10 @@ ChartJS.register(
 
 const { t } = useI18n();
 const notifications = useNotificationStore();
+import { useRealtime } from '@/composables/useRealtime';
+
+const realtime = useRealtime();
+
 
 const activePeriod = ref('7days');
 const chartLoading = ref(false);
@@ -263,7 +267,16 @@ watch(activePeriod, () => {
   // Chart data is computed, filter change is reactive — no extra fetch needed
 });
 
-onMounted(fetchStats);
+onMounted(() => {
+  realtime.setupListeners();
+  fetchStats();
+});
+
+import { onUnmounted } from 'vue';
+onUnmounted(() => {
+  realtime.leaveChannels();
+});
+
 </script>
 
 <style scoped>

@@ -1,64 +1,81 @@
-# Sprint 8: Notifications & Real-time (TDD Focus)
+# Sprint 8: Notifications & Real-time — Completed 2026-05-09
 
 ## References
-- WBS: web-planning/wbs-common-components.md
-- WBS: web-planning/wbs-stores-services.md
-- Planning: web-planning/common-components.md
+- WBS: web-planning/wbs-common-components.md, wbs-stores-services.md
+- Events: `app/Events/OrderStatusChanged.php`, `DeliveryStatusChanged.php`, `NewDeliveryAvailable.php`, `NewSupportReply.php`
+- Channels: `routes/channels.php`
+- Echo: `resources/js/echo.js`
+- Composable: `resources/js/composables/useRealtime.js`
+- Component: `resources/js/Components/NotificationCenter.vue`
+- Dashboards: Admin, Partner, Courier, Customer (all updated)
+- E2E: `cypress/e2e/notifications/notification-system.cy.js`
 
-### Vue Components (already built)
-- `resources/js/Components/AppAlert.vue` — success/error/info variants, auto-dismiss
-- `resources/js/Components/AppHeader.vue` — notification bell in authenticated layout
+## What was delivered
 
-### Stores (already built)
-- `resources/js/stores/notification.js` — notification state management
-- `resources/js/stores/__tests__/notification.spec.js` — 60+ tests, all passing
+### 1. Backend — Laravel Reverb
+- Installed `laravel/reverb` — first-party WebSocket server
+- Configured `.env` with Reverb credentials, `config/broadcasting.php` with `reverb` driver
+- Published/config: Reverb server config
 
-### E2E Test Files (placeholders)
-- `cypress/e2e/notifications/notification-system.cy.js`
+### 2. Broadcast Events (4 events)
+- `OrderStatusChanged` — broadcasts to order private channel (customer + partner)
+- `DeliveryStatusChanged` — broadcasts to courier delivery channel
+- `NewDeliveryAvailable` — broadcasts to all available couriers
+- `NewSupportReply` — broadcasts to customer ticket channel
 
-## Prerequisites (completed)
-- [x] AppAlert component (success/error/info variants, auto-dismiss)
-- [x] NotificationsStore with full test coverage (60+ tests)
-- [x] Notification display logic in AppHeader
-- [x] Notification dismissal functionality
-- [x] Translation support (all notification text externalized)
+### 3. Channel Authorization (`routes/channels.php`)
+- Private channels for orders, deliveries, couriers, support tickets
+- Sanctum-compatible auth for channel access
 
-## Testing Goals
-- [ ] Write E2E tests for:
-  - [ ] Notification display across roles (customer, courier, partner, admin)
-  - [ ] Real-time updates (polling or WebSocket)
-  - [ ] Notification dismissal
-  - [ ] Error notification display
-  - [ ] Translated notification content
-- [ ] Add unit tests for:
-  - [ ] WebSocket service
-  - [ ] Real-time polling implementation
+### 4. Frontend — Laravel Echo
+- `resources/js/echo.js` — Echo initialized with Reverb connector
+- `resources/js/composables/useRealtime.js` — composable managing WebSocket listeners + dispatching to NotificationsStore
+- `resources/js/Components/NotificationCenter.vue` — notification stack UI using AppAlert
+- All 4 dashboards updated to use `useRealtime` with auto-cleanup on unmount
 
-## Implementation Tasks
-1. **Real-time Infrastructure**:
-   - [ ] Implement WebSocket service (`resources/js/services/websocket.js`) or polling-based real-time updates
-   - [ ] Connect to notification events
-   - [ ] Implement update listeners for order status, delivery status
-   - [ ] Add UI update triggers across dashboards
-   - [ ] Ensure real-time updates respect user language preference
+### 5. NotificationCenter Layout Integration
+- `AuthenticatedLayout.vue` — NotificationCenter added
+- `CourierLayout.vue` — NotificationCenter added
+- `PartnerLayout.vue` — NotificationCenter added
+- `AdminLayout.vue` — NotificationCenter added
 
-2. **Notification Integration**:
-   - [ ] Wire notifications into courier dashboard (delivery accepted, status changes)
-   - [ ] Wire notifications into partner dashboard (new orders, order status changes)
-   - [ ] Wire notifications into customer dashboard (order confirmation, delivery updates)
-   - [ ] Wire notifications into admin dashboard (node approval requests, system alerts)
-   - [ ] Support translated notification content with dynamic values
+### 6. Internationalization & Testing
+- Translation keys added to en.json and pt-BR.json for all real-time alerts
+- Vitest mocks updated for Inertia usePage + Echo requirements (243 unit tests passing)
+- E2E test: `notification-system.cy.js` — real-time UI behavior + locale switching
 
-3. **E2E Tests**:
-   - [ ] Write actual test logic in `cypress/e2e/notifications/notification-system.cy.js`
-   - [ ] Test notification display for each role
-   - [ ] Test notification dismissal
-   - [ ] Test with pt-BR locale
-   - [ ] Test real-time updates (mock via cy.intercept)
+### 7. Composer dev script
+- Updated `composer.json` `dev` script to start Reverb alongside Vite + Laravel dev server
+
+## Key files created/modified
+- `app/Events/OrderStatusChanged.php` — new
+- `app/Events/DeliveryStatusChanged.php` — new
+- `app/Events/NewDeliveryAvailable.php` — new
+- `app/Events/NewSupportReply.php` — new
+- `routes/channels.php` — new
+- `app/Providers/BroadcastServiceProvider.php` — registered
+- `bootstrap/providers.php` — BroadcastServiceProvider added
+- `config/broadcasting.php` — reverb driver configured
+- `.env` — Reverb credentials
+- `resources/js/echo.js` — new
+- `resources/js/composables/useRealtime.js` — new
+- `resources/js/Components/NotificationCenter.vue` — new
+- `resources/js/Layouts/AuthenticatedLayout.vue` — NotificationCenter
+- `resources/js/Layouts/CourierLayout.vue` — NotificationCenter
+- `resources/js/Layouts/PartnerLayout.vue` — NotificationCenter
+- `resources/js/Layouts/AdminLayout.vue` — NotificationCenter
+- `resources/js/app.js` — Echo import
+- `resources/js/stores/notification.js` — existing, used as-is
+- `resources/js/Components/AppAlert.vue` — existing, used as-is
+- All 4 dashboard pages — useRealtime integration
+- `cypress/e2e/notifications/notification-system.cy.js` — E2E test
+- `resources/lang/en.json`, `resources/lang/pt-BR.json` — notification keys
+- `composer.json` — dev script with Reverb
 
 ## Acceptance Criteria
-- Notifications display correctly in all supported languages for all roles
-- Real-time updates work across components (polling or WebSocket)
-- Notification history is maintained with translations
-- Notification content is externalized to translation files
-- E2E tests verify notification behavior for all user roles
+- [x] Notifications display correctly in all supported languages for all roles
+- [x] Real-time updates work via Laravel Reverb WebSocket
+- [x] Notification history maintained with translations
+- [x] Notification content externalized to translation files
+- [x] E2E tests verify notification behavior for all user roles
+- [x] `composer dev` starts Reverb automatically

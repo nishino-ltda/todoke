@@ -13,6 +13,7 @@ O TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada para
   - Mecanismos de avaliação e feedback
   - Detecção de atividades suspeitas
 - **Funcionalidades offline** para áreas com conectividade limitada
+- **Notificações em tempo real** via Laravel Reverb para atualizações instantâneas de pedidos e entregas
 - **Precificação comunitária** com participação democrática dos entregadores
 - **Ecossistema completo:** API + App + Painel Administrativo
 
@@ -66,16 +67,31 @@ Sistema democrático onde entregadores colaboram na definição de preços:
 3. **Preço por Custo Real**: Baseado em dados reportados pelos entregadores
 4. **Dashboard Coletivo**: Visualização transparente de custos e demanda
 
+## Notificações e Real-time
+A plataforma utiliza **Laravel Reverb** para comunicação via WebSockets em tempo real:
+- **Status do Pedido**: Atualizações instantâneas para clientes e parceiros.
+- **Disponibilidade de Entrega**: Notificações imediatas para entregadores próximos.
+- **Suporte**: Chat e respostas de tickets em tempo real.
+- **Painel Admin**: Monitoramento live de atividades do sistema.
+
+## Stack Tecnológica
+- **Backend**: Laravel 12, PHP 8.2+
+- **Frontend**: Vue.js 3, Vuetify, Inertia.js
+- **Real-time**: Laravel Reverb, Laravel Echo
+- **Banco de Dados**: SQLite (MVP) / PostgreSQL (Produção)
+- **Estado**: Pinia
+
 ## Testes
 A suíte de testes inclui:
-- Testes unitários para modelos
-- Testes de feature para endpoints da API
-- Testes de integração para fluxos complexos
+- **Unitários & Feature (PHP)**: Testes de modelos e API usando PHPUnit.
+- **E2E (Frontend)**: Testes de fluxo completo usando Cypress.
+- **Unitários (JS)**: Testes de componentes usando Vitest.
 
 **Execução:**
 ```bash
-./vendor/bin/phpunit  # Todos os testes
-./vendor/bin/phpunit --testsuite=Unit  # Apenas unitários
+./vendor/bin/phpunit         # Testes de Backend
+npm run test                # Testes Unitários de Frontend (Vitest)
+npm run test:e2e:local      # Testes E2E (Cypress)
 ```
 
 ## Como Contribuir

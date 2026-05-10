@@ -3,10 +3,10 @@
     <div v-if="ticket" data-cy="support-ticket-detail">
       <div class="d-flex justify-space-between align-center mb-6">
         <div>
-          <h1 class="text-h4 mb-1">{{ ticket.subject }}</h1>
+          <h1 class="text-h4 mb-1" data-cy="ticket-subject">{{ ticket.subject }}</h1>
           <div class="text-caption text-grey">#{{ ticket.id }} • {{ formatDate(ticket.created_at) }}</div>
         </div>
-        <v-chip :color="getStatusColor(ticket.status)" class="text-uppercase font-weight-bold">
+        <v-chip :color="getStatusColor(ticket.status)" class="text-uppercase font-weight-bold" data-cy="ticket-status-chip">
           {{ t(`support.status.${ticket.status}`) }}
         </v-chip>
       </div>
@@ -19,12 +19,12 @@
             </v-card-title>
             <v-card-text class="pa-0">
               <v-list class="message-thread">
-                <v-list-item v-for="(msg, index) in ticket.messages" :key="index" class="py-4 border-b">
+                <v-list-item v-for="(msg, index) in ticket.messages" :key="index" class="py-4 border-b" data-cy="reply-item">
                   <v-list-item-title class="d-flex justify-space-between mb-2">
                     <span class="font-weight-bold">{{ msg.user_name || 'System' }}</span>
                     <span class="text-caption text-grey">{{ formatDate(msg.created_at) }}</span>
                   </v-list-item-title>
-                  <div class="text-body-1 whitespace-pre-wrap">{{ msg.body }}</div>
+                  <div class="text-body-1 whitespace-pre-wrap" data-cy="ticket-message">{{ msg.body }}</div>
                 </v-list-item>
               </v-list>
             </v-card-text>

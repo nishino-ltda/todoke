@@ -1,58 +1,48 @@
 # Active Context (2026-05-09)
 
 ## Current Focus
-- Sprint 7: Admin Panel ✅ COMPLETED
-- Next: **Sprint 9: Support System E2E**
+- Sprint 7: Admin Panel ✅
+- Sprint 9: Support System E2E ✅
+- Sprint 8: Notifications & Real-time ✅ COMPLETED
+- Next: **Partner Dashboard Completion**
 
-## Sprint 7 Completed Items
+## Sprint 8 Completed Items
 
-### 1. Charts & Data Visualization
-- Chart.js (vue-chartjs) on Admin Dashboard with deliveries/users charts
-- Time period filter buttons (Today, 7d, 30d, All)
-- Locale-aware chart labels
+### 1. Laravel Reverb (Backend)
+- Installed and configured as first-party WebSocket server
+- 4 broadcast events: OrderStatusChanged, DeliveryStatusChanged, NewDeliveryAvailable, NewSupportReply
+- Channel authorization in routes/channels.php (Sanctum-compatible)
 
-### 2. Region Map Visualization
-- Leaflet map on Admin Regions page with polygon boundaries + partner nodes
+### 2. Laravel Echo (Frontend)
+- `resources/js/echo.js` — Reverb connector initialization
+- `resources/js/composables/useRealtime.js` — WebSocket listener management
+- `resources/js/Components/NotificationCenter.vue` — notification stack UI
+- All 4 layouts/dashboards updated with real-time listeners + auto-cleanup
 
-### 3. Detailed Delivery View
-- Modal with full delivery details: origin, destination, status timeline, customer/courier, route map
+### 3. Testing
+- 243 unit tests passing (Echo/Inertia mocks updated)
+- E2E: notification-system.cy.js with real-time UI + locale switching
 
-### 4. E2E Tests — 7 admin flows (replaced all placeholders)
-- admin_flow, admin-login, user-management, node-management
-- region-management, delivery-monitoring, system-configuration
+### 4. Dev Experience
+- `composer dev` now starts Reverb alongside Vite + Laravel
 
-### 5. Unit Tests — 3 new spec files
-- AdminRegions, AdminDeliveries, AdminSettings
-
-### 6. Bug Fixes (final 3 pre-existing failures resolved)
-- **AdminDashboard.spec.js** — Chart.js mock, template syntax, translation keys
-- **AuthForm.spec.js** — setValue() on v-text-field stub
-- **AppFooter.spec.js** — data-test → data-cy
-
-### Test Results
-- **49 test files, 238 tests, ALL PASSING** (zero failures — first time)
-
-## Modified Files (Sprint 7)
-
-### Frontend
-- `resources/js/Pages/Admin/Dashboard.vue` — charts + time filters
-- `resources/js/Pages/Admin/Deliveries/Index.vue` — detail modal with map
-- `resources/js/Pages/Admin/Regions/Index.vue` — region map
-
-### Tests
-- `resources/js/Pages/__tests__/AdminRegions.spec.js` — new
-- `resources/js/Pages/__tests__/AdminDeliveries.spec.js` — new
-- `resources/js/Pages/__tests__/AdminSettings.spec.js` — new
-- `resources/js/Pages/__tests__/AdminDashboard.spec.js` — fixed
-- `resources/js/Components/__tests__/AppFooter.spec.js` — fixed (data-cy)
-- `resources/js/Components/__tests__/AuthForm.spec.js` — fixed (setValue)
-- `cypress/e2e/admin/*.cy.js` — 7 files with real test logic
+## Modified Files (Sprint 8)
+- 4 new Events in app/Events/
+- routes/channels.php (new), app/Providers/BroadcastServiceProvider.php (registered)
+- config/broadcasting.php, .env (Reverb config)
+- resources/js/echo.js, composables/useRealtime.js (new)
+- resources/js/Components/NotificationCenter.vue (new)
+- All 4 layouts — NotificationCenter integration
+- All 4 dashboards — useRealtime integration
+- cypress/e2e/notifications/notification-system.cy.js
+- resources/lang/{en,pt-BR}.json — notification keys
+- composer.json — dev script
 
 ## Next Steps
-- **Sprint 9: Support System E2E**
-  - Write real E2E test logic in 3 placeholder files (support_flow, ticket-system, tickets)
-  - Test ticket create, list, detail, reply, close, FAQ, language switching, error states
-  - Create Support Store if missing
-
-## Known Test Status
-- 49 test files, 238 tests, all passing (as of Sprint 7)
+- **Partner Dashboard Completion**
+  - Charts for metrics dashboard
+  - Courier request functionality
+  - Print label functionality
+  - OrderDetail component (confirm/verify)
+  - E2E tests for partner workflows (replace placeholders)
+  - Verify API integration completeness

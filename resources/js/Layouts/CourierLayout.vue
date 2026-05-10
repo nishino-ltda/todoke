@@ -28,6 +28,7 @@
       <v-container class="pa-4 pa-md-6" fluid>
         <slot />
       </v-container>
+      <NotificationCenter />
     </v-main>
 
     <v-bottom-navigation v-model="activeTab" color="primary" grow>
@@ -53,6 +54,7 @@
 import { ref, computed } from 'vue';
 import { usePage, router } from '@inertiajs/vue3';
 import LanguageSelector from '../Components/LanguageSelector.vue';
+import NotificationCenter from '@/Components/NotificationCenter.vue';
 
 const page = usePage();
 const activeTab = computed(() => {

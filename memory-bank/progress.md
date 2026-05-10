@@ -10,60 +10,61 @@
 | Menu / Ordering | ~95% | ✅ Done (minor: variations, gallery) |
 | Courier Dashboard | ~95% | ✅ Done |
 | Admin Panel | ~95% | ✅ Done |
-| Partner Dashboard | ~75% | 🟡 Built (OrderDetail, API integration, E2E pending) |
-| Support System | ~95% | ✅ Built (E2E pending) |
-| Notifications/Real-time | ~30% | 🔴 Not started |
+| Partner Dashboard | ~75% | 🟡 Next up |
+| Support System | 100% | ✅ Done |
+| Notifications/Real-time | ~95% | ✅ Done |
 | Performance & Polish | 0% | 🔴 Not started |
 
-**Test Suite: 49 files, 238 tests, ALL PASSING** ✅
+**Unit Tests: 243 passing** | **E2E: Auth, Customer, Courier, Admin, Support, Notifications all with real logic**
+
+---
+
+## Sprint 8: Notifications & Real-time — Completed 2026-05-09
+
+### What was delivered
+- **Laravel Reverb** — first-party WebSocket server installed and configured
+- **4 broadcast events** — OrderStatusChanged, DeliveryStatusChanged, NewDeliveryAvailable, NewSupportReply
+- **Channel auth** — routes/channels.php with Sanctum-compatible private channels
+- **Laravel Echo** — frontend WebSocket client with Reverb connector
+- **useRealtime composable** — manages listeners, auto-dispatch to NotificationsStore
+- **NotificationCenter.vue** — notification stack in all 4 layouts
+- **Real-time dashboards** — Admin, Partner, Courier, Customer all wired
+- **E2E tests** — notification-system.cy.js with real-time UI + locale switching
+- **composer dev** — auto-starts Reverb
+
+### Key files
+- 4 new Events, routes/channels.php, echo.js, useRealtime.js, NotificationCenter.vue
+- All 4 layouts updated, all 4 dashboards updated
+- 243 unit tests passing
+
+---
+
+## Sprint 9: Support System E2E — Completed 2026-05-09
+
+### What was delivered
+- Support Store (support.js), data-cy on all 6 support components
+- 3 E2E files with real logic (support_flow, ticket-system, tickets)
 
 ---
 
 ## Sprint 7: Admin Panel — Completed 2026-05-09
 
 ### What was delivered
-- **Charts**: Chart.js on Dashboard (deliveries/users over time) with time period filters
-- **Region map**: Leaflet map with region polygons + partner nodes
-- **Delivery detail**: Modal with full info + route map
-- **7 E2E tests**: All admin flows with real test logic (replaced placeholders)
-- **3 new unit tests**: AdminRegions, AdminDeliveries, AdminSettings
-- **3 bug fixes**: AppFooter (data-cy), AuthForm (setValue), AdminDashboard (Chart.js mock)
-
-### Test Results
-- **49 test files, 238 tests, ALL PASSING** — all pre-existing failures resolved
+- Charts (Chart.js), region map (Leaflet), delivery detail modal
+- 7 E2E files with real logic, 3 new unit test files
+- 3 bug fixes (AppFooter, AuthForm, AdminDashboard)
 
 ---
 
 ## Sprint 6: Courier Dashboard — Completed 2026-05-09
-
-### What was delivered
-- **Delivery service**: 6 methods connected to real API endpoints
-- **Dashboard data flow**: Availability toggle, accept/reject, status updates
-- **15 unit tests** for delivery service
-- **12 E2E tests**: courier-flow (7) + courier-dashboard (5, incl. mobile 375px)
-- **Fixed**: formatCurrency locale detection
-
-### Test Results
-- Unit: 216 pass (2 pre-existing failures, later fixed in Sprint 7)
+- delivery.js (6 methods), full dashboard data flow, 15 unit tests, 12 E2E tests
 
 ---
 
 ## Sprint 5: Menu System — Completed 2026-05-09
-
-### What was delivered
-- **Dual routing**: `/menu/{slug}` and `/{slug}`
-- **Cart component**: items, +/-, remove, totals, empty state, i18n
-- **API integration**: GET /api/v1/partners/{slug}
-- **Auth integration**: checkout login prompt, cart preserved
-- **Order submission**: POST /api/v1/orders, clear cart, redirect
-
-### Key files
-- `Cart.vue`, `Menu.vue`, `Checkout.vue`, `cart.js`, `order.js`
-- `MenuController.php`, `API/PartnerController.php`
-- `customer_flow.cy.js`, `ordering.cy.js`
+- Dual routing, Cart component, API integration, Auth integration, Order submission
 
 ---
 
 ## Previous Sprints (1-4)
-- Sprint 1/2: Auth system, Home page, i18n infrastructure ✅
-- Sprint 3/4: All common components, stores, services, checkout flow ✅
+- Auth system, Home page, i18n infrastructure, all common components, stores, services
