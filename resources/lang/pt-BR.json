@@ -272,7 +272,6 @@
             "coordinates": "Coordenadas (Limite JSON)",
             "active": "Ativo",
             "inactive": "Inativo",
-            "nodes_count": "Qtd de Nós",
             "create_subtitle": "Defina sua área de cobertura de entrega",
             "details": "Detalhes da Região",
             "empty": "Nenhuma região encontrada.",
@@ -285,32 +284,6 @@
                 "load": "Falha ao carregar regiões",
                 "save": "Falha ao salvar região",
                 "delete": "Falha ao excluir região"
-            }
-        },
-        "nodes": {
-            "title": "Gerenciamento de Nós",
-            "add": "Adicionar Nó",
-            "edit": "Editar Nó",
-            "new": "Novo Nó",
-            "name": "Nome do Nó",
-            "type": "Tipo de Nó",
-            "region": "Região",
-            "address": "Endereço",
-            "empty": "Nenhum nó encontrado.",
-            "types": {
-                "hub": "Hub",
-                "store": "Loja",
-                "locker": "Armário"
-            },
-            "success": {
-                "created": "Nó criado com sucesso",
-                "updated": "Nó atualizado com sucesso",
-                "deleted": "Nó excluído com sucesso"
-            },
-            "error": {
-                "load": "Falha ao carregar nós",
-                "save": "Falha ao salvar nó",
-                "delete": "Falha ao excluir nó"
             }
         },
         "actions": {
@@ -429,13 +402,11 @@
             "systemActivity": "Atividade do Sistema",
             "quickActions": "Ações Rápidas",
             "reviewNewUsers": "Revisar Novos Usuários",
-            "approvePendingNodes": "Aprovar Nós Pendentes",
             "systemHealth": "Verificação de Saúde do Sistema",
             "chartPlaceholder": "Gráficos de atividade em tempo real serão integrados aqui.",
             "metrics": {
                 "totalUsers": "Total de Usuários",
                 "activeDeliveries": "Entregas Ativas",
-                "systemNodes": "Nós do Sistema",
                 "issuesReported": "Problemas Reportados"
             },
             "error_load": "Falha ao carregar estatísticas do sistema",
@@ -479,34 +450,6 @@
                 "update_failed": "Falha ao atualizar status do usuário",
                 "activated": "ativado",
                 "suspended": "suspenso"
-            }
-        },
-        "nodes": {
-            "title": "Aprovação e Gerenciamento de Nós",
-            "table": {
-                "id": "ID do Nó",
-                "name": "Nome",
-                "type": "Tipo",
-                "owner": "Proprietário",
-                "status": "Status",
-                "actions": "Ações"
-            },
-            "actions": {
-                "approve": "Aprovar",
-                "reject": "Rejeitar"
-            },
-            "status": {
-                "pending": "Pendente",
-                "approved": "Aprovado",
-                "rejected": "Rejeitado",
-                "maintenance": "Manutenção"
-            },
-            "notifications": {
-                "load_failed": "Falha ao carregar nós",
-                "approve_success": "Nó {name} aprovado",
-                "approve_failed": "Falha ao aprovar nó",
-                "reject_success": "Nó {name} rejeitado",
-                "reject_failed": "Falha ao rejeitar nó"
             }
         },
         "regions": {

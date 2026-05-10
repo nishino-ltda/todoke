@@ -106,53 +106,31 @@ trait DeliveryHelpersTrait
         }
 
         if ($request->isHybrid) {
-            $motoboyNode = \App\Models\Node::where('type', 'delivery_point')
-                ->where('status', 'active')
-                ->first();
-
-            $droneNode = \App\Models\Node::where('type', 'distribution_center')
-                ->where('status', 'active')
-                ->first();
-
-            \Illuminate\Support\Facades\Log::debug('Found nodes for hybrid delivery', [
-                'motoboy_node' => $motoboyNode ? $motoboyNode->toArray() : null,
-                'drone_node' => $droneNode ? $droneNode->toArray() : null
-            ]);
-            
             $deliveryData['stages'] = [
                 [
                     'type' => 'delivery_point',
                     'status' => 'pending',
-                    'partner_id' => $motoboyNode ? $motoboyNode->partner_id : null,
-                    'node_id' => $motoboyNode ? $motoboyNode->id : null
+                    'partner_id' => null,
                 ],
                 [
                     'type' => 'distribution_center',
                     'status' => 'pending',
-                    'partner_id' => $droneNode ? $droneNode->partner_id : null,
-                    'node_id' => $droneNode ? $droneNode->id : null
+                    'partner_id' => null,
                 ]
             ];
-            
-            $deliveryData['logistics_partner_id'] = $deliveryData['stages'][0]['partner_id'];
-            
+
             $deliveryData['assignments'] = [
                 [
-                    'partner_id' => $deliveryData['stages'][0]['partner_id'],
+                    'partner_id' => null,
                     'stage' => 1,
                     'status' => 'pending'
                 ],
                 [
-                    'partner_id' => $deliveryData['stages'][1]['partner_id'],
+                    'partner_id' => null,
                     'stage' => 2,
                     'status' => 'pending'
                 ]
             ];
-            
-            \Illuminate\Support\Facades\Log::info('Setting hybrid delivery stages and assignments', [
-                'stages' => $deliveryData['stages'],
-                'assignments' => $deliveryData['assignments']
-            ]);
         } else {
             $deliveryData['stages'] = null;
         }

@@ -1,5 +1,51 @@
 # Web Interface Implementation Progress
 
+## Multirole System (Complete) — 2026-05-10
+
+### Auto-activation & Secondary Roles
+- [x] All users register as `active` (no more pending approval for courier/partner)
+- [x] Couriers and partners automatically get `customer` secondary role
+- [x] `role_user` pivot table with `user_id`, `role`, timestamps
+- [x] `RoleUser` model with `belongsTo(User)`
+
+### API Endpoints
+- [x] `POST /api/v1/users/me/roles` — add courier or partner role
+- [x] `GET/PATCH /api/v1/users/me` — now returns `all_roles` array
+- [x] `POST /api/v1/auth/register` — returns `all_roles`, always auto-login
+- [x] `POST /api/v1/auth/login` — returns `all_roles`
+
+### Middleware
+- [x] `EnsureUserType` (web) — checks both `type` and `hasRole()` for multirole
+- [x] `CheckApiRole` (API) — JSON 403 for API role verification
+
+### Profile Pages
+- [x] **Customer/Profile.vue** — full form (name, email, phone, photoUrl) + "Become Partner/Courier" section
+- [x] **Partner/Profile.vue** — form + "Become Courier" + "Access as Customer"
+- [x] **Courier/Profile.vue** — form + "Become Partner" + "Access as Customer"
+- [x] **Admin/Profile.vue** — basic profile form
+
+### Layouts
+- [x] **AuthenticatedLayout** — dynamic nav: shows Partner/Courier links if user has those roles
+- [x] **AdminLayout** — Profile + conditional "Access as Customer" link
+- [x] **PartnerLayout** — Profile + "Access as Customer" link
+- [x] **CourierLayout** — Profile + "Access as Customer" link
+
+### Auth Flow Changes
+- [x] `AuthForm.vue` — removed pending alert; all registrations redirect to `/customer/dashboard`
+- [x] `auth.js` store — always auto-login (token-to-session conversion) for all user types
+- [x] `Register.vue` — removed `pendingApproval` state
+
+### Admin Visibility
+- [x] Admin Dashboard — "New Users" widget (5 most recent users with role chips and time ago)
+- [x] Admin Users page — `created_at` column, date filter (All / 24h / 7d / 30d), "New" badge for < 7 days
+
+### Seeder Updates
+- [x] Partner and courier users now have `customer` secondary role
+- [x] 3 new "today" users (newcustomer, newcourier, newpartner) for testing
+- [x] Varied `created_at` timestamps across seed users
+
+---
+
 ## Partner Dashboard (Complete) — 2026-05-10
 
 ### Dashboard Metrics
@@ -17,7 +63,7 @@
 - [x] Fetch partner metrics
 - [x] Fetch/update orders via partner.js service
 - [x] Manage products/addons CRUD
-- [x] Manage regions/nodes CRUD
+- [x] Manage regions CRUD
 
 ### E2E Tests
 - [x] `partner-dashboard.cy.js` — metrics, chart interactions

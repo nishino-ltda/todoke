@@ -31,11 +31,6 @@ class Region extends Model
         return $this->belongsTo(User::class, 'partner_id');
     }
 
-    public function nodes()
-    {
-        return $this->hasMany(Node::class, 'region_id');
-    }
-
     /**
      * Get the voting rounds for the region.
      */

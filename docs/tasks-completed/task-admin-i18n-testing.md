@@ -2,38 +2,20 @@
 
 ## Objective
 
-Integrate i18n into the 3 built Admin Panel pages (Dashboard, Users, Nodes) and create comprehensive unit tests with i18n assertions. No test files exist for the admin area — they must be created from scratch following patterns from PartnerDashboard.spec.js and CourierDashboard.spec.js.
+Integrate i18n into the 2 built Admin Panel pages (Dashboard, Users) and create comprehensive unit tests with i18n assertions. No test files exist for the admin area — they must be created from scratch following patterns from PartnerDashboard.spec.js and CourierDashboard.spec.js.
 
 ## Background
 
-The Admin Panel has 3 fully built pages and 3 stub pages (Regions, Deliveries, Settings — excluded from this task). **Zero pages use i18n** and **zero test files exist**. The admin service (`admin.js`) has all required API methods.
+The Admin Panel has 2 fully built pages and 4 stub pages (Regions, Deliveries, Settings — excluded from this task). **Zero pages use i18n** and **zero test files exist**. The admin service (`admin.js`) has all required API methods.
 
 ## Scope
 
 ### Files to Modify
 
 **Pages:**
-1. `resources/js/Pages/Admin/Dashboard.vue` (98 lines) — Metrics labels, "System Activity" title, "Quick Actions" title, action item text ("Review New Users", "Approve Pending Nodes", etc.), empty state text, chart placeholder text, price formatting, all aria-labels
+1. `resources/js/Pages/Admin/Dashboard.vue` (98 lines) — Metrics labels, "System Activity" title, "Quick Actions" title, action item text ("Review New Users", etc.), empty state text, chart placeholder text, price formatting, all aria-labels
 
 2. `resources/js/Pages/Admin/Users.vue` (134 lines) — "User Management" title, "Add User" button, table headers, search placeholder, role/filter labels, status chip text, activate/deactivate button text, confirmation modal text, user detail labels, empty state, loading text, error messages
-
-3. `resources/js/Pages/Admin/Nodes.vue` (131 lines) — "Node Approval & Management" title, table headers, status chip text, approve/reject button text, search/filter labels, node detail labels, confirmation modal text, empty state, loading text, error messages
-
-**Tests (create new files):**
-4. `resources/js/Pages/__tests__/AdminDashboard.spec.js` — Test Dashboard.vue:
-   - Renders with pt-BR locale (verify Portuguese metric labels, section titles, action items)
-   - Renders with en locale (verify English equivalents)
-   - Fallback behavior when translation key missing
-
-5. `resources/js/Pages/__tests__/AdminUsers.spec.js` — Test Users.vue:
-   - Renders with pt-BR locale (verify "Gerenciamento de Usuários", status labels, button text)
-   - Language switching verification
-   - User list rendering with translated status chips
-
-6. `resources/js/Pages/__tests__/AdminNodes.spec.js` — Test Nodes.vue:
-   - Renders with pt-BR locale (verify "Aprovação e Gerenciamento de Nós", status labels)
-   - Language switching verification
-   - Approve/reject button text in both locales
 
 **Translation Files:**
 7. `resources/lang/pt-BR.json` — Add `admin.*` translation keys
@@ -41,7 +23,7 @@ The Admin Panel has 3 fully built pages and 3 stub pages (Regions, Deliveries, S
 
 ### Out of Scope (NOT to be modified)
 - `Admin/Regions.vue`, `Admin/Deliveries.vue`, `Admin/Settings.vue` (stub pages)
-- `Admin/Regions/`, `Admin/Deliveries/`, `Admin/Settings/`, `Admin/Nodes/`, `Admin/Users/` subdirectory stubs
+- `Admin/Regions/`, `Admin/Deliveries/`, `Admin/Settings/`, `Admin/Users/` subdirectory stubs
 - Router configuration
 - Backend PHP files
 - Admin service (already has API methods)
@@ -80,27 +62,6 @@ The Admin Panel has 3 fully built pages and 3 stub pages (Regions, Deliveries, S
         "confirmDeactivate": "Tem certeza que deseja desativar este usuário?"
       },
       "empty": "Nenhum usuário encontrado"
-    },
-    "nodes": {
-      "title": "Aprovação e Gerenciamento de Nós",
-      "search": "Buscar nós...",
-      "table": {
-        "name": "Nome",
-        "type": "Tipo",
-        "status": "Status",
-        "owner": "Proprietário",
-        "region": "Região",
-        "actions": "Ações"
-      },
-      "actions": {
-        "approve": "Aprovar",
-        "reject": "Rejeitar",
-        "view": "Visualizar",
-        "confirmApprove": "Tem certeza que deseja aprovar este nó?",
-        "confirmReject": "Tem certeza que deseja rejeitar este nó?"
-      },
-      "empty": "Nenhum nó encontrado"
-    }
   }
 }
 ```
@@ -202,7 +163,7 @@ function createWrapper(locale = 'pt-BR') {
 
 ## Verification
 ```bash
-npx vitest run resources/js/Pages/__tests__/AdminDashboard.spec.js resources/js/Pages/__tests__/AdminUsers.spec.js resources/js/Pages/__tests__/AdminNodes.spec.js
+npx vitest run resources/js/Pages/__tests__/AdminDashboard.spec.js resources/js/Pages/__tests__/AdminUsers.spec.js
 ```
 
 Review each admin page to confirm all text renders correctly in pt-BR (default) and after switching to English.

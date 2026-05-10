@@ -87,14 +87,6 @@ class PartnerDeliveryCoordinationTest extends TestCase
             ]
         ]);
 
-        // 3. Criar node de entrega para LogisMaster
-        $deliveryNode = \App\Models\Node::factory()->create([
-            'partner_id' => $logistics->id,
-            'region_id' => $logisticsRegion->id,
-            'type' => 'delivery_point',
-            'status' => 'active'
-        ]);
-
         // 4. Autenticar como BistroTech com token Sanctum
         $token = $partner->createToken('test-token')->plainTextToken;
         $this->withHeaders([

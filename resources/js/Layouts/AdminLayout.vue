@@ -1,6 +1,15 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" permanent elevation="2">
+    <v-app-bar app flat border color="white">
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold">
+        {{ currentPageTitle }}
+      </v-app-bar-title>
+      <v-spacer></v-spacer>
+      <LanguageSelector />
+    </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" app :permanent="!$vuetify.display.mobile" :temporary="$vuetify.display.mobile" elevation="2">
       <v-list-item
         prepend-avatar="https://ui-avatars.com/api/?name=Admin&background=0D47A1&color=fff"
         title="Admin Panel"
@@ -22,24 +31,20 @@
           data-cy="admin-nav-item"
         ></v-list-item>
       </v-list>
-      
+
       <template v-slot:append>
-        <div class="pa-4">
-          <v-btn block color="error" variant="tonal" prepend-icon="mdi-logout" @click="logout">
-            Logout
-          </v-btn>
-        </div>
+        <v-divider></v-divider>
+        <v-list-item
+          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=0D47A1&color=fff`"
+          :title="user?.name || user?.email || 'User'"
+          :subtitle="user?.email"
+        >
+          <template v-slot:append>
+            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small"></v-btn>
+          </template>
+        </v-list-item>
       </template>
     </v-navigation-drawer>
-
-    <v-app-bar flat border color="white">
-      <v-app-bar-nav-icon v-if="$vuetify.display.mobile" @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-toolbar-title class="text-subtitle-1 font-weight-bold">
-        {{ currentPageTitle }}
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <LanguageSelector />
-    </v-app-bar>
 
     <v-main class="bg-grey-lighten-4">
       <v-container fluid class="pa-6">
@@ -52,25 +57,40 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import { usePage, router } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
+import { useAuthStore } from '@/stores/auth';
 import LanguageSelector from '../Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
 
 const { t } = useI18n();
 const page = usePage();
+const authStore = useAuthStore();
 const drawer = ref(true);
+
+const { user } = storeToRefs(authStore);
 
 const currentRoute = computed(() => page.url);
 
-const navItems = computed(() => [
-  { title: t('admin.dashboard.title'), icon: 'mdi-view-dashboard', route: '/admin/dashboard' },
-  { title: t('admin.users.title'), icon: 'mdi-account-group', route: '/admin/users' },
-  { title: t('admin.nodes.title'), icon: 'mdi-lan', route: '/admin/nodes' },
-  { title: t('admin.regions.title'), icon: 'mdi-map-marker-radius', route: '/admin/regions' },
-  { title: t('admin.deliveries.title'), icon: 'mdi-truck-delivery', route: '/admin/deliveries' },
-  { title: t('admin.settings.title'), icon: 'mdi-cog', route: '/admin/settings' },
-]);
+const hasCustomerRole = computed(() => user.value?.all_roles?.includes('customer'));
+
+const navItems = computed(() => {
+  const items = [
+    { title: t('admin.dashboard.title'), icon: 'mdi-view-dashboard', route: '/admin/dashboard' },
+    { title: t('admin.users.title'), icon: 'mdi-account-group', route: '/admin/users' },
+    { title: t('admin.regions.title'), icon: 'mdi-map-marker-radius', route: '/admin/regions' },
+    { title: t('admin.deliveries.title'), icon: 'mdi-truck-delivery', route: '/admin/deliveries' },
+    { title: t('admin.settings.title'), icon: 'mdi-cog', route: '/admin/settings' },
+    { title: 'Profile', icon: 'mdi-account', route: '/admin/profile' },
+  ];
+
+  if (hasCustomerRole.value) {
+    items.push({ title: 'Access as Customer', icon: 'mdi-account-switch', route: '/customer/dashboard' });
+  }
+
+  return items;
+});
 
 const currentPageTitle = computed(() => {
   const item = navItems.value.find(n => n.route === currentRoute.value);
@@ -82,7 +102,7 @@ const navigateTo = (route) => {
 };
 
 const logout = () => {
-  router.post('/logout');
+  authStore.logout(router);
 };
 </script>
 

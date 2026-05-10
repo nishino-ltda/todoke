@@ -8,6 +8,7 @@ import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
 import { createI18n } from 'vue-i18n';
 import { useLogStore } from './stores/log';
+import { useAuthStore } from './stores/auth';
 import { useNotificationStore } from './stores/notification';
 import vuetify from './plugins/vuetify';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
@@ -57,6 +58,13 @@ createInertiaApp({
             .use(ZiggyVue)
             .use(i18n)
             .mount(el);
+
+        // Sync auth store with initial props
+        const authStore = useAuthStore(pinia);
+        if (props.initialPage.props.auth?.user) {
+            authStore.user = props.initialPage.props.auth.user;
+            authStore.isAuthenticated = true;
+        }
 
         // Expose stores to Cypress after initialization
         if (window.Cypress) {

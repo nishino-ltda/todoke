@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app color="primary" dark data-cy="app-header">
-    <v-app-bar-nav-icon @click="toggleDrawer" />
+    <v-app-bar-nav-icon v-if="withDrawerToggle" @click="$emit('toggle-drawer')" />
     <v-toolbar-title>{{ $t('app.title') }}</v-toolbar-title>
     <v-spacer />
 
@@ -39,10 +39,16 @@ import { Link } from '@inertiajs/vue3'
 import CartIcon from './CartIcon.vue'
 import LanguageSelector from './LanguageSelector.vue'
 
+const emit = defineEmits(['toggle-drawer'])
+
 const props = defineProps({
   minimal: {
     type: Boolean,
     default: false
+  },
+  withDrawerToggle: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -57,8 +63,5 @@ const handleLogout = () => {
     .catch(err => logStore.log(`❌ AppHeader: Logout failed - ${err.message}`))
 }
 
-function toggleDrawer() {
-  logStore.log('📱 AppHeader: Drawer toggled')
-  // Will implement drawer toggle later
-}
+
 </script>

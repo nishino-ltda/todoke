@@ -72,22 +72,7 @@ class HybridDeliveryFlowTest extends TestCase
             'partner_id' => $drone->id
         ]);
 
-        // 3. Criar nodes (motoboy e hub de drone)
-        $motoboyNode = \App\Models\Node::factory()->create([
-            'partner_id' => $motoboy->id,
-            'region_id' => $motoboyRegion->id,
-            'type' => 'delivery_point',
-            'status' => 'active'
-        ]);
-
-        $droneHub = \App\Models\Node::factory()->create([
-            'partner_id' => $drone->id,
-            'region_id' => $droneRegion->id,
-            'type' => 'distribution_center',
-            'status' => 'active'
-        ]);
-
-         // 4. Autenticar como partner com token Sanctum
+        // 3. Autenticar como partner com token Sanctum
         $token = $partner->createToken('test-token')->plainTextToken;
         $this->withHeaders([
             'Authorization' => 'Bearer ' . $token
@@ -152,12 +137,6 @@ class HybridDeliveryFlowTest extends TestCase
         $this->assertNotNull($stages[0]['partner_id']);
         $this->assertNotNull($stages[1]['partner_id']);
         
-        // Verificar se os nodes foram associados corretamente (usando IDs dinâmicos)
-        $this->assertArrayHasKey('node_id', $stages[0]);
-        $this->assertArrayHasKey('node_id', $stages[1]);
-        $this->assertNotNull($stages[0]['node_id']);
-        $this->assertNotNull($stages[1]['node_id']);
-
         // 8. Verificar se os assignments foram criados automaticamente
         $assignments = \App\Models\DeliveryAssignment::where('delivery_id', $delivery->id)->get();
         $this->assertCount(2, $assignments);

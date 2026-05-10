@@ -3,19 +3,9 @@
         <div data-cy="auth-register">
             <h1>Register</h1>
             <p>Create a new account.</p>
-            
-            <v-alert
-                v-if="pendingApproval"
-                type="info"
-                data-cy="pending-alert"
-                class="mb-4"
-            >
-                Your account is pending approval. You'll receive an email when your account is activated.
-            </v-alert>
 
             <AuthForm 
-                mode="register" 
-                @pending="pendingApproval = true"
+                mode="register"
             />
             
             <v-btn 
@@ -32,15 +22,9 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
 import AuthForm from '@/Components/AuthForm.vue';
-import { useLogStore } from '@/stores/log';
 
-const pendingApproval = ref(false);
 const { t } = useI18n();
-
-const logStore = useLogStore();
-logStore.log('✨ Registration page loaded');
 </script>

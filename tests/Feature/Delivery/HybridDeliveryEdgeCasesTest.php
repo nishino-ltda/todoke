@@ -9,7 +9,6 @@ use App\Models\Delivery;
 use Mockery;
 use App\Models\DeliveryAssignment;
 use App\Models\User;
-use App\Models\Node;
 use App\Models\Region;
 use App\Services\DeliveryStatusService;
 use Illuminate\Testing\Fluent\AssertableJson; // Import for API response assertions
@@ -47,8 +46,6 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         // Create logistics partner
         $partner = User::factory()->create(['type' => 'partner']);
         $region = Region::factory()->create();
-        $node1 = Node::factory()->create(['region_id' => $region->id, 'type' => 'delivery_point']); // Motorbike node
-        $node2 = Node::factory()->create(['region_id' => $region->id, 'type' => 'distribution_center']); // Drone node
 
         // Create a hybrid delivery with two stages
         $delivery = Delivery::factory()->create([
@@ -56,8 +53,8 @@ class HybridDeliveryEdgeCasesTest extends TestCase
             'courier_id' => $courier->id, // Assign the authenticated courier
             'is_hybrid' => true,
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'pending', 'partner_id' => null, 'node_id' => $node1->id],
-                ['type' => 'distribution_center', 'status' => 'pending', 'partner_id' => null, 'node_id' => $node2->id],
+                ['type' => 'delivery_point', 'status' => 'pending', 'partner_id' => null],
+                ['type' => 'distribution_center', 'status' => 'pending', 'partner_id' => null],
             ],
         ]);
 
@@ -148,8 +145,6 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         // Create necessary entities
         $partner = User::factory()->create(['type' => 'partner']);
         $region = Region::factory()->create();
-        $node1 = Node::factory()->create(['region_id' => $region->id, 'type' => 'delivery_point']); // Motorbike node
-        $node2 = Node::factory()->create(['region_id' => $region->id, 'type' => 'distribution_center']); // Drone node
 
         // Create a hybrid delivery with two stages, first stage completed
         $delivery = Delivery::factory()->create([
@@ -157,8 +152,8 @@ class HybridDeliveryEdgeCasesTest extends TestCase
             'courier_id' => $courier->id, // Assign the authenticated courier
             'is_hybrid' => true,
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'delivered', 'partner_id' => null, 'node_id' => $node1->id],
-                ['type' => 'distribution_center', 'status' => 'pending', 'partner_id' => null, 'node_id' => $node2->id],
+                ['type' => 'delivery_point', 'status' => 'delivered', 'partner_id' => null],
+                ['type' => 'distribution_center', 'status' => 'pending', 'partner_id' => null],
             ],
         ]);
 
@@ -225,8 +220,6 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         // Create necessary entities
         $partner = User::factory()->create(['type' => 'partner']);
         $region = Region::factory()->create();
-        $node1 = Node::factory()->create(['region_id' => $region->id, 'type' => 'delivery_point']); // Motorbike node
-        $node2 = Node::factory()->create(['region_id' => $region->id, 'type' => 'distribution_center']); // Drone node
 
         // Create a hybrid delivery with two stages
         $delivery = Delivery::factory()->create([
@@ -234,8 +227,8 @@ class HybridDeliveryEdgeCasesTest extends TestCase
             'courier_id' => $courier->id, // Assign the authenticated courier
             'is_hybrid' => true,
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'delivered', 'partner_id' => null, 'node_id' => $node1->id], // First stage delivered
-                ['type' => 'distribution_center', 'status' => 'in_transit', 'partner_id' => null, 'node_id' => $node2->id], // Drone stage in transit
+                ['type' => 'delivery_point', 'status' => 'delivered', 'partner_id' => null],
+                ['type' => 'distribution_center', 'status' => 'in_transit', 'partner_id' => null],
             ],
         ]);
 
@@ -306,14 +299,11 @@ class HybridDeliveryEdgeCasesTest extends TestCase
         // Create necessary entities and a hybrid delivery
         $partner = User::factory()->create(['type' => 'partner']);
         $region = Region::factory()->create();
-        $node1 = Node::factory()->create(['region_id' => $region->id, 'type' => 'delivery_point']); // Motorbike node
-        $node2 = Node::factory()->create(['region_id' => $region->id, 'type' => 'distribution_center']); // Drone node
-
         $delivery = Delivery::factory()->create([
             'logistics_partner_id' => $partner->id,
             'stages' => [
-                ['type' => 'delivery_point', 'status' => 'completed', 'partner_id' => null, 'node_id' => $node1->id], // First stage completed
-                ['type' => 'distribution_center', 'status' => 'in_transit', 'partner_id' => null, 'node_id' => $node2->id], // Drone stage in transit
+                ['type' => 'delivery_point', 'status' => 'completed', 'partner_id' => null],
+                ['type' => 'distribution_center', 'status' => 'in_transit', 'partner_id' => null],
             ],
         ]);
 

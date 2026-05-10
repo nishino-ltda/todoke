@@ -253,7 +253,6 @@
             "coordinates": "Coordinates (JSON Boundary)",
             "active": "Active",
             "inactive": "Inactive",
-            "nodes_count": "Nodes Count",
             "create_subtitle": "Define your delivery coverage area",
             "details": "Region Details",
             "empty": "No regions found.",
@@ -266,32 +265,6 @@
                 "load": "Failed to load regions",
                 "save": "Failed to save region",
                 "delete": "Failed to delete region"
-            }
-        },
-        "nodes": {
-            "title": "Nodes Management",
-            "add": "Add Node",
-            "edit": "Edit Node",
-            "new": "Novo Nó",
-            "name": "Node Name",
-            "type": "Node Type",
-            "region": "Region",
-            "address": "Address",
-            "empty": "No nodes found.",
-            "types": {
-                "hub": "Hub",
-                "store": "Store",
-                "locker": "Locker"
-            },
-            "success": {
-                "created": "Node created successfully",
-                "updated": "Node updated successfully",
-                "deleted": "Node deleted successfully"
-            },
-            "error": {
-                "load": "Failed to load nodes",
-                "save": "Failed to save node",
-                "delete": "Failed to delete node"
             }
         },
         "actions": {
@@ -410,13 +383,11 @@
             "systemActivity": "System Activity",
             "quickActions": "Quick Actions",
             "reviewNewUsers": "Review New Users",
-            "approvePendingNodes": "Approve Pending Nodes",
             "systemHealth": "System Health Check",
             "chartPlaceholder": "Real-time activity charts will be integrated here.",
             "metrics": {
                 "totalUsers": "Total Users",
                 "activeDeliveries": "Active Deliveries",
-                "systemNodes": "System Nodes",
                 "issuesReported": "Issues Reported"
             },
             "error_load": "Failed to load system stats",
@@ -460,34 +431,6 @@
                 "update_failed": "Failed to update user status",
                 "activated": "activated",
                 "suspended": "suspended"
-            }
-        },
-        "nodes": {
-            "title": "Node Approval & Management",
-            "table": {
-                "id": "Node ID",
-                "name": "Name",
-                "type": "Type",
-                "owner": "Owner",
-                "status": "Status",
-                "actions": "Actions"
-            },
-            "actions": {
-                "approve": "Approve",
-                "reject": "Reject"
-            },
-            "status": {
-                "pending": "Pending",
-                "approved": "Approved",
-                "rejected": "Rejected",
-                "maintenance": "Maintenance"
-            },
-            "notifications": {
-                "load_failed": "Failed to load nodes",
-                "approve_success": "Node {name} approved",
-                "approve_failed": "Failed to approve node",
-                "reject_success": "Node {name} rejected",
-                "reject_failed": "Failed to reject node"
             }
         },
         "regions": {

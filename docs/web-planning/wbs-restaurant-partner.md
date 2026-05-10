@@ -38,18 +38,16 @@
 - [x] Implement CRUD operations for addons
 - [x] Link addons to products
 
-## 6. Region/Node Management (Logistics Partners)
+## 6. Region Management (Logistics Partners)
 - [x] Create Region List component (`RegionList.vue`)
 - [x] Create Region Editor component (`RegionEditor.vue`)
-- [x] Create Node List component (`NodeList.vue`)
-- [x] Create Node Form component (`NodeForm.vue`)
-- [x] Implement CRUD operations for regions/nodes
+- [x] Implement CRUD operations for regions
 
 ## 7. API Integration
 - [x] Fetch partner metrics
 - [x] Fetch/update orders
 - [x] Manage products/addons
-- [x] Manage regions/nodes (for logistics partners)
+- [x] Manage regions (for logistics partners)
 
 ## 8. Testing
 - [x] Unit tests for components (PartnerDashboard, PartnerProducts, PartnerLogistics — 10 tests passing with i18n assertions)

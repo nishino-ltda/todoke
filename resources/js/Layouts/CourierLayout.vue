@@ -1,92 +1,103 @@
 <template>
   <v-app>
-    <v-app-bar flat border color="white">
-      <v-app-bar-title class="font-weight-bold primary--text">
-        <v-icon icon="mdi-truck-delivery" class="mr-2"></v-icon>
+    <v-app-bar app flat border color="white">
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold">
         Courier Portal
       </v-app-bar-title>
-      
+
       <v-spacer></v-spacer>
-      
+
       <LanguageSelector />
-      
-      <v-btn icon id="courier-menu-btn">
-        <v-avatar size="32">
-          <v-img src="https://ui-avatars.com/api/?name=Courier&background=random"></v-img>
-        </v-avatar>
-      </v-btn>
-      
-      <v-menu activator="#courier-menu-btn">
-        <v-list>
-          <v-list-item prepend-icon="mdi-account" title="Profile" @click="goTo('/courier/profile')"></v-list-item>
-          <v-list-item prepend-icon="mdi-logout" title="Logout" @click="logout"></v-list-item>
-        </v-list>
-      </v-menu>
     </v-app-bar>
 
-    <v-main class="bg-grey-lighten-5">
-      <v-container class="pa-4 pa-md-6" fluid>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      :temporary="$vuetify.display.mobile"
+      :permanent="!$vuetify.display.mobile"
+    >
+      <v-list density="comfortable" nav>
+        <v-list-item
+          v-for="item in navItems"
+          :key="item.title"
+          :active="isActive(item.route)"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          @click="goTo(item.route)"
+          link
+          data-cy="courier-nav-item"
+        ></v-list-item>
+      </v-list>
+
+      <template v-slot:append>
+        <v-divider></v-divider>
+        <v-list-item
+          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=0D47A1&color=fff`"
+          :title="user?.name || user?.email || 'User'"
+          :subtitle="user?.email"
+        >
+          <template v-slot:append>
+            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small"></v-btn>
+          </template>
+        </v-list-item>
+      </template>
+    </v-navigation-drawer>
+
+    <v-main class="bg-grey-lighten-4">
+      <v-container fluid class="pa-6">
         <slot />
       </v-container>
       <NotificationCenter />
     </v-main>
-
-    <v-bottom-navigation v-model="activeTab" color="primary" grow>
-      <v-btn value="dashboard" @click="goTo('/courier')">
-        <v-icon>mdi-view-dashboard</v-icon>
-        Dashboard
-      </v-btn>
-
-      <v-btn value="history" @click="goTo('/courier/history')">
-        <v-icon>mdi-history</v-icon>
-        History
-      </v-btn>
-
-      <v-btn value="earnings" @click="goTo('/courier/earnings')">
-        <v-icon>mdi-cash-multiple</v-icon>
-        Earnings
-      </v-btn>
-
-      <v-btn value="service-area" @click="goTo('/courier/service-area')">
-        <v-icon>mdi-map-marker-path</v-icon>
-        Area
-      </v-btn>
-    </v-bottom-navigation>
   </v-app>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
 import { usePage, router } from '@inertiajs/vue3';
+import { useAuthStore } from '@/stores/auth';
 import LanguageSelector from '../Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
 
 const page = usePage();
-const activeTab = computed(() => {
-  if (page.url.includes('/history')) return 'history';
-  if (page.url.includes('/earnings')) return 'earnings';
-  if (page.url.includes('/service-area')) return 'service-area';
-  return 'dashboard';
-});
+const authStore = useAuthStore();
+const drawer = ref(true);
+
+const { user } = storeToRefs(authStore);
+
+const currentRoute = computed(() => page.url);
+
+const navItems = [
+  { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/courier' },
+  { title: 'Deliveries', icon: 'mdi-truck-delivery', route: '/courier/deliveries' },
+  { title: 'Hybrid Deliveries', icon: 'mdi-truck-fast', route: '/courier/hybrid-deliveries' },
+  { title: 'Service Area', icon: 'mdi-map-marker-path', route: '/courier/service-area' },
+  { title: 'Settings', icon: 'mdi-cog', route: '/courier/settings' },
+  { title: 'Profile', icon: 'mdi-account', route: '/courier/profile' },
+  { title: 'Access as Customer', icon: 'mdi-account-switch', route: '/customer/dashboard' },
+];
+
+const isActive = (route) => {
+  if (route === '/courier') {
+    return currentRoute.value === route || currentRoute.value === '/courier/dashboard';
+  }
+  return currentRoute.value.startsWith(route);
+};
 
 const goTo = (url) => {
   router.visit(url);
 };
 
 const logout = () => {
-  router.post('/logout');
+  authStore.logout(router);
 };
 </script>
 
 <style scoped>
 .v-main {
-  padding-bottom: 64px; /* Space for bottom nav */
-}
-
-@media (min-width: 960px) {
-  .v-container {
-    max-width: 800px;
-    margin: 0 auto;
-  }
+  min-height: 100vh;
 }
 </style>

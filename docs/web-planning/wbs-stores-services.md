@@ -6,6 +6,9 @@
   - [x] Handle login/logout
   - [x] Persist session
   - [x] Unit tests (100% coverage)
+  - [x] Auto-login for all user types (no more pending approval)
+  - [x] `setAuth()` stores `all_roles` from user response
+  - [x] `register()` always calls token-to-session and sets auth
 - [x] Implement Cart Store
   - [x] Manage shopping cart state
   - [x] Handle cart operations

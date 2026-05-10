@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Product;
 use App\Models\Order;
 use App\Models\Delivery;
-use App\Models\Node;
+
 use App\Models\Region;
 use App\Models\Rating;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -83,18 +83,6 @@ class ModelTest extends TestCase
 
         $this->assertEquals('pending', $delivery->status);
         $this->assertEquals('standard', $delivery->type);
-    }
-
-    #[Test]
-    public function node_model_has_expected_attributes()
-    {
-        $node = Node::factory()->create([
-            'type' => 'partner',
-            'status' => 'active'
-        ]);
-
-        $this->assertEquals('partner', $node->type);
-        $this->assertEquals('active', $node->status);
     }
 
     #[Test]

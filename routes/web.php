@@ -17,6 +17,7 @@ use App\Http\Controllers\Customer\MenuController as CustomerMenuController;
 use App\Http\Controllers\Customer\CheckoutController as CustomerCheckoutController;
 use App\Http\Controllers\Customer\OrderController as CustomerOrderController;
 use App\Http\Controllers\Customer\ProfileController as CustomerProfileController;
+use App\Http\Controllers\Customer\SettingsController as CustomerSettingsController;
 use App\Http\Controllers\Customer\TermsController as CustomerTermsController;
 use App\Http\Controllers\Customer\PrivacyController as CustomerPrivacyController;
 
@@ -26,24 +27,27 @@ use App\Http\Controllers\Partner\OrderController as PartnerOrderController;
 use App\Http\Controllers\Partner\ProductController as PartnerProductController;
 use App\Http\Controllers\Partner\AddonController as PartnerAddonController;
 use App\Http\Controllers\Partner\RegionController as PartnerRegionController;
-use App\Http\Controllers\Partner\NodeController as PartnerNodeController;
+
 use App\Http\Controllers\Partner\SettingsController as PartnerSettingsController;
 use App\Http\Controllers\Partner\VariationController as PartnerVariationController;
+use App\Http\Controllers\Partner\ProfileController as PartnerProfileController;
 
 // Courier Controllers
 use App\Http\Controllers\Courier\DashboardController as CourierDashboardController;
 use App\Http\Controllers\Courier\DeliveryController as CourierDeliveryController;
 use App\Http\Controllers\Courier\HybridDeliveryController as CourierHybridDeliveryController;
 use App\Http\Controllers\Courier\SettingsController as CourierSettingsController;
+use App\Http\Controllers\Courier\ProfileController as CourierProfileController;
 
 // Admin Controllers
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\NodeController as AdminNodeController;
+
 use App\Http\Controllers\Admin\RegionController as AdminRegionController;
 use App\Http\Controllers\Admin\SettingsController as AdminSettingsController;
 use App\Http\Controllers\Admin\DeliveryController as AdminDeliveryController;
 use App\Http\Controllers\Admin\SystemMonitorController as AdminSystemMonitorController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -111,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/profile', [CustomerProfileController::class, 'index'])->name('profile');
+        Route::get('/settings', [CustomerSettingsController::class, 'index'])->name('settings.index');
         
     });
 
@@ -157,15 +162,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}', [PartnerRegionController::class, 'show'])->name('show');
         });
 
-        // Partner Nodes
-        Route::prefix('nodes')->name('nodes.')->group(function () {
-            Route::get('/', [PartnerNodeController::class, 'index'])->name('index');
-            Route::get('/create', [PartnerNodeController::class, 'create'])->name('create');
-            Route::get('/{id}/edit', [PartnerNodeController::class, 'edit'])->name('edit');
-            Route::get('/{id}', [PartnerNodeController::class, 'show'])->name('show');
-        });
-
         Route::get('/settings', [PartnerSettingsController::class, 'index'])->name('settings.index');
+        Route::get('/profile', [PartnerProfileController::class, 'index'])->name('profile');
     });
 
     // Courier Routes
@@ -187,6 +185,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/settings', [CourierSettingsController::class, 'index'])->name('settings.index');
+        Route::get('/profile', [CourierProfileController::class, 'index'])->name('profile');
 
         // Courier Service Area
         Route::get('/service-area', [App\Http\Controllers\Courier\ServiceAreaController::class, 'index'])->name('service-area.index');
@@ -202,13 +201,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/', [AdminUserController::class, 'index'])->name('index');
             Route::get('/{id}', [AdminUserController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [AdminUserController::class, 'edit'])->name('edit');
-        });
-
-        // Admin Nodes
-        Route::prefix('nodes')->name('nodes.')->group(function () {
-            Route::get('/', [AdminNodeController::class, 'index'])->name('index');
-            Route::get('/{id}', [AdminNodeController::class, 'show'])->name('show');
-            Route::get('/{id}/approve', [AdminNodeController::class, 'approve'])->name('approve');
         });
 
         // Admin Regions
@@ -244,6 +236,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
     });
 });
 

@@ -97,7 +97,6 @@ const selectedRegion = ref(null);
 
 const headers = computed(() => [
   { title: t('partner.regions.name'), key: 'name' },
-  { title: t('partner.regions.nodes_count'), key: 'nodes_count' },
   { title: t('partner.orders.status'), key: 'active' },
   { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
 ]);

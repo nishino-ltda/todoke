@@ -1,12 +1,12 @@
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <PartnerLayout>
         <div data-cy="partner-product-variations-index">
             <h1>Product Variations</h1>
             <p>This is a placeholder page for listing product variations.</p>
         </div>
-    </AuthenticatedLayout>
+    </PartnerLayout>
 </template>

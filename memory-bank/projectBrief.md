@@ -37,15 +37,12 @@ TODOKE is an innovative delivery management platform combining traditional couri
 ```mermaid
 erDiagram
     USER ||--o{ DELIVERY : "customer/courier"
-    USER ||--o{ NODE : "partner"
-    DELIVERY ||--|{ NODE : "associated node"
     DELIVERY ||--o{ DELIVERY_ASSIGNMENT : "stage assignments"
-    REGION ||--o{ NODE : "nodes in region"
 ```
 
 ## API Architecture
 - RESTful design with Bearer Token authentication
-- Core endpoints for deliveries, nodes, regions and orders
+- Core endpoints for deliveries, regions and orders
 - Specialized endpoints for hybrid delivery status updates
 
 ## Testing Approach

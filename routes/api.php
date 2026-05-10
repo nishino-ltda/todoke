@@ -14,7 +14,7 @@ use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\RegionController;
-use App\Http\Controllers\API\NodeController;
+
 use App\Http\Controllers\API\VotingController;
 use App\Http\Controllers\API\AddonController;
 
@@ -115,6 +115,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/me', [UserController::class, 'profile']);
             Route::patch('/me', [UserController::class, 'update']);
             Route::delete('/me', [UserController::class, 'destroy']);
+            Route::post('/me/roles', [UserController::class, 'addRole']);
             Route::patch('/locale', [\App\Http\Controllers\UserController::class, 'updateLocale']);
         });
 
@@ -131,9 +132,6 @@ Route::prefix('v1')->group(function () {
 
         // Rotas de regiões
         Route::post('/regions', [RegionController::class, 'store']);
-
-        // Rotas de nodes
-        Route::post('/nodes', [NodeController::class, 'store']);
 
         // Rotas de produtos
         Route::prefix('products')->group(function () {
@@ -170,7 +168,6 @@ Route::prefix('v1')->group(function () {
             Route::get('/users', [UserController::class, 'index']);
             Route::patch('/users/{id}/status', [UserController::class, 'updateStatus']);
             Route::get('/stats', [UserController::class, 'stats']);
-            Route::patch('/nodes/{node}/approve', [NodeController::class, 'approve']);
             Route::post('/users/{id}/unlock', [UserController::class, 'unlock']);
 
             // Regions
@@ -207,6 +204,35 @@ Route::prefix('v1')->group(function () {
         // Rotas de parceiro
         Route::prefix('partner')->group(function () {
             Route::get('/metrics', [\App\Http\Controllers\API\PartnerController::class, 'metrics']);
+            Route::get('/dashboard', [\App\Http\Controllers\API\PartnerController::class, 'dashboard']);
+
+            // Orders
+            Route::get('/orders', [OrderController::class, 'partnerIndex']);
+            Route::get('/orders/{id}', [OrderController::class, 'partnerShow']);
+            Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+
+            // Menu / Products
+            Route::get('/menu', [ProductController::class, 'partnerMenu']);
+            Route::patch('/menu/{id}/availability', [ProductController::class, 'toggleAvailability']);
+
+            // Products CRUD
+            Route::get('/products', [ProductController::class, 'partnerProducts']);
+            Route::post('/products', [ProductController::class, 'partnerStore']);
+            Route::put('/products/{product}', [ProductController::class, 'partnerUpdate']);
+            Route::delete('/products/{id}', [ProductController::class, 'partnerDestroy']);
+
+            // Addons CRUD
+            Route::get('/addons', [AddonController::class, 'partnerIndex']);
+            Route::post('/addons', [AddonController::class, 'store']);
+            Route::put('/addons/{addon}', [AddonController::class, 'update']);
+            Route::delete('/addons/{addon}', [AddonController::class, 'destroy']);
+
+            // Regions CRUD
+            Route::get('/regions', [RegionController::class, 'partnerIndex']);
+            Route::post('/regions', [RegionController::class, 'store']);
+            Route::put('/regions/{id}', [RegionController::class, 'partnerUpdate']);
+            Route::delete('/regions/{id}', [RegionController::class, 'partnerDestroy']);
+
         });
 
         // Test routes - only available in development environment

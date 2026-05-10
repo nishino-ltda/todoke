@@ -1,5 +1,5 @@
 <template>
-  <AuthenticatedLayout>
+  <CustomerLayout>
     <div data-cy="customer-checkout" class="pa-6">
       <v-row v-if="!isAuthenticated" class="justify-center pa-6">
         <v-col cols="12" md="6" class="text-center">
@@ -95,13 +95,13 @@
         </v-col>
       </v-row>
     </div>
-  </AuthenticatedLayout>
+  </CustomerLayout>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import CustomerLayout from '@/Layouts/CustomerLayout.vue'
 import CheckoutForm from '@/Components/CheckoutForm.vue'
 import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'

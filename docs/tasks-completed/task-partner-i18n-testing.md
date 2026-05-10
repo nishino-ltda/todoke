@@ -25,13 +25,9 @@ All partner CRUD pages are built, the partner service has all API methods, and t
 10. `Regions/Index.vue` — Page title, "Add Region" button, table headers, empty state
 11. `Regions/Create.vue` — Form labels, validation messages, submit/cancel buttons
 12. `Regions/Edit.vue` — Form labels, validation messages, submit/cancel buttons
-13. `Nodes/Index.vue` — Page title, "Add Node" button, table headers, empty state
-14. `Nodes/Create.vue` — Form labels, validation messages, submit/cancel buttons
-15. `Nodes/Edit.vue` — Form labels, validation messages, submit/cancel buttons
-
 **Tests** (in `resources/js/Pages/__tests__/`):
 16. `PartnerDashboard.spec.js` — Add i18n assertions (verify pt-BR text renders, language switching)
-17. `PartnerLogistics.spec.js` — Add i18n assertions for Regions/Nodes pages
+17. `PartnerLogistics.spec.js` — Add i18n assertions for Regions pages
 18. `PartnerProducts.spec.js` — Add i18n assertions for Products pages
 
 **Component** (in `resources/js/Components/`):
@@ -91,7 +87,6 @@ partner.{page}.{element} — e.g.:
   partner.products.empty
   partner.addons.title
   partner.regions.title
-  partner.nodes.title
   partner.actions.edit
   partner.actions.delete
   partner.actions.save

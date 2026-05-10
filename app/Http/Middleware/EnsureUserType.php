@@ -18,10 +18,13 @@ class EnsureUserType
      */
     public function handle(Request $request, Closure $next, ...$types)
     {
-        if (!in_array($request->user()->type, $types)) {
-            return redirect()->route('login');
+        $user = $request->user();
+        foreach ($types as $type) {
+            if ($user->type === $type || $user->hasRole($type)) {
+                return $next($request);
+            }
         }
-        
-        return $next($request);
+
+        return redirect()->route('login');
     }
 }

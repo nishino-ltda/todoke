@@ -67,6 +67,38 @@
 
         <!-- Quick Actions Panel -->
         <v-col cols="12" lg="4">
+          <!-- Recent Users Widget -->
+          <v-card border elevation="0" class="rounded-xl mb-4">
+            <v-card-title class="px-6 py-4 d-flex align-center">
+              <span>New Users</span>
+              <v-chip v-if="recentUsers.length" color="primary" size="small" class="ml-2">
+                {{ recentUsers.length }}
+              </v-chip>
+            </v-card-title>
+            <v-list density="comfortable">
+              <v-list-item
+                v-for="u in recentUsers"
+                :key="u.id"
+                :prepend-avatar="`https://ui-avatars.com/api/?name=${u.name}&background=0D47A1&color=fff`"
+                :title="u.name"
+                :subtitle="`${u.type} · ${daysAgo(u.created_at)}`"
+                @click="router.visit('/admin/users')"
+                link
+              >
+                <template v-slot:append>
+                  <v-chip
+                    :color="getRoleColor(u.type)"
+                    size="x-small"
+                    variant="flat"
+                    class="text-uppercase"
+                  >
+                    {{ u.type }}
+                  </v-chip>
+                </template>
+              </v-list-item>
+            </v-list>
+          </v-card>
+
           <v-card border elevation="0" class="rounded-xl">
             <v-card-title class="px-6 py-4">{{ t('admin.dashboard.quickActions') }}</v-card-title>
             <v-list density="comfortable">
@@ -76,13 +108,6 @@
                 @click="router.visit('/admin/users')"
                 link
                 data-cy="quick-action-users"
-              ></v-list-item>
-              <v-list-item
-                prepend-icon="mdi-lan-check"
-                :title="t('admin.dashboard.approvePendingNodes')"
-                @click="router.visit('/admin/nodes')"
-                link
-                data-cy="quick-action-nodes"
               ></v-list-item>
               <v-list-item
                 prepend-icon="mdi-map-marker-multiple"
@@ -107,7 +132,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 import {
   Chart as ChartJS,
@@ -143,6 +168,13 @@ const { t } = useI18n();
 const notifications = useNotificationStore();
 import { useRealtime } from '@/composables/useRealtime';
 
+const props = defineProps({
+  recentUsers: {
+    type: Array,
+    default: () => [],
+  },
+});
+
 const realtime = useRealtime();
 
 
@@ -152,7 +184,6 @@ const chartLoading = ref(false);
 const stats = ref({
   total_users: '0',
   active_deliveries: '0',
-  total_nodes: '0',
   reported_issues: '0'
 });
 
@@ -241,7 +272,6 @@ const barChartOptions = { ...chartOptions };
 const metrics = computed(() => [
   { title: t('admin.dashboard.metrics.totalUsers'), value: stats.value.total_users, icon: 'mdi-account-group', color: 'blue' },
   { title: t('admin.dashboard.metrics.activeDeliveries'), value: stats.value.active_deliveries, icon: 'mdi-moped-electric', color: 'green' },
-  { title: t('admin.dashboard.metrics.systemNodes'), value: stats.value.total_nodes, icon: 'mdi-lan', color: 'purple' },
   { title: t('admin.dashboard.metrics.issuesReported'), value: stats.value.reported_issues, icon: 'mdi-alert-circle', color: 'red' },
 ]);
 
@@ -253,7 +283,6 @@ const fetchStats = async () => {
     stats.value = {
       total_users: data.total_users?.toString() || '0',
       active_deliveries: data.active_deliveries?.toString() || '0',
-      total_nodes: data.total_nodes?.toString() || '0',
       reported_issues: data.reported_issues?.toString() || '0'
     };
   } catch (err) {
@@ -261,6 +290,18 @@ const fetchStats = async () => {
   } finally {
     chartLoading.value = false;
   }
+};
+
+const daysAgo = (dateStr) => {
+  const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24));
+  if (days === 0) return 'Today';
+  if (days === 1) return '1 day ago';
+  return `${days} days ago`;
+};
+
+const getRoleColor = (role) => {
+  const colors = { admin: 'red', partner: 'blue', courier: 'green', customer: 'grey' };
+  return colors[role] || 'grey';
 };
 
 watch(activePeriod, () => {

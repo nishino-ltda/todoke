@@ -1,12 +1,12 @@
 <template>
-    <AuthenticatedLayout>
+    <PartnerLayout>
         <div data-cy="partner-addons-create">
             <h1>Create Addon</h1>
             <p>Form to create a new addon.</p>
         </div>
-    </AuthenticatedLayout>
+    </PartnerLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 </script>

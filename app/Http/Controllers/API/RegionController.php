@@ -8,6 +8,35 @@ use Illuminate\Http\Request;
 
 class RegionController extends Controller
 {
+    public function partnerIndex(Request $request)
+    {
+        $regions = Region::where('partner_id', $request->user()->id)->get();
+        return response()->json($regions);
+    }
+
+    public function partnerUpdate(Request $request, $id)
+    {
+        $region = Region::where('partner_id', $request->user()->id)->findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'polygon' => 'sometimes|array',
+            'status' => 'sometimes|in:active,inactive',
+        ]);
+
+        $region->update($validated);
+
+        return response()->json($region);
+    }
+
+    public function partnerDestroy(Request $request, $id)
+    {
+        $region = Region::where('partner_id', $request->user()->id)->findOrFail($id);
+        $region->delete();
+
+        return response()->json(null, 204);
+    }
+
     public function index(Request $request)
     {
         // Public list or partner's list?

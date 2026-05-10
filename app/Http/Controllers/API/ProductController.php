@@ -10,6 +10,125 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ProductController extends Controller
 {
+    public function partnerMenu(Request $request)
+    {
+        $products = Product::where('partner_id', $request->user()->id)
+            ->with('addons')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($products->map(function ($product) {
+            return $this->formatProduct($product);
+        }));
+    }
+
+    public function partnerProducts(Request $request)
+    {
+        return $this->partnerMenu($request);
+    }
+
+    public function toggleAvailability(Request $request, $id)
+    {
+        $product = Product::where('partner_id', $request->user()->id)->findOrFail($id);
+        $request->validate(['available' => 'required|boolean']);
+
+        $product->update(['status' => $request->available ? 'available' : 'unavailable']);
+
+        return response()->json($this->formatProduct($product->load('addons')));
+    }
+
+    public function partnerStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'category' => 'required|string|max:255',
+            'image' => 'nullable|string|max:2048',
+            'available' => 'sometimes|boolean',
+        ]);
+
+        $product = Product::create([
+            'partner_id' => $request->user()->id,
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category' => $request->category,
+            'imageUrl' => $request->image,
+            'status' => $request->has('available') ? ($request->available ? 'available' : 'unavailable') : 'available',
+        ]);
+
+        if ($request->has('addon_ids')) {
+            $product->addons()->sync($request->addon_ids);
+        }
+
+        $product->load('addons');
+
+        return response()->json($this->formatProduct($product), 201);
+    }
+
+    public function partnerUpdate(Request $request, Product $product)
+    {
+        if ($product->partner_id !== $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'sometimes|numeric|min:0',
+            'category' => 'sometimes|string|max:255',
+            'image' => 'nullable|string|max:2048',
+            'available' => 'sometimes|boolean',
+        ]);
+
+        $data = $request->only(['name', 'description', 'price', 'category']);
+        if ($request->has('image')) {
+            $data['imageUrl'] = $request->image;
+        }
+        if ($request->has('available')) {
+            $data['status'] = $request->available ? 'available' : 'unavailable';
+        }
+
+        $product->update($data);
+
+        if ($request->has('addon_ids')) {
+            $product->addons()->sync($request->addon_ids);
+        }
+
+        $product->load('addons');
+
+        return response()->json($this->formatProduct($product));
+    }
+
+    public function partnerDestroy(Request $request, $id)
+    {
+        $product = Product::where('partner_id', $request->user()->id)->findOrFail($id);
+        $product->delete();
+
+        return response()->json(['message' => 'Product deleted successfully']);
+    }
+
+    private function formatProduct($product)
+    {
+        return [
+            'id' => $product->id,
+            'name' => $product->name,
+            'description' => $product->description,
+            'price' => (float) $product->price,
+            'category' => $product->category,
+            'image' => $product->imageUrl,
+            'available' => $product->status === 'available',
+            'addons' => $product->addons->map(function ($addon) {
+                return [
+                    'id' => $addon->id,
+                    'name' => $addon->name,
+                    'price' => (float) $addon->price,
+                ];
+            }),
+        ];
+    }
+
     public function index(Request $request)
     {
         $query = Product::query()->with('partner');

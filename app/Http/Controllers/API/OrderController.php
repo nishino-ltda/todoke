@@ -13,6 +13,69 @@ use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
 {
+    public function partnerIndex(Request $request)
+    {
+        $orders = Order::where('partner_id', $request->user()->id)
+            ->with(['items.product', 'client', 'delivery'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($orders->map(function ($order) {
+            return $this->formatOrder($order);
+        }));
+    }
+
+    public function partnerShow(Request $request, $id)
+    {
+        $order = Order::where('partner_id', $request->user()->id)
+            ->with(['items.product', 'client', 'delivery'])
+            ->findOrFail($id);
+
+        return response()->json($this->formatOrder($order));
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:pending,preparing,ready,completed,cancelled',
+        ]);
+
+        $order = Order::where('partner_id', $request->user()->id)->findOrFail($id);
+        $order->update(['status' => $request->status]);
+
+        return response()->json($this->formatOrder($order->load(['items.product', 'client', 'delivery'])));
+    }
+
+    private function formatOrder($order)
+    {
+        return [
+            'id' => $order->id,
+            'customer_name' => $order->client->name ?? 'N/A',
+            'customer_phone' => $order->client->phone ?? '',
+            'status' => $order->status,
+            'total' => (float) $order->total_value,
+            'subtotal' => (float) $order->total_value,
+            'delivery_fee' => 0.00,
+            'delivery_address' => $order->delivery?->destination['address'] ?? 'N/A',
+            'payment_method' => $order->delivery?->payment_method ?? 'credit_card',
+            'items' => $order->items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'product_name' => $item->product->name ?? 'Product',
+                    'quantity' => $item->quantity,
+                    'price' => (float) $item->unit_price,
+                    'addons' => collect($item->selected_addons)->map(function ($addon) {
+                        return [
+                            'id' => $addon['id'] ?? 0,
+                            'name' => $addon['name'] ?? '',
+                            'price' => (float) ($addon['unit_price'] ?? 0),
+                        ];
+                    })->toArray(),
+                ];
+            })->toArray(),
+        ];
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

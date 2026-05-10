@@ -68,10 +68,10 @@ Plan for frontend state management (stores) and reusable logic (services) to han
     - Interacts with the API Service for fetching available deliveries, accepting assignments, and updating statuses.
 - **Partner Service:**
     - Encapsulates partner-related logic.
-    - Interacts with the API Service for fetching metrics, managing orders, products, addons, regions, and nodes.
+    - Interacts with the API Service for fetching metrics, managing orders, products, addons, and regions.
 - **Admin Service:**
     - Encapsulates admin-related logic.
-    - Interacts with the API Service for user management, node approval, and fetching system stats.
+    - Interacts with the API Service for user management and fetching system stats.
 - **Support Service:**
     - Encapsulates support ticket logic.
     - Interacts with the API Service for submitting and retrieving support tickets.

@@ -74,7 +74,7 @@ class AuthController extends Controller
             'cpf' => $request->cpf,
             'type' => $request->type,
             'password' => Hash::make($request->password),
-            'status' => $request->type === 'customer' ? 'active' : 'pending',
+            'status' => 'active',
         ];
 
         // Handle courier specific data
@@ -97,6 +97,11 @@ class AuthController extends Controller
 
         $user = User::create($userData);
 
+        // Se registrou como courier ou partner, adiciona role customer
+        if (in_array($request->type, ['courier', 'partner'])) {
+            $user->addRole('customer');
+        }
+
         $token = $user->createToken('auth_token', [$user->type])->plainTextToken;
 
         Log::debug('Token generated for user', [
@@ -113,6 +118,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'type' => $user->type,
+                'all_roles' => $user->allRoles(),
             ]
         ], 201);
     }
@@ -277,6 +283,7 @@ class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'type' => $user->type,
+                'all_roles' => $user->allRoles(),
             ]
         ]);
     }

@@ -188,15 +188,6 @@
       </template>
     </template>
 
-    <v-alert
-      v-if="pendingAlert"
-      type="info"
-      data-cy="pending-alert"
-      class="mb-4"
-    >
-      {{ t('auth.pending_approval') }}
-    </v-alert>
-
     <v-btn
       type="submit"
       class="v-btn"
@@ -242,7 +233,6 @@ const props = defineProps({
 
 const authStore = useAuthStore()
 const formRef = ref(null)
-const pendingAlert = ref(false)
 
 const validateField = async (field) => {
   if (!formRef.value) return false
@@ -562,23 +552,10 @@ const emit = defineEmits(['success', 'error'])
         if (response?.data?.token) {
           logStore.log(`✅ Registration successful for ${form.value.email}`, 'info')
           emit('success', { token: response.data.token })
-          
-          // Handle customer registration
-          if (form.value.role === 'customer') {
-            logStore.log(`✅ Customer registered successfully, redirecting to dashboard`, 'info')
-            await router.visit('/customer/dashboard')
-            return response
-          } else {
-            // Emit pending approval for couriers/partners
-            emit('pending')
-            
-            // Show pending approval message
-            if (response.data.user.type !== 'customer') {
-              pendingAlert.value = true
-            }
-            
-            return response
-          }
+
+          logStore.log(`✅ User registered successfully, redirecting to dashboard`, 'info')
+          await router.visit('/customer/dashboard')
+          return response
         }
         throw new Error('Registration failed - no token received')
       } catch (error) {

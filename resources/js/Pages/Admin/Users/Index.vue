@@ -1,12 +1,173 @@
 <template>
-    <AuthenticatedLayout>
-        <div data-cy="admin-users-index">
-            <h1>Admin Users</h1>
-            <p>Manage users.</p>
+  <AdminLayout>
+    <div class="user-management">
+      <div class="d-flex align-center justify-space-between mb-6">
+        <h1 class="text-h4 font-weight-bold">{{ t('admin.users.title') }}</h1>
+        <div class="d-flex ga-2">
+          <v-btn-toggle v-model="dateFilter" mandatory color="primary" density="compact" rounded="lg">
+            <v-btn value="all" size="small">All</v-btn>
+            <v-btn value="24h" size="small">24h</v-btn>
+            <v-btn value="7d" size="small">7 days</v-btn>
+            <v-btn value="30d" size="small">30 days</v-btn>
+          </v-btn-toggle>
         </div>
-    </AuthenticatedLayout>
+      </div>
+
+      <DataTable
+        :headers="headers"
+        :items="filteredUsers"
+        :loading="loading"
+        data-cy="users-table"
+      >
+        <template #item.type="{ item }">
+          <v-chip
+            :color="getRoleColor(item.type)"
+            size="small"
+            class="text-uppercase font-weight-bold"
+          >
+            {{ t(`admin.users.roles.${item.type}`) }}
+          </v-chip>
+        </template>
+
+        <template #item.created_at="{ item }">
+          <div class="d-flex align-center ga-2">
+            <span>{{ formatDate(item.created_at) }}</span>
+            <v-chip v-if="isNewUser(item.created_at)" color="success" size="x-small" variant="flat">
+              New
+            </v-chip>
+          </div>
+        </template>
+
+        <template #item.status="{ item }">
+          <v-chip
+            :color="item.status === 'active' ? 'success' : 'error'"
+            size="x-small"
+            variant="flat"
+          >
+            {{ item.status === 'active' ? t('admin.users.status.active') : t('admin.users.status.suspended') }}
+          </v-chip>
+        </template>
+
+        <template #item.actions="{ item }">
+          <v-btn variant="text" color="primary" icon="mdi-pencil" data-cy="edit-user-btn"></v-btn>
+          <v-btn
+            v-if="item.status === 'active'"
+            variant="text"
+            color="error"
+            icon="mdi-account-off"
+            @click="toggleUserStatus(item, 'deactivate')"
+            data-cy="deactivate-user-btn"
+          ></v-btn>
+          <v-btn
+            v-else
+            variant="text"
+            color="success"
+            icon="mdi-account-check"
+            @click="toggleUserStatus(item, 'activate')"
+            data-cy="activate-user-btn"
+          ></v-btn>
+        </template>
+      </DataTable>
+    </div>
+  </AdminLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { ref, computed, onMounted, watch } from 'vue';
+import AdminLayout from '@/Layouts/AdminLayout.vue';
+import DataTable from '@/Components/DataTable.vue';
+import adminService from '@/services/admin';
+import { useNotificationStore } from '@/stores/notification';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+const notifications = useNotificationStore();
+const loading = ref(false);
+const users = ref([]);
+const dateFilter = ref('all');
+
+const headers = computed(() => [
+  { title: 'ID', key: 'id', width: '80px' },
+  { title: t('admin.users.table.name'), key: 'name' },
+  { title: t('admin.users.table.email'), key: 'email' },
+  { title: t('admin.users.table.role'), key: 'type' },
+  { title: 'Registered', key: 'created_at' },
+  { title: t('admin.users.table.status'), key: 'status' },
+  { title: t('admin.users.table.actions'), key: 'actions', sortable: false, align: 'end' },
+]);
+
+const isNewUser = (dateStr) => {
+  const created = new Date(dateStr);
+  const days = (Date.now() - created.getTime()) / (1000 * 60 * 60 * 24);
+  return days < 7;
+};
+
+const formatDate = (dateStr) => {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
+
+const filteredUsers = computed(() => {
+  if (dateFilter.value === 'all') return users.value;
+
+  const now = Date.now();
+  const ms = {
+    '24h': 24 * 60 * 60 * 1000,
+    '7d': 7 * 24 * 60 * 60 * 1000,
+    '30d': 30 * 24 * 60 * 60 * 1000,
+  };
+
+  return users.value.filter((u) => {
+    const created = new Date(u.created_at).getTime();
+    return (now - created) <= ms[dateFilter.value];
+  });
+});
+
+const fetchUsers = async () => {
+  loading.value = true;
+  try {
+    const response = await adminService.getUsers();
+    users.value = response.data;
+  } catch (err) {
+    notifications.error(t('admin.users.notifications.load_failed'));
+  } finally {
+    loading.value = false;
+  }
+};
+
+const toggleUserStatus = async (user, action) => {
+  try {
+    await adminService.manageUser(user.id, action);
+    notifications.success(t('admin.users.notifications.update_success', {
+      name: user.name,
+      action: action === 'activate' ? t('admin.users.notifications.activated') : t('admin.users.notifications.suspended')
+    }));
+    fetchUsers();
+  } catch (err) {
+    notifications.error(t('admin.users.notifications.update_failed'));
+  }
+};
+
+const getRoleColor = (role) => {
+  const colors = {
+    admin: 'red-darken-4',
+    partner: 'blue-darken-2',
+    courier: 'green-darken-2',
+    customer: 'grey-darken-1',
+  };
+  return colors[role] || 'grey';
+};
+
+onMounted(fetchUsers);
 </script>
+
+<style scoped>
+.user-management {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

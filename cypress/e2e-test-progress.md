@@ -7,7 +7,6 @@ This document tracks progress in updating Cypress e2e tests to ensure empty test
 ### Admin
 - [x] admin-login.cy.js
 - [x] delivery-monitoring.cy.js
-- [x] node-management.cy.js
 - [x] region-management.cy.js
 - [x] system-configuration.cy.js
 - [x] user-management.cy.js

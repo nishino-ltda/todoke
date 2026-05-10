@@ -19,6 +19,7 @@
   - [x] Full navigation header
   - [x] Applied to all authenticated pages
   - [x] Unit tests (100% coverage)
+  - [x] Dynamic nav items based on `all_roles` (shows Partner/Courier links if user has those roles)
 
 ## 2. Authentication Components
 - [x] Create Auth Form (`AuthForm.vue`)
@@ -26,6 +27,8 @@
   - [x] Registration functionality
   - [x] Form validation
   - [x] Error handling
+  - [x] Auto-login for all user types (removed pending approval flow)
+  - [x] Redirect to `/customer/dashboard` for all registrations
 
 ## 3. Form Components
 - [x] Create Address Input (`AddressInput.vue`)

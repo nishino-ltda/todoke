@@ -55,8 +55,8 @@ const i18n = createI18n({
 })
 
 const stubs = {
-  AuthenticatedLayout: {
-    template: '<div class="authenticated-layout"><slot /></div>',
+  CustomerLayout: {
+    template: '<div class="customer-layout"><slot /></div>',
   },
   CheckoutForm: {
     template: '<div class="checkout-form-stub" />',

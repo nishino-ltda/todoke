@@ -65,34 +65,22 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       const response = await api.post(endpoint, userData, config)
-      
-      // Log the response for debugging
+
       const logStore = useLogStore()
       logStore.log(`🔑 Registration response received`, 'debug', response.data)
-      
-      // Only set auth if user is customer (others need approval)
-      if (response.data.user?.type === 'customer') {
-        // Convert token to session for persistence
-        await api.post('/auth/token-to-session', {
-          token: response.data.token
-        }, {
-          headers: {
-            'Authorization': `Bearer ${response.data.token}`
-          }
-        })
-        
-        setAuth(response.data)
-        
-        // For customers, let the frontend handle the redirect
-        if (response.data.user?.type === 'customer') {
-          logStore.log(`✅ Customer registered successfully`, 'info')
-          return response
+
+      // Convert token to session for persistence
+      await api.post('/auth/token-to-session', {
+        token: response.data.token
+      }, {
+        headers: {
+          'Authorization': `Bearer ${response.data.token}`
         }
-      } else {
-        // For non-customers, emit pending event
-        logStore.log(`🔄 Account pending approval for ${response.data.user?.type}`, 'info')
-      }
-      
+      })
+
+      setAuth(response.data)
+
+      logStore.log(`✅ User registered successfully as ${response.data.user?.type}`, 'info')
       return response
     } catch (err) {
       clearAuth()
@@ -104,13 +92,26 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logout(router = null) {
-    user.value = null
-    token.value = null
-    isAuthenticated.value = false
-    error.value = null
-    localStorage.removeItem('token')
-    if (router) router.visit('/login')
+  async function logout(inertiaRouter = null) {
+    const logStore = useLogStore()
+    const r = inertiaRouter || router
+    try {
+      logStore.log('🚪 Logout initiated')
+      // Try to call server-side logout
+      const authService = (await import('@/services/auth')).default
+      await authService.logout()
+      logStore.log('✅ Server-side logout successful')
+    } catch (err) {
+      logStore.log(`⚠️ Server-side logout failed: ${err.message}`, 'warning')
+    } finally {
+      // Always clear local state
+      clearAuth()
+      if (r) {
+        logStore.log('🏠 Redirecting to home via web logout')
+        // Use POST /logout to clear the web session reliably
+        r.post('/logout')
+      }
+    }
   }
 
   function setAuth(authData) {

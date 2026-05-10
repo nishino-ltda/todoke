@@ -22,13 +22,25 @@ POST /api/v1/auth/register
 {
   "name": "string",
   "email": "string",
-  "telefone": "string",
-  "tipo": "entregador|cliente|parceiro",
-  "senha": "string"
+  "phone": "string",
+  "cpf": "string",
+  "type": "customer|courier|partner",
+  "password": "string",
+  "password_confirmation": "string",
+  // Courier-specific:
+  "license_number": "string (required_if type=courier)",
+  "vehicle_type": "motorcycle|car|bicycle (required_if type=courier)",
+  // Partner-specific:
+  "business_name": "string (required_if type=partner)",
+  "business_type": "restaurant|market|pharmacy (required_if type=partner)",
+  "tax_id": "string (required_if type=partner)",
+  "address": "string (required_if type=partner)"
 }
 ```
+**Nota:** Todos os usuários são criados como `active`. Couriers e partners recebem automaticamente a role secundária `customer` (multirole).
+
 **Respostas:**
-- 201 Created: Usuário criado
+- 201 Created: Usuário criado (inclui `all_roles`)
 - 400 Bad Request: Dados inválidos
 - 409 Conflict: Email já cadastrado
 
@@ -47,11 +59,12 @@ POST /api/v1/auth/login
 ```json
 {
   "token": "string",
-  "usuario": {
+  "user": {
     "id": "string",
     "name": "string",
     "email": "string",
-    "tipo": "string"
+    "type": "string",
+    "all_roles": ["string"]
   }
 }
 ```
@@ -66,10 +79,11 @@ GET /api/v1/users/me
   "id": "string",
   "name": "string",
   "email": "string",
-  "telefone": "string",
-  "tipo": "string",
-  "fotoUrl": "string|null",
-  "status": "string"
+  "phone": "string",
+  "type": "string",
+  "photoUrl": "string|null",
+  "status": "string",
+  "all_roles": ["string"]
 }
 ```
 
@@ -81,10 +95,48 @@ PATCH /api/v1/users/me
 ```json
 {
   "name": "string",
-  "telefone": "string",
-  "fotoUrl": "string"
+  "phone": "string",
+  "photoUrl": "string",
+  "license_number": "string (se courier)",
+  "vehicle_type": "string (se courier)",
+  "business_name": "string (se partner)",
+  "business_type": "string (se partner)",
+  "tax_id": "string (se partner)",
+  "address": "string (se partner)"
 }
 ```
+
+### 1.5 Adicionar Role Secundária
+```
+POST /api/v1/users/me/roles
+```
+**Body:**
+```json
+{
+  "role": "courier|partner",
+  "license_number": "string (required_if role=courier)",
+  "vehicle_type": "string (required_if role=courier)",
+  "business_name": "string (required_if role=partner)",
+  "business_type": "string (required_if role=partner)",
+  "tax_id": "string (required_if role=partner)",
+  "address": "string (required_if role=partner)"
+}
+```
+**Resposta (200 OK):**
+```json
+{
+  "message": "Role added successfully",
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "type": "string",
+    "all_roles": ["string"]
+  }
+}
+```
+**Respostas de erro:**
+- 422: Role já existe ou dados de validação inválidos
 
 ## 2. Entregas
 
@@ -172,45 +224,9 @@ PATCH /api/v1/deliveries/{id}/status
 }
 ```
 
-## 3. Nodes e Regiões (Parceiros)
+## 3. Regiões
 
-### 3.1 Listar Nodes
-```
-GET /api/v1/nodes
-```
-**Resposta (200 OK):**
-```json
-{
-  "nodes": [
-    {
-      "id": "string",
-      "tipo": "string",
-      "identificador": "string",
-      "status": "string",
-      "regiao": {
-        "id": "string",
-        "name": "string"
-      }
-    }
-  ]
-}
-```
-
-### 3.2 Criar Node
-```
-POST /api/v1/nodes
-```
-**Body:**
-```json
-{
-  "tipo": "entregador|drone|veiculo",
-  "identificador": "string",
-  "capacidade": "number",
-  "regiaoId": "string"
-}
-```
-
-### 3.3 Listar Regiões
+### 3.1 Listar Regiões
 ```
 GET /api/v1/regions
 ```
@@ -222,13 +238,12 @@ GET /api/v1/regions
       "id": "string",
       "name": "string",
       "status": "string",
-      "nodesCount": "number"
     }
   ]
 }
 ```
 
-### 3.4 Criar/Atualizar Região
+### 3.2 Criar/Atualizar Região
 ```
 POST /api/v1/regions
 PUT /api/v1/regions/{id}

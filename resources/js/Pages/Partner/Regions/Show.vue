@@ -1,14 +1,14 @@
 <template>
-    <AuthenticatedLayout>
+    <PartnerLayout>
         <div data-cy="partner-regions-show">
             <h1>Partner Region Details</h1>
             <p>Details for region: {{ regionId }}</p>
         </div>
-    </AuthenticatedLayout>
+    </PartnerLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({

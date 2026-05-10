@@ -26,22 +26,6 @@ export const adminService = {
   },
 
   /**
-   * Get all nodes
-   */
-  async getNodes() {
-    return api.get('/admin/nodes');
-  },
-
-  /**
-   * Approve/Reject node
-   * @param {string|number} nodeId 
-   * @param {string} status - 'approved' | 'rejected'
-   */
-  async updateNodeStatus(nodeId, status) {
-    return api.patch(`/admin/nodes/${nodeId}/status`, { status });
-  },
-
-  /**
    * Get all regions
    */
   async getRegions() {

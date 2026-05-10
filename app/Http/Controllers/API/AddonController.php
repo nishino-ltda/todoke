@@ -9,6 +9,25 @@ use Illuminate\Support\Facades\Validator;
 
 class AddonController extends Controller
 {
+    public function partnerIndex(Request $request)
+    {
+        $addons = Addon::where('partner_id', $request->user()->id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($addon) {
+                return [
+                    'id' => $addon->id,
+                    'name' => $addon->name,
+                    'description' => $addon->description,
+                    'price' => (float) $addon->price,
+                    'status' => $addon->status,
+                    'created_at' => $addon->created_at,
+                ];
+            });
+
+        return response()->json($addons);
+    }
+
     public function index(Request $request)
     {
         $query = Addon::query()->with('partner');

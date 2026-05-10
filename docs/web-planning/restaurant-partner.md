@@ -1,7 +1,7 @@
 # Web Area Planning: Restaurant/Partner Dashboard
 
 ## Purpose
-Provide partners (restaurants, logistics companies) with a web interface to manage orders, products, and potentially regions and nodes.
+Provide partners (restaurants, logistics companies) with a web interface to manage orders, products, and potentially regions.
 
 ## Key Features
 - Secure login for partner users.
@@ -12,7 +12,6 @@ Provide partners (restaurants, logistics companies) with a web interface to mana
 - Functionality to request a courier or drone for pickup (requires integration with delivery allocation logic, potentially a new API endpoint).
 - Product and addon management: list, add, edit, and remove (leveraging `/api/v1/products`, `POST /api/v1/products`, `PUT /api/v1/products/{product}`, `/api/v1/addons`, `POST /api/v1/addons`, `PUT /api/v1/addons/{addon}`, `DELETE /api/v1/addons/{addon}`, `POST /api/v1/products/{product}/addons`).
 - (For Logistics Partners) Region management: view, create, edit regions (leveraging `/api/v1/regions`, `POST /api/v1/regions`, `PUT /api/v1/regions/{id}`).
-- (For Logistics Partners) Node management: view, add, edit nodes (leveraging `/api/v1/nodes`, `POST /api/v1/nodes`).
 - (Potential Future) Simple stock management.
 
 ## Implementation Considerations
@@ -56,9 +55,9 @@ Provide partners (restaurants, logistics companies) with a web interface to mana
 - Implement protected routes accessible only by authenticated partner users.
 - Utilize Vuetify components for layout, data tables (`v-data-table`), forms, and modals.
 - Implement real-time updates for orders using polling (`setInterval`) or explore WebSocket integration for a more efficient solution.
-- Create components for dashboard widgets (`MetricsWidget.vue`), order list (`OrderList.vue`), order details (`OrderDetail.vue`), product/addon forms (`ProductForm.vue`, `AddonForm.vue`), region editor (`RegionEditor.vue`), and node management (`NodeList.vue`, `NodeForm.vue`).
+- Create components for dashboard widgets (`MetricsWidget.vue`), order list (`OrderList.vue`), order details (`OrderDetail.vue`), product/addon forms (`ProductForm.vue`, `AddonForm.vue`), region editor (`RegionEditor.vue`).
 - Integrate with the existing API for all data interactions.
-- Consider permissions within the partner role (e.g., only logistics partners can manage regions/nodes).
+- Consider permissions within the partner role (e.g., only logistics partners can manage regions).
 
 ## API Endpoints Used
 - `/api/v1/partner/metrics`
@@ -67,7 +66,6 @@ Provide partners (restaurants, logistics companies) with a web interface to mana
 - `/api/v1/products/{product}/addons` (POST)
 - `/api/v1/addons` (GET, POST, PUT, DELETE)
 - `/api/v1/regions` (GET, POST, PUT)
-- `/api/v1/nodes` (GET, POST)
 
 ## Potential Components
 - Dashboard Layout component (`PartnerDashboardLayout.vue`)
@@ -80,8 +78,6 @@ Provide partners (restaurants, logistics companies) with a web interface to mana
 - Addon Form component (`AddonForm.vue`)
 - Region List component (`RegionList.vue`)
 - Region Editor component (`RegionEditor.vue`)
-- Node List component (`NodeList.vue`)
-- Node Form component (`NodeForm.vue`)
 
 ## Testing Status (2025-05-13)
 - Completed E2E tests for:

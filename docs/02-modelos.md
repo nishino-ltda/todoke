@@ -11,7 +11,6 @@ Este documento descreve os principais modelos de dados da plataforma TODOKE de f
 ```mermaid
 erDiagram
     USER ||--o{ DELIVERY : "cliente/entregador"
-    USER ||--o{ NODE : "parceiro"
     USER ||--o{ REGION : "parceiro"
     USER ||--o{ PRODUCT : "restaurante"
     USER ||--o{ ADDON : "restaurante"
@@ -19,11 +18,9 @@ erDiagram
     DELIVERY ||--o{ RATING : "avaliações"
     RATING }|--|| USER : "avaliador"
     RATING }|--|| USER : "avaliado"
-    DELIVERY ||--|{ NODE : "node associado"
     DELIVERY ||--|{ ORDER : "entrega"
     DELIVERY ||--o{ MESSAGE : "mensagens"
     DELIVERY ||--o{ DELIVERY_ASSIGNMENT : "atribuições"
-    REGION ||--o{ NODE : "nodes na região"
     ORDER ||--o{ ORDER_ITEM : "itens"
     ORDER_ITEM }|--|| PRODUCT : "produto"
     ORDER_ITEM ||--o{ ADDON : "addons selecionados"
@@ -36,7 +33,7 @@ erDiagram
 
 ### 1. Usuário (User)
 **Atributos:** id , name, email, phone, type (enum), status  
-**Relacionamentos:** Deliveries, Nodes, Regions, Products, Addons, Notifications
+**Relacionamentos:** Deliveries, Regions, Products, Addons, Notifications
 
 ### 2. Entrega (Delivery)  
 **Atributos:** 
@@ -57,7 +54,6 @@ erDiagram
 - estimated_time (integer, nullable)
 - confirmation_code (string, nullable)
 - stages (JSON, nullable)
-- nodeId (Node, nullable)
 - createdAt, updatedAt, deletedAt (timestamps)
 
 **Relacionamentos:** 
@@ -65,7 +61,6 @@ erDiagram
 - User (entregador)
 - User (parceiro logístico)
 - Ratings
-- Node 
 - Order 
 - Messages 
 - Assignments
@@ -74,30 +69,8 @@ erDiagram
 - customerId + status
 - courierId + status 
 - logisticsPartnerId
-- nodeId
 
-### 3. Node (Node)  
-**Atributos:** 
-- id 
-- partnerId (User)
-- type (enum: partner, distribution_center, delivery_point)
-- identifier (string, unique)
-- capacity (decimal, nullable)
-- status (enum: active, inactive, maintenance, pending_approval)
-- regionId (Region)
-- current_position (GeoJSON)
-- createdAt, updatedAt, deletedAt (timestamps)
-
-**Relacionamentos:** 
-- User (parceiro)
-- Region 
-- Deliveries
-
-**Índices:**
-- regionId + type
-- partnerId
-
-### 4. Região (Region)  
+### 3. Região (Region)  
 **Atributos:** 
 - id 
 - partnerId (User)
@@ -108,12 +81,10 @@ erDiagram
 
 **Relacionamentos:** 
 - User (partner)
-- Nodes
-
 **Índices:**
 - partnerId
 
-### 5. Avaliação (Rating)  
+### 4. Avaliação (Rating)  
 **Atributos:** 
 - id 
 - deliveryId (Delivery)
@@ -132,7 +103,7 @@ erDiagram
 - deliveryId
 - raterId + ratedId (composto)
 
-### 6. Produto (Product)  
+### 5. Produto (Product)  
 **Atributos:** 
 - id
 - partnerId (User)
@@ -153,7 +124,7 @@ erDiagram
 - partnerId + status
 - category
 
-### 7. Addon (Complemento)
+### 6. Addon (Complemento)
 **Atributos:**
 - id
 - partnerId (User)
@@ -170,7 +141,7 @@ erDiagram
 **Índices:**
 - partnerId + status
 
-### 8. Pedido (Order)  
+### 7. Pedido (Order)  
 **Atributos:** 
 - id
 - customerId (User)
@@ -190,7 +161,7 @@ erDiagram
 - partnerId + status
 - customerId + createdAt
 
-### 9. Item do Pedido (OrderItem)  
+### 8. Item do Pedido (OrderItem)  
 **Atributos:** 
 - orderId (Order)
 - productId (Product)
@@ -206,7 +177,7 @@ erDiagram
 **Índices:**
 - productId
 
-### 10. Notificação (Notification)  
+### 9. Notificação (Notification)  
 **Atributos:** 
 - id 
 - userId (User)
@@ -221,7 +192,7 @@ erDiagram
 **Índices:**
 - userId + read_at
 
-### 11. Mensagem (Message)  
+### 10. Mensagem (Message)  
 **Atributos:** 
 - id 
 - deliveryId (Delivery)
@@ -237,7 +208,7 @@ erDiagram
 - deliveryId
 - userId
 
-### 12. Atribuição de Entrega (DeliveryAssignment)  
+### 11. Atribuição de Entrega (DeliveryAssignment)  
 **Atributos:**
 - id
 - deliveryId (Delivery)

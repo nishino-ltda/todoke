@@ -3,34 +3,33 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
-use App\Models\Node;
+use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class MenuController extends Controller
 {
-    public function show($identifier)
+    public function show($slug)
     {
         try {
-            $node = Node::where('identifier', $identifier)
+            $partner = User::where('slug', $slug)
                 ->where('type', 'partner')
                 ->where('status', 'active')
-                ->with(['partner', 'products' => function ($query) {
+                ->with(['products' => function ($query) {
                     $query->where('status', 'available');
                 }])
                 ->firstOrFail();
 
-            $products = $node->products->load('addons');
+            $products = $partner->products->load('addons');
 
             return Inertia::render('Customer/Menu', [
                 'partner' => [
-                    'id' => $node->partner->id,
-                    'name' => $node->partner->business_name ?: $node->partner->name,
-                    'slug' => $node->identifier,
-                    'type' => $node->partner->business_type,
+                    'id' => $partner->id,
+                    'name' => $partner->business_name ?: $partner->name,
+                    'slug' => $slug,
+                    'type' => $partner->business_type,
                 ],
                 'products' => $products->map(function ($product) {
                     return [
-                        'id' => $product->id,
                         'name' => $product->name,
                         'description' => $product->description,
                         'price' => (float) $product->price,
@@ -39,7 +38,6 @@ class MenuController extends Controller
                         'status' => $product->status,
                         'addons' => $product->addons->map(function ($addon) {
                             return [
-                                'id' => $addon->id,
                                 'name' => $addon->name,
                                 'description' => $addon->description,
                                 'price' => (float) $addon->price,

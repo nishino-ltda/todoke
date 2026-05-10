@@ -7,7 +7,7 @@
 
 ## 2. System Metrics
 - [x] Create Admin Stats Widget (`AdminStatsWidget.vue`)
-- [x] Display key system metrics (users, deliveries, nodes)
+- [x] Display key system metrics (users, deliveries)
 - [x] Implement charts/graphs for data visualization
 - [x] Add time period filters
 
@@ -16,14 +16,12 @@
 - [x] Implement user search/filter functionality
 - [x] Add activate/deactivate functionality
 - [x] Display user details
+- [x] Add created_at column with relative date display
+- [x] Add "New" badge for users < 7 days
+- [x] Add quick date filter (All, 24h, 7d, 30d)
+- [x] Add "New Users" dashboard widget (5 most recent users) with role chips
 
-## 4. Node Management
-- [x] Create Node List component (`NodeList.vue`)
-- [x] Implement node approval/rejection
-- [x] Display node details
-- [x] Add search/filter functionality
-
-## 5. Region Management
+## 4. Region Management
 - [x] Create Region List component (`Regions/Index.vue`)
 - [x] Implement region CRUD operations (create, read, update, delete)
 - [x] Display region details with partner info
@@ -45,7 +43,7 @@
 ## 8. API Integration
 - [x] Fetch system stats
 - [x] Manage users
-- [x] Manage nodes/regions
+- [x] Manage regions
 - [x] Monitor deliveries
 - [x] Update system settings
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -143,5 +144,31 @@ class User extends Authenticatable implements CanResetPassword
     public function products()
     {
         return $this->hasMany(Product::class, 'partner_id');
+    }
+
+    public function roleRecords(): HasMany
+    {
+        return $this->hasMany(RoleUser::class);
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->type === $role || $this->roleRecords()->where('role', $role)->exists();
+    }
+
+    public function allRoles(): array
+    {
+        $roles = [$this->type];
+        foreach ($this->roleRecords as $record) {
+            $roles[] = $record->role;
+        }
+        return array_unique($roles);
+    }
+
+    public function addRole(string $role): void
+    {
+        if ($this->type !== $role) {
+            $this->roleRecords()->firstOrCreate(['role' => $role]);
+        }
     }
 }

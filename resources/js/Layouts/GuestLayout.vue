@@ -1,6 +1,6 @@
 <template>
   <v-app data-cy="guest-layout">
-    <AppHeader :minimal="props.minimal" />
+    <AppHeader :minimal="props.minimal" :with-drawer-toggle="false" />
     <v-main>
       <v-container>
         <slot data-cy="guest-content" />

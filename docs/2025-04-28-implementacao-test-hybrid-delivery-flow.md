@@ -38,22 +38,7 @@ public function test_hybrid_delivery_flow()
         'partner_id' => $drone->id
     ]);
 
-    // 3. Criar nodes (motoboy e hub de drone)
-    $motoboyNode = \App\Models\Node::factory()->create([
-        'partner_id' => $motoboy->id,
-        'region_id' => $motoboyRegion->id,
-        'type' => 'delivery_point',
-        'status' => 'active'
-    ]);
-
-    $droneHub = \App\Models\Node::factory()->create([
-        'partner_id' => $drone->id,
-        'region_id' => $droneRegion->id,
-        'type' => 'distribution_center',
-        'status' => 'active'
-    ]);
-
-    // 4. Autenticar como partner com token Sanctum
+    // 3. Autenticar como partner com token Sanctum
     $token = $partner->createToken('test-token')->plainTextToken;
     $this->withHeaders([
         'Authorization' => 'Bearer ' . $token
@@ -98,8 +83,7 @@ public function test_hybrid_delivery_flow()
                 '*' => [
                     'type',
                     'status',
-                    'partner_id', // Verificar se o parceiro foi associado
-                    'node_id'     // Verificar se o node foi associado
+                    'partner_id' // Verificar se o parceiro foi associado
                 ]
             ]
         ]);
@@ -119,10 +103,6 @@ public function test_hybrid_delivery_flow()
     $this->assertEquals($motoboy->id, $stages[0]['partner_id']);
     $this->assertEquals($drone->id, $stages[1]['partner_id']);
     
-    // Verificar se os nodes foram associados corretamente
-    $this->assertEquals($motoboyNode->id, $stages[0]['node_id']);
-    $this->assertEquals($droneHub->id, $stages[1]['node_id']);
-
     // 8. Verificar se os assignments foram criados automaticamente
     $this->assertDatabaseHas('delivery_assignments', [
         'delivery_id' => $delivery->id,
@@ -165,19 +145,6 @@ public function test_hybrid_delivery_status_updates()
         'type' => 'customer'
     ]);
 
-    // 2. Criar nodes
-    $motoboyNode = \App\Models\Node::factory()->create([
-        'partner_id' => $motoboy->id,
-        'type' => 'delivery_point',
-        'status' => 'active'
-    ]);
-
-    $droneHub = \App\Models\Node::factory()->create([
-        'partner_id' => $drone->id,
-        'type' => 'distribution_center',
-        'status' => 'active'
-    ]);
-
     // 3. Criar entrega híbrida
     $delivery = \App\Models\Delivery::factory()->create([
         'customer_id' => $customer->id,
@@ -187,14 +154,12 @@ public function test_hybrid_delivery_status_updates()
             [
                 'type' => 'delivery_point',
                 'status' => 'pending',
-                'partner_id' => $motoboy->id,
-                'node_id' => $motoboyNode->id
+                'partner_id' => $motoboy->id
             ],
             [
                 'type' => 'distribution_center',
                 'status' => 'pending',
-                'partner_id' => $drone->id,
-                'node_id' => $droneHub->id
+                'partner_id' => $drone->id
             ]
         ]
     ]);
@@ -493,54 +458,10 @@ class DeliveryController extends Controller
         ];
 
         if ($request->isHybrid) {
-            // Buscar nodes apropriados para cada etapa
-            $motoboyNode = null;
-            $droneNode = null;
-            
-            if (isset($request->logistics_partner_id)) {
-                $motoboyNode = \App\Models\Node::where('partner_id', $request->logistics_partner_id)
-                    ->where('type', 'delivery_point')
-                    ->where('status', 'active')
-                    ->first();
-            }
-            
-            if (!$motoboyNode) {
-                // Buscar qualquer node de entrega ativo
-                $motoboyNode = \App\Models\Node::where('type', 'delivery_point')
-                    ->where('status', 'active')
-                    ->first();
-            }
-            
-            // Buscar hub de drone mais próximo do destino
-            $droneNode = \App\Models\Node::where('type', 'distribution_center')
-                ->where('status', 'active')
-                ->first();
-            
-            if ($motoboyNode && $droneNode) {
-                $deliveryData['stages'] = [
-                    [
-                        'type' => 'delivery_point',
-                        'status' => 'pending',
-                        'partner_id' => $motoboyNode->partner_id,
-                        'node_id' => $motoboyNode->id
-                    ],
-                    [
-                        'type' => 'distribution_center',
-                        'status' => 'pending',
-                        'partner_id' => $droneNode->partner_id,
-                        'node_id' => $droneNode->id
-                    ]
-                ];
-                
-                // Definir o parceiro logístico inicial
-                $deliveryData['logistics_partner_id'] = $motoboyNode->partner_id;
-            } else {
-                // Fallback para estrutura básica se não encontrar nodes
-                $deliveryData['stages'] = [
-                    ['type' => 'delivery_point', 'status' => 'pending'],
-                    ['type' => 'distribution_center', 'status' => 'pending']
-                ];
-            }
+            $deliveryData['stages'] = [
+                ['type' => 'delivery_point', 'status' => 'pending'],
+                ['type' => 'distribution_center', 'status' => 'pending']
+            ];
             
             Log::info('Setting hybrid delivery stages', ['stages' => $deliveryData['stages']]);
         } else {

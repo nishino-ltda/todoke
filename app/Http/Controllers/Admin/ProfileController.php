@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class NodeController extends Controller
+class ProfileController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Admin/Nodes/Index');
+        return Inertia::render('Admin/Profile');
     }
 }

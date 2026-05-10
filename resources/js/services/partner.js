@@ -125,20 +125,6 @@ export const partnerService = {
   async deleteRegion(id) { return api.delete(`/partner/regions/${id}`); },
 
   /**
-   * Get partner nodes
-   */
-  async getNodes() {
-    return api.get('/partner/nodes');
-  },
-
-  /**
-   * Create/Update/Delete Node
-   */
-  async createNode(data) { return api.post('/partner/nodes', data); },
-  async updateNode(id, data) { return api.put(`/partner/nodes/${id}`, data); },
-  async deleteNode(id) { return api.delete(`/partner/nodes/${id}`); },
-
-  /**
    * Request a courier for an order
    */
   async requestCourier(orderId) {

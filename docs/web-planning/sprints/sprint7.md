@@ -12,7 +12,6 @@
 ### 2. Region Map Visualization
 - Added Leaflet map to Admin Regions page
 - Region polygon boundaries displayed on map
-- Partner nodes within each region shown as markers
 - Used existing DeliveryMap/MapService patterns
 
 ### 3. Detailed Delivery View
@@ -24,7 +23,6 @@
 - `admin_flow.cy.js` — full admin workflow
 - `admin-login.cy.js` — login as admin, redirect to dashboard
 - `user-management.cy.js` — list, search, filter, activate/deactivate
-- `node-management.cy.js` — list, approve, reject, filter by status
 - `region-management.cy.js` — create with polygon, edit, delete, validation
 - `delivery-monitoring.cy.js` — metrics cards, filter by status, detail view
 - `system-configuration.cy.js` — update site name, toggle maintenance, change fees

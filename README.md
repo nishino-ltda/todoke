@@ -23,21 +23,18 @@ O TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada para
 ```mermaid
 erDiagram
     USER ||--o{ DELIVERY : "cliente/entregador"
-    USER ||--o{ NODE : "parceiro"
     USER ||--o{ REGION : "parceiro"
     USER ||--o{ PRODUCT : "restaurante"
     DELIVERY ||--o{ RATING : "avaliações"
-    DELIVERY ||--|{ NODE : "node associado"
     DELIVERY ||--|{ ORDER : "entrega"
-    REGION ||--o{ NODE : "nodes na região"
     ORDER ||--o{ PRODUCT : "itens"
     ORDER ||--|{ USER : "cliente/restaurante"
 ```
 
 ### Principais Entidades
 - **User**: Todos os tipos de usuários (entregadores, clientes, administradores)
+- **RoleUser**: Roles secundárias (multirole: um usuário pode ser partner + customer)
 - **Delivery**: Solicitações de entrega com status, origem/destino, etc.
-- **Node**: Recursos de entrega (entregadores, drones, veículos)
 - **Region**: Áreas geográficas de operação
 - **Product**: Itens do cardápio de restaurantes
 - **Order**: Pedidos de produtos com status
@@ -47,12 +44,13 @@ Todas as rotas requerem autenticação via Bearer Token (exceto registro/login).
 
 ### Endpoints Principais
 - **Autenticação**: `/api/v1/auth/register`, `/api/v1/auth/login`
+- **Perfil / Roles**:
+  - `GET /api/v1/users/me` - Perfil do usuário (inclui `all_roles`)
+  - `PATCH /api/v1/users/me` - Atualizar perfil
+  - `POST /api/v1/users/me/roles` - Adicionar role secundária (courier/partner)
 - **Entregas**: 
   - `POST /api/v1/deliveries` - Criar entrega
   - `PATCH /api/v1/deliveries/{id}/accept` - Aceitar entrega
-- **Nodes/Regiões**: 
-  - `GET /api/v1/nodes` - Listar nodes
-  - `POST /api/v1/regions` - Criar região
 - **Pedidos**: 
   - `POST /api/v1/orders` - Criar pedido
   - `PATCH /api/v1/orders/{id}/status` - Atualizar status
@@ -103,14 +101,19 @@ npm run test:e2e:local      # Testes E2E (Cypress)
 
 ## Contas de Teste
 
-| Papel | Email | Senha |
-|-------|-------|-------|
-| Admin | admin@todoke.test | password123 |
-| Suporte | support@todoke.test | password123 |
-| Parceiro (Restaurante) | partner@todoke.test | password123 |
-| Entregador | courier@todoke.test | password123 |
-| Cliente | customer@todoke.test | password123 |
-| Usuário Bloqueado | locked@todoke.test | password123 |
+| Papel | Email | Senha | Roles |
+|-------|-------|-------|-------|
+| Admin | admin@todoke.test | password123 | admin |
+| Suporte | support@todoke.test | password123 | admin |
+| Parceiro (Restaurante) | partner@todoke.test | password123 | partner, customer |
+| Entregador | courier@todoke.test | password123 | courier, customer |
+| Cliente | customer@todoke.test | password123 | customer |
+| Usuário Bloqueado | locked@todoke.test | password123 | customer |
+| Novo Cliente | newcustomer@todoke.test | password123 | customer |
+| Novo Entregador | newcourier@todoke.test | password123 | courier, customer |
+| Novo Parceiro | newpartner@todoke.test | password123 | partner, customer |
+
+**Multirole:** Parceiros e entregadores também são clientes. Use as credenciais de partner/courier para acessar `/customer/dashboard` e navegar como cliente.
 
 Para re-seed o banco de dados: `php artisan db:seed`
 
@@ -118,11 +121,12 @@ Para re-seed o banco de dados: `php artisan db:seed`
 
 | Área | Status |
 |------|--------|
-| Autenticação multi-role | ✅ Completo |
+| Autenticação multi-role (com suporte a roles secundárias) | ✅ Completo |
+| Multirole: auto-activation, "Acessar como Cliente", perfis por role | ✅ Completo |
 | Home Page (hero, features, CTA) | ✅ Completo |
 | Cardápio / Carrinho / Checkout | ✅ Completo |
 | Painel do Entregador (delivery map, aceitar/rejeitar) | ✅ Completo |
-| Painel Admin (gráficos, gestão, monitoramento) | ✅ Completo |
+| Painel Admin (gráficos, gestão, monitoramento, created_at, filtros) | ✅ Completo |
 | Painel Parceiro (métricas, pedidos, produtos, etiqueta) | ✅ Completo |
 | Sistema de Suporte (tickets, FAQ) | ✅ Completo |
 | Notificações Real-time (Laravel Reverb) | ✅ Completo |

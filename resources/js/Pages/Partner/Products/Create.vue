@@ -1,12 +1,12 @@
 <template>
-    <AuthenticatedLayout>
+    <PartnerLayout>
         <div data-cy="partner-products-create">
             <h1>Create Product</h1>
             <p>Form to create a new product.</p>
         </div>
-    </AuthenticatedLayout>
+    </PartnerLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 </script>

@@ -21,7 +21,7 @@
 - [x] Dashboard metrics (partner_flow.cy.js, partner-dashboard.cy.js, dashboard.cy.js)
 - [x] Order management (partner_flow.cy.js, order-management.cy.js)
 - [x] Product management (partner_flow.cy.js)
-- [x] (Logistics) Region/node management (region-management.cy.js)
+- [x] (Logistics) Region management (region-management.cy.js)
 
 ## 5. Courier Flow Tests
 - [x] Availability toggle (courier_flow.cy.js, courier-dashboard.cy.js, dashboard.cy.js)
@@ -31,7 +31,6 @@
 
 ## 6. Admin Flow Tests
 - [x] User management (admin_flow.cy.js, user-management.cy.js)
-- [x] Node approval (admin_flow.cy.js, node-management.cy.js)
 - [x] System monitoring (admin_flow.cy.js, delivery-monitoring.cy.js)
 - [x] Configuration changes (admin_flow.cy.js, system-configuration.cy.js)
 - [x] Region management (region-management.cy.js)

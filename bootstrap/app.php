@@ -20,6 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'ensure.type' => \App\Http\Middleware\EnsureUserType::class,
+            'check.api.role' => \App\Http\Middleware\CheckApiRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

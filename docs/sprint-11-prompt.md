@@ -21,7 +21,7 @@ All WBS files are in `docs/web-planning/*.md`. Review the unchecked items in eac
 These files contain only `cy.fail('Test not implemented')` calls. Their flows are already covered by real tests in the same directory:
 - `cypress/e2e/partner/partner-flow.cy.js` — covered by `partner_flow.cy.js`
 - `cypress/e2e/partner/dashboard.cy.js` — covered by `partner-dashboard.cy.js`
-- `cypress/e2e/partner/region-management.cy.js` — covered by `partner_flow.cy.js` region/node section
+- `cypress/e2e/partner/region-management.cy.js` — covered by `partner_flow.cy.js` region section
 
 Delete these 3 files.
 

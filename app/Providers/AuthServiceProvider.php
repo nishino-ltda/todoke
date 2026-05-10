@@ -4,9 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Password;
-use App\Models\Node;
 use App\Models\Product;
-use App\Policies\NodePolicy;
 use App\Policies\ProductPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +20,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Product::class => ProductPolicy::class,
-        Node::class => NodePolicy::class,
     ];
 
     /**

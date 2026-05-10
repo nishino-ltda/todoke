@@ -1,12 +1,12 @@
 <template>
-    <AuthenticatedLayout>
+    <PartnerLayout>
         <div data-cy="partner-settings-index">
             <h1>Partner Settings</h1>
             <p>Manage partner settings.</p>
         </div>
-    </AuthenticatedLayout>
+    </PartnerLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 </script>

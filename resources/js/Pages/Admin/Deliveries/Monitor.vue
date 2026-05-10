@@ -51,7 +51,7 @@
               <v-icon size="12" class="mr-1">mdi-bike</v-icon>
               {{ delivery.courier?.name || 'Searching courier...' }}
             </div>
-          </v-row>
+          </v-card>
         </v-col>
       </v-row>
     </div>

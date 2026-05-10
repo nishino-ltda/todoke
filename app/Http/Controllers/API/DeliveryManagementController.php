@@ -28,7 +28,7 @@ class DeliveryManagementController extends Controller
         // Admins don't get filtered
 
         $limit = $request->input('limit', 15);
-        $deliveries = $query->with(['customer', 'logisticsPartner', 'courier', 'node'])
+        $deliveries = $query->with(['customer', 'logisticsPartner', 'courier'])
                             ->orderBy('created_at', 'desc')
                             ->paginate($limit);
 

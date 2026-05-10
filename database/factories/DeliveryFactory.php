@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Models\User;
-use App\Models\Node;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -47,7 +46,6 @@ class DeliveryFactory extends Factory
             'value' => fake()->randomFloat(2, 5, 50),
             'estimated_time' => fake()->numberBetween(10, 120),
             'confirmation_code' => fake()->bothify('????-####'),
-            'node_id' => Node::factory()->create()->id,
             'special_instructions' => fake()->boolean(70) ? fake()->sentence() : null,
             'payment_method' => fake()->randomElement([
                 'credit_card',

@@ -75,18 +75,6 @@ describe('👔 Admin Flow', () => {
     cy.wait('@activateUser');
   });
 
-  it('📍 Should navigate to nodes and approve one', () => {
-    cy.intercept('PATCH', '**/api/v1/admin/nodes/*/status', {
-      statusCode: 200, body: { id: 1, status: 'approved' }
-    }).as('approveNode');
-
-    cy.visit('/admin/nodes');
-    cy.wait('@getNodes');
-    cy.get('[data-cy="nodes-table"]').should('be.visible');
-    cy.get('[data-cy="approve-node-btn"]').first().click();
-    cy.wait('@approveNode');
-  });
-
   it('⚙️ Should update platform settings', () => {
     cy.intercept('GET', '**/api/v1/admin/settings', {
       statusCode: 200,

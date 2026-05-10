@@ -17,7 +17,7 @@ Baseado nas migrações e modelos existentes:
 - **Delivery**:
   - `stages`: Array JSON com etapas da entrega híbrida
   - `logistics_partner_id`: ID do parceiro logístico
-  - `node_id`: ID do node associado (hub, drone, etc.)
+
   - `status`: Enum com valores como 'pending', 'accepted', 'in_transit', 'collected', 'delivered', 'canceled'
 
 - **DeliveryAssignment**:
@@ -106,7 +106,7 @@ Modificar o teste `test_hybrid_delivery_flow` para:
    - Incluir informações sobre o tipo de parceiro em cada etapa
 
 2. Implementar lógica para associar automaticamente os parceiros às etapas com base em:
-   - Tipo de node (delivery_point, distribution_center)
+   - Tipo de parceiro (delivery_point, distribution_center)
    - Região geográfica
    - Disponibilidade do parceiro
 

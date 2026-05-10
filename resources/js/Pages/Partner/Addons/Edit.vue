@@ -1,14 +1,14 @@
 <template>
-    <AuthenticatedLayout>
+    <PartnerLayout>
         <div data-cy="partner-addons-edit">
             <h1>Edit Addon</h1>
             <p>Edit details for addon: {{ addonId }}</p>
         </div>
-    </AuthenticatedLayout>
+    </PartnerLayout>
 </template>
 
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({

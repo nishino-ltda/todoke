@@ -4,12 +4,14 @@
 - **Added Support User**: `support@todoke.test` added to seeders and README.
 - **Updated WBS**: Admin charts, filters, and map integration marked as complete.
 - **Sprint 11 Planning**: Focused on E2E coverage of critical flows (Checkout, Home, Admin).
+- **Multirole System**: Implemented full multirole support with auto-activation, role_user pivot, secondary roles, "Access as Customer" links, profile pages per role, and admin visibility widgets.
 
 
 ## Overall Status by Area
 | Area | Completion | Status |
 |------|-----------|--------|
-| Authentication | 100% | ✅ Done |
+| Authentication (multirole) | 100% | ✅ Done |
+| Multirole / Auto-activation | 100% | ✅ Done |
 | Home Page | ~90% | ✅ Done (minor: SEO) |
 | Common Components | 100% | ✅ Done |
 | Stores & Services | ~90% | ✅ Done (minor service tests) |
@@ -24,6 +26,31 @@
 **Unit Tests: 243+ passing** | **E2E: 12 files across all roles with real logic**
 
 ---
+
+## Multirole System — Completed 2026-05-10
+
+### What was delivered
+- **Auto-activation**: All users register as `active` (no pending)
+- **Secondary roles**: Couriers and partners automatically get `customer` role via `role_user` pivot
+- **API**: `POST /api/v1/users/me/roles` to add courier/partner role from profile
+- **Middleware**: `EnsureUserType` (web) and `CheckApiRole` (API) both check `hasRole()` for multirole support
+- **Profile pages**: Customer, Partner, Courier, Admin each have functional profile forms
+- **Layouts**: Dynamic nav items based on `all_roles`; "Access as Customer" links in partner/courier/admin layouts
+- **Auth flow**: Removed pending approval; all registrations auto-login and redirect to `/customer/dashboard`
+- **Admin visibility**: "New Users" widget on dashboard; `created_at` column + date filters on Users page
+
+### Key files
+- `database/migrations/*_create_role_user_table.php` — pivot table
+- `app/Models/RoleUser.php` — model
+- `app/Models/User.php` — `roleRecords()`, `hasRole()`, `allRoles()`, `addRole()`
+- `app/Http/Middleware/EnsureUserType.php` — multirole-aware
+- `app/Http/Middleware/CheckApiRole.php` — API role middleware
+- `app/Http/Controllers/API/AuthController.php` — auto-add customer role, active status, all_roles
+- `app/Http/Controllers/API/UserController.php` — addRole, expanded update, all_roles in profile
+- `resources/js/stores/auth.js` — always auto-login for all types
+- `resources/js/Components/AuthForm.vue` — removed pending, redirect to /customer/dashboard
+- `resources/js/Pages/{Customer,Partner,Courier,Admin}/Profile.vue` — per-role profiles
+- `resources/js/Layouts/{Authenticated,Admin,Partner,Courier}Layout.vue` — multirole-aware nav
 
 ## Partner Dashboard — Completed 2026-05-10
 

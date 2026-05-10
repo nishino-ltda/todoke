@@ -27,7 +27,7 @@ Define the strategy for implementing end-to-end (E2E) tests to ensure the web ap
     - Viewing the dashboard with relevant metrics.
     - Viewing and updating order statuses.
     - Managing products and addons (add, edit, delete).
-    - (For Logistics Partners) Managing regions and nodes (add, edit).
+    - (For Logistics Partners) Managing regions (add, edit).
 - **Courier Flow:**
     - Logging in as a courier.
     - Toggling availability status.
@@ -38,7 +38,6 @@ Define the strategy for implementing end-to-end (E2E) tests to ensure the web ap
     - Logging in as an admin.
     - Accessing all admin sections.
     - Managing users (view, activate/deactivate).
-    - Approving/rejecting pending nodes.
     - Viewing system statistics.
 - **Support Flow:**
     - Submitting a support ticket as different user types.

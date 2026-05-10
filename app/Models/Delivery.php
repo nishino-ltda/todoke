@@ -25,7 +25,6 @@ class Delivery extends Model
         'value',
         'estimated_time',
         'confirmation_code',
-        'node_id',
         'current_position',
         'stages',
         'special_instructions',
@@ -81,11 +80,6 @@ class Delivery extends Model
     public function logisticsPartner()
     {
         return $this->belongsTo(User::class, 'logistics_partner_id');
-    }
-
-    public function node()
-    {
-        return $this->belongsTo(Node::class, 'node_id');
     }
 
     public function order()

@@ -63,14 +63,8 @@ describe('🏢 Partner Flow', () => {
     cy.get('.v-snackbar').should('contain', 'created');
   });
 
-  it('📍 Should manage regions and nodes', () => {
+  it('📍 Should manage regions', () => {
     cy.visit('/partner/regions');
     cy.get('[data-cy="regions-table"]').should('be.visible');
-    
-    cy.visit('/partner/nodes');
-    cy.get('[data-cy="nodes-table"]').should('be.visible');
-    cy.get('[data-cy="create-node-btn"]').click();
-    cy.get('[data-cy="node-name-input"] input').type('Test Node');
-    cy.get('[data-cy="save-node-btn"]').click();
   });
 });
