@@ -32,7 +32,7 @@
         <v-row>
           <!-- Main Info -->
           <v-col cols="12" lg="8">
-            <v-card border elevation="0" class="rounded-xl mb-6 pa-6">
+            <v-card border elevation="0" class="rounded-xl mb-6 pa-8">
               <v-row>
                 <v-col cols="12" md="4">
                   <div class="text-overline text-grey">{{ t('admin.deliveries.table.customer') }}</div>

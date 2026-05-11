@@ -1,9 +1,9 @@
 <template>
   <AdminLayout>
-    <div class="settings-page pa-6">
+    <div class="settings-page pa-8">
       <h1 class="text-h4 mb-6">{{ t('admin.settings.title', 'Platform Settings') }}</h1>
       
-      <v-card border elevation="0" class="pa-6 rounded-xl">
+      <v-card border elevation="0" class="pa-8 rounded-xl">
         <v-form @submit.prevent="saveSettings">
           <v-row>
             <v-col cols="12" md="6">

@@ -6,7 +6,9 @@
         {{ currentPageTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      <LanguageSelector />
+      
+      <CartIcon class="mr-4" />
+      <LanguageSelector class="mr-2" />
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" app :permanent="!$vuetify.display.mobile" :temporary="$vuetify.display.mobile" elevation="2">
@@ -47,7 +49,7 @@
     </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-4">
-      <v-container fluid class="pa-6">
+      <v-container fluid class="pa-8">
         <slot />
       </v-container>
       <NotificationCenter />
@@ -62,6 +64,7 @@ import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePage, router } from '@inertiajs/vue3';
 import { useAuthStore } from '@/stores/auth';
+import CartIcon from '@/Components/CartIcon.vue';
 import LanguageSelector from '../Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
 import AppFooter from '../Components/AppFooter.vue';
@@ -105,6 +108,14 @@ const navigateTo = (route) => {
 const logout = () => {
   authStore.logout(router);
 };
+
+// Sync auth store with server-side props
+import { watch } from 'vue';
+watch(() => page.props.auth?.user, (newUser) => {
+  if (newUser) {
+    authStore.user = newUser;
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>

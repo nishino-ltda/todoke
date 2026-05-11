@@ -9,6 +9,8 @@ class ProfileController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Courier/Profile');
+        return Inertia::render('Courier/Profile', [
+            'user' => request()->user(),
+        ]);
     }
 }

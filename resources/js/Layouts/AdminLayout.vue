@@ -47,7 +47,7 @@
     </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-4">
-      <v-container fluid class="pa-6">
+      <v-container fluid class="pa-8">
         <slot />
       </v-container>
       <NotificationCenter />
@@ -107,6 +107,14 @@ const navigateTo = (route) => {
 const logout = () => {
   authStore.logout(router);
 };
+
+// Sync auth store with server-side props
+import { watch } from 'vue';
+watch(() => page.props.auth?.user, (newUser) => {
+  if (newUser) {
+    authStore.user = newUser;
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>

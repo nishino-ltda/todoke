@@ -3,7 +3,7 @@
     <div data-cy="support-ticket-reply">
       <h1 class="text-h4 mb-6">{{ t('support.reply.title') }}</h1>
 
-      <v-card border elevation="0" class="pa-6">
+      <v-card border elevation="0" class="pa-8">
         <v-form @submit.prevent="submit" v-model="isValid">
           <v-textarea
             v-model="form.message"

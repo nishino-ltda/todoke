@@ -3,7 +3,7 @@
         <v-container class="fill-height justify-center" fluid>
             <v-row justify="center">
                 <v-col cols="12" sm="8" md="6" lg="5">
-                    <v-card elevation="4" class="pa-6 rounded-xl" data-cy="auth-login">
+                    <v-card elevation="4" class="pa-8 rounded-xl" data-cy="auth-login">
                         <div class="text-center mb-8">
                             <h1 class="text-h4 font-weight-bold primary--text mb-2">
                                 {{ t('auth.login') }}

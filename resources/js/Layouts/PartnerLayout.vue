@@ -36,7 +36,7 @@
     </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-4">
-      <v-container fluid class="pa-6">
+      <v-container fluid class="pa-8">
         <div class="d-flex align-center mb-6">
           <v-icon size="32" color="primary" class="mr-3">mdi-store</v-icon>
           <h1 class="text-h4 font-weight-bold">Partner Dashboard</h1>
@@ -84,6 +84,14 @@ const navigateTo = (route) => {
 const logout = () => {
   authStore.logout(router);
 };
+
+// Sync auth store with server-side props
+import { watch } from 'vue';
+watch(() => page.props.auth?.user, (newUser) => {
+  if (newUser) {
+    authStore.user = newUser;
+  }
+}, { immediate: true });
 </script>
 
 <style scoped>

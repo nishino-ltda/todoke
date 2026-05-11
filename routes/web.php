@@ -115,6 +115,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/profile', [CustomerProfileController::class, 'index'])->name('profile');
+        Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
         Route::get('/settings', [CustomerSettingsController::class, 'index'])->name('settings.index');
         
     });

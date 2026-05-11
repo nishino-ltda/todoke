@@ -4,12 +4,47 @@
       <h1>Customer Profile</h1>
       <v-card class="mt-4">
         <v-card-text>
-          <v-text-field v-model="form.name" label="Name" data-cy="profile-name" />
+          <v-text-field 
+            v-model="form.name" 
+            label="Name" 
+            :error-messages="form.errors.name"
+            data-cy="profile-name" 
+          />
           <v-text-field v-model="form.email" label="Email" disabled data-cy="profile-email" />
-          <v-text-field v-model="form.phone" label="Phone" data-cy="profile-phone" />
-          <v-text-field v-model="form.photoUrl" label="Photo URL" data-cy="profile-photo" />
+          
+          <v-text-field 
+            v-model="form.phone" 
+            label="Phone" 
+            :error-messages="form.errors.phone"
+            data-cy="profile-phone" 
+            @input="form.phone = maskPhone($event.target.value)"
+          />
 
-          <v-btn color="primary" @click="saveProfile" :loading="saving" data-cy="save-profile-btn">
+          <div class="mb-4">
+            <label class="v-label mb-2 d-block">Profile Photo</label>
+            <div class="d-flex align-center gap-4">
+              <v-avatar size="100" class="elevation-2" rounded="lg">
+                <v-img :src="photoPreview || resolveImageUrl(form.photoUrl)" cover>
+                  <template v-slot:placeholder>
+                    <v-icon size="large" icon="mdi-account"></v-icon>
+                  </template>
+                </v-img>
+              </v-avatar>
+              <v-file-input
+                label="Choose a photo"
+                prepend-icon="mdi-camera"
+                accept="image/*"
+                @change="handlePhotoChange"
+                variant="outlined"
+                density="compact"
+                hide-details
+                class="flex-grow-1"
+                data-cy="profile-photo-input"
+              />
+            </div>
+          </div>
+
+          <v-btn color="primary" @click="saveProfile" :loading="form.processing" data-cy="save-profile-btn">
             Save
           </v-btn>
         </v-card-text>
@@ -32,7 +67,7 @@
             <v-card v-if="showPartnerForm" class="mt-2 pa-4">
               <v-text-field v-model="partnerForm.business_name" label="Business Name" />
               <v-select v-model="partnerForm.business_type" :items="['restaurant', 'market', 'pharmacy']" label="Business Type" />
-              <v-text-field v-model="partnerForm.tax_id" label="Tax ID" />
+              <v-text-field v-model="partnerForm.tax_id" label="Tax ID" @input="partnerForm.tax_id = maskCNPJ($event.target.value)" />
               <v-text-field v-model="partnerForm.address" label="Address" />
               <v-btn color="primary" @click="addRole('partner')" :loading="addingRole">
                 Submit
@@ -68,27 +103,49 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { router } from '@inertiajs/vue3'
+import { ref, onMounted, computed, watch } from 'vue'
+import { useForm, usePage, router } from '@inertiajs/vue3'
 import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import api from '@/services/api'
 import CustomerLayout from '@/Layouts/CustomerLayout.vue'
+import { useMasks } from '@/composables/useMasks'
 
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
-const saving = ref(false)
+const { maskPhone, maskCNPJ } = useMasks()
+const page = usePage()
 const addingRole = ref(false)
 const successMessage = ref('')
 const showPartnerForm = ref(false)
 const showCourierForm = ref(false)
+const photoPreview = ref(null)
 
-const form = ref({
+const form = useForm({
   name: '',
   email: '',
   phone: '',
   photoUrl: '',
+  photo: null,
 })
+
+const resolveImageUrl = (path) => {
+  if (!path) return null
+  if (path.startsWith('http')) return path
+  return `/storage/${path}`
+}
+
+const handlePhotoChange = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    form.photo = file
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      photoPreview.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
 
 const partnerForm = ref({
   business_name: '',
@@ -106,33 +163,44 @@ const allRoles = computed(() => user.value?.all_roles || [])
 const isPartner = computed(() => allRoles.value.includes('partner'))
 const isCourier = computed(() => allRoles.value.includes('courier'))
 
+console.log('[Profile] page.props.user:', page.props.user?.name, page.props.user?.email)
+
+const populateForm = () => {
+  const data = page.props.user
+  if (data) {
+    form.name = data.name || ''
+    form.email = data.email || ''
+    form.phone = data.phone || ''
+    form.photoUrl = data.photoUrl || ''
+  }
+}
+
+watch(() => page.props.user, (newUser) => {
+  if (newUser && !form.processing) {
+    populateForm()
+  }
+}, { immediate: true })
+
 onMounted(() => {
-  if (user.value) {
-    form.value.name = user.value.name || ''
-    form.value.email = user.value.email || ''
-    form.value.phone = user.value.phone || ''
-    form.value.photoUrl = user.value.photoUrl || ''
+  if (!form.name) {
+    populateForm()
   }
 })
 
-const saveProfile = async () => {
-  saving.value = true
+const saveProfile = () => {
   successMessage.value = ''
-  try {
-    await api.patch('/users/me', {
-      name: form.value.name,
-      phone: form.value.phone,
-      photoUrl: form.value.photoUrl,
-    })
-    authStore.user.name = form.value.name
-    authStore.user.phone = form.value.phone
-    authStore.user.photoUrl = form.value.photoUrl
-    successMessage.value = 'Profile updated successfully'
-  } catch (err) {
-    console.error('Failed to save profile', err)
-  } finally {
-    saving.value = false
-  }
+  // Use post with _method spoofing for file upload support in Laravel PATCH routes
+  form.transform((data) => ({
+    ...data,
+    _method: 'PATCH',
+  })).post(route('customer.profile.update'), {
+    onSuccess: () => {
+      successMessage.value = 'Profile updated successfully'
+      form.photo = null
+      photoPreview.value = null
+    },
+    preserveScroll: true
+  })
 }
 
 const addRole = async (role) => {

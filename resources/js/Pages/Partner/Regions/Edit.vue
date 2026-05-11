@@ -24,7 +24,7 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-card border elevation="0" class="rounded-xl pa-6">
+          <v-card border elevation="0" class="rounded-xl pa-8">
             <h2 class="text-h6 font-weight-bold mb-6">{{ t('partner.regions.details', 'Region Details') }}</h2>
             
             <v-form ref="formRef" @submit.prevent="submit">

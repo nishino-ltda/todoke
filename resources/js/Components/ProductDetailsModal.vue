@@ -1,70 +1,95 @@
 <template>
-  <v-dialog v-if="product" v-model="showModal" max-width="600" persistent>
-    <v-card>
-      <v-btn 
-        icon
-        @click="$emit('close')"
-        class="close-button"
-        absolute
-        right
-        top
-      >
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-      
-      <v-img
-        :src="product.image || '/images/placeholder-food.jpg'"
-        :alt="product.name"
-        cover
-        max-height="300"
-        class="ma-4"
-      ></v-img>
-      
-      <v-card-text>
-        <v-card-title class="text-h5">{{ product.name }}</v-card-title>
-        <v-card-subtitle class="text-h6 font-weight-bold primary--text">
-          ${{ product.price.toFixed(2) }}
-        </v-card-subtitle>
-        <v-card-text class="text-body-1">
-          {{ product.description || $t('cart.no_description') }}
-        </v-card-text>
-
-        <v-card-text v-if="product.addons && product.addons.length" class="addons-section">
-          <h3>{{ $t('cart.addons') }}</h3>
-          <div v-for="addon in product.addons" :key="addon.id" class="addon-item">
-            <input 
-              type="checkbox" 
-              :id="'addon-' + addon.id" 
-              v-model="selectedAddons" 
-              :value="addon.id"
-              :data-cy="'addon-checkbox-' + addon.id"
-            >
-            <label :for="'addon-' + addon.id" :data-cy="'addon-label-' + addon.id">
-              {{ addon.name }} (+ ${{ addon.price.toFixed(2) }})
-            </label>
+  <v-dialog v-if="product" v-model="showModal" max-width="550" transition="dialog-bottom-transition">
+    <v-card class="product-details-card rounded-xl overflow-hidden">
+      <div class="image-wrapper">
+        <v-img
+          :src="resolveImageUrl(product.image)"
+          :alt="product.name"
+          cover
+          height="300"
+        >
+          <div class="d-flex justify-end pa-4">
+             <v-btn 
+                icon="mdi-close"
+                @click="$emit('close')"
+                variant="elevated"
+                color="white"
+                size="small"
+                elevation="4"
+                class="close-btn"
+              ></v-btn>
           </div>
-        </v-card-text>
+        </v-img>
+      </div>
+      
+      <v-card-text class="pa-8">
+        <div class="d-flex justify-space-between align-start mb-2">
+            <div>
+                <h2 class="text-h4 font-weight-bold mb-1">{{ product.name }}</h2>
+                <v-chip size="small" color="primary" variant="tonal" class="font-weight-bold text-uppercase">
+                    {{ product.category }}
+                </v-chip>
+            </div>
+            <div class="text-h5 font-weight-black text-primary">
+                {{ formatPrice(product.price) }}
+            </div>
+        </div>
+
+        <p class="text-body-1 text-medium-emphasis mb-8">
+          {{ product.description || $t('cart.no_description', 'Delicioso prato preparado com ingredientes frescos.') }}
+        </p>
+
+        <div v-if="product.addons && product.addons.length" class="addons-section mb-8">
+          <h3 class="text-h6 font-weight-bold mb-4 d-flex align-center">
+            <v-icon icon="mdi-plus-circle-outline" class="mr-2" color="primary"></v-icon>
+            {{ $t('cart.addons', 'Adicionais') }}
+          </h3>
+          <v-list class="pa-0 bg-transparent">
+            <v-list-item
+              v-for="addon in product.addons"
+              :key="addon.id"
+              class="addon-list-item px-0 mb-2"
+            >
+              <template v-slot:prepend>
+                <v-checkbox
+                  v-model="selectedAddonIds"
+                  :value="addon.id"
+                  color="primary"
+                  hide-details
+                  density="compact"
+                  :data-cy="'addon-checkbox-' + addon.id"
+                ></v-checkbox>
+              </template>
+              <v-list-item-title class="font-weight-medium">{{ addon.name }}</v-list-item-title>
+              <template v-slot:append>
+                <span class="text-body-2 font-weight-bold text-primary">+ {{ formatPrice(addon.price) }}</span>
+              </template>
+            </v-list-item>
+          </v-list>
+        </div>
         
-        <v-card-actions class="quantity-controls">
-          <v-btn @click="quantity > 1 ? quantity-- : null" icon data-cy="decrease-quantity">
-            <v-icon>mdi-minus</v-icon>
-          </v-btn>
-          <span class="mx-2" data-cy="quantity-display">{{ quantity }}</span>
-          <v-btn @click="quantity++" icon data-cy="increase-quantity">
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </v-card-actions>
+        <div class="d-flex align-center justify-center mb-8 bg-grey-lighten-4 rounded-pill pa-2 mx-auto" style="max-width: 160px;">
+          <v-btn @click="quantity > 1 ? quantity-- : null" icon="mdi-minus" variant="text" size="small" data-cy="decrease-quantity"></v-btn>
+          <span class="mx-6 font-weight-black text-h6" data-cy="quantity-display">{{ quantity }}</span>
+          <v-btn @click="quantity++" icon="mdi-plus" variant="text" size="small" data-cy="increase-quantity"></v-btn>
+        </div>
         
-        <v-card-actions>
-          <v-btn
-            color="primary"
-            @click="addToCart"
-            block
-            data-cy="add-to-cart"
-          >
-            {{ $t('cart.add_to_cart') }} (${{ totalPrice.toFixed(2) }})
-          </v-btn>
-        </v-card-actions>
+        <v-btn
+          color="primary"
+          @click="addToCart"
+          block
+          size="x-large"
+          rounded="pill"
+          elevation="8"
+          class="font-weight-bold add-to-cart-btn"
+          data-cy="add-to-cart"
+          :loading="adding"
+        >
+          <v-icon icon="mdi-cart-plus" class="mr-2"></v-icon>
+          {{ $t('cart.add_to_cart', 'Adicionar ao Carrinho') }}
+          <v-spacer></v-spacer>
+          {{ formatPrice(totalPrice) }}
+        </v-btn>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -72,7 +97,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useCartStore } from '../stores/cart'
+import { useCartStore } from '@/stores/cart'
 
 const props = defineProps({
   product: {
@@ -81,15 +106,26 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'added'])
 
 const cart = useCartStore()
 const quantity = ref(1)
-const selectedAddons = ref([])
+const selectedAddonIds = ref([])
 const showModal = ref(true)
+const adding = ref(false)
+
+const resolveImageUrl = (path) => {
+  if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+  if (path.startsWith('http')) return path
+  return `/storage/${path}`
+}
+
+const formatPrice = (value) => {
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0)
+}
 
 const totalPrice = computed(() => {
-  const addonsTotal = selectedAddons.value.reduce((sum, addonId) => {
+  const addonsTotal = selectedAddonIds.value.reduce((sum, addonId) => {
     const addon = props.product.addons?.find(a => a.id === addonId)
     return sum + (addon?.price || 0)
   }, 0)
@@ -97,48 +133,56 @@ const totalPrice = computed(() => {
 })
 
 const addToCart = () => {
-  const addons = selectedAddons.value.map(addonId => 
+  adding.value = true
+  const addons = selectedAddonIds.value.map(addonId => 
     props.product.addons.find(a => a.id === addonId)
   ).filter(Boolean)
 
   const item = {
     ...props.product,
-    selectedAddons: addons
+    selectedAddons: addons,
+    quantity: quantity.value
   }
-  for (let i = 0; i < quantity.value; i++) {
-    cart.addItem(item)
-  }
-  emit('close')
+  
+  cart.addItem(item)
+  
+  setTimeout(() => {
+    adding.value = false
+    emit('added')
+    emit('close')
+  }, 500)
 }
 </script>
 
 <style scoped>
-.addons-section {
-  margin: 1rem 0;
-  border-top: 1px solid #eee;
-  padding-top: 1rem;
+.product-details-card {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
 }
 
-.addons-section h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+.image-wrapper {
+  position: relative;
 }
 
-.addon-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin: 0.5rem 0;
+.close-btn {
+  border-radius: 12px !important;
+  opacity: 0.9;
 }
 
-.addon-item input[type="checkbox"] {
-  margin-right: 0.5rem;
+.close-btn:hover {
+  opacity: 1;
 }
 
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem 0;
+.addon-list-item {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.add-to-cart-btn {
+    text-transform: none;
+    letter-spacing: 0;
+    transition: all 0.3s ease;
+}
+
+.add-to-cart-btn:hover {
+    transform: scale(1.02);
 }
 </style>

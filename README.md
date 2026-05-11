@@ -24,7 +24,7 @@ O TODOKE é uma plataforma inovadora de gerenciamento de entregas projetada para
 erDiagram
     USER ||--o{ DELIVERY : "cliente/entregador"
     USER ||--o{ REGION : "parceiro"
-    USER ||--o{ PRODUCT : "restaurante"
+    USER ||--o{ PRODUCT : "parceiro/restaurante"
     DELIVERY ||--o{ RATING : "avaliações"
     DELIVERY ||--|{ ORDER : "entrega"
     ORDER ||--o{ PRODUCT : "itens"
@@ -36,7 +36,7 @@ erDiagram
 - **RoleUser**: Roles secundárias (multirole: um usuário pode ser partner + customer)
 - **Delivery**: Solicitações de entrega com status, origem/destino, etc.
 - **Region**: Áreas geográficas de operação
-- **Product**: Itens do cardápio de restaurantes
+- **Product**: Itens do cardápio de parceiros (restaurantes, lojas)
 - **Order**: Pedidos de produtos com status
 
 ## API REST

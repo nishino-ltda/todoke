@@ -43,7 +43,7 @@
     </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-4">
-      <v-container fluid class="pa-6">
+      <v-container fluid class="pa-8">
         <slot />
       </v-container>
       <NotificationCenter />

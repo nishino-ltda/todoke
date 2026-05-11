@@ -17,11 +17,11 @@
       <v-row>
         <v-col cols="12" md="8">
           <v-card class="mb-6" elevation="1">
-            <v-card-title class="pa-6 pb-0">
+            <v-card-title class="pa-8 pb-0">
               <v-icon start color="primary">mdi-cog</v-icon>
               {{ t('admin.settings.general') }}
             </v-card-title>
-            <v-card-text class="pa-6">
+            <v-card-text class="pa-8">
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field
@@ -79,11 +79,11 @@
           </v-card>
 
           <v-card elevation="1">
-            <v-card-title class="pa-6 pb-0">
+            <v-card-title class="pa-8 pb-0">
               <v-icon start color="primary">mdi-cash-multiple</v-icon>
               {{ t('admin.settings.fees') }}
             </v-card-title>
-            <v-card-text class="pa-6">
+            <v-card-text class="pa-8">
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field

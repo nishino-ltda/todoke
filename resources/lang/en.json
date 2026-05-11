@@ -53,6 +53,7 @@
             "password_match": "Password confirmation does not match",
             "general_error": "Validation failed",
             "cpf_format": "CPF must be in format 000.000.000-00",
+            "cnpj_format": "CNPJ must be in format 00.000.000/0000-00",
             "phone_format": "Phone must be in format (00) 0000-0000 or (00) 90000-0000"
         },
         "errors": {
@@ -128,19 +129,34 @@
             "locate_me": "Locate Me",
             "view_details": "View Details",
             "your_location": "Your Location"
+        },
+        "dashboard": {
+            "subtitle": "What shall we order today?",
+            "categories": "Categories",
+            "nearby_partners": "Near You",
+            "locate_me": "Update Location",
+            "show_nearby": "See Partners on Map",
+            "recommended": "Recommended for You",
+            "view_all": "View all",
+            "no_products": "No products found",
+            "no_products_hint": "Try changing the category or searching for another term.",
+            "recent_orders": "Order again?"
         }
     },
     "menu": {
-        "title": "Customer Menu",
+        "title": "Explore Menu",
         "subtitle": "Browse available products",
-        "search_placeholder": "Search products",
+        "search_placeholder": "Search dishes or restaurants...",
         "no_products": "No products found matching your search.",
         "categories": "Categories",
         "loading": "Loading menu...",
         "error_title": "Unable to load menu",
         "retry": "Try Again",
         "not_found": "Partner not found",
-        "partner_type": "Partner"
+        "partner_type": "Partner",
+        "view_list": "List",
+        "view_map": "Map",
+        "filters": "Filters"
     },
     "cart": {
         "title": "Your Cart",

@@ -252,6 +252,7 @@
               variant="outlined"
               density="comfortable"
               data-cy="tax-id-input"
+              @input="form.tax_id = maskCNPJ($event.target.value)"
             ></v-text-field>
           </v-col>
 
@@ -320,8 +321,10 @@ import { router } from '@inertiajs/vue3'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useLogStore } from '@/stores/log'
+import { useMasks } from '@/composables/useMasks'
 
 const { t } = useI18n()
+const { maskPhone, maskCPF, maskCNPJ, validateCPF, validateCNPJ } = useMasks()
 const logStoreInstance = useLogStore();
 logStoreInstance.log('😎 AuthForm component initialized.');
 
@@ -370,26 +373,6 @@ onMounted(() => {
   }
 })
 
-const maskCPF = (val) => {
-  if (!val) return ''
-  let v = val.replace(/\D/g, '')
-  if (v.length > 11) v = v.substring(0, 11)
-  if (v.length <= 3) return v
-  if (v.length <= 6) return `${v.substring(0, 3)}.${v.substring(3)}`
-  if (v.length <= 9) return `${v.substring(0, 3)}.${v.substring(3, 6)}.${v.substring(6)}`
-  return `${v.substring(0, 3)}.${v.substring(3, 6)}.${v.substring(6, 9)}-${v.substring(9)}`
-}
-
-const maskPhone = (val) => {
-  if (!val) return ''
-  let v = val.replace(/\D/g, '')
-  if (v.length > 11) v = v.substring(0, 11)
-  if (v.length <= 2) return v
-  if (v.length <= 6) return `(${v.substring(0, 2)}) ${v.substring(2)}`
-  if (v.length <= 10) return `(${v.substring(0, 2)}) ${v.substring(2, 6)}-${v.substring(6)}`
-  return `(${v.substring(0, 2)}) ${v.substring(2, 7)}-${v.substring(7)}`
-}
-
   const form = ref({
     email: '',
     password: '',
@@ -423,15 +406,17 @@ const loading = computed(() => authStore.loading)
       v => !!v || t('auth.validation.required', { field: t('auth.form.phone') }),
       v => {
         if (!v) return true
-        if (!/^\(\d{2}\) [5-9]\d{3,4}-\d{4}$/.test(v)) {
-          return t('auth.validation.phone_format')
-        }
-        return true
+        const digits = v.replace(/\D/g, '')
+        return (digits.length >= 10 && digits.length <= 11) || t('auth.validation.phone_format')
       }
     ],
     cpf: [
       v => !!v || t('auth.validation.required', { field: t('auth.form.cpf') }),
-      v => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(v) || t('auth.validation.cpf_format')
+      v => validateCPF(v) || t('auth.validation.cpf_format')
+    ],
+    tax_id: [
+      v => !!v || t('auth.validation.required', { field: t('auth.form.tax_id') }),
+      v => validateCNPJ(v) || t('auth.validation.cnpj_format')
     ],
   password: [
     v => !!v || t('auth.validation.required', { field: t('auth.form.password') }),

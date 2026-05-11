@@ -27,7 +27,7 @@ class UserController extends Controller
             'email' => $user->email,
             'phone' => $user->phone,
             'type' => $user->type,
-            'photoUrl' => $user->fotoUrl ?? null,
+            'photoUrl' => $user->photoUrl ?? null,
             'status' => $user->status,
             'all_roles' => $user->allRoles(),
         ]);
@@ -46,6 +46,7 @@ class UserController extends Controller
             'email' => 'sometimes|string|email|max:255|unique:users,email,'.$request->user()->id,
             'phone' => 'sometimes|string|max:20',
             'photoUrl' => 'sometimes|nullable|string|max:255',
+            'photo' => 'sometimes|nullable|image|max:2048',
             'license_number' => 'sometimes|string|max:50',
             'vehicle_type' => 'sometimes|string|in:motorcycle,car,bicycle',
             'business_name' => 'sometimes|string|max:255',
@@ -55,10 +56,21 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
+        Log::info('API Profile update initiated for user: ' . $user->email, $request->except(['photo']));
 
         $originalEmail = $user->email;
         $allowed = array_filter(['name', 'email', 'phone', 'photoUrl', 'license_number', 'vehicle_type', 'business_name', 'business_type', 'tax_id', 'address'], fn($f) => $request->has($f));
-        $user->update($request->only($allowed));
+        
+        $data = $request->only($allowed);
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('profiles', 'public');
+            $data['photoUrl'] = $path;
+            Log::info('API Profile photo uploaded: ' . $path);
+        }
+
+        $user->update($data);
+        Log::info('API Profile updated successfully for user: ' . $user->email);
 
         // Reset email verification if email changed
         if ($request->has('email') && $originalEmail !== $request->email) {

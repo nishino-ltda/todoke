@@ -1,6 +1,6 @@
 <template>
   <AdminLayout>
-    <div class="deliveries-monitoring pa-6" data-cy="deliveries-monitoring">
+    <div class="deliveries-monitoring pa-8" data-cy="deliveries-monitoring">
       <h1 class="text-h4 mb-6">{{ t('admin.deliveries.title', 'Delivery Monitoring') }}</h1>
       
       <v-row class="mb-6">

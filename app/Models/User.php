@@ -43,6 +43,13 @@ class User extends Authenticatable implements CanResetPassword
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['all_roles'];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
@@ -163,6 +170,14 @@ class User extends Authenticatable implements CanResetPassword
             $roles[] = $record->role;
         }
         return array_unique($roles);
+    }
+
+    /**
+     * Accessor for all_roles attribute.
+     */
+    public function getAllRolesAttribute(): array
+    {
+        return $this->allRoles();
     }
 
     public function addRole(string $role): void

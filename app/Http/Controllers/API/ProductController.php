@@ -39,28 +39,39 @@ class ProductController extends Controller
 
     public function partnerStore(Request $request)
     {
+        $user = $request->user();
+        Log::info('API Product creation initiated by partner: ' . $user->email, $request->except(['image']));
+
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'category' => 'required|string|max:255',
-            'image' => 'nullable|string|max:2048',
+            'image' => 'nullable|image|max:2048',
             'available' => 'sometimes|boolean',
         ]);
 
+        $imageUrl = null;
+        if ($request->hasFile('image')) {
+            $imageUrl = $request->file('image')->store('products', 'public');
+            Log::info('API Product image uploaded: ' . $imageUrl);
+        }
+
         $product = Product::create([
-            'partner_id' => $request->user()->id,
+            'partner_id' => $user->id,
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'category' => $request->category,
-            'imageUrl' => $request->image,
+            'imageUrl' => $imageUrl,
             'status' => $request->has('available') ? ($request->available ? 'available' : 'unavailable') : 'available',
         ]);
 
         if ($request->has('addon_ids')) {
             $product->addons()->sync($request->addon_ids);
         }
+
+        Log::info('API Product created successfully: ' . $product->id);
 
         $product->load('addons');
 
@@ -73,19 +84,25 @@ class ProductController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        $user = $request->user();
+        Log::info('API Product update initiated by partner: ' . $user->email . ' for product: ' . $product->id, $request->except(['image']));
+
         $request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
             'category' => 'sometimes|string|max:255',
-            'image' => 'nullable|string|max:2048',
+            'image' => 'nullable|image|max:2048',
             'available' => 'sometimes|boolean',
         ]);
 
         $data = $request->only(['name', 'description', 'price', 'category']);
-        if ($request->has('image')) {
-            $data['imageUrl'] = $request->image;
+        
+        if ($request->hasFile('image')) {
+            $data['imageUrl'] = $request->file('image')->store('products', 'public');
+            Log::info('API Product image updated: ' . $data['imageUrl']);
         }
+
         if ($request->has('available')) {
             $data['status'] = $request->available ? 'available' : 'unavailable';
         }
@@ -95,6 +112,8 @@ class ProductController extends Controller
         if ($request->has('addon_ids')) {
             $product->addons()->sync($request->addon_ids);
         }
+
+        Log::info('API Product updated successfully: ' . $product->id);
 
         $product->load('addons');
 
@@ -147,6 +166,7 @@ class ProductController extends Controller
                     'description' => $product->description,
                     'price' => $product->price,
                     'category' => $product->category,
+                    'image' => $product->imageUrl,
                     'status' => $product->status,
                     'partner' => $product->partner->name
                 ];

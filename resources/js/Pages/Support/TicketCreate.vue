@@ -3,7 +3,7 @@
     <div data-cy="support-ticket-create">
       <h1 class="text-h4 mb-6">{{ t('support.create.title') }}</h1>
 
-      <v-card border elevation="0" class="pa-6">
+      <v-card border elevation="0" class="pa-8">
         <v-form @submit.prevent="submit" v-model="isValid">
           <v-text-field
             v-model="form.subject"

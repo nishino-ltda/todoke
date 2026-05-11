@@ -48,7 +48,7 @@ describe('🔑 Login Flow', () => {
 
     // Test form validation
     cy.log('🔍 Verifying required field validation');
-    cy.get('[data-test="login-button"]').click();
+    cy.get('[data-cy*="login-button"]').click();
     
     // Expect validation errors (this is the expected behavior)
     cy.on('uncaught:exception', (err) => {
@@ -58,13 +58,13 @@ describe('🔑 Login Flow', () => {
 
     // Test successful login flow
     cy.log('✅ Testing successful customer login');
-    cy.get('[data-test="email-input"]').type(customer.email);
-    cy.get('[data-test="password-input"]').type(customer.password);
-    cy.get('[data-test="login-button"]').click();
+    cy.get('[data-cy*="email-input"]').type(customer.email);
+    cy.get('[data-cy*="password-input"]').type(customer.password);
+    cy.get('[data-cy*="login-button"]').click();
 
     // Verify successful login and redirect  
     cy.url().should('include', '/customer/dashboard', { timeout: 20000 });
-    cy.get('[data-test="customer-dashboard"]').should('contain', 'Customer Dashboard');
+    cy.get('[data-cy*="customer-dashboard"]').should('contain', 'Customer Dashboard');
   });
 
   // SPRINT 1: Core authentication testing  
@@ -87,15 +87,15 @@ describe('🔑 Login Flow', () => {
 
     // Fill and submit form
     cy.log('📝 Filling login form');
-    cy.get('[data-test="email-input"]').type(courier.email);
-    cy.get('[data-test="password-input"]').type(courier.password);
-    cy.get('[data-test="login-button"]').click();
+    cy.get('[data-cy*="email-input"]').type(courier.email);
+    cy.get('[data-cy*="password-input"]').type(courier.password);
+    cy.get('[data-cy*="login-button"]').click();
 
     // Verify successful login and redirect  
     cy.log('❔ Verifying successful login and redirect');
     // Wait for redirect after login
     cy.url().should('include', '/courier/dashboard', { timeout: 20000 });
-    cy.get('[data-test="courier-dashboard"]').should('contain', 'Courier Dashboard');
+    cy.get('[data-cy*="courier-dashboard"]').should('contain', 'Courier Dashboard');
 
     // Verify successful login
     cy.log('✅ Login successful');
@@ -121,15 +121,15 @@ describe('🔑 Login Flow', () => {
 
     // Fill and submit form
     cy.log('📝 Filling login form');
-    cy.get('[data-test="email-input"]').type(partner.email);
-    cy.get('[data-test="password-input"]').type(partner.password);
-    cy.get('[data-test="login-button"]').click();
+    cy.get('[data-cy*="email-input"]').type(partner.email);
+    cy.get('[data-cy*="password-input"]').type(partner.password);
+    cy.get('[data-cy*="login-button"]').click();
 
     // Verify successful login and redirect
     cy.log('❔ Verifying successful login and redirect');
     // Wait for redirect after login
     cy.url().should('include', '/partner/dashboard', { timeout: 20000 });
-    cy.get('[data-testid="partner-welcome"]').should('contain', 'Partner Dashboard');
+    cy.get('[data-cyid="partner-welcome"]').should('contain', 'Partner Dashboard');
 
     // Verify successful login
     cy.log('✅ Login successful');
@@ -155,15 +155,15 @@ describe('🔑 Login Flow', () => {
 
     // Fill and submit form
     cy.log('📝 Filling login form');
-    cy.get('[data-test="email-input"]').type(admin.email);
-    cy.get('[data-test="password-input"]').type(admin.password);
-    cy.get('[data-test="login-button"]').click();
+    cy.get('[data-cy*="email-input"]').type(admin.email);
+    cy.get('[data-cy*="password-input"]').type(admin.password);
+    cy.get('[data-cy*="login-button"]').click();
 
     // Verify successful login and redirect
     cy.log('❔ Verifying successful login and redirect');
     // Wait for redirect after login
     cy.url().should('include', '/admin/dashboard', { timeout: 10000 });
-    cy.get('[data-testid="admin-welcome"]').should('contain', 'Admin Dashboard');
+    cy.get('[data-cyid="admin-welcome"]').should('contain', 'Admin Dashboard');
 
     // Verify successful login
     cy.log('✅ Login successful');
@@ -194,10 +194,10 @@ describe('🔑 Login Flow', () => {
     // Test wrong password
     cy.log('🔑 Testing wrong password');
     cy.visit('/login');
-    cy.get('[data-test="email-input"]').type(validUser.email);
-    cy.get('[data-test="password-input"]').type('wrongpassword');
-    cy.get('[data-test="login-button"]').click();
-    cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible')
+    cy.get('[data-cy*="email-input"]').type(validUser.email);
+    cy.get('[data-cy*="password-input"]').type('wrongpassword');
+    cy.get('[data-cy*="login-button"]').click();
+    cy.get('[data-cy*="auth-alert"]', { timeout: 10000 }).should('be.visible')
       .should('contain', 'The provided credentials are incorrect');
 
     // Verify failed login shows expected error
@@ -209,33 +209,33 @@ describe('🔑 Login Flow', () => {
       }
       return true; // let other errors fail the test
     });
-    cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible');
+    cy.get('[data-cy*="auth-alert"]', { timeout: 10000 }).should('be.visible');
 
     // Test nonexistent account
     cy.log('👤 Testing nonexistent account');
-    cy.get('[data-test="email-input"]').find('input').clear();
-    cy.get('[data-test="email-input"]').find('input').type(invalidUser.email);
-    cy.get('[data-test="password-input"]').find('input').clear();
-    cy.get('[data-test="password-input"]').find('input').type(invalidUser.password);
-    cy.get('[data-test="login-button"]').click();
-    cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible')
+    cy.get('[data-cy*="email-input"]').find('input').clear();
+    cy.get('[data-cy*="email-input"]').find('input').type(invalidUser.email);
+    cy.get('[data-cy*="password-input"]').find('input').clear();
+    cy.get('[data-cy*="password-input"]').find('input').type(invalidUser.password);
+    cy.get('[data-cy*="login-button"]').click();
+    cy.get('[data-cy*="auth-alert"]', { timeout: 10000 }).should('be.visible')
       .should('contain', 'The provided credentials are incorrect');
 
     // Test locked account
     cy.log('🔒 Testing locked account');
-    cy.get('[data-test="email-input"]').find('input').clear().type('locked@todoke.test');
-    cy.get('[data-test="password-input"]').find('input').clear().type(validUser.password);
-    cy.get('[data-test="login-button"]').click();
+    cy.get('[data-cy*="email-input"]').find('input').clear().type('locked@todoke.test');
+    cy.get('[data-cy*="password-input"]').find('input').clear().type(validUser.password);
+    cy.get('[data-cy*="login-button"]').click();
     
     // Debug the alert element
-    cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible').then(($alert) => {
+    cy.get('[data-cy*="auth-alert"]', { timeout: 10000 }).should('be.visible').then(($alert) => {
       cy.log('Alert text content:', $alert.text());
       cy.log('Alert visibility:', $alert.is(':visible'));
       cy.log('Alert classes:', $alert.attr('class'));
     });
     
     // Verify error message in UI (handles both English and Portuguese)
-    cy.get('[data-test="auth-alert"]', { timeout: 10000 }).should('be.visible')
+    cy.get('[data-cy*="auth-alert"]', { timeout: 10000 }).should('be.visible')
       .should('contain', 'Account locked. Please contact support.');
 
     // Skip rate limiting test to avoid triggering application errors
@@ -272,13 +272,13 @@ describe('🔑 Login Flow', () => {
 
     // Test form usability with more robust selectors
     cy.log(' Testing form usability');
-    cy.get('[data-test="email-input"]', { timeout: 3000 })
+    cy.get('[data-cy*="email-input"]', { timeout: 3000 })
       .should('be.visible')
       .click()
       .find('input')
       .clear()
       .type(user.email);
-    cy.get('[data-test="password-input"]', { timeout: 3000 })
+    cy.get('[data-cy*="password-input"]', { timeout: 3000 })
       .should('be.visible')
       .click()
       .find('input')
@@ -286,9 +286,9 @@ describe('🔑 Login Flow', () => {
       .type(user.password);
 
     // Verify form elements are properly filled
-    cy.get('[data-test="email-input"] input', { timeout: 3000 })
+    cy.get('[data-cy*="email-input"] input', { timeout: 3000 })
       .should('have.value', user.email);
-    cy.get('[data-test="password-input"] input', { timeout: 3000 })
+    cy.get('[data-cy*="password-input"] input', { timeout: 3000 })
       .should('have.value', user.password);
   });
 });

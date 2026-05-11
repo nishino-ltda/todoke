@@ -20,8 +20,12 @@
         data-cy="products-table"
       >
         <template #item.image="{ item }">
-          <v-avatar size="40" class="mr-2">
-            <v-img :src="item.image || '/images/placeholder-food.jpg'"></v-img>
+          <v-avatar size="40" rounded="lg" class="mr-2 elevation-1">
+            <v-img :src="resolveImageUrl(item.image)">
+              <template v-slot:placeholder>
+                <v-icon icon="mdi-food" size="small"></v-icon>
+              </template>
+            </v-img>
           </v-avatar>
         </template>
 
@@ -102,12 +106,30 @@
               ></v-textarea>
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="form.image"
-                :label="t('partner.products.image_url')"
-                placeholder="https://..."
-                data-cy="product-image-input"
-              ></v-text-field>
+              <div class="mb-2">
+                <label class="v-label d-block mb-1">{{ t('partner.products.image') }}</label>
+                <div class="d-flex align-center gap-4">
+                  <v-avatar size="80" rounded="lg" class="elevation-1">
+                    <v-img :src="imagePreview || resolveImageUrl(form.image)" cover>
+                      <template v-slot:placeholder>
+                        <v-icon icon="mdi-food"></v-icon>
+                      </template>
+                    </v-img>
+                  </v-avatar>
+                  <v-file-input
+                    v-model="imageFile"
+                    :label="t('partner.products.select_image')"
+                    accept="image/*"
+                    prepend-icon="mdi-camera"
+                    variant="outlined"
+                    density="compact"
+                    hide-details
+                    @change="handleImageChange"
+                    class="flex-grow-1"
+                    data-cy="product-image-file"
+                  ></v-file-input>
+                </div>
+              </div>
             </v-col>
             <v-col cols="12">
               <v-select
@@ -163,6 +185,26 @@ const isEditing = ref(false);
 const selectedProduct = ref(null);
 const productForm = ref(null);
 const availableAddons = ref([]);
+const imageFile = ref(null);
+const imagePreview = ref(null);
+
+const resolveImageUrl = (path) => {
+  if (!path) return null;
+  if (path.startsWith('http')) return path;
+  return `/storage/${path}`;
+};
+
+const handleImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    imageFile.value = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.value = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
 const categories = ['Pizza', 'Burger', 'Dessert', 'Drinks', 'Sushi'];
 
@@ -229,17 +271,43 @@ const saveProduct = async () => {
 
   saving.value = true;
   try {
+    const formData = new FormData();
+    formData.append('name', form.value.name);
+    formData.append('price', form.value.price);
+    formData.append('category', form.value.category);
+    formData.append('description', form.value.description || '');
+    formData.append('available', form.value.available ? 1 : 0);
+    
+    if (imageFile.value) {
+      formData.append('image', imageFile.value);
+    }
+    
+    // Addons
+    if (form.value.addon_ids && form.value.addon_ids.length) {
+      form.value.addon_ids.forEach((id, index) => {
+        formData.append(`addon_ids[${index}]`, id);
+      });
+    }
+
     if (isEditing.value) {
-      await partnerService.updateProduct(selectedProduct.value.id, form.value);
+      formData.append('_method', 'PUT');
+      await api.post(`/partner/products/${selectedProduct.value.id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       notifications.success(t('partner.products.success.updated'));
     } else {
-      await partnerService.createProduct(form.value);
+      await api.post('/partner/products', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       notifications.success(t('partner.products.success.created'));
     }
     showFormModal.value = false;
+    imageFile.value = null;
+    imagePreview.value = null;
     fetchProducts();
   } catch (err) {
     notifications.error(t('partner.products.error.save'));
+    console.error(err);
   } finally {
     saving.value = false;
   }

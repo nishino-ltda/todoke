@@ -1,7 +1,7 @@
 <template>
   <CustomerLayout>
-    <div data-cy="customer-checkout" class="pa-6">
-      <v-row v-if="!isAuthenticated" class="justify-center pa-6">
+    <div data-cy="customer-checkout" class="pa-8">
+      <v-row v-if="!isAuthenticated" class="justify-center pa-8">
         <v-col cols="12" md="6" class="text-center">
           <v-icon color="grey" size="64">mdi-account-lock-outline</v-icon>
           <h2 class="text-h5 mt-4">{{ $t('checkout.login_required_title') }}</h2>
@@ -25,7 +25,7 @@
         </v-col>
       </v-row>
 
-      <v-row v-else-if="cartStore.items.length === 0" class="justify-center pa-6">
+      <v-row v-else-if="cartStore.items.length === 0" class="justify-center pa-8">
         <v-col cols="12" md="6" class="text-center">
           <v-icon color="grey" size="64">mdi-cart-off</v-icon>
           <h2 class="text-h5 mt-4">{{ $t('checkout.empty_cart_title') }}</h2>

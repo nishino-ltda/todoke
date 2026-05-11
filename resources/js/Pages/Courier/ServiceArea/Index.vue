@@ -17,7 +17,7 @@
       </v-col>
 
       <v-col cols="12" md="3">
-        <v-card border elevation="0" class="rounded-xl pa-6 bg-white">
+        <v-card border elevation="0" class="rounded-xl pa-8 bg-white">
           <h3 class="text-h6 font-weight-bold mb-4">{{ t('courier.service_area.settings', 'Settings') }}</h3>
           
           <v-form @submit.prevent="submit">

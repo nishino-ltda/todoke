@@ -1,27 +1,30 @@
 <template>
-  <v-container data-cy="product-list-container">
-    <v-row class="mb-4">
+  <v-container data-cy="product-list-container" class="pa-0">
+    <v-row v-if="showSearch" class="mb-4 px-4">
       <v-col cols="12">
         <v-text-field
           v-model="searchQuery"
           :label="$t('menu.search_placeholder')"
           prepend-inner-icon="mdi-magnify"
           clearable
-          outlined
-          dense
+          variant="solo"
+          flat
+          rounded="pill"
           hide-details
           data-cy="product-search"
+          class="elevation-1"
         ></v-text-field>
       </v-col>
     </v-row>
     
     <v-row v-if="filteredProducts.length === 0" class="mt-4">
       <v-col cols="12" class="text-center">
-        <p>{{ $t('menu.no_products') }}</p>
+        <v-icon icon="mdi-magnify-close" size="64" color="grey"></v-icon>
+        <p class="mt-2 text-grey">{{ $t('menu.no_products') }}</p>
       </v-col>
     </v-row>
     
-    <v-row data-cy="product-list-row">
+    <v-row data-cy="product-list-row" class="pa-2">
       <v-col 
         v-for="product in filteredProducts"
         :key="product.id"
@@ -31,6 +34,7 @@
         <ProductCard 
           :product="product"
           @product-clicked="handleProductClicked"
+          @add-to-cart="handleAddToCart"
           data-cy="product-card"
         />
       </v-col>
@@ -47,10 +51,14 @@ const props = defineProps({
     type: Array,
     required: true,
     default: () => []
+  },
+  showSearch: {
+    type: Boolean,
+    default: false
   }
 })
 
-const emit = defineEmits(['product-clicked'])
+const emit = defineEmits(['product-clicked', 'add-to-cart'])
 const searchQuery = ref('')
 
 const filteredProducts = computed(() => {
@@ -65,5 +73,9 @@ const filteredProducts = computed(() => {
 
 const handleProductClicked = (product) => {
   emit('product-clicked', product)
+}
+
+const handleAddToCart = (product) => {
+  emit('add-to-cart', product)
 }
 </script>

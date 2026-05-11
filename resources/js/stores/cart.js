@@ -23,7 +23,8 @@ export const useCartStore = defineStore('cart', () => {
     }
   })
 
-  const count = computed(() => items.value.length)
+  const count = computed(() => items.value.reduce((sum, item) => sum + (item.quantity || 0), 0))
+  
   const total = computed(() =>
     items.value.reduce((sum, item) => {
       const addonsPrice = (item.selectedAddons || []).reduce((addonSum, addon) => {
@@ -42,12 +43,15 @@ export const useCartStore = defineStore('cart', () => {
       item.id === product.id &&
       JSON.stringify(item.selectedAddons) === JSON.stringify(product.selectedAddons)
     )
+    
+    const qtyToAdd = product.quantity || 1
+
     if (existing) {
-      existing.quantity++
+      existing.quantity += qtyToAdd
     } else {
       items.value.push({
         ...product,
-        quantity: 1,
+        quantity: qtyToAdd,
         selectedAddons: product.selectedAddons || []
       })
     }
@@ -80,6 +84,13 @@ export const useCartStore = defineStore('cart', () => {
     items.value = []
   }
 
+  function reorder(orderItems) {
+    // orderItems should be an array of products/items
+    orderItems.forEach(item => {
+        addItem(item)
+    })
+  }
+
   async function submitOrder(orderData) {
     try {
       const response = await fetch('/api/v1/orders', {
@@ -95,13 +106,11 @@ export const useCartStore = defineStore('cart', () => {
       const data = await response.json();
       
       if (!response.ok) {
-        // If we have validation errors
         if (response.status === 422 && data.errors) {
           const error = new Error('Validation failed');
           error.response = { data };
           throw error;
         }
-        
         throw new Error(data.message || 'Failed to submit order');
       }
       
@@ -124,6 +133,7 @@ export const useCartStore = defineStore('cart', () => {
     decrementQuantity,
     removeItem,
     clearCart,
+    reorder,
     submitOrder,
   }
 })

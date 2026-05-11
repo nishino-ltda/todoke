@@ -53,6 +53,7 @@
             "password_match": "Confirmação de senha não confere",
             "general_error": "Falha na validação",
             "cpf_format": "CPF deve estar no formato 000.000.000-00",
+            "cnpj_format": "CNPJ deve estar no formato 00.000.000/0000-00",
             "phone_format": "Telefone deve estar no formato (00) 0000-0000 ou (00) 90000-0000"
         },
         "errors": {
@@ -128,19 +129,34 @@
             "locate_me": "Me Localizar",
             "view_details": "Ver Detalhes",
             "your_location": "Sua Localização"
+        },
+        "dashboard": {
+            "subtitle": "O que vamos pedir hoje?",
+            "categories": "Categorias",
+            "nearby_partners": "Perto de Você",
+            "locate_me": "Atualizar Localização",
+            "show_nearby": "Ver Parceiros no Mapa",
+            "recommended": "Recomendados para Você",
+            "view_all": "Ver tudo",
+            "no_products": "Nenhum produto encontrado",
+            "no_products_hint": "Tente trocar a categoria ou buscar outro termo.",
+            "recent_orders": "Pedir de novo?"
         }
     },
     "menu": {
-        "title": "Menu do Cliente",
+        "title": "Explorar Cardápio",
         "subtitle": "Explore os produtos disponíveis",
-        "search_placeholder": "Buscar produtos",
+        "search_placeholder": "Buscar pratos ou restaurantes...",
         "no_products": "Nenhum produto encontrado para sua busca.",
         "categories": "Categorias",
         "loading": "Carregando cardápio...",
         "error_title": "Não foi possível carregar o cardápio",
         "retry": "Tentar Novamente",
         "not_found": "Parceiro não encontrado",
-        "partner_type": "Parceiro"
+        "partner_type": "Parceiro",
+        "view_list": "Lista",
+        "view_map": "Mapa",
+        "filters": "Filtros"
     },
     "cart": {
         "title": "Seu Carrinho",
