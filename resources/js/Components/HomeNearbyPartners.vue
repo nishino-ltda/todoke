@@ -54,7 +54,7 @@
           :key="product.id" 
           cols="12" sm="6" md="4" lg="3"
         >
-          <v-card class="product-card h-100 rounded-lg" elevation="1" hover>
+          <v-card class="product-card h-100 rounded-lg" elevation="1" hover @click="viewProduct(product)">
             <v-img
               :src="resolveImageUrl(product.image)"
               height="200"
@@ -89,13 +89,14 @@
                 variant="tonal"
                 color="primary"
                 block
-                @click="viewProduct(product)"
+                @click.stop="viewProduct(product)"
                 data-cy="view-product-btn"
               >
                 {{ t('home.nearby.view_details', 'Ver Detalhes') }}
               </v-btn>
             </v-card-actions>
           </v-card>
+
         </v-col>
       </v-row>
       
