@@ -25,18 +25,25 @@ export const useCartStore = defineStore('cart', () => {
 
   const count = computed(() => items.value.reduce((sum, item) => sum + (item.quantity || 0), 0))
   
-  const total = computed(() =>
-    items.value.reduce((sum, item) => {
-      const addonsPrice = (item.selectedAddons || []).reduce((addonSum, addon) => {
-        return addonSum + (addon.price || 0)
-      }, 0)
-      return sum + ((item.price + addonsPrice) * item.quantity)
-    }, 0)
-  )
-
+  const total = ref(0)
   const subtotal = computed(() => total.value)
-  const deliveryFee = computed(() => 5.00)
-  const totalWithDelivery = computed(() => subtotal.value + deliveryFee.value)
+  const deliveryFee = ref(5.00)
+  const totalWithDelivery = computed(() => total.value + deliveryFee.value)
+
+  watchEffect(() => {
+    let sum = 0
+    items.value.forEach(item => {
+      let itemPrice = Number(item.price || 0)
+      let addonsPrice = 0
+      if (item.selectedAddons && Array.isArray(item.selectedAddons)) {
+        item.selectedAddons.forEach(addon => {
+          addonsPrice += Number(addon.price || 0)
+        })
+      }
+      sum += (itemPrice + addonsPrice) * Number(item.quantity || 1)
+    })
+    total.value = sum
+  })
 
   function addItem(product) {
     const existing = items.value.find(item =>

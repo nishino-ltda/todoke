@@ -3,7 +3,7 @@ export function useCurrency(locale = 'pt-BR') {
     return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: 'BRL',
-    }).format(value || 0)
+    }).format(Number(value || 0))
   }
 
   return { formatCurrency }

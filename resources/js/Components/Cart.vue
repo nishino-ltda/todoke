@@ -122,12 +122,12 @@ defineEmits(['close'])
 const cartStore = useCartStore()
 
 function formatPrice(value) {
-  return `R$ ${(value || 0).toFixed(2)}`
+  return `R$ ${Number(value || 0).toFixed(2)}`
 }
 
 function getItemSubtotal(item) {
-  const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => sum + (addon.price || 0), 0)
-  return (item.price + addonsTotal) * item.quantity
+  const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => sum + Number(addon.price || 0), 0)
+  return (Number(item.price || 0) + addonsTotal) * Number(item.quantity || 0)
 }
 
 function addonLabel(addon) {

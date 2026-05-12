@@ -73,7 +73,7 @@
 
                 <v-list-item-title class="font-weight-medium">{{ item.name }}</v-list-item-title>
                 <v-list-item-subtitle class="text-primary font-weight-bold">
-                  {{ formatCurrency(item.price) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
+                  {{ formatCurrency(getItemSubtotal(item)) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
                 </v-list-item-subtitle>
 
                 <template v-if="item.selectedAddons?.length" v-slot:append>
@@ -136,9 +136,14 @@ const resolveImageUrl = (path) => {
   return `/storage/${path}`
 }
 
+function getItemSubtotal(item) {
+  const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => sum + Number(addon.price || 0), 0)
+  return Number(item.price || 0) + addonsTotal
+}
+
 function addonLabel(addon) {
   if (typeof addon === 'object') {
-    return `${addon.name}`
+    return `${addon.name} (${formatCurrency(addon.price)})`
   }
   return addon
 }

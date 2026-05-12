@@ -163,7 +163,7 @@ const resolveImageUrl = (path) => {
 }
 
 const formatPrice = (value) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0)
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0))
 }
 
 const totalPrice = computed(() => {
