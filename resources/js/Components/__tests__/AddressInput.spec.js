@@ -189,4 +189,20 @@ describe('AddressInput', () => {
     
     expect(wrapper.find('.loading-spinner').exists()).toBe(true)
   })
+
+  it('handles non-array errors prop gracefully', () => {
+    const wrapper = mount(AddressInput, {
+      props: {
+        modelValue: '',
+        errors: {} // Non-iterable object
+      },
+      global: {
+        stubs: {
+          'v-textarea': VTextareaStub
+        }
+      }
+    })
+    // Should not crash and should render normally
+    expect(wrapper.find('.v-textarea-stub').exists()).toBe(true)
+  })
 })

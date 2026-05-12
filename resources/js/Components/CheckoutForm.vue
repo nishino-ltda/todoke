@@ -55,7 +55,7 @@ const emit = defineEmits(['submit'])
 
 const address = ref('')
 const paymentMethod = ref('')
-const errors = ref({})
+const errors = ref([])
 const formRef = ref(null)
 
 const requiredField = (value) => !!value || 'This field is required'

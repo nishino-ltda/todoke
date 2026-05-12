@@ -31,7 +31,7 @@ class StoreController extends Controller
                     'latitude' => $partner->latitude ?? -23.5505 + (fmod($partner->id, 10) * 0.01),
                     'longitude' => $partner->longitude ?? -46.6333 + (fmod($partner->id, 10) * 0.01),
                 ],
-                'products' => $products->map(function ($product) {
+                'products' => $products->map(function ($product) use ($partner) {
                     return [
                         'id' => $product->id,
                         'name' => $product->name,

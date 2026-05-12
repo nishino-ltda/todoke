@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Addon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class PartnerProductSeeder extends Seeder
 {
@@ -158,11 +159,12 @@ class PartnerProductSeeder extends Seeder
         }
 
         foreach ($partners as $p) {
-            $user = User::firstOrCreate(
+            $user = User::updateOrCreate(
                 ['email' => $p['email']],
                 [
                     'name' => $p['name'],
                     'business_name' => $p['business_name'],
+                    'slug' => Str::slug($p['business_name']),
                     'business_type' => $p['business_type'],
                     'type' => 'partner',
                     'password' => Hash::make('password123'),

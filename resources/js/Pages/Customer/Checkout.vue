@@ -54,29 +54,42 @@
         </v-col>
 
         <v-col cols="12" md="5">
-          <v-card variant="outlined" data-cy="checkout-order-summary">
-            <v-card-title>{{ $t('checkout.order_summary') }}</v-card-title>
-            <v-list>
+          <v-card class="glass-card" elevation="2" rounded="xl" data-cy="checkout-order-summary">
+            <v-card-title class="text-h5 font-weight-black pt-6 px-6">
+              {{ $t('checkout.order_summary') }}
+            </v-card-title>
+
+            <v-list v-if="cartStore.items.length > 0" class="bg-transparent px-4 py-2">
               <v-list-item
                 v-for="(item, index) in cartStore.items"
                 :key="item.id + '-' + index"
+                class="mb-2 rounded-lg"
                 data-cy="checkout-summary-item"
               >
-                <v-list-item-content>
-                  <v-list-item-title>{{ item.name }} × {{ item.quantity }}</v-list-item-title>
-                  <v-list-item-subtitle v-if="item.selectedAddons?.length">
-                    <span v-for="addon in item.selectedAddons" :key="addon.id" class="text-caption mr-2">
+                <template v-slot:prepend>
+                  <v-avatar rounded="lg" size="48" class="mr-3" color="grey-lighten-3">
+                    <v-img :src="resolveImageUrl(item.image)" cover></v-img>
+                  </v-avatar>
+                </template>
+
+                <v-list-item-title class="font-weight-medium">{{ item.name }}</v-list-item-title>
+                <v-list-item-subtitle class="text-primary font-weight-bold">
+                  {{ formatPrice(item.price) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
+                </v-list-item-subtitle>
+
+                <template v-if="item.selectedAddons?.length" v-slot:append>
+                  <div class="text-caption text-medium-emphasis text-right" style="max-width: 100px;">
+                    <div v-for="addon in item.selectedAddons" :key="addon.id">
                       + {{ addonLabel(addon) }}
-                    </span>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action class="text-right">
-                  {{ formatPrice(item.price * item.quantity) }}
-                </v-list-item-action>
+                    </div>
+                  </div>
+                </template>
               </v-list-item>
             </v-list>
-            <v-divider />
-            <v-card-text>
+
+            <v-divider v-if="cartStore.items.length > 0" class="mx-6"></v-divider>
+
+            <v-card-text v-if="cartStore.items.length > 0" class="px-6 py-4">
               <v-row class="text-body-1 mb-1">
                 <v-col cols="8">{{ $t('cart.subtotal') }}</v-col>
                 <v-col cols="4" class="text-right">{{ formatPrice(cartStore.subtotal) }}</v-col>
@@ -86,9 +99,9 @@
                 <v-col cols="4" class="text-right">{{ formatPrice(cartStore.deliveryFee) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
-              <v-row class="text-h6 font-weight-bold">
+              <v-row class="text-h6 font-weight-black">
                 <v-col cols="8">{{ $t('cart.total') }}</v-col>
-                <v-col cols="4" class="text-right">{{ formatPrice(cartStore.totalWithDelivery) }}</v-col>
+                <v-col cols="4" class="text-right text-primary">{{ formatPrice(cartStore.totalWithDelivery) }}</v-col>
               </v-row>
             </v-card-text>
           </v-card>
@@ -115,8 +128,15 @@ const isSubmitting = ref(false)
 const errorMessage = ref('')
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 
+const resolveImageUrl = (path) => {
+  if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
+  if (path.startsWith('http')) return path
+  return `/storage/${path}`
+}
+
 function formatPrice(value) {
-  return `R$ ${(value || 0).toFixed(2)}`
+  const num = parseFloat(value) || 0
+  return `R$ ${num.toFixed(2)}`
 }
 
 function addonLabel(addon) {
@@ -146,6 +166,11 @@ async function handleSubmit(formData) {
 
   const partnerId = cartStore.items[0]?.partner_id
 
+  const payment =
+    typeof formData.paymentMethod === 'string'
+      ? { method: formData.paymentMethod }
+      : formData.paymentMethod
+
   const orderPayload = {
     partner_id: partnerId,
     items: cartStore.items.map(item => ({
@@ -156,6 +181,7 @@ async function handleSubmit(formData) {
         quantity: 1,
       })) || [],
     })),
+    payment,
     delivery: {
       destination: {
         lat: formData.lat || 0,
@@ -185,3 +211,15 @@ onMounted(() => {
   }
 })
 </script>
+
+<style scoped>
+.glass-card {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(var(--v-border-color), 0.1);
+}
+
+:deep(.v-list-item) {
+  border-radius: 12px;
+}
+</style>

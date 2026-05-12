@@ -12,7 +12,7 @@ const i18n = createI18n({
   messages: {
     'pt-BR': {
       cart: {
-        add_to_cart: 'Adicionar ao Carrinho',
+        add_to_cart: 'Adicionar',
         addons: 'Adicionais',
         no_description: 'Nenhuma descrição disponível'
       }
@@ -82,7 +82,7 @@ describe('ProductDetailsModal', () => {
     setActivePinia(createPinia())
     cartStore = useCartStore()
     cartStore.addItem = vi.fn()
-    
+
     product = {
       id: 1,
       name: 'Test Product',
@@ -140,7 +140,7 @@ describe('ProductDetailsModal', () => {
   it('adds correct quantity to cart', async () => {
     // Reset the mock specifically for this test
     cartStore.addItem.mockClear()
-    
+
     const wrapper = mount(ProductDetailsModal, {
       props: { product },
       global: {
@@ -212,7 +212,7 @@ describe('ProductDetailsModal', () => {
     // Select first addon
     await wrapper.findAll('.addon-item input')[0].setValue(true)
     await nextTick()
-    
+
     // Base price (10.99) + addon (1.50) = 12.49
     expect(wrapper.vm.totalPrice).toBe(12.49)
     expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('$12.49')
@@ -220,7 +220,7 @@ describe('ProductDetailsModal', () => {
     // Increase quantity to 2
     await wrapper.findAll('.quantity-controls .v-btn')[1].trigger('click')
     await nextTick()
-    
+
     // (12.49) * 2 = 24.98
     expect(wrapper.vm.totalPrice).toBe(24.98)
     expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('$24.98')
@@ -237,7 +237,7 @@ describe('ProductDetailsModal', () => {
     })
 
     expect(wrapper.find('.addons-section h3').text()).toBe('Adicionais')
-    expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('Adicionar ao Carrinho')
+    expect(wrapper.find('[data-cy="add-to-cart"]').text()).toContain('Adicionar')
 
     i18n.global.locale.value = 'en'
     await nextTick()

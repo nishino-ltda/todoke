@@ -32,7 +32,7 @@
       v-else
       v-model="address"
       :label="t('components.address.label')"
-      :error-messages="errors"
+      :error-messages="errorMessages"
       rows="3"
       auto-grow
       required
@@ -68,7 +68,8 @@ const loading = ref(false)
 const geocodeError = ref(null)
 
 const errorMessages = computed(() => {
-  const allErrors = [...props.errors]
+  const baseErrors = Array.isArray(props.errors) ? props.errors : []
+  const allErrors = [...baseErrors]
   if (geocodeError.value) {
     allErrors.push(geocodeError.value)
   }

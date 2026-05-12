@@ -30,28 +30,25 @@ function toggle() {
 </script>
 
 <template>
-  <v-btn
-    variant="text"
-    density="compact"
-    class="language-badge"
+  <v-badge
+    :content="displayCode"
+    color="primary"
+    overlap
     data-cy="language-selector"
-    @click="toggle"
   >
-    <span class="language-code">{{ displayCode }}</span>
-  </v-btn>
+    <v-btn
+      icon
+      variant="text"
+      @click="toggle"
+    >
+      <v-icon>mdi-translate</v-icon>
+    </v-btn>
+  </v-badge>
 </template>
 
 <style scoped>
-.language-badge {
-  min-width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  padding: 0;
-}
-.language-code {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+:deep(.v-badge__badge) {
+  bottom: calc(100% - 24px) !important;
+  left: calc(100% - 24px) !important;
 }
 </style>

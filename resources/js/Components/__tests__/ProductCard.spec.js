@@ -9,7 +9,7 @@ const i18n = createI18n({
   messages: {
     'pt-BR': {
       cart: {
-        add_to_cart: 'Adicionar ao Carrinho'
+        add_to_cart: 'Adicionar'
       }
     },
     en: {
@@ -79,7 +79,7 @@ describe('ProductCard', () => {
       }
     })
 
-    expect(wrapper.find('[data-cy="add-to-cart-button"]').text()).toBe('Adicionar ao Carrinho')
+    expect(wrapper.find('[data-cy="add-to-cart-button"]').text()).toBe('Adicionar')
 
     i18n.global.locale.value = 'en'
     await nextTick()
@@ -96,7 +96,7 @@ describe('ProductCard', () => {
     })
 
     await wrapper.find('[data-cy="product-name"]').trigger('click')
-    
+
     expect(wrapper.emitted('product-clicked')).toBeTruthy()
     expect(wrapper.emitted('product-clicked')[0][0]).toEqual(product)
   })

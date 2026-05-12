@@ -90,7 +90,7 @@
     },
     "home": {
         "hero": {
-            "title": "A Entrega é Nossa. O Futuro é Open Source.",
+            "title": "A Entrega é Nossa.",
             "subtitle": "Sem taxas abusivas. Sem monopólios. Uma plataforma justa para quem entrega e para quem produz.",
             "register_button": "Começar",
             "login_button": "Entrar"
@@ -172,7 +172,7 @@
         "empty": "Seu carrinho está vazio.",
         "empty_title": "Seu carrinho está vazio",
         "empty_message": "Navegue pelo cardápio e adicione itens para começar!",
-        "add_to_cart": "Adicionar ao Carrinho",
+        "add_to_cart": "Adicionar",
         "remove": "Remover",
         "unit_price": "Preço unitário",
         "subtotal": "Subtotal",
@@ -809,8 +809,9 @@
         },
         "payment": {
             "label": "Método de Pagamento",
-            "credit_card": "Cartão de Crédito",
             "cash": "Dinheiro na Entrega",
+            "card_machine": "Maquininha na Entrega",
+            "change_for": "Trazer troco para",
             "card_number": "Número do Cartão",
             "expiry": "Validade (MM/AA)",
             "cvv": "CVV",

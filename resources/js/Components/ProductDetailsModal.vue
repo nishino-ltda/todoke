@@ -8,16 +8,30 @@
           cover
           height="300"
         >
-          <div class="d-flex justify-end pa-4">
+          <div class="d-flex justify-space-between pa-4">
              <v-btn 
-                icon="mdi-close"
-                @click="$emit('close')"
+                v-if="showPartner && partnerSlug"
+                prepend-icon="mdi-store"
+                @click="goToStore"
                 variant="elevated"
                 color="white"
                 size="small"
                 elevation="4"
-                class="close-btn"
-              ></v-btn>
+                class="store-btn text-none font-weight-bold"
+                data-cy="view-store-btn"
+              >
+                {{ partnerName || 'Loja' }}
+              </v-btn>
+              <v-spacer v-else></v-spacer>
+              <v-btn 
+                 icon="mdi-close"
+                 @click="$emit('close')"
+                 variant="elevated"
+                 color="white"
+                 size="small"
+                 elevation="4"
+                 class="close-btn"
+               ></v-btn>
           </div>
         </v-img>
       </div>
@@ -39,18 +53,7 @@
           {{ product.description || $t('cart.no_description', 'Delicioso prato preparado com ingredientes frescos.') }}
         </p>
 
-        <v-btn
-          v-if="partnerSlug"
-          variant="tonal"
-          color="primary"
-          size="small"
-          class="mb-6"
-          prepend-icon="mdi-store"
-          @click="goToStore"
-          data-cy="view-store-btn"
-        >
-          Ver Loja
-        </v-btn>
+
 
         <div v-if="product.addons && product.addons.length" class="addons-section mb-6">
           <h3 class="text-h6 font-weight-bold mb-4 d-flex align-center">
@@ -90,16 +93,15 @@
           <v-btn
             color="primary"
             @click="addToCart"
-            block
             size="x-large"
             rounded="pill"
             elevation="8"
-            class="font-weight-bold add-to-cart-btn flex-grow-1"
+            class="font-weight-bold add-to-cart-btn flex-grow-1 text-none"
             data-cy="add-to-cart"
             :loading="adding"
           >
             <v-icon icon="mdi-cart-plus" class="mr-2"></v-icon>
-            {{ $t('cart.add_to_cart', 'Adicionar ao Carrinho') }}
+            {{ $t('cart.add_to_cart', 'Adicionar') }}
             <v-spacer></v-spacer>
             {{ formatPrice(totalPrice) }}
           </v-btn>
@@ -118,6 +120,10 @@ const props = defineProps({
   product: {
     type: Object,
     required: true
+  },
+  showPartner: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -130,6 +136,7 @@ const showModal = ref(true)
 const adding = ref(false)
 
 const partnerSlug = computed(() => props.product?.partner_slug || null)
+const partnerName = computed(() => props.product?.partner_business_name || props.product?.partner?.business_name || props.product?.partner || props.product?.partner_name || props.product?.partner?.name || null)
 
 const resolveImageUrl = (path) => {
   if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
@@ -185,12 +192,12 @@ const goToStore = () => {
   position: relative;
 }
 
-.close-btn {
+.close-btn, .store-btn {
   border-radius: 12px !important;
   opacity: 0.9;
 }
 
-.close-btn:hover {
+.close-btn:hover, .store-btn:hover {
   opacity: 1;
 }
 

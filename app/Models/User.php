@@ -39,7 +39,8 @@ class User extends Authenticatable implements CanResetPassword
         'business_type',
         'tax_id',
         'address',
-        'business_document_path'
+        'business_document_path',
+        'slug'
     ];
 
     /**
