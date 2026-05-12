@@ -211,6 +211,7 @@
             "dashboard": "Dashboard",
             "orders": "Orders",
             "products": "Products",
+            "addons": "Add-ons",
             "settings": "Settings",
             "profile": "Profile",
             "access_as_customer": "Access as Customer"

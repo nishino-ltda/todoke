@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\Addon;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
+
 
 class ProductController extends Controller
 {
@@ -150,7 +152,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $query = Product::query()->with('partner');
+        $query = Product::query()->with('partner')->with('addons');
 
         if ($request->has('category')) {
             $query->where('category', $request->category);
@@ -171,6 +173,13 @@ class ProductController extends Controller
                     'partner' => $product->partner->business_name ?: $product->partner->name,
                     'partner_id' => $product->partner_id,
                     'partner_slug' => $product->partner->slug,
+                    'addons' => $product->addons->map(function ($addon) {
+                        return [
+                            'id' => $addon->id,
+                            'name' => $addon->name,
+                            'price' => (float) $addon->price,
+                        ];
+                    }),
                 ];
             })
         ]);

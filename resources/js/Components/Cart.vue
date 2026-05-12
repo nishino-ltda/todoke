@@ -36,8 +36,9 @@
             </v-list-item-subtitle>
 
             <v-list-item-subtitle data-cy="cart-item-subtotal">
-              <strong>{{ $t('cart.subtotal') }}: {{ formatPrice(item.price * item.quantity) }}</strong>
+              <strong>{{ $t('cart.subtotal') }}: {{ formatPrice(getItemSubtotal(item)) }}</strong>
             </v-list-item-subtitle>
+
           </v-list-item-content>
 
           <v-list-item-action class="d-flex flex-row align-center">
@@ -122,6 +123,11 @@ const cartStore = useCartStore()
 
 function formatPrice(value) {
   return `R$ ${(value || 0).toFixed(2)}`
+}
+
+function getItemSubtotal(item) {
+  const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => sum + (addon.price || 0), 0)
+  return (item.price + addonsTotal) * item.quantity
 }
 
 function addonLabel(addon) {

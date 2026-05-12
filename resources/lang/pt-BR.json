@@ -211,6 +211,7 @@
             "dashboard": "Painel",
             "orders": "Pedidos",
             "products": "Produtos",
+            "addons": "Adicionais",
             "settings": "Configurações",
             "profile": "Perfil",
             "access_as_customer": "Acessar como Cliente"
@@ -357,6 +358,7 @@
             "name": "Nome do Adicional",
             "price": "Preço Adicional",
             "empty": "Nenhum adicional encontrado.",
+            "none_available": "Nenhum adicional cadastrado.",
             "confirm_delete": "Tem certeza que deseja excluir {name}?",
             "validation": {
                 "price_non_negative": "O preço não pode ser negativo"
@@ -834,7 +836,8 @@
             "saturday": "Sábado",
             "sunday": "Domingo"
         },
-        "currency_symbol": "{value}"
+        "currency_symbol": "R$ {value}"
+
     },
     "notifications": {
         "new_notification": "Nova Notificação",

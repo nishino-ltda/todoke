@@ -1,12 +1,12 @@
 <template>
-  <v-dialog v-if="product" v-model="showModal" max-width="550" transition="dialog-bottom-transition">
-    <v-card class="product-details-card rounded-xl overflow-hidden">
-      <div class="image-wrapper">
+  <v-dialog v-if="product" v-model="showModal" max-width="550" scrollable transition="dialog-bottom-transition">
+    <v-card class="product-details-card rounded-xl">
+      <div class="image-wrapper flex-shrink-0">
         <v-img
           :src="resolveImageUrl(product.image)"
           :alt="product.name"
           cover
-          height="300"
+          height="200"
         >
           <div class="d-flex justify-space-between pa-4">
              <v-btn 
@@ -35,8 +35,19 @@
           </div>
         </v-img>
       </div>
+
+      <!-- Floating Quantity Picker -->
+      <div class="quantity-floating-wrapper d-flex justify-center">
+          <div class="d-flex align-center justify-space-between bg-white rounded-pill px-4 py-1 elevation-8 quantity-picker">
+            <v-btn @click="quantity > 1 ? quantity-- : null" icon="mdi-minus" variant="text" size="small" density="comfortable" color="primary" data-cy="decrease-quantity"></v-btn>
+            <span class="font-weight-black text-h6 quantity-value" data-cy="quantity-display">{{ quantity }}</span>
+            <v-btn @click="quantity++" icon="mdi-plus" variant="text" size="small" density="comfortable" color="primary" data-cy="increase-quantity"></v-btn>
+          </div>
+
+      </div>
+
       
-      <v-card-text class="pa-8">
+      <v-card-text class="pa-8 pb-4">
         <div class="d-flex justify-space-between align-start mb-2">
             <div>
                 <h2 class="text-h4 font-weight-bold mb-1">{{ product.name }}</h2>
@@ -53,8 +64,6 @@
           {{ product.description || $t('cart.no_description', 'Delicioso prato preparado com ingredientes frescos.') }}
         </p>
 
-
-
         <div v-if="product.addons && product.addons.length" class="addons-section mb-6">
           <h3 class="text-h6 font-weight-bold mb-4 d-flex align-center">
             <v-icon icon="mdi-plus-circle-outline" class="mr-2" color="primary"></v-icon>
@@ -65,16 +74,18 @@
               v-for="addon in product.addons"
               :key="addon.id"
               class="addon-list-item px-0 mb-2"
+              @click="toggleAddon(addon.id)"
+              link
             >
               <template v-slot:prepend>
-                <v-checkbox
+                <v-checkbox-btn
                   v-model="selectedAddonIds"
                   :value="addon.id"
                   color="primary"
                   hide-details
                   density="compact"
                   :data-cy="'addon-checkbox-' + addon.id"
-                ></v-checkbox>
+                ></v-checkbox-btn>
               </template>
               <v-list-item-title class="font-weight-medium">{{ addon.name }}</v-list-item-title>
               <template v-slot:append>
@@ -83,32 +94,29 @@
             </v-list-item>
           </v-list>
         </div>
-
-        <div class="d-flex align-center ga-2">
-          <div class="d-flex align-center bg-grey-lighten-4 rounded-pill flex-shrink-0">
-            <v-btn @click="quantity > 1 ? quantity-- : null" icon="mdi-minus" variant="text" size="small" data-cy="decrease-quantity"></v-btn>
-            <span class="mx-4 font-weight-black text-h6" data-cy="quantity-display">{{ quantity }}</span>
-            <v-btn @click="quantity++" icon="mdi-plus" variant="text" size="small" data-cy="increase-quantity"></v-btn>
-          </div>
-          <v-btn
-            color="primary"
-            @click="addToCart"
-            size="x-large"
-            rounded="pill"
-            elevation="8"
-            class="font-weight-bold add-to-cart-btn flex-grow-1 text-none"
-            data-cy="add-to-cart"
-            :loading="adding"
-          >
-            <v-icon icon="mdi-cart-plus" class="mr-2"></v-icon>
-            {{ $t('cart.add_to_cart', 'Adicionar') }}
-            <v-spacer></v-spacer>
-            {{ formatPrice(totalPrice) }}
-          </v-btn>
-        </div>
       </v-card-text>
+
+      <v-card-actions class="pa-8 pt-0">
+        <v-btn
+          color="primary"
+          @click="addToCart"
+          size="x-large"
+          rounded="pill"
+          elevation="8"
+          class="font-weight-bold add-to-cart-btn w-100 text-none"
+          data-cy="add-to-cart"
+          :loading="adding"
+        >
+          <v-icon icon="mdi-cart-plus" class="mr-2"></v-icon>
+          {{ $t('cart.add_to_cart', 'Adicionar') }}
+          <v-spacer></v-spacer>
+          {{ formatPrice(totalPrice) }}
+        </v-btn>
+      </v-card-actions>
+
     </v-card>
   </v-dialog>
+
 </template>
 
 <script setup>
@@ -138,7 +146,17 @@ const adding = ref(false)
 const partnerSlug = computed(() => props.product?.partner_slug || null)
 const partnerName = computed(() => props.product?.partner_business_name || props.product?.partner?.business_name || props.product?.partner || props.product?.partner_name || props.product?.partner?.name || null)
 
+const toggleAddon = (id) => {
+  const index = selectedAddonIds.value.indexOf(id)
+  if (index === -1) {
+    selectedAddonIds.value.push(id)
+  } else {
+    selectedAddonIds.value.splice(index, 1)
+  }
+}
+
 const resolveImageUrl = (path) => {
+
   if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
   if (path.startsWith('http')) return path
   return `/storage/${path}`
@@ -149,12 +167,13 @@ const formatPrice = (value) => {
 }
 
 const totalPrice = computed(() => {
-  const addonsTotal = selectedAddonIds.value.reduce((sum, addonId) => {
-    const addon = props.product.addons?.find(a => a.id === addonId)
-    return sum + (addon?.price || 0)
+  const addonsTotal = (selectedAddonIds.value || []).reduce((sum, addonId) => {
+    const addon = (props.product.addons || []).find(a => a.id === addonId)
+    return sum + Number(addon?.price || 0)
   }, 0)
-  return (props.product.price + addonsTotal) * quantity.value
+  return (Number(props.product.price || 0) + addonsTotal) * Number(quantity.value || 1)
 })
+
 
 const addToCart = () => {
   adding.value = true
@@ -186,11 +205,38 @@ const goToStore = () => {
 <style scoped>
 .product-details-card {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  background-color: white !important;
 }
+
 
 .image-wrapper {
   position: relative;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  overflow: hidden;
 }
+
+.quantity-floating-wrapper {
+  position: absolute;
+  top: 200px;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+
+.quantity-picker {
+  border: 1px solid rgba(var(--v-border-color), 0.1);
+  width: 160px;
+}
+
+.quantity-value {
+  min-width: 30px;
+  text-align: center;
+}
+
+
 
 .close-btn, .store-btn {
   border-radius: 12px !important;

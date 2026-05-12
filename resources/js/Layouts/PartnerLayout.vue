@@ -71,6 +71,7 @@ const navItems = [
   { titleKey: 'partner.nav.dashboard', icon: 'mdi-view-dashboard', route: '/partner/dashboard' },
   { titleKey: 'partner.nav.orders', icon: 'mdi-clipboard-list', route: '/partner/orders' },
   { titleKey: 'partner.nav.products', icon: 'mdi-package-variant-closed', route: '/partner/products' },
+  { titleKey: 'partner.nav.addons', icon: 'mdi-plus-box-outline', route: '/partner/addons' },
   { titleKey: 'partner.nav.settings', icon: 'mdi-cog', route: '/partner/settings' },
   { titleKey: 'partner.nav.profile', icon: 'mdi-account', route: '/partner/profile' },
   { titleKey: 'partner.nav.access_as_customer', icon: 'mdi-account-switch', route: '/customer/dashboard' },

@@ -43,6 +43,19 @@
           ></v-switch>
         </template>
 
+        <template #item.addons="{ item }">
+          <v-chip
+            size="small"
+            :color="item.addon_ids?.length ? 'primary' : 'grey'"
+            variant="tonal"
+            class="cursor-pointer"
+            @click="openAddonsModal(item)"
+            data-cy="open-addons-modal-btn"
+          >
+            {{ item.addon_ids?.length || 0 }} {{ t('partner.nav.addons') }}
+          </v-chip>
+        </template>
+
         <template #item.actions="{ item }">
           <v-btn
             variant="text"
@@ -90,6 +103,47 @@
           <v-btn color="error" @click="doDelete" :loading="saving" data-cy="confirm-delete-btn">{{ t('partner.actions.delete') }}</v-btn>
         </template>
       </AppModal>
+
+      <AppModal
+        v-model="showAddonsModal"
+        :title="t('partner.nav.addons') + ': ' + (selectedProduct?.name || '')"
+        maxWidth="500"
+        scrollable
+      >
+
+        <v-list class="pa-0">
+          <v-list-item
+            v-for="addon in availableAddons"
+            :key="addon.id"
+            class="px-0"
+          >
+            <template v-slot:prepend>
+              <v-checkbox
+                v-model="selectedAddonIds"
+                :value="addon.id"
+                color="primary"
+                hide-details
+                density="compact"
+              ></v-checkbox>
+            </template>
+            <v-list-item-title>{{ addon.name }}</v-list-item-title>
+            <template v-slot:append>
+              <span class="text-primary font-weight-bold">+ {{ t('common.currency_symbol', { value: addon.price.toFixed(2) }, '$' + addon.price.toFixed(2)) }}</span>
+            </template>
+          </v-list-item>
+        </v-list>
+        
+        <v-alert v-if="availableAddons.length === 0" type="info" variant="tonal" class="mt-4">
+          {{ t('partner.addons.none_available') || 'Nenhum adicional cadastrado.' }}
+        </v-alert>
+
+        <template #actions>
+          <v-btn variant="text" @click="showAddonsModal = false">{{ t('partner.actions.cancel') }}</v-btn>
+          <v-btn color="primary" @click="saveAddons" :loading="saving" data-cy="save-addons-btn">
+            {{ t('partner.actions.save') || 'Salvar' }}
+          </v-btn>
+        </template>
+      </AppModal>
     </div>
   </PartnerLayout>
 </template>
@@ -116,10 +170,12 @@ const saving = ref(false);
 const products = ref(props.productsData || []);
 const showFormModal = ref(false);
 const showDeleteModal = ref(false);
+const showAddonsModal = ref(false);
 const isEditing = ref(false);
 const selectedProduct = ref(null);
 const productForm = ref(null);
 const availableAddons = ref([]);
+const selectedAddonIds = ref([]);
 const imageFile = ref(null);
 
 const resolveImageUrl = (path) => {
@@ -133,6 +189,7 @@ const headers = computed(() => [
   { title: t('partner.products.name'), key: 'name' },
   { title: t('partner.products.category'), key: 'category' },
   { title: t('partner.products.price'), key: 'price' },
+  { title: t('partner.nav.addons'), key: 'addons', sortable: false },
   { title: t('partner.products.available'), key: 'available', sortable: false },
   { title: t('partner.orders.actions'), key: 'actions', sortable: false, align: 'end' },
 ]);
@@ -181,8 +238,32 @@ const openCreateModal = () => {
 const editProduct = (product) => {
   isEditing.value = true;
   selectedProduct.value = product;
-  form.value = { ...product };
+  form.value = { 
+    ...product,
+    available: product.available ?? true,
+    addon_ids: product.addon_ids || []
+  };
   showFormModal.value = true;
+};
+
+const openAddonsModal = (product) => {
+  selectedProduct.value = product;
+  selectedAddonIds.value = [...(product.addon_ids || [])];
+  showAddonsModal.value = true;
+};
+
+const saveAddons = async () => {
+  saving.value = true;
+  try {
+    await partnerService.updateProductAddons(selectedProduct.value.id, selectedAddonIds.value);
+    notifications.success(t('partner.products.success.updated'));
+    showAddonsModal.value = false;
+    fetchProducts();
+  } catch (err) {
+    notifications.error(t('partner.products.error.save'));
+  } finally {
+    saving.value = false;
+  }
 };
 
 const saveProduct = async () => {

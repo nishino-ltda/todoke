@@ -11,7 +11,8 @@
     </v-btn>
   </v-badge>
   
-  <v-dialog v-model="showCartDialog" max-width="500px">
+  <v-dialog v-model="showCartDialog" max-width="500px" scrollable>
+
     <v-card theme="light" class="glass-card" elevation="2" rounded="xl">
       <v-card-title class="text-h5 font-weight-black pt-6 px-6">
         {{ $t('cart.title') }}
@@ -31,8 +32,15 @@
 
           <v-list-item-title class="font-weight-medium">{{ item.name }}</v-list-item-title>
           <v-list-item-subtitle class="text-primary font-weight-bold">
-            ${{ item.price }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
+            {{ formatPrice(getItemSubtotal(item)) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
           </v-list-item-subtitle>
+          
+          <div v-if="item.selectedAddons?.length" class="text-caption text-medium-emphasis mt-1">
+            <div v-for="addon in item.selectedAddons" :key="addon.id">
+              + {{ addon.name }} ({{ formatPrice(addon.price) }})
+            </div>
+          </div>
+
           
           <template v-slot:append>
             <v-btn 
@@ -50,8 +58,9 @@
       <v-divider v-if="cart.items.length > 0" class="mx-6"></v-divider>
       
       <v-card-text v-if="cart.items.length > 0" class="text-right px-6 py-4 text-h6 font-weight-black">
-        {{ $t('cart.total') }}: <span class="text-primary">${{ cart.total.toFixed(2) }}</span>
+        {{ $t('cart.total') }}: <span class="text-primary">{{ formatPrice(cart.total) }}</span>
       </v-card-text>
+
       
       <v-card-actions class="px-6 pb-6 pt-0">
         <v-spacer></v-spacer>
@@ -99,6 +108,15 @@ function removeItem(id) {
   cart.removeItem(id)
 }
 
+function formatPrice(value) {
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value || 0)
+}
+
+function getItemSubtotal(item) {
+  const addonsTotal = (item.selectedAddons || []).reduce((sum, addon) => sum + (addon.price || 0), 0)
+  return item.price + addonsTotal
+}
+
 function checkout() {
     showCartDialog.value = false
     if (authStore.isAuthenticated) {
@@ -107,6 +125,7 @@ function checkout() {
       router.visit('/login?redirect=' + encodeURIComponent('/customer/checkout'))
     }
 }
+
 </script>
 
 <style scoped>

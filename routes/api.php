@@ -223,6 +223,8 @@ Route::prefix('v1')->group(function () {
             Route::post('/products', [ProductController::class, 'partnerStore']);
             Route::put('/products/{product}', [ProductController::class, 'partnerUpdate']);
             Route::delete('/products/{id}', [ProductController::class, 'partnerDestroy']);
+            Route::post('/products/{product}/addons', [ProductController::class, 'addAddons']);
+
 
             // Addons CRUD
             Route::get('/addons', [AddonController::class, 'partnerIndex']);

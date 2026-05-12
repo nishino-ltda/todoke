@@ -3,10 +3,12 @@
     v-model="modelValue"
     :max-width="maxWidth"
     :persistent="persistent"
+    :scrollable="scrollable"
     @click:outside="onOutsideClick"
     data-cy="app-modal"
   >
-    <v-card class="app-modal-card">
+    <v-card class="app-modal-card d-flex flex-column" :style="scrollable ? 'max-height: 90vh' : ''">
+
       <v-card-title v-if="title || $slots.title || showClose" class="d-flex align-center justify-space-between modal-header">
         <slot name="title">
           <span class="text-h5" data-cy="modal-title">{{ title }}</span>
@@ -59,8 +61,13 @@ const props = defineProps({
   showClose: {
     type: Boolean,
     default: true
+  },
+  scrollable: {
+    type: Boolean,
+    default: false
   }
 });
+
 
 const emit = defineEmits(['update:modelValue', 'close']);
 

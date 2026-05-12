@@ -168,10 +168,10 @@ Para re-seed o banco de dados: `php artisan db:seed`
 | Autenticação multi-role (com suporte a roles secundárias) | ✅ Completo |
 | Multirole: auto-activation, "Acessar como Cliente", perfis por role | ✅ Completo |
 | Home Page (hero, features, CTA) | ✅ Completo |
-| Cardápio / Carrinho / Checkout | ✅ Completo |
+| Cardápio / Carrinho / Checkout (com addons) | ✅ Completo |
 | Painel do Entregador (delivery map, aceitar/rejeitar) | ✅ Completo |
 | Painel Admin (gráficos, gestão, monitoramento, created_at, filtros) | ✅ Completo |
-| Painel Parceiro (métricas, pedidos, produtos, etiqueta) | ✅ Completo |
+| Painel Parceiro (métricas, pedidos, produtos, etiqueta, addons) | ✅ Completo |
 | Sistema de Suporte (tickets, FAQ) | ✅ Completo |
 | Notificações Real-time (Laravel Reverb) | ✅ Completo |
 | Internacionalização (pt-BR + en) | ✅ Completo |

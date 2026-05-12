@@ -203,19 +203,99 @@ class PartnerProductSeeder extends Seeder
                 );
             }
 
-            // Add some generic addons for restaurants
-            if ($p['category'] === 'Pizza' || $p['category'] === 'Burger') {
-                $addons = [
-                    ['name' => 'Bacon Extra', 'price' => 5.00],
-                    ['name' => 'Queijo Extra', 'price' => 4.00],
-                    ['name' => 'Maionese da Casa', 'price' => 2.50],
-                ];
+            // Create addons per category and associate them with specific products
+            $categoryAddons = [
+                'Pizza' => [
+                    'addons' => [
+                        ['name' => 'Borda Recheada', 'price' => 6.00],
+                        ['name' => 'Bacon Extra', 'price' => 5.00],
+                        ['name' => 'Queijo Extra', 'price' => 4.00],
+                        ['name' => 'Cheddar Extra', 'price' => 5.00],
+                        ['name' => 'Catupiry Extra', 'price' => 5.00],
+                    ],
+                    'product_addon_map' => [
+                        0 => [0, 1, 2],
+                        1 => [0, 2, 4],
+                        2 => [0, 1, 3],
+                    ],
+                ],
+                'Burger' => [
+                    'addons' => [
+                        ['name' => 'Bacon Extra', 'price' => 4.00],
+                        ['name' => 'Queijo Extra', 'price' => 3.00],
+                        ['name' => 'Ovo', 'price' => 2.50],
+                        ['name' => 'Onion Rings', 'price' => 5.00],
+                        ['name' => 'Maionese da Casa', 'price' => 2.00],
+                    ],
+                    'product_addon_map' => [
+                        0 => [0, 1, 2, 4],
+                        1 => [0, 1, 3],
+                        2 => [0, 1, 3, 4],
+                    ],
+                ],
+                'Açaí' => [
+                    'addons' => [
+                        ['name' => 'Leite Ninho', 'price' => 3.00],
+                        ['name' => 'Granola', 'price' => 2.00],
+                        ['name' => 'Morango Extra', 'price' => 4.00],
+                        ['name' => 'Nutella', 'price' => 5.00],
+                        ['name' => 'Leite Condensado', 'price' => 2.50],
+                    ],
+                    'product_addon_map' => [
+                        0 => [0, 1, 2, 3, 4],
+                        1 => [0, 1, 2, 3, 4],
+                    ],
+                ],
+                'Japonesa' => [
+                    'addons' => [
+                        ['name' => 'Cream Cheese Extra', 'price' => 3.50],
+                        ['name' => 'Salmão Extra', 'price' => 8.00],
+                        ['name' => 'Tarê Extra', 'price' => 2.00],
+                        ['name' => 'Gergelim', 'price' => 1.50],
+                    ],
+                    'product_addon_map' => [
+                        0 => [0, 1, 3],
+                        1 => [0, 1],
+                        2 => [0, 2, 3],
+                    ],
+                ],
+                'Brasileira' => [
+                    'addons' => [
+                        ['name' => 'Ovo', 'price' => 2.00],
+                        ['name' => 'Bacon Extra', 'price' => 4.00],
+                        ['name' => 'Queijo Extra', 'price' => 3.00],
+                        ['name' => 'Banana Frita', 'price' => 3.50],
+                    ],
+                    'product_addon_map' => [
+                        0 => [0, 1, 2],
+                        1 => [0, 1, 2, 3],
+                    ],
+                ],
+            ];
 
-                foreach ($addons as $a) {
-                    Addon::updateOrCreate(
+            $catConfig = $categoryAddons[$p['category']] ?? null;
+
+            if ($catConfig) {
+                $createdAddonIds = [];
+
+                foreach ($catConfig['addons'] as $a) {
+                    $addon = Addon::updateOrCreate(
                         ['partner_id' => $user->id, 'name' => $a['name']],
                         ['price' => $a['price']]
                     );
+                    $createdAddonIds[] = $addon->id;
+                }
+
+                $allProducts = Product::where('partner_id', $user->id)->get();
+
+                foreach ($catConfig['product_addon_map'] as $prodIndex => $addonIndices) {
+                    if (isset($allProducts[$prodIndex])) {
+                        $addonIdsForProduct = array_map(function ($idx) use ($createdAddonIds) {
+                            return $createdAddonIds[$idx];
+                        }, $addonIndices);
+
+                        $allProducts[$prodIndex]->addons()->sync($addonIdsForProduct);
+                    }
                 }
             }
         }

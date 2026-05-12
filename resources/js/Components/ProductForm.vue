@@ -71,20 +71,8 @@
         </div>
       </v-col>
       
-      <v-col cols="12">
-        <v-select
-          v-model="modelValue.addon_ids"
-          :items="availableAddons"
-          item-title="name"
-          item-value="id"
-          :label="t('partner.products.select_addons')"
-          multiple
-          chips
-          data-cy="product-addons-select"
-        ></v-select>
-      </v-col>
-      
       <v-col cols="12" v-if="showAvailable">
+
         <v-switch
           v-model="modelValue.available"
           :label="t('partner.products.available')"

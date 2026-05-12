@@ -77,6 +77,16 @@ export const partnerService = {
   async deleteProduct(productId) {
     return api.delete(`/partner/products/${productId}`);
   },
+  
+  /**
+   * Update product addons
+   * @param {string|number} productId 
+   * @param {Array} addonIds 
+   */
+  async updateProductAddons(productId, addonIds) {
+    return api.post(`/partner/products/${productId}/addons`, { addon_ids: addonIds });
+  },
+
 
   /**
    * Get partner addons
