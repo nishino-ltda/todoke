@@ -3,7 +3,7 @@
         <div data-cy="home-page" class="home-page">
             <HomeHero />
             <HomeNearbyPartners />
-            <HomeFeatures />
+            <!-- <HomeFeatures /> -->
             <HomeCTA />
         </div>
     </GuestLayout>
