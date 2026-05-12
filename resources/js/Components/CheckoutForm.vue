@@ -14,6 +14,7 @@
       v-model="paymentMethod"
       :errors="errors"
       :rules="[requiredField]"
+      :total="props.total"
       data-cy="payment-method-input"
     />
 
@@ -48,6 +49,10 @@ const props = defineProps({
   errorMessage: {
     type: String,
     default: '',
+  },
+  total: {
+    type: Number,
+    default: 0,
   },
 })
 

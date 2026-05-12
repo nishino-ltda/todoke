@@ -812,6 +812,8 @@
             "cash": "Dinheiro na Entrega",
             "card_machine": "Maquininha na Entrega",
             "change_for": "Trazer troco para",
+            "exact_amount": "Valor Exato",
+            "other": "Outro",
             "card_number": "Número do Cartão",
             "expiry": "Validade (MM/AA)",
             "cvv": "CVV",

@@ -829,6 +829,8 @@
             "cash": "Cash on Delivery",
             "card_machine": "Card Machine on Delivery",
             "change_for": "Bring change for",
+            "exact_amount": "Exact Amount",
+            "other": "Other",
             "card_number": "Card Number",
             "expiry": "Expiry Date (MM/YY)",
             "cvv": "CVV",

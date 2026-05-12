@@ -49,6 +49,7 @@
           <CheckoutForm
             :is-submitting="isSubmitting"
             :error-message="errorMessage"
+            :total="cartStore.totalWithDelivery"
             @submit="handleSubmit"
           />
         </v-col>

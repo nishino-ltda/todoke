@@ -130,7 +130,7 @@ npm run test:e2e:local      # Testes E2E (Cypress)
 ```
 
 ## Como Contribuir
-1. O projeto é open-source sob licença MIT
+1. O projeto é open-source sob licença [GNU GPL v3.0](LICENSE)
 2. Documentação abrangente disponível
 3. Roadmap público para acompanhamento
 4. Bug bounty program para vulnerabilidades
