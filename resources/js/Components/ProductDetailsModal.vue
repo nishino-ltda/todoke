@@ -35,11 +35,24 @@
             </div>
         </div>
 
-        <p class="text-body-1 text-medium-emphasis mb-8">
+        <p class="text-body-1 text-medium-emphasis mb-4">
           {{ product.description || $t('cart.no_description', 'Delicioso prato preparado com ingredientes frescos.') }}
         </p>
 
-        <div v-if="product.addons && product.addons.length" class="addons-section mb-8">
+        <v-btn
+          v-if="partnerSlug"
+          variant="tonal"
+          color="primary"
+          size="small"
+          class="mb-6"
+          prepend-icon="mdi-store"
+          @click="goToStore"
+          data-cy="view-store-btn"
+        >
+          Ver Loja
+        </v-btn>
+
+        <div v-if="product.addons && product.addons.length" class="addons-section mb-6">
           <h3 class="text-h6 font-weight-bold mb-4 d-flex align-center">
             <v-icon icon="mdi-plus-circle-outline" class="mr-2" color="primary"></v-icon>
             {{ $t('cart.addons', 'Adicionais') }}
@@ -67,29 +80,30 @@
             </v-list-item>
           </v-list>
         </div>
-        
-        <div class="d-flex align-center justify-center mb-8 bg-grey-lighten-4 rounded-pill pa-2 mx-auto" style="max-width: 160px;">
-          <v-btn @click="quantity > 1 ? quantity-- : null" icon="mdi-minus" variant="text" size="small" data-cy="decrease-quantity"></v-btn>
-          <span class="mx-6 font-weight-black text-h6" data-cy="quantity-display">{{ quantity }}</span>
-          <v-btn @click="quantity++" icon="mdi-plus" variant="text" size="small" data-cy="increase-quantity"></v-btn>
+
+        <div class="d-flex align-center ga-2">
+          <div class="d-flex align-center bg-grey-lighten-4 rounded-pill flex-shrink-0">
+            <v-btn @click="quantity > 1 ? quantity-- : null" icon="mdi-minus" variant="text" size="small" data-cy="decrease-quantity"></v-btn>
+            <span class="mx-4 font-weight-black text-h6" data-cy="quantity-display">{{ quantity }}</span>
+            <v-btn @click="quantity++" icon="mdi-plus" variant="text" size="small" data-cy="increase-quantity"></v-btn>
+          </div>
+          <v-btn
+            color="primary"
+            @click="addToCart"
+            block
+            size="x-large"
+            rounded="pill"
+            elevation="8"
+            class="font-weight-bold add-to-cart-btn flex-grow-1"
+            data-cy="add-to-cart"
+            :loading="adding"
+          >
+            <v-icon icon="mdi-cart-plus" class="mr-2"></v-icon>
+            {{ $t('cart.add_to_cart', 'Adicionar ao Carrinho') }}
+            <v-spacer></v-spacer>
+            {{ formatPrice(totalPrice) }}
+          </v-btn>
         </div>
-        
-        <v-btn
-          color="primary"
-          @click="addToCart"
-          block
-          size="x-large"
-          rounded="pill"
-          elevation="8"
-          class="font-weight-bold add-to-cart-btn"
-          data-cy="add-to-cart"
-          :loading="adding"
-        >
-          <v-icon icon="mdi-cart-plus" class="mr-2"></v-icon>
-          {{ $t('cart.add_to_cart', 'Adicionar ao Carrinho') }}
-          <v-spacer></v-spacer>
-          {{ formatPrice(totalPrice) }}
-        </v-btn>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -97,6 +111,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { router } from '@inertiajs/vue3'
 import { useCartStore } from '@/stores/cart'
 
 const props = defineProps({
@@ -113,6 +128,8 @@ const quantity = ref(1)
 const selectedAddonIds = ref([])
 const showModal = ref(true)
 const adding = ref(false)
+
+const partnerSlug = computed(() => props.product?.partner_slug || null)
 
 const resolveImageUrl = (path) => {
   if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
@@ -151,6 +168,11 @@ const addToCart = () => {
     emit('added')
     emit('close')
   }, 500)
+}
+
+const goToStore = () => {
+  emit('close')
+  router.visit(`/store/${partnerSlug.value}`)
 }
 </script>
 

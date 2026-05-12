@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="primary" dark data-cy="app-header">
+  <v-app-bar app elevation="2" color="primary" theme="dark" data-cy="app-header">
     <v-app-bar-nav-icon v-if="withDrawerToggle" @click="$emit('toggle-drawer')" />
     <v-toolbar-title>
       <Link :href="route('home')" class="text-white text-decoration-none font-weight-bold" data-cy="app-title-link">
@@ -10,10 +10,12 @@
 
     <LanguageSelector class="mr-2" />
 
-    <template v-if="isAuthenticated">
-      <span class="welcome-message" data-cy="welcome-message">{{ $t('app.welcome', { name: user?.name }) }}</span>
+    <template v-if="page.props.auth?.user || user">
+      <span class="welcome-message" data-cy="welcome-message">
+        {{ $t('app.welcome', { name: (page.props.auth?.user?.name || user?.name || 'User') }) }}
+      </span>
       <Link 
-        v-if="user?.role === 'customer'"
+        v-if="(page.props.auth?.user?.type || user?.type) === 'customer'"
         :href="route('menu')" 
         class="text-white mr-2" 
         data-cy="menu-link"
@@ -21,7 +23,7 @@
         {{ $t('auth.menu') }}
       </Link>
       <v-btn text disabled v-if="loading" data-cy="loading-indicator">{{ $t('app.loading') }}</v-btn>
-      <CartIcon v-if="user?.role === 'customer' && !minimal" />
+      <CartIcon v-if="(page.props.auth?.user?.type || user?.type) === 'customer' && !minimal" />
       <v-btn text @click="handleLogout" :disabled="loading" data-cy="logout-button">
         {{ $t('auth.logout') }}
       </v-btn>
@@ -38,9 +40,11 @@
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useLogStore } from '@/stores/log'
-import { Link } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
 import CartIcon from './CartIcon.vue'
 import LanguageSelector from './LanguageSelector.vue'
+
+const page = usePage()
 
 const emit = defineEmits(['toggle-drawer'])
 

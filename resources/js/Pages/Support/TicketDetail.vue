@@ -146,7 +146,7 @@ const fetchTicket = async () => {
   try {
     const id = props.id || window.location.pathname.split('/').pop();
     const response = await supportService.getTicket(id);
-    ticket.value = response.data || response;
+    ticket.value = response.data.data || response;
   } catch (err) {
     console.error(err);
   } finally {

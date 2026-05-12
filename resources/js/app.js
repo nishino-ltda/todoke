@@ -2,7 +2,7 @@ import '../css/app.css';
 import './bootstrap';
 import './echo';
 
-import { createInertiaApp } from '@inertiajs/vue3';
+import { createInertiaApp, usePage } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createApp, h } from 'vue';
 import { createPinia } from 'pinia';
@@ -38,10 +38,12 @@ const i18n = createI18n({
     }
 });
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
 createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
+    title: (title) => {
+        const page = usePage();
+        const name = page?.props?.app?.name || import.meta.env.VITE_APP_NAME || 'TODOKE';
+        return title ? `${title} - ${name}` : name;
+    },
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.vue`,

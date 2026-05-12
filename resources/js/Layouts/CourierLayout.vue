@@ -1,14 +1,13 @@
 <template>
+  <Head :title="currentPageTitle" />
   <v-app>
-    <v-app-bar app flat border color="white" class="glass-bar">
+    <v-app-bar app elevation="2" color="primary" theme="dark" data-cy="layout-header">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-
       <v-app-bar-title class="text-subtitle-1 font-weight-bold">
+        <v-icon v-if="currentPageIcon" class="mr-1" size="small">{{ currentPageIcon }}</v-icon>
         {{ currentPageTitle }}
       </v-app-bar-title>
-
       <v-spacer></v-spacer>
-
       <LanguageSelector />
     </v-app-bar>
 
@@ -17,46 +16,28 @@
       app
       :temporary="$vuetify.display.mobile"
       :permanent="!$vuetify.display.mobile"
-      elevation="0"
-      border="e"
+      elevation="2"
     >
-      <div class="pa-4 d-flex align-center">
-        <v-img src="/images/logo.png" width="32" height="32" class="mr-2" />
-        <span class="text-h6 font-weight-black color-primary">TODOKE</span>
-      </div>
-
-      <v-list density="comfortable" nav class="mt-2">
+      <v-list density="comfortable" nav>
         <v-list-item
           v-for="item in navItems"
-          :key="item.title"
+          :key="item.titleKey"
           :active="isActive(item.route)"
           :prepend-icon="item.icon"
           :title="t(item.titleKey)"
           @click="goTo(item.route)"
           link
-          rounded="lg"
-          class="mb-1"
           data-cy="courier-nav-item"
         ></v-list-item>
       </v-list>
 
       <template v-slot:append>
-        <v-divider></v-divider>
-        <v-list-item
-          class="pa-4"
-          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=0D47A1&color=fff`"
-          :title="user?.name || user?.email || t('courier.nav.user')"
-          :subtitle="user?.email"
-        >
-          <template v-slot:append>
-            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small" color="error"></v-btn>
-          </template>
-        </v-list-item>
+        <UserMenuAppend />
       </template>
     </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-4">
-      <v-container fluid class="pa-4 pa-md-8 page-container">
+      <v-container fluid class="pa-8">
         <slot />
       </v-container>
       <NotificationCenter />
@@ -67,23 +48,24 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { usePage, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '@/stores/auth';
-import LanguageSelector from '../Components/LanguageSelector.vue';
+import { useLayout } from '@/Composables/useLayout';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
-import AppFooter from '../Components/AppFooter.vue';
+import AppFooter from '@/Components/AppFooter.vue';
+import UserMenuAppend from '@/Components/UserMenuAppend.vue';
+
+const props = defineProps({
+  currentPageIcon: {
+    type: String,
+    default: null,
+  },
+});
 
 const { t } = useI18n();
-const page = usePage();
-const authStore = useAuthStore();
-const drawer = ref(true);
-
-const { user } = storeToRefs(authStore);
-
-const currentRoute = computed(() => page.url);
+const { drawer, currentRoute, navigateTo } = useLayout();
 
 const navItems = [
   { titleKey: 'courier.nav.dashboard', icon: 'mdi-view-dashboard', route: '/courier/dashboard' },
@@ -95,51 +77,30 @@ const navItems = [
   { titleKey: 'courier.nav.access_as_customer', icon: 'mdi-account-switch', route: '/customer/dashboard' },
 ];
 
-const currentPageTitle = computed(() => {
-  const currentItem = navItems.find(item => isActive(item.route));
-  return currentItem ? t(currentItem.titleKey) : t('courier.title');
-});
-
 const isActive = (route) => {
-  if (route === '/courier/dashboard' || route === '/courier') {
-    return currentRoute.value === '/courier' || currentRoute.value === '/courier/dashboard';
-  }
+  if (route === '/courier/dashboard') return currentRoute.value === '/courier' || currentRoute.value === '/courier/dashboard';
   return currentRoute.value.startsWith(route);
 };
 
 const goTo = (url) => {
-  router.visit(url);
+  navigateTo(url);
 };
 
-const logout = () => {
-  authStore.logout(router);
-};
+const matchedNavItem = computed(() => navItems.find(n => isActive(n.route)));
 
-// Sync auth store with server-side props
-import { watch } from 'vue';
-watch(() => page.props.auth?.user, (newUser) => {
-  if (newUser) {
-    authStore.user = newUser;
-  }
-}, { immediate: true });
+const currentPageTitle = computed(() => {
+  const item = matchedNavItem.value;
+  return item ? t(item.titleKey) : t('courier.title');
+});
+
+const currentPageIcon = computed(() => {
+  if (props.currentPageIcon) return props.currentPageIcon;
+  return matchedNavItem.value?.icon || null;
+});
 </script>
 
 <style scoped>
-.v-main {
-  min-height: 100vh;
-}
-
-.glass-bar {
-  background: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(10px);
-}
-
-.color-primary {
-  color: var(--v-primary-base);
-}
-
-.page-container {
-  max-width: 1400px;
-  margin: 0 auto;
+.v-navigation-drawer {
+  background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
 }
 </style>

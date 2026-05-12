@@ -5,6 +5,15 @@
         "error": "Ocorreu um erro",
         "welcome": "Bem-vindo, {name}"
     },
+    "nav": {
+        "home": "Início",
+        "about": "Sobre Nós",
+        "contact": "Contato"
+    },
+    "guest": {
+        "title": "Convidado",
+        "welcome": "Bem-vindo ao TODOKE"
+    },
     "auth": {
         "pending_approval": "Sua conta está aguardando aprovação. Você receberá um e-mail quando for aprovada.",
         "login": "Entrar",
@@ -576,6 +585,16 @@
             "save_error": "Falha ao salvar configurações"
         }
     },
+    "customer": {
+        "nav": {
+            "dashboard": "Painel",
+            "menu": "Cardápio",
+            "orders": "Pedidos",
+            "profile": "Perfil",
+            "support": "Suporte"
+        },
+        "title": "Portal do Cliente"
+    },
     "admin": {
         "dashboard": {
             "title": "Painel Administrativo",
@@ -705,6 +724,7 @@
         }
     },
     "support": {
+        "title": "Central de Suporte",
         "dashboard": {
             "title": "Painel de Suporte",
             "stats": {

@@ -168,7 +168,9 @@ class ProductController extends Controller
                     'category' => $product->category,
                     'image' => $product->imageUrl,
                     'status' => $product->status,
-                    'partner' => $product->partner->name
+                    'partner' => $product->partner->name,
+                    'partner_id' => $product->partner_id,
+                    'partner_slug' => $product->partner->slug,
                 ];
             })
         ]);

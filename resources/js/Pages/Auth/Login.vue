@@ -13,7 +13,7 @@
                             </p>
                         </div>
 
-                        <AuthForm mode="login" />
+                        <AuthForm mode="login" :redirect="redirectUrl" />
 
                         <div class="text-center mt-6 d-flex flex-column gap-2">
                             <Link 
@@ -40,6 +40,7 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { Link } from '@inertiajs/vue3';
 import GuestLayout from '@/Layouts/GuestLayout.vue';
@@ -47,6 +48,9 @@ import AuthForm from '@/Components/AuthForm.vue';
 import { useLogStore } from '@/stores/log';
 
 const { t } = useI18n();
+
+const params = new URLSearchParams(window.location.search);
+const redirectUrl = ref(params.get('redirect') || null);
 
 const logStore = useLogStore();
 logStore.log('💪 🌞 Login page loaded 🌈 ❤️');

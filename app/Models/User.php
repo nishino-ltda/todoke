@@ -186,4 +186,9 @@ class User extends Authenticatable implements CanResetPassword
             $this->roleRecords()->firstOrCreate(['role' => $role]);
         }
     }
+
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
+    }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\TestLogController;
 // Public Controllers
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\StoreController;
 
 // Common Controllers
 use App\Http\Controllers\SupportController;
@@ -245,4 +246,5 @@ require __DIR__.'/auth.php';
 
 // Partner Menu Routes (Public)
 Route::get('/menu/{partner}', [MenuController::class, 'show'])->name('menu.show');
+Route::get('/store/{partner}', [StoreController::class, 'show'])->name('store.show');
 Route::get('/{partner}', [MenuController::class, 'show'])->name('partner.menu');

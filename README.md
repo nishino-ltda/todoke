@@ -72,6 +72,50 @@ A plataforma utiliza **Laravel Reverb** para comunicação via WebSockets em tem
 - **Suporte**: Chat e respostas de tickets em tempo real.
 - **Painel Admin**: Monitoramento live de atividades do sistema.
 
+## WebSocket (Laravel Reverb)
+
+Notificações em tempo real são servidas pelo **Laravel Reverb** na porta `8080`.
+
+### Configuração
+
+No `.env`, certifique-se de ter:
+
+```env
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=935290
+REVERB_APP_KEY=vuiwvlzqq7o6mg6eukth
+REVERB_APP_SECRET=ck4kcy5p7tvl0xtpz8nu
+REVERB_HOST="localhost"
+REVERB_PORT=8080
+REVERB_SCHEME=http
+
+VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+VITE_REVERB_HOST="${REVERB_HOST}"
+VITE_REVERB_PORT="${REVERB_PORT}"
+VITE_REVERB_SCHEME="${REVERB_SCHEME}"
+```
+
+### Iniciar o servidor WebSocket
+
+```bash
+php artisan reverb:start
+```
+
+Ou use o comando de desenvolvimento completo (sobe servidor HTTP, queue, Vite, Reverb em paralelo):
+
+```bash
+composer dev
+```
+
+### Canais de tempo real
+
+| Canal | Evento | Descrição |
+|-------|--------|-----------|
+| `orders.{id}` | `OrderStatusChanged` | Notifica cliente/parceiro sobre mudança de status do pedido |
+| `deliveries.{id}` | `DeliveryStatusChanged` | Notifica cliente/entregador sobre atualização de entrega |
+| `courier.available` | `NewDeliveryAvailable` | Notifica entregadores sobre novas entregas disponíveis |
+| `support.tickets.{id}` | `NewSupportReply` | Notifica usuário sobre resposta em ticket de suporte |
+
 ## Testes
 A suíte de testes inclui:
 - **Unitários & Feature (PHP)**: Testes de modelos e API usando PHPUnit.

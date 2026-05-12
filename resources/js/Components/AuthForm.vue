@@ -336,6 +336,10 @@ const props = defineProps({
     type: String,
     default: 'login',
     validator: (value) => ['login', 'register'].includes(value)
+  },
+  redirect: {
+    type: String,
+    default: null,
   }
 })
 
@@ -589,6 +593,12 @@ const emit = defineEmits(['success', 'error'])
             if (response?.token) {
               logStore.log(`✅ Login successful for ${credentials.email}`, 'info')
               emit('success', { token: response.token })
+              
+              if (props.redirect) {
+                logStore.log(`🛣️ Redirecting to redirect param: ${props.redirect}`)
+                router.visit(props.redirect)
+                return response
+              }
               
               // Redirect based on user type
               const userType = authStore.user?.type

@@ -1,18 +1,21 @@
 <template>
+  <Head :title="$t('app.title')" />
   <v-app data-cy="guest-layout">
+    <v-app-bar app elevation="2" color="primary" theme="dark" data-cy="layout-header">
+      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold">
+        {{ $page.props.app.name }}
+      </v-app-bar-title>
+      <v-spacer></v-spacer>
+      <CartIcon class="mr-4" />
+      <LanguageSelector />
+    </v-app-bar>
+
     <v-navigation-drawer v-model="drawer" temporary data-cy="guest-drawer">
-      <v-list-item
-        prepend-avatar="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-        :title="isAuthenticated ? user?.name : 'Convidado'"
-        :subtitle="isAuthenticated ? user?.email : 'Bem-vindo ao TODOKE'"
-      ></v-list-item>
-
-      <v-divider></v-divider>
-
       <v-list density="compact" nav>
         <v-list-item
           prepend-icon="mdi-home"
-          title="Home"
+          :title="$t('nav.home')"
           value="home"
           @click="router.visit(route('home'))"
         ></v-list-item>
@@ -20,13 +23,13 @@
         <template v-if="!isAuthenticated">
           <v-list-item
             prepend-icon="mdi-login"
-            title="Entrar"
+            :title="$t('auth.login')"
             value="login"
             @click="router.visit(route('login'))"
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-account-plus"
-            title="Registrar"
+            :title="$t('auth.register')"
             value="register"
             @click="router.visit(route('register'))"
           ></v-list-item>
@@ -36,13 +39,13 @@
           <v-list-item
             v-if="user?.role === 'customer'"
             prepend-icon="mdi-silverware-fork-knife"
-            title="Menu"
+            :title="$t('auth.menu')"
             value="menu"
             @click="router.visit(route('menu'))"
           ></v-list-item>
           <v-list-item
             prepend-icon="mdi-logout"
-            title="Sair"
+            :title="$t('auth.logout')"
             value="logout"
             @click="handleLogout"
           ></v-list-item>
@@ -52,39 +55,39 @@
 
         <v-list-item
           prepend-icon="mdi-information-outline"
-          title="Sobre Nós"
+          :title="$t('nav.about')"
           value="about"
         ></v-list-item>
         <v-list-item
           prepend-icon="mdi-email-outline"
-          title="Contato"
+          :title="$t('nav.contact')"
           value="contact"
         ></v-list-item>
       </v-list>
-    </v-navigation-drawer>
 
-    <AppHeader 
-      :minimal="props.minimal" 
-      :with-drawer-toggle="true" 
-      @toggle-drawer="drawer = !drawer"
-    />
+      <template v-slot:append>
+        <UserMenuAppend />
+      </template>
+    </v-navigation-drawer>
 
     <v-main>
       <v-container fluid class="pa-0">
         <slot data-cy="guest-content" />
       </v-container>
     </v-main>
+
     <AppFooter :minimal="props.minimal" />
   </v-app>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import { router } from '@inertiajs/vue3'
-import { storeToRefs } from 'pinia'
-import { useAuthStore } from '@/stores/auth'
-import AppHeader from '@/Components/AppHeader.vue'
+import { router, Head } from '@inertiajs/vue3'
+import { useLayout } from '@/Composables/useLayout'
+import LanguageSelector from '@/Components/LanguageSelector.vue'
 import AppFooter from '@/Components/AppFooter.vue'
+import CartIcon from '@/Components/CartIcon.vue'
+import UserMenuAppend from '@/Components/UserMenuAppend.vue'
 
 const props = defineProps({
   minimal: {
@@ -93,17 +96,18 @@ const props = defineProps({
   }
 })
 
-const drawer = ref(false)
-const authStore = useAuthStore()
-const { isAuthenticated, user } = storeToRefs(authStore)
+const { drawer, logout, isAuthenticated, user } = useLayout()
 
 const handleLogout = () => {
-  authStore.logout()
-  drawer.value = false
+  logout()
 }
 </script>
 
 <style scoped>
+.v-navigation-drawer {
+  background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
+}
+
 .v-main {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   min-height: 100vh;

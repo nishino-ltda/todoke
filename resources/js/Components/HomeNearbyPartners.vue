@@ -22,13 +22,25 @@
         </v-btn>
       </div>
 
-      <!-- Map Section -->
+      <!-- Location Result Banner -->
       <v-expand-transition>
-        <div v-if="showMap" class="mb-10">
-          <v-card elevation="2" class="rounded-xl overflow-hidden">
-            <div id="home-map" ref="mapElement" style="height: 400px; width: 100%;"></div>
-          </v-card>
-        </div>
+        <v-alert
+          v-if="locationText"
+          :type="locationError ? 'warning' : 'success'"
+          variant="tonal"
+          class="mb-6 rounded-lg"
+          density="comfortable"
+          data-cy="location-result"
+        >
+          <div class="d-flex align-center">
+            <v-icon
+              :icon="locationError ? 'mdi-alert-circle-outline' : 'mdi-map-marker-radius'"
+              class="mr-3"
+              size="24"
+            ></v-icon>
+            <span class="text-body-1 font-weight-medium">{{ locationText }}</span>
+          </div>
+        </v-alert>
       </v-expand-transition>
 
       <!-- Products Grid -->
@@ -101,23 +113,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
 import ProductDetailsModal from '@/Components/ProductDetailsModal.vue'
 
 const { t } = useI18n()
 const loading = ref(true)
 const locating = ref(false)
-const showMap = ref(false)
 const products = ref([])
-const mapElement = ref(null)
-const map = ref(null)
-const userLocation = ref(null)
 const selectedProduct = ref(null)
 const showDetails = ref(false)
+const locationText = ref('')
+const locationError = ref(false)
 
 const fetchProducts = async () => {
   loading.value = true
@@ -140,67 +148,35 @@ const formatPrice = (price) => {
 
 const startGeolocation = () => {
   locating.value = true
+  locationText.value = ''
+  locationError.value = false
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        userLocation.value = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
+        const uniquePartners = new Set()
+        products.value.forEach(p => {
+          if (p.partner) uniquePartners.add(p.partner)
+        })
+        const count = uniquePartners.size
+        if (count > 0) {
+          locationText.value = `${count} ${count === 1 ? 'parceiro' : 'parceiros'} na região`
+        } else {
+          locationText.value = 'Nenhum parceiro na região'
         }
-        showMap.value = true
+        locationError.value = false
         locating.value = false
-        setTimeout(initMap, 100)
       },
       (err) => {
         console.warn('Geolocation failed:', err)
+        locationText.value = 'Não foi possível determinar sua localização. Tente novamente.'
+        locationError.value = true
         locating.value = false
-        // Fallback or alert
       }
     )
   } else {
+    locationText.value = 'Geolocalização não suportada pelo navegador.'
+    locationError.value = true
     locating.value = false
-  }
-}
-
-const initMap = () => {
-  if (map.value) {
-    map.value.remove()
-  }
-  
-  if (mapElement.value && userLocation.value) {
-    map.value = L.map(mapElement.value).setView([userLocation.value.lat, userLocation.value.lng], 14)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map.value)
-
-    // User marker
-    L.circleMarker([userLocation.value.lat, userLocation.value.lng], {
-      color: '#1976D2',
-      fillColor: '#2196F3',
-      fillOpacity: 0.8,
-      radius: 8
-    }).addTo(map.value).bindPopup(t('home.nearby.your_location', 'Sua Localização'))
-
-    // Fix for default marker icon issues in bundlers
-    delete L.Icon.Default.prototype._getIconUrl
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
-      iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
-    })
-
-    // Mock partner markers around the user for demonstration
-    const mockPartners = [
-      { name: 'Pizzaria Bella Ciao', lat: userLocation.value.lat + 0.005, lng: userLocation.value.lng + 0.003 },
-      { name: 'Burger Master', lat: userLocation.value.lat - 0.004, lng: userLocation.value.lng + 0.006 },
-      { name: 'Sushi Express', lat: userLocation.value.lat + 0.007, lng: userLocation.value.lng - 0.002 }
-    ]
-
-    mockPartners.forEach(partner => {
-      L.marker([partner.lat, partner.lng])
-        .addTo(map.value)
-        .bindPopup(partner.name)
-    })
   }
 }
 
@@ -217,12 +193,6 @@ const viewProduct = (product) => {
 
 onMounted(() => {
   fetchProducts()
-})
-
-onUnmounted(() => {
-  if (map.value) {
-    map.value.remove()
-  }
 })
 </script>
 
@@ -244,9 +214,5 @@ onUnmounted(() => {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-#home-map {
-  z-index: 1;
 }
 </style>

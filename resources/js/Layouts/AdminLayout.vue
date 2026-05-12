@@ -1,31 +1,30 @@
 <template>
+  <Head :title="currentPageTitle" />
   <v-app>
-    <v-app-bar app flat border color="white">
+    <v-app-bar app elevation="2" color="primary" theme="dark" data-cy="layout-header">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title class="text-subtitle-1 font-weight-bold">
+        <v-icon v-if="currentPageIcon" class="mr-1" size="small">{{ currentPageIcon }}</v-icon>
         {{ currentPageTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
       <LanguageSelector />
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app :permanent="!$vuetify.display.mobile" :temporary="$vuetify.display.mobile" elevation="2">
-      <v-list-item
-        prepend-avatar="https://ui-avatars.com/api/?name=Admin&background=0D47A1&color=fff"
-        title="Admin Panel"
-        subtitle="System Management"
-        class="pa-4"
-      ></v-list-item>
-
-      <v-divider></v-divider>
-
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      :temporary="$vuetify.display.mobile"
+      :permanent="!$vuetify.display.mobile"
+      elevation="2"
+    >
       <v-list density="comfortable" nav>
         <v-list-item
           v-for="item in navItems"
-          :key="item.title"
-          :active="currentRoute === item.route"
+          :key="item.titleKey"
+          :active="isActive(item.route)"
           :prepend-icon="item.icon"
-          :title="item.title"
+          :title="t(item.titleKey)"
           @click="navigateTo(item.route)"
           link
           data-cy="admin-nav-item"
@@ -33,16 +32,7 @@
       </v-list>
 
       <template v-slot:append>
-        <v-divider></v-divider>
-        <v-list-item
-          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=0D47A1&color=fff`"
-          :title="user?.name || user?.email || 'User'"
-          :subtitle="user?.email"
-        >
-          <template v-slot:append>
-            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small"></v-btn>
-          </template>
-        </v-list-item>
+        <UserMenuAppend />
       </template>
     </v-navigation-drawer>
 
@@ -58,63 +48,60 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { usePage, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '@/stores/auth';
-import LanguageSelector from '../Components/LanguageSelector.vue';
+import { useLayout } from '@/Composables/useLayout';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
-import AppFooter from '../Components/AppFooter.vue';
+import AppFooter from '@/Components/AppFooter.vue';
+import UserMenuAppend from '@/Components/UserMenuAppend.vue';
+
+const props = defineProps({
+  currentPageIcon: {
+    type: String,
+    default: null,
+  },
+});
 
 const { t } = useI18n();
-const page = usePage();
-const authStore = useAuthStore();
-const drawer = ref(true);
-
-const { user } = storeToRefs(authStore);
-
-const currentRoute = computed(() => page.url);
+const { drawer, currentRoute, navigateTo, user } = useLayout();
 
 const hasCustomerRole = computed(() => user.value?.all_roles?.includes('customer'));
 
 const navItems = computed(() => {
   const items = [
-    { title: t('admin.dashboard.title'), icon: 'mdi-view-dashboard', route: '/admin/dashboard' },
-    { title: t('admin.users.title'), icon: 'mdi-account-group', route: '/admin/users' },
-    { title: t('admin.regions.title'), icon: 'mdi-map-marker-radius', route: '/admin/regions' },
-    { title: t('admin.deliveries.title'), icon: 'mdi-truck-delivery', route: '/admin/deliveries' },
-    { title: t('admin.settings.title'), icon: 'mdi-cog', route: '/admin/settings' },
-    { title: 'Profile', icon: 'mdi-account', route: '/admin/profile' },
+    { titleKey: 'admin.dashboard.title', icon: 'mdi-view-dashboard', route: '/admin/dashboard' },
+    { titleKey: 'admin.nav.profile', icon: 'mdi-account', route: '/admin/profile' },
+    { titleKey: 'admin.users.title', icon: 'mdi-account-group', route: '/admin/users' },
+    { titleKey: 'admin.regions.title', icon: 'mdi-map-marker-radius', route: '/admin/regions' },
+    { titleKey: 'admin.deliveries.title', icon: 'mdi-truck-delivery', route: '/admin/deliveries' },
+    { titleKey: 'admin.settings.title', icon: 'mdi-cog', route: '/admin/settings' },
   ];
 
   if (hasCustomerRole.value) {
-    items.push({ title: 'Access as Customer', icon: 'mdi-account-switch', route: '/customer/dashboard' });
+    items.push({ titleKey: 'admin.nav.access_as_customer', icon: 'mdi-account-switch', route: '/customer/dashboard' });
   }
 
   return items;
 });
 
+const isActive = (route) => {
+  if (route === '/admin/dashboard') return currentRoute.value === '/admin' || currentRoute.value === '/admin/dashboard';
+  return currentRoute.value.startsWith(route);
+};
+
+const matchedNavItem = computed(() => navItems.value.find(n => isActive(n.route)));
+
 const currentPageTitle = computed(() => {
-  const item = navItems.value.find(n => n.route === currentRoute.value);
-  return item ? item.title : 'Admin Panel';
+  const item = matchedNavItem.value;
+  return item ? t(item.titleKey) : t('admin.title');
 });
 
-const navigateTo = (route) => {
-  router.visit(route);
-};
-
-const logout = () => {
-  authStore.logout(router);
-};
-
-// Sync auth store with server-side props
-import { watch } from 'vue';
-watch(() => page.props.auth?.user, (newUser) => {
-  if (newUser) {
-    authStore.user = newUser;
-  }
-}, { immediate: true });
+const currentPageIcon = computed(() => {
+  if (props.currentPageIcon) return props.currentPageIcon;
+  return matchedNavItem.value?.icon || null;
+});
 </script>
 
 <style scoped>

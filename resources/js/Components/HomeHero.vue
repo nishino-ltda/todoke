@@ -16,7 +16,7 @@
           <h1 class="text-h2 font-weight-black mb-6 hero-text shadow-text" data-cy="hero-title">
             {{ t('home.hero.title') }}
           </h1>
-          <p class="text-h5 hero-text font-weight-medium shadow-text mb-0" data-cy="hero-subtitle">
+          <p class="text-h6 hero-text font-weight-medium shadow-text mb-0" data-cy="hero-subtitle">
             {{ t('home.hero.subtitle') }}
           </p>
         </v-col>

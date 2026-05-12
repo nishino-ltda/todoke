@@ -193,6 +193,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/tickets', [\App\Http\Controllers\API\SupportController::class, 'store']);
             Route::get('/tickets/{id}', [\App\Http\Controllers\API\SupportController::class, 'show']);
             Route::post('/tickets/{id}/reply', [\App\Http\Controllers\API\SupportController::class, 'reply']);
+            Route::patch('/tickets/{id}/close', [\App\Http\Controllers\API\SupportController::class, 'close']);
             Route::get('/faq', [\App\Http\Controllers\API\SupportController::class, 'faq']);
         });
 

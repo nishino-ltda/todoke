@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -296,8 +297,10 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // Mock settings for now as there is no settings table yet
-        return response()->json([
+        $settings = Setting::all()->pluck('value', 'key');
+        
+        // Ensure all expected keys exist even if not in DB
+        $defaults = [
             'site_name' => 'TODOKE',
             'maintenance_mode' => false,
             'allow_registration' => true,
@@ -305,7 +308,22 @@ class UserController extends Controller
             'delivery_fee_per_km' => 1.50,
             'support_email' => 'support@todoke.com',
             'contact_phone' => '+55 11 99999-9999'
-        ]);
+        ];
+
+        $result = [];
+        foreach ($defaults as $key => $defaultValue) {
+            $value = $settings->get($key, $defaultValue);
+            // Type casting
+            if (in_array($key, ['maintenance_mode', 'allow_registration'])) {
+                $result[$key] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            } elseif (in_array($key, ['delivery_fee_base', 'delivery_fee_per_km'])) {
+                $result[$key] = (float) $value;
+            } else {
+                $result[$key] = $value;
+            }
+        }
+
+        return response()->json($result);
     }
 
     /**
@@ -320,11 +338,17 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        // In a real app, you would save these to a settings table or file
-        // For now, we just return success
+        $data = $request->all();
+        
+        foreach ($data as $key => $value) {
+            // Convert booleans to string for storage if necessary, or just store as is if DB allows
+            // Our migration uses text for value
+            Setting::updateOrCreate(['key' => $key], ['value' => is_bool($value) ? ($value ? 'true' : 'false') : $value]);
+        }
+
         return response()->json([
             'message' => 'Settings updated successfully',
-            'data' => $request->all()
+            'data' => $this->getSettings()->getData()
         ]);
     }
 }

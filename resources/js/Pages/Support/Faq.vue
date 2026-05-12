@@ -59,7 +59,7 @@ onMounted(async () => {
   loading.value = true;
   try {
     const response = await supportService.getFaqs();
-    faqs.value = response.data || response;
+    faqs.value = response.data.data || [];
   } catch (err) {
     console.error(err);
   } finally {

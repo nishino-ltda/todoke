@@ -12,3 +12,19 @@
 .v-toolbar__content {
   padding-right: 10px;
 }
+
+/* Force Header Premium Styles */
+.v-app-bar[data-cy="layout-header"],
+.v-app-bar[data-cy="app-header"] {
+  background-color: var(--brand-primary) !important;
+  color: white !important;
+  box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px rgba(255, 63, 51, .4) !important;
+}
+
+.v-app-bar[data-cy="layout-header"] .v-btn,
+.v-app-bar[data-cy="app-header"] .v-btn,
+.v-app-bar[data-cy="layout-header"] .v-icon,
+.v-app-bar[data-cy="app-header"] .v-icon {
+  color: white !important;
+}
+

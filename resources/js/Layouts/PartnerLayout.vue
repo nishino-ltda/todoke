@@ -1,14 +1,14 @@
 <template>
+  <Head :title="currentPageTitle" />
   <v-app>
-    <v-app-bar app flat border color="white">
+    <v-app-bar app elevation="2" color="primary" theme="dark" data-cy="layout-header">
       <v-app-bar-nav-icon @click="drawer = !drawer" data-cy="app-bar-nav-icon"></v-app-bar-nav-icon>
-      <v-app-bar-title class="text-subtitle-1 font-weight-bold d-flex align-center">
-        <v-icon size="24" color="primary" class="mr-2">mdi-store</v-icon>
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold">
+        <v-icon v-if="currentPageIcon" class="mr-1" size="small">{{ currentPageIcon }}</v-icon>
         {{ currentPageTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      
-      <LanguageSelector class="mr-2" />
+      <LanguageSelector />
     </v-app-bar>
 
     <v-navigation-drawer
@@ -18,39 +18,21 @@
       :permanent="!$vuetify.display.mobile"
       elevation="2"
     >
-      <v-list-item
-        prepend-avatar="https://ui-avatars.com/api/?name=Partner&background=0D47A1&color=fff"
-        :title="t('partner.title')"
-        subtitle="Partner Portal"
-        class="pa-4"
-      ></v-list-item>
-
-      <v-divider></v-divider>
-
       <v-list density="comfortable" nav>
         <v-list-item
           v-for="item in navItems"
-          :key="item.title"
+          :key="item.titleKey"
           :active="isActive(item.route)"
-          @click="navigateTo(item.route)"
           :prepend-icon="item.icon"
           :title="t(item.titleKey)"
+          @click="navigateTo(item.route)"
           link
           data-cy="partner-nav-item"
         ></v-list-item>
       </v-list>
 
       <template v-slot:append>
-        <v-divider></v-divider>
-        <v-list-item
-          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=0D47A1&color=fff`"
-          :title="user?.name || user?.email || 'User'"
-          :subtitle="user?.email"
-        >
-          <template v-slot:append>
-            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small" data-cy="logout-btn"></v-btn>
-          </template>
-        </v-list-item>
+        <UserMenuAppend />
       </template>
     </v-navigation-drawer>
 
@@ -66,23 +48,24 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { storeToRefs } from 'pinia';
-import { usePage, router } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
-import { useAuthStore } from '@/stores/auth';
-import AppFooter from '../Components/AppFooter.vue';
+import { useLayout } from '@/Composables/useLayout';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
-import LanguageSelector from '../Components/LanguageSelector.vue';
+import AppFooter from '@/Components/AppFooter.vue';
+import UserMenuAppend from '@/Components/UserMenuAppend.vue';
+
+const props = defineProps({
+  currentPageIcon: {
+    type: String,
+    default: null,
+  },
+});
 
 const { t } = useI18n();
-const page = usePage();
-const authStore = useAuthStore();
-const drawer = ref(true);
-
-const { user } = storeToRefs(authStore);
-
-const currentRoute = computed(() => page.url);
+const { drawer, currentRoute, navigateTo } = useLayout();
 
 const navItems = [
   { titleKey: 'partner.nav.dashboard', icon: 'mdi-view-dashboard', route: '/partner/dashboard' },
@@ -98,32 +81,20 @@ const isActive = (route) => {
   return currentRoute.value.startsWith(route);
 };
 
+const matchedNavItem = computed(() => navItems.find(n => isActive(n.route)));
+
 const currentPageTitle = computed(() => {
-  const item = navItems.find(n => isActive(n.route));
+  const item = matchedNavItem.value;
   return item ? t(item.titleKey) : t('partner.title');
 });
 
-const navigateTo = (route) => {
-  router.visit(route);
-};
-
-const logout = () => {
-  authStore.logout(router);
-};
-
-// Sync auth store with server-side props
-watch(() => page.props.auth?.user, (newUser) => {
-  if (newUser) {
-    authStore.user = newUser;
-  }
-}, { immediate: true });
+const currentPageIcon = computed(() => {
+  if (props.currentPageIcon) return props.currentPageIcon;
+  return matchedNavItem.value?.icon || null;
+});
 </script>
 
 <style scoped>
-.v-main {
-  min-height: 100vh;
-}
-
 .v-navigation-drawer {
   background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
 }

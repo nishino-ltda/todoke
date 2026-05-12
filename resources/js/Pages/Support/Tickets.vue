@@ -113,7 +113,7 @@ onMounted(async () => {
   loading.value = true;
   try {
     const response = await supportService.getTickets();
-    tickets.value = response.data || [];
+    tickets.value = response.data.data || [];
   } catch (err) {
     console.error(err);
   } finally {

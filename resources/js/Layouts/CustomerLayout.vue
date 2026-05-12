@@ -1,33 +1,31 @@
 <template>
+  <Head :title="currentPageTitle" />
   <v-app>
-    <v-app-bar app flat border color="white">
+    <v-app-bar app elevation="2" color="primary" theme="dark" data-cy="layout-header">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-app-bar-title class="text-subtitle-1 font-weight-bold">
+        <v-icon v-if="currentPageIcon" class="mr-1" size="small">{{ currentPageIcon }}</v-icon>
         {{ currentPageTitle }}
       </v-app-bar-title>
       <v-spacer></v-spacer>
-      
       <CartIcon class="mr-4" />
-      <LanguageSelector class="mr-2" />
+      <LanguageSelector />
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app :permanent="!$vuetify.display.mobile" :temporary="$vuetify.display.mobile" elevation="2">
-      <v-list-item
-        prepend-avatar="https://ui-avatars.com/api/?name=Customer&background=FF3F33&color=fff"
-        title="Customer Portal"
-        subtitle="My Account"
-        class="pa-4"
-      ></v-list-item>
-
-      <v-divider></v-divider>
-
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      :temporary="$vuetify.display.mobile"
+      :permanent="!$vuetify.display.mobile"
+      elevation="2"
+    >
       <v-list density="comfortable" nav>
         <v-list-item
           v-for="item in navItems"
-          :key="item.title"
+          :key="item.titleKey"
           :active="isActive(item.route)"
           :prepend-icon="item.icon"
-          :title="item.title"
+          :title="t(item.titleKey)"
           @click="navigateTo(item.route)"
           link
           data-cy="customer-nav-item"
@@ -35,20 +33,11 @@
       </v-list>
 
       <template v-slot:append>
-        <v-divider></v-divider>
-        <v-list-item
-          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=075B5E&color=fff`"
-          :title="user?.name || user?.email || 'User'"
-          :subtitle="user?.email"
-        >
-          <template v-slot:append>
-            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small"></v-btn>
-          </template>
-        </v-list-item>
+        <UserMenuAppend />
       </template>
     </v-navigation-drawer>
 
-    <v-main>
+    <v-main class="bg-grey-lighten-4">
       <v-container fluid class="pa-8">
         <slot />
       </v-container>
@@ -60,62 +49,50 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import { usePage, router } from '@inertiajs/vue3';
-import { useAuthStore } from '@/stores/auth';
+import { computed } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+import { useLayout } from '@/Composables/useLayout';
 import CartIcon from '@/Components/CartIcon.vue';
-import LanguageSelector from '../Components/LanguageSelector.vue';
+import LanguageSelector from '@/Components/LanguageSelector.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
-import AppFooter from '../Components/AppFooter.vue';
+import AppFooter from '@/Components/AppFooter.vue';
+import UserMenuAppend from '@/Components/UserMenuAppend.vue';
 
-const page = usePage();
-const authStore = useAuthStore();
-const drawer = ref(true);
+const props = defineProps({
+  currentPageIcon: {
+    type: String,
+    default: null,
+  },
+});
 
-const { user } = storeToRefs(authStore);
-
-const currentRoute = computed(() => page.url);
+const { t } = useI18n();
+const { drawer, currentRoute, navigateTo } = useLayout();
 
 const navItems = [
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/customer/dashboard' },
-  { title: 'Menu', icon: 'mdi-menu', route: '/customer/menu' },
-  { title: 'Orders', icon: 'mdi-clipboard-list', route: '/customer/orders' },
-  { title: 'Profile', icon: 'mdi-account', route: '/customer/profile' },
-  { title: 'Settings', icon: 'mdi-cog', route: '/customer/settings' },
-  { title: 'Support', icon: 'mdi-face-agent', route: '/support' },
+  { titleKey: 'customer.nav.dashboard', icon: 'mdi-view-dashboard', route: '/customer/dashboard' },
+  { titleKey: 'customer.nav.menu', icon: 'mdi-menu', route: '/customer/menu' },
+  { titleKey: 'customer.nav.orders', icon: 'mdi-clipboard-list', route: '/customer/orders' },
+  { titleKey: 'customer.nav.profile', icon: 'mdi-account', route: '/customer/profile' },
+  { titleKey: 'customer.nav.support', icon: 'mdi-face-agent', route: '/support' },
 ];
 
 const isActive = (route) => {
-  if (route === '/support') {
-    return currentRoute.value.startsWith(route);
-  }
-  if (route === '/customer/orders') {
-    return currentRoute.value.startsWith(route);
-  }
-  return currentRoute.value === route;
+  if (route === '/customer/dashboard') return currentRoute.value === '/customer' || currentRoute.value === '/customer/dashboard';
+  return currentRoute.value.startsWith(route);
 };
+
+const matchedNavItem = computed(() => navItems.find(n => isActive(n.route)));
 
 const currentPageTitle = computed(() => {
-  const item = navItems.find(n => isActive(n.route));
-  return item ? item.title : 'Customer Portal';
+  const item = matchedNavItem.value;
+  return item ? t(item.titleKey) : t('customer.title');
 });
 
-const navigateTo = (route) => {
-  router.visit(route);
-};
-
-const logout = () => {
-  authStore.logout(router);
-};
-
-// Sync auth store with server-side props
-import { watch } from 'vue';
-watch(() => page.props.auth?.user, (newUser) => {
-  if (newUser) {
-    authStore.user = newUser;
-  }
-}, { immediate: true });
+const currentPageIcon = computed(() => {
+  if (props.currentPageIcon) return props.currentPageIcon;
+  return matchedNavItem.value?.icon || null;
+});
 </script>
 
 <style scoped>

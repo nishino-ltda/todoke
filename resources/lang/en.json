@@ -5,6 +5,15 @@
         "error": "An error occurred",
         "welcome": "Welcome, {name}"
     },
+    "nav": {
+        "home": "Home",
+        "about": "About Us",
+        "contact": "Contact"
+    },
+    "guest": {
+        "title": "Guest",
+        "welcome": "Welcome to TODOKE"
+    },
     "auth": {
         "pending_approval": "Your account is pending approval. You'll receive an email when it's approved.",
         "login": "Login",
@@ -575,7 +584,22 @@
             "save_error": "Failed to save settings"
         }
     },
+    "customer": {
+        "nav": {
+            "dashboard": "Dashboard",
+            "menu": "Menu",
+            "orders": "Orders",
+            "profile": "Profile",
+            "support": "Support"
+        },
+        "title": "Customer Portal"
+    },
         "admin": {
+        "nav": {
+            "profile": "Profile",
+            "access_as_customer": "Access as Customer"
+        },
+        "title": "Admin Panel",
         "dashboard": {
             "title": "Admin Dashboard",
             "systemActivity": "System Activity",
@@ -717,6 +741,7 @@
         }
     },
     "support": {
+        "title": "Support Center",
         "dashboard": {
             "title": "Support Dashboard",
             "stats": {
