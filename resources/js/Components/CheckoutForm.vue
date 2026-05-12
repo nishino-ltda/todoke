@@ -25,10 +25,12 @@
     <v-btn
       type="submit"
       color="primary"
-      size="large"
+      size="x-large"
       :loading="props.isSubmitting"
       :disabled="props.isSubmitting"
-      class="mt-4"
+      class="mt-4 font-weight-bold text-none"
+      rounded="xl"
+      block
       data-cy="submit-order"
     >
       {{ $t('checkout.place_order') }}

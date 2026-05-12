@@ -163,33 +163,26 @@
               </v-card>
             </v-fade-transition>
 
-            <div
+            <EmptyState
               v-if="availableDeliveries.length === 0 && !loading"
-              class="text-center py-12 glass-card opacity-70 rounded-xl"
-            >
-              <v-icon size="64" class="mb-4 text-primary opacity-30">mdi-moped-electric</v-icon>
-              <p class="font-weight-medium">{{ t('courier.availableDeliveries.empty') }}</p>
-            </div>
+              icon="mdi-moped-electric"
+              icon-color="primary"
+              :message="t('courier.availableDeliveries.empty')"
+              container-class="glass-card opacity-70"
+            />
           </div>
 
-          <!-- Offline state -->
-          <div
+          <EmptyState
             v-if="!isOnline"
-            class="text-center py-12 glass-card rounded-xl"
-          >
-            <v-icon size="80" class="mb-4 text-grey-lighten-2">mdi-power-sleep</v-icon>
-            <h3 class="text-h6 font-weight-bold mb-2">{{ t('courier.status.offline') }}</h3>
-            <p class="text-grey px-8">{{ t('courier.actions.goOnline') }}</p>
-            <v-btn
-              color="primary"
-              class="mt-6 px-10 text-none font-weight-bold"
-              size="large"
-              rounded="xl"
-              @click="isOnline = true; onAvailabilityChange(true)"
-            >
-              Go Online
-            </v-btn>
-          </div>
+            icon="mdi-power-sleep"
+            icon-color="grey-lighten-2"
+            icon-size="80"
+            :title="t('courier.status.offline')"
+            :message="t('courier.actions.goOnline')"
+            :action-label="t('courier.status.go_online')"
+            container-class="glass-card"
+            @action="isOnline = true; onAvailabilityChange(true)"
+          />
         </v-col>
       </v-row>
     </div>
@@ -202,10 +195,13 @@ import { useI18n } from 'vue-i18n';
 import { useRealtime } from '@/composables/useRealtime';
 import CourierLayout from '@/Layouts/CourierLayout.vue';
 import DeliveryMap from '@/Components/DeliveryMap.vue';
+import EmptyState from '@/Components/EmptyState.vue';
 import deliveryService from '@/services/delivery';
 import { useNotificationStore } from '@/stores/notification';
+import { useCurrency } from '@/Composables/useCurrency';
 
 const { t, locale } = useI18n();
+const { formatCurrency } = useCurrency(locale.value);
 const notifications = useNotificationStore();
 const realtime = useRealtime();
 
@@ -241,12 +237,6 @@ const nextStatusLabel = computed(() => {
 });
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const formatCurrency = (value) => {
-  return new Intl.NumberFormat(locale.value, {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value || 0);
-};
 
 // ─── Actions ──────────────────────────────────────────────────────────────────
 const fetchDeliveries = async () => {
@@ -341,14 +331,6 @@ watch(activeDelivery, (newVal, oldVal) => {
 </script>
 
 <style scoped>
-.glass-card {
-  background: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(12px);
-  border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05) !important;
-}
-
 .status-card {
   position: relative;
   border-radius: 24px;
@@ -413,12 +395,7 @@ watch(activeDelivery, (newVal, oldVal) => {
 }
 
 .courier-dashboard {
-  animation: fadeIn 0.6s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  animation: fadeIn 0.5s ease-out;
 }
 
 .color-primary {

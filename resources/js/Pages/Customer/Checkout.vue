@@ -1,50 +1,48 @@
 <template>
   <CustomerLayout>
-    <div data-cy="customer-checkout" class="pa-8">
-      <v-row v-if="!isAuthenticated" class="justify-center pa-8">
-        <v-col cols="12" md="6" class="text-center">
-          <v-icon color="grey" size="64">mdi-account-lock-outline</v-icon>
-          <h2 class="text-h5 mt-4">{{ $t('checkout.login_required_title') }}</h2>
-          <p class="text-body-1 text-grey mt-2">{{ $t('checkout.login_required_message') }}</p>
-          <v-btn
-            color="primary"
-            class="mt-4 mr-2"
-            @click="goToLogin"
-            data-cy="checkout-login-btn"
-          >
-            {{ $t('auth.login') }}
-          </v-btn>
-          <v-btn
-            color="secondary"
-            class="mt-4"
-            @click="goToRegister"
-            data-cy="checkout-register-btn"
-          >
-            {{ $t('auth.register') }}
-          </v-btn>
-        </v-col>
-      </v-row>
+    <div data-cy="customer-checkout" class="pa-8 fade-in">
+      <EmptyState
+        v-if="!isAuthenticated"
+        icon="mdi-account-lock-outline"
+        :title="$t('checkout.login_required_title')"
+        :message="$t('checkout.login_required_message')"
+      >
+        <v-btn
+          color="primary"
+          class="mt-4 mr-2 font-weight-bold text-none"
+          size="large"
+          rounded="xl"
+          @click="goToLogin"
+          data-cy="checkout-login-btn"
+        >
+          {{ $t('auth.login') }}
+        </v-btn>
+        <v-btn
+          color="secondary"
+          class="mt-4 font-weight-bold text-none"
+          size="large"
+          rounded="xl"
+          @click="goToRegister"
+          data-cy="checkout-register-btn"
+        >
+          {{ $t('auth.register') }}
+        </v-btn>
+      </EmptyState>
 
-      <v-row v-else-if="cartStore.items.length === 0" class="justify-center pa-8">
-        <v-col cols="12" md="6" class="text-center">
-          <v-icon color="grey" size="64">mdi-cart-off</v-icon>
-          <h2 class="text-h5 mt-4">{{ $t('checkout.empty_cart_title') }}</h2>
-          <p class="text-body-1 text-grey mt-2">{{ $t('checkout.empty_cart_message') }}</p>
-          <v-btn
-            color="primary"
-            class="mt-4"
-            @click="goToMenu"
-            data-cy="checkout-browse-menu-btn"
-          >
-            {{ $t('checkout.browse_menu') }}
-          </v-btn>
-        </v-col>
-      </v-row>
+      <EmptyState
+        v-else-if="cartStore.items.length === 0"
+        icon="mdi-cart-off"
+        :title="$t('checkout.empty_cart_title')"
+        :message="$t('checkout.empty_cart_message')"
+        :action-label="$t('checkout.browse_menu')"
+        @action="goToMenu"
+        data-cy="checkout-browse-menu-btn"
+      />
 
       <v-row v-else>
         <v-col cols="12" md="7">
           <h1 class="text-h4 mb-2">{{ $t('checkout.title') }}</h1>
-          <p class="text-subtitle-1 text-grey mb-6">{{ $t('checkout.subtitle') }}</p>
+          <p class="text-subtitle-1 text-medium-emphasis mb-6">{{ $t('checkout.subtitle') }}</p>
 
           <CheckoutForm
             :is-submitting="isSubmitting"
@@ -55,7 +53,7 @@
         </v-col>
 
         <v-col cols="12" md="5">
-          <v-card class="glass-card" elevation="2" rounded="xl" data-cy="checkout-order-summary">
+          <v-card class="glass-card" data-cy="checkout-order-summary">
             <v-card-title class="text-h5 font-weight-black pt-6 px-6">
               {{ $t('checkout.order_summary') }}
             </v-card-title>
@@ -75,7 +73,7 @@
 
                 <v-list-item-title class="font-weight-medium">{{ item.name }}</v-list-item-title>
                 <v-list-item-subtitle class="text-primary font-weight-bold">
-                  {{ formatPrice(item.price) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
+                  {{ formatCurrency(item.price) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
                 </v-list-item-subtitle>
 
                 <template v-if="item.selectedAddons?.length" v-slot:append>
@@ -93,16 +91,16 @@
             <v-card-text v-if="cartStore.items.length > 0" class="px-6 py-4">
               <v-row class="text-body-1 mb-1">
                 <v-col cols="8">{{ $t('cart.subtotal') }}</v-col>
-                <v-col cols="4" class="text-right">{{ formatPrice(cartStore.subtotal) }}</v-col>
+                <v-col cols="4" class="text-right">{{ formatCurrency(cartStore.subtotal) }}</v-col>
               </v-row>
               <v-row class="text-body-1 mb-1">
                 <v-col cols="8">{{ $t('cart.delivery_fee') }}</v-col>
-                <v-col cols="4" class="text-right">{{ formatPrice(cartStore.deliveryFee) }}</v-col>
+                <v-col cols="4" class="text-right">{{ formatCurrency(cartStore.deliveryFee) }}</v-col>
               </v-row>
               <v-divider class="my-2" />
               <v-row class="text-h6 font-weight-black">
                 <v-col cols="8">{{ $t('cart.total') }}</v-col>
-                <v-col cols="4" class="text-right text-primary">{{ formatPrice(cartStore.totalWithDelivery) }}</v-col>
+                <v-col cols="4" class="text-right text-primary">{{ formatCurrency(cartStore.totalWithDelivery) }}</v-col>
               </v-row>
             </v-card-text>
           </v-card>
@@ -117,13 +115,16 @@ import { ref, computed, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import CustomerLayout from '@/Layouts/CustomerLayout.vue'
 import CheckoutForm from '@/Components/CheckoutForm.vue'
+import EmptyState from '@/Components/EmptyState.vue'
 import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
 import { useOrderApi } from '@/services/order'
+import { useCurrency } from '@/Composables/useCurrency'
 
 const cartStore = useCartStore()
 const authStore = useAuthStore()
 const orderApi = useOrderApi()
+const { formatCurrency } = useCurrency()
 
 const isSubmitting = ref(false)
 const errorMessage = ref('')
@@ -133,11 +134,6 @@ const resolveImageUrl = (path) => {
   if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
   if (path.startsWith('http')) return path
   return `/storage/${path}`
-}
-
-function formatPrice(value) {
-  const num = parseFloat(value) || 0
-  return `R$ ${num.toFixed(2)}`
 }
 
 function addonLabel(addon) {
@@ -214,12 +210,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.glass-card {
-  background: rgba(255, 255, 255, 0.8) !important;
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(var(--v-border-color), 0.1);
-}
-
 :deep(.v-list-item) {
   border-radius: 12px;
 }

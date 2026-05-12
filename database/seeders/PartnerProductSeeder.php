@@ -16,7 +16,7 @@ class PartnerProductSeeder extends Seeder
         $partners = [
             [
                 'name' => 'Roberto da Silva',
-                'email' => 'bella.italia@todoke.test',
+                'email' => 'partner@todoke.test',
                 'business_name' => 'Pizzaria Bella Itália',
                 'business_type' => 'restaurant',
                 'category' => 'Pizza',

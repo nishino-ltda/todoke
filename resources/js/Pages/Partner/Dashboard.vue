@@ -17,7 +17,7 @@
       <!-- Charts Section -->
       <v-row class="mb-6">
         <v-col cols="12" lg="8">
-          <v-card border elevation="0" class="rounded-xl">
+          <v-card class="glass-card">
             <v-card-title class="px-6 py-4 d-flex align-center justify-space-between">
               <span>{{ t('partner.dashboard.charts.order_volume') }}</span>
               <v-btn-toggle
@@ -50,7 +50,7 @@
           </v-card>
         </v-col>
         <v-col cols="12" lg="4">
-          <v-card border elevation="0" class="rounded-xl h-100">
+          <v-card class="glass-card h-100">
              <v-card-title class="px-6 py-4">
               {{ t('partner.dashboard.charts.revenue_share') }}
             </v-card-title>
@@ -87,7 +87,7 @@
             </template>
             
             <template #item.total="{ item }">
-              <span class="font-weight-bold">${{ item.total?.toFixed(2) || '0.00' }}</span>
+              <span class="font-weight-bold">{{ formatCurrency(item.total) }}</span>
             </template>
 
             <template #item.actions="{ item }">
@@ -125,14 +125,14 @@
               </template>
               <v-list-item-title>{{ item.name }}</v-list-item-title>
               <template #append>
-                <span>{{ t('common.currency_symbol', { value: (item.price * item.quantity).toFixed(2) }, '$' + (item.price * item.quantity).toFixed(2)) }}</span>
+                <span>{{ formatCurrency(item.price * item.quantity) }}</span>
               </template>
             </v-list-item>
           </v-list>
           <v-divider class="my-3"></v-divider>
           <div class="d-flex justify-space-between text-h6 px-4">
             <span>{{ t('partner.orders.total') }}</span>
-            <span class="primary--text font-weight-bold">{{ t('common.currency_symbol', { value: selectedOrder.total?.toFixed(2) || '0.00' }, '$' + (selectedOrder.total?.toFixed(2) || '0.00')) }}</span>
+            <span class="primary--text font-weight-bold">{{ formatCurrency(selectedOrder.total) }}</span>
           </div>
         </div>
         <template #actions>
@@ -169,6 +169,7 @@ import AppModal from '@/Components/AppModal.vue';
 import MetricsWidget from '@/Components/MetricsWidget.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
+import { useCurrency } from '@/Composables/useCurrency';
 import { useRealtime } from '@/composables/useRealtime';
 
 ChartJS.register(
@@ -191,6 +192,7 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
+const { formatCurrency } = useCurrency();
 const notifications = useNotificationStore();
 const realtime = useRealtime();
 
@@ -202,7 +204,7 @@ const activePeriod = ref('7days');
 const metrics = ref([
   { titleKey: 'partner.dashboard.metrics.new_orders', value: '0', icon: 'mdi-bell-ring', color: 'bg-orange', key: 'new_orders' },
   { titleKey: 'partner.dashboard.metrics.preparing', value: '0', icon: 'mdi-silverware', color: 'bg-blue', key: 'preparing' },
-  { titleKey: 'partner.dashboard.metrics.today_revenue', value: '$0.00', icon: 'mdi-currency-usd', color: 'bg-green', key: 'today_revenue' },
+  { titleKey: 'partner.dashboard.metrics.today_revenue', value: formatCurrency(0), icon: 'mdi-currency-usd', color: 'bg-green', key: 'today_revenue' },
   { titleKey: 'partner.dashboard.metrics.completed', value: '0', icon: 'mdi-check-circle', color: 'bg-purple', key: 'completed' },
 ]);
 
@@ -304,7 +306,7 @@ const fetchDashboardData = async () => {
     metrics.value.forEach(m => {
       if (stats[m.key] !== undefined) {
         if (m.key === 'today_revenue') {
-           m.value = `$${stats[m.key].toFixed(2)}`;
+           m.value = formatCurrency(stats[m.key]);
         } else {
            m.value = stats[m.key].toString();
         }
@@ -328,15 +330,7 @@ const viewOrder = (order) => {
 
 const acceptOrder = async (order) => {
   try {
-    // Assuming updateOrderStatus exists in partnerService (I added it to my mental model, let's verify/add)
-    if (partnerService.updateOrderStatus) {
-        await partnerService.updateOrderStatus(order.id, 'preparing');
-    } else {
-        // Fallback or use a generic update
-        await partnerService.updateItemAvailability(order.id, true); // This was in the service but it's for items
-        // I'll update the service in a moment if needed
-    }
-    
+    await partnerService.updateOrderStatus(order.id, 'preparing');
     notifications.success(t('partner.orders.accepted', { id: order.id }));
     fetchDashboardData();
     showOrderModal.value = false;
@@ -403,10 +397,5 @@ watch(recentOrders, (newOrders, oldOrders) => {
 .chart-wrapper {
   position: relative;
   height: 300px;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 </style>

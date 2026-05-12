@@ -109,9 +109,12 @@
                 <span class="text-h6 font-weight-bold">Total</span>
                 <span class="text-h5 font-weight-black color-primary">{{ formatPrice(order.total) }}</span>
             </div>
-            <v-chip variant="tonal" color="success" block class="justify-center font-weight-bold">
-                <v-icon start icon="mdi-credit-card-outline"></v-icon>
-                Pago via Cartão de Crédito
+            <v-chip variant="tonal" :color="order.payment_method === 'cash' ? 'info' : 'success'" block class="justify-center font-weight-bold">
+                <v-icon start :icon="order.payment_method === 'cash' ? 'mdi-cash' : 'mdi-credit-card-outline'"></v-icon>
+                {{ $t('components.payment.' + order.payment_method, order.payment_method) }}
+                <span v-if="order.payment_method === 'cash' && order.change_for > 0" class="ml-1">
+                  ({{ $t('components.payment.change_for') }}: {{ formatPrice(order.change_for) }})
+                </span>
             </v-chip>
           </v-card>
 
@@ -154,47 +157,63 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 import CustomerLayout from '@/Layouts/CustomerLayout.vue'
 import { useCartStore } from '@/stores/cart'
 
 const props = defineProps({
   orderId: String,
+  orderData: Object,
 })
 
 const cartStore = useCartStore()
 const showSnackbar = ref(false)
 const snackbarText = ref('')
 
-// Mock Order Data
-const order = ref({
-    id: props.orderId,
-    status: 'preparing',
-    created_at: '10 de Mai, 18:45',
-    items_count: 2,
-    subtotal: 75.00,
-    delivery_fee: 14.90,
-    total: 89.90,
+// Map Backend Order Data
+const order = computed(() => {
+  const data = props.orderData || {}
+  const delivery = data.delivery || {}
+  
+  return {
+    id: data.id,
+    status: data.status,
+    created_at: data.created_at_formatted || new Date(data.created_at).toLocaleString('pt-BR'),
+    items_count: data.items?.length || 0,
+    subtotal: parseFloat(data.total_value) - (parseFloat(delivery.value) || 0),
+    delivery_fee: parseFloat(delivery.value) || 0,
+    total: parseFloat(data.total_value),
     address: {
-        street: 'Av. Paulista',
-        number: '1000',
-        neighborhood: 'Bela Vista',
-        city: 'São Paulo',
-        complement: 'Bloco B, Apto 42'
+        street: delivery.destination?.address?.split(',')[0] || delivery.destination?.address || 'N/A',
+        number: delivery.destination?.address?.split(',')[1] || '',
+        neighborhood: delivery.destination?.neighborhood || '',
+        city: delivery.destination?.city || '',
+        complement: delivery.destination?.complement || ''
     },
-    items: [
-        { id: 101, name: 'Pizza Calabresa', price: 75.00, quantity: 1, description: 'Molho de tomate, mussarela, calabresa fatiada e cebola.' },
-        { id: 102, name: 'Coca-Cola 2L', price: 14.90, quantity: 1, description: 'Garrafa pet 2 litros.' }
-    ]
+    full_address: delivery.destination?.address || 'N/A',
+    payment_method: delivery.payment_method || 'credit_card',
+    change_for: parseFloat(delivery.change_for) || 0,
+    items: (data.items || []).map(item => ({
+        id: item.id,
+        name: item.product?.name || 'Produto',
+        price: parseFloat(item.unit_price),
+        quantity: item.quantity,
+        description: item.product?.description || '',
+        image: item.product?.image || null
+    }))
+  }
 })
 
-const timelineSteps = ref([
-    { title: 'Pedido Recebido', description: 'O restaurante já está com seu pedido.', icon: 'mdi-check', completed: true, time: '18:46' },
-    { title: 'Em Preparação', description: 'Seu pedido está sendo preparado com carinho.', icon: 'mdi-pot-steam', completed: true, current: true, time: '18:55' },
-    { title: 'Saiu para Entrega', description: 'O entregador está a caminho da sua casa.', icon: 'mdi-moped', completed: false },
-    { title: 'Entregue', description: 'Bom apetite!', icon: 'mdi-home-heart', completed: false }
-])
+const timelineSteps = computed(() => {
+    const s = order.value.status
+    return [
+        { title: 'Pedido Recebido', description: 'O restaurante já está com seu pedido.', icon: 'mdi-check', completed: true },
+        { title: 'Em Preparação', description: 'Seu pedido está sendo preparado.', icon: 'mdi-pot-steam', completed: ['preparing', 'ready', 'completed'].includes(s), current: s === 'preparing' },
+        { title: 'Saiu para Entrega', description: 'O entregador está a caminho.', icon: 'mdi-moped', completed: ['ready', 'completed'].includes(s), current: s === 'ready' },
+        { title: 'Entregue', description: 'Bom apetite!', icon: 'mdi-home-heart', completed: s === 'completed', current: s === 'completed' }
+    ]
+})
 
 const formatPrice = (value) => {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)

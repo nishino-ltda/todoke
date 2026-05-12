@@ -34,7 +34,13 @@
                 <v-list-item-title>{{ t('partner.orders.total') }}: {{ t('common.currency_symbol', { value: order.total }, '$' + order.total) }}</v-list-item-title>
               </v-list-item>
               <v-list-item>
-                <v-list-item-title>{{ t('partner.orders.payment_method') }}: {{ order.payment_method }}</v-list-item-title>
+                <v-list-item-title>
+                  {{ t('partner.orders.payment_method') }}: 
+                  {{ t('components.payment.' + order.payment_method, order.payment_method) }}
+                  <v-chip v-if="order.payment_method === 'cash' && order.change_for > 0" color="info" size="small" class="ml-2">
+                    {{ t('components.payment.change_for') }}: {{ t('common.currency_symbol', { value: order.change_for }, 'R$ ' + order.change_for) }}
+                  </v-chip>
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-col>
@@ -114,6 +120,11 @@
         <p style="margin: 5px 0;"><strong>CUSTOMER:</strong> {{ order.customer_name }}</p>
         <p style="margin: 5px 0;"><strong>ADDRESS:</strong> {{ order.delivery_address }}</p>
         <p style="margin: 5px 0;"><strong>PHONE:</strong> {{ order.customer_phone }}</p>
+        <p style="margin: 5px 0;"><strong>PAYMENT:</strong> {{ t('components.payment.' + order.payment_method, order.payment_method) }} 
+          <span v-if="order.payment_method === 'cash' && order.change_for > 0">
+            ({{ t('components.payment.change_for') }}: {{ t('common.currency_symbol', { value: order.change_for }, 'R$ ' + order.change_for) }})
+          </span>
+        </p>
         <hr style="border-top: 1px dashed black; margin: 10px 0;">
         <div v-for="item in order.items" :key="item.id" style="margin: 2px 0;">
           {{ item.quantity }}x {{ item.product_name }}

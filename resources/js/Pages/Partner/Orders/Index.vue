@@ -1,6 +1,6 @@
 <template>
   <PartnerLayout>
-    <div class="partner-orders-index" data-cy="partner-orders-index">
+    <div class="partner-orders-index glass-card pa-6 fade-in" data-cy="partner-orders-index">
       <DataTable
         :title="t('partner.orders.title')"
         :headers="translatedHeaders"
@@ -19,7 +19,7 @@
         </template>
         
         <template #item.total="{ item }">
-          <span class="font-weight-bold">{{ t('common.currency_symbol', { value: item.total?.toFixed(2) || '0.00' }, '$' + (item.total?.toFixed(2) || '0.00')) }}</span>
+          <span class="font-weight-bold">{{ formatCurrency(item.total) }}</span>
         </template>
 
         <template #item.actions="{ item }">
@@ -34,10 +34,14 @@
             v-if="item.status === 'pending'"
             variant="text"
             color="success"
-            icon="mdi-check"
+            class="font-weight-bold"
+            density="comfortable"
             @click="updateStatus(item.id, 'preparing')"
             data-cy="accept-order-btn"
-          ></v-btn>
+          >
+            <v-icon class="mr-1" size="small">mdi-check</v-icon>
+            {{ t('partner.actions.accept') }}
+          </v-btn>
         </template>
       </DataTable>
     </div>
@@ -52,8 +56,10 @@ import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import partnerService from '@/services/partner';
 import { useNotificationStore } from '@/stores/notification';
+import { useCurrency } from '@/Composables/useCurrency';
 
 const { t } = useI18n();
+const { formatCurrency } = useCurrency();
 const notifications = useNotificationStore();
 
 const loading = ref(false);

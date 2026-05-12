@@ -174,57 +174,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
 import CustomerLayout from '@/Layouts/CustomerLayout.vue'
 import { useCartStore } from '@/stores/cart'
+
+const props = defineProps({
+  orders: Array
+})
 
 const cartStore = useCartStore()
 const tab = ref('active')
 const showSnackbar = ref(false)
 const snackbarText = ref('')
 
-// Mock Data (In a real app, this would come from props)
-const activeOrders = ref([
-  {
-    id: 'TK-8821',
-    partner_name: 'Pizzaria Bella Itália',
-    status: 'preparing',
-    total: 89.90,
-    items_summary: '1x Pizza Calabresa, 1x Coca-Cola 2L',
-    progress: 45,
-    eta: '25-35 min',
-    items: [
-        { id: 101, name: 'Pizza Calabresa', price: 75.00, quantity: 1, partner_id: 2 },
-        { id: 102, name: 'Coca-Cola 2L', price: 14.90, quantity: 1, partner_id: 2 }
-    ]
-  }
-])
+const allOrders = computed(() => {
+    return (props.orders || []).map(order => {
+        const items = (order.items || []).map(item => ({
+            id: item.id,
+            name: item.product?.name || 'Produto',
+            price: parseFloat(item.unit_price),
+            quantity: item.quantity,
+            partner_id: order.partner_id
+        }))
+        
+        return {
+            id: order.id,
+            partner_name: order.partner?.business_name || order.partner?.name || 'Restaurante',
+            status: order.status,
+            total: parseFloat(order.total_value),
+            items_summary: items.map(i => `${i.quantity}x ${i.name}`).join(', '),
+            date: new Date(order.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }),
+            progress: order.status === 'preparing' ? 45 : (order.status === 'ready' ? 80 : 100),
+            eta: order.status === 'preparing' ? '25-35 min' : (order.status === 'ready' ? '5-10 min' : 'Entregue'),
+            items: items
+        }
+    })
+})
 
-const orderHistory = ref([
-  {
-    id: 'TK-7712',
-    partner_name: 'Burguer do Porto',
-    status: 'completed',
-    total: 45.00,
-    items_summary: '1x Combo Smash Bacon',
-    date: 'Ontem, 20:15',
-    items: [
-        { id: 201, name: 'Combo Smash Bacon', price: 45.00, quantity: 1, partner_id: 3 }
-    ]
-  },
-  {
-    id: 'TK-6605',
-    partner_name: 'Sushi Garden',
-    status: 'completed',
-    total: 120.00,
-    items_summary: 'Combo 40 peças Mix',
-    date: '3 dias atrás',
-    items: [
-        { id: 301, name: 'Combo 40 peças Mix', price: 120.00, quantity: 1, partner_id: 4 }
-    ]
-  }
-])
+const activeOrders = computed(() => 
+    allOrders.value.filter(o => ['pending', 'preparing', 'ready'].includes(o.status))
+)
+
+const orderHistory = computed(() => 
+    allOrders.value.filter(o => ['completed', 'cancelled', 'delivered'].includes(o.status))
+)
 
 const formatPrice = (value) => {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value)
@@ -236,6 +230,7 @@ const getStatusColor = (status) => {
     preparing: 'info',
     ready: 'success',
     completed: 'success',
+    delivered: 'success',
     cancelled: 'error'
   }
   return colors[status] || 'grey'

@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Addon;
+use App\Models\User;
+use App\Models\Delivery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -48,16 +50,19 @@ class OrderController extends Controller
 
     private function formatOrder($order)
     {
+        $deliveryFee = (float) ($order->delivery->value ?? 0.00);
+        
         return [
             'id' => $order->id,
             'customer_name' => $order->client->name ?? 'N/A',
             'customer_phone' => $order->client->phone ?? '',
             'status' => $order->status,
             'total' => (float) $order->total_value,
-            'subtotal' => (float) $order->total_value,
-            'delivery_fee' => 0.00,
+            'subtotal' => (float) ($order->total_value - $deliveryFee),
+            'delivery_fee' => $deliveryFee,
             'delivery_address' => $order->delivery?->destination['address'] ?? 'N/A',
             'payment_method' => $order->delivery?->payment_method ?? 'credit_card',
+            'change_for' => (float) ($order->delivery?->change_for ?? 0.00),
             'items' => $order->items->map(function ($item) {
                 return [
                     'id' => $item->id,
@@ -148,12 +153,33 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->update(['total_value' => $total]);
+        $deliveryFee = 5.00;
+        $totalWithDelivery = $total + $deliveryFee;
+
+        // Create Delivery Record
+        $partner = User::find($request->partner_id);
+        $delivery = Delivery::create([
+            'customer_id' => $request->user()->id,
+            'origin' => ['address' => $partner->address ?? 'Restaurante'],
+            'destination' => $request->delivery['destination'],
+            'status' => 'pending',
+            'type' => 'standard',
+            'item_description' => 'Pedido #' . $order->id,
+            'value' => $deliveryFee,
+            'payment_method' => $request->payment['method'] ?? 'credit_card',
+            'change_for' => $request->payment['change_for'] ?? null,
+        ]);
+
+        $order->update([
+            'total_value' => $totalWithDelivery,
+            'delivery_id' => $delivery->id
+        ]);
 
         return response()->json([
             'id' => $order->id,
             'status' => $order->status,
-            'total_value' => number_format($order->total_value, 2, '.', '')
+            'total_value' => number_format($order->total_value, 2, '.', ''),
+            'delivery_fee' => number_format($deliveryFee, 2, '.', '')
         ], 201);
     }
 }

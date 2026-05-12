@@ -29,7 +29,8 @@ class Delivery extends Model
         'stages',
         'special_instructions',
         'payment_method',
-        'is_hybrid'
+        'is_hybrid',
+        'change_for'
     ];
 
     protected $casts = [
@@ -42,7 +43,8 @@ class Delivery extends Model
         'current_position' => 'array',
         'stages' => 'array',
         'payment_method' => 'string',
-        'is_hybrid' => 'boolean'
+        'is_hybrid' => 'boolean',
+        'change_for' => 'decimal:2'
     ];
 
     public function setStagesAttribute($value)

@@ -105,11 +105,15 @@ import partnerService from '@/services/partner';
 import api from '@/services/api';
 import { useNotificationStore } from '@/stores/notification';
 
+const props = defineProps({
+  productsData: Array
+});
+
 const { t } = useI18n();
 const notifications = useNotificationStore();
 const loading = ref(false);
 const saving = ref(false);
-const products = ref([]);
+const products = ref(props.productsData || []);
 const showFormModal = ref(false);
 const showDeleteModal = ref(false);
 const isEditing = ref(false);
@@ -261,7 +265,9 @@ const doDelete = async () => {
 };
 
 onMounted(() => {
-  fetchProducts();
+  if (products.value.length === 0) {
+    fetchProducts();
+  }
   fetchAddons();
 });
 </script>

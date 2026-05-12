@@ -444,6 +444,7 @@
             "title": "CURRENT STATUS",
             "online": "Online",
             "offline": "Offline",
+            "go_online": "Go Online",
             "pending": "Pending",
             "accepted": "Accepted",
             "arrived": "Arrived",
