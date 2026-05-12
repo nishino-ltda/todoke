@@ -13,7 +13,7 @@
 
     <v-navigation-drawer v-model="drawer" app :permanent="!$vuetify.display.mobile" :temporary="$vuetify.display.mobile" elevation="2">
       <v-list-item
-        prepend-avatar="https://ui-avatars.com/api/?name=Customer&background=0D47A1&color=fff"
+        prepend-avatar="https://ui-avatars.com/api/?name=Customer&background=FF3F33&color=fff"
         title="Customer Portal"
         subtitle="My Account"
         class="pa-4"
@@ -37,7 +37,7 @@
       <template v-slot:append>
         <v-divider></v-divider>
         <v-list-item
-          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=0D47A1&color=fff`"
+          :prepend-avatar="`https://ui-avatars.com/api/?name=${user?.name || 'U'}&background=075B5E&color=fff`"
           :title="user?.name || user?.email || 'User'"
           :subtitle="user?.email"
         >
@@ -48,7 +48,7 @@
       </template>
     </v-navigation-drawer>
 
-    <v-main class="bg-grey-lighten-4">
+    <v-main>
       <v-container fluid class="pa-8">
         <slot />
       </v-container>

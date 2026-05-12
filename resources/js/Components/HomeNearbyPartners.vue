@@ -44,7 +44,7 @@
         >
           <v-card class="product-card h-100 rounded-lg" elevation="1" hover>
             <v-img
-              :src="product.image || 'https://cdn.pixabay.com/photo/2017/02/15/10/39/food-2068221_1280.jpg'"
+              :src="resolveImageUrl(product.image)"
               height="200"
               cover
             >
@@ -91,6 +91,12 @@
         <p class="text-h6 text-medium-emphasis">Nenhum parceiro operando no momento.</p>
       </v-row>
     </v-container>
+    <ProductDetailsModal
+      v-if="selectedProduct"
+      :product="selectedProduct"
+      v-model="showDetails"
+      @close="showDetails = false"
+    />
   </section>
 </template>
 
@@ -100,6 +106,7 @@ import { useI18n } from 'vue-i18n'
 import api from '@/services/api'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import ProductDetailsModal from '@/Components/ProductDetailsModal.vue'
 
 const { t } = useI18n()
 const loading = ref(true)
@@ -109,6 +116,8 @@ const products = ref([])
 const mapElement = ref(null)
 const map = ref(null)
 const userLocation = ref(null)
+const selectedProduct = ref(null)
+const showDetails = ref(false)
 
 const fetchProducts = async () => {
   loading.value = true
@@ -195,9 +204,15 @@ const initMap = () => {
   }
 }
 
+const resolveImageUrl = (path) => {
+  if (!path) return 'https://cdn.pixabay.com/photo/2017/02/15/10/39/food-2068221_1280.jpg'
+  if (path.startsWith('http')) return path
+  return `/storage/${path}`
+}
+
 const viewProduct = (product) => {
-    // In a real app, this would navigate to the partner's page
-    console.log('Viewing product:', product)
+    selectedProduct.value = product
+    showDetails.value = true
 }
 
 onMounted(() => {

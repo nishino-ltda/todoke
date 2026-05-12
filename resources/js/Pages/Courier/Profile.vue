@@ -1,178 +1,325 @@
 <template>
   <CourierLayout>
-    <div data-cy="courier-profile">
-      <h1>Courier Profile</h1>
-      <v-card class="mt-4">
-        <v-card-text>
-          <v-text-field v-model="form.name" label="Name" />
-          <v-text-field v-model="form.email" label="Email" disabled />
-          <v-text-field v-model="form.phone" label="Phone" @input="form.phone = maskPhone($event.target.value)" />
-          
-          <div class="mb-4">
-            <label class="v-label mb-2 d-block">Profile Photo</label>
-            <div class="d-flex align-center gap-4">
-              <v-avatar size="100" class="elevation-2" rounded="lg">
-                <v-img :src="photoPreview || resolveImageUrl(form.photoUrl)" cover>
-                  <template v-slot:placeholder>
-                    <v-icon size="large" icon="mdi-account"></v-icon>
-                  </template>
-                </v-img>
-              </v-avatar>
-              <v-file-input
-                v-model="photoFile"
-                label="Choose a photo"
-                prepend-icon="mdi-camera"
-                accept="image/*"
-                @change="handlePhotoChange"
-                variant="outlined"
-                density="compact"
-                hide-details
-                class="flex-grow-1"
-              />
-            </div>
-          </div>
-          <v-divider class="my-4" />
-          <v-text-field v-model="form.license_number" label="License Number" />
-          <v-select v-model="form.vehicle_type" :items="['motorcycle', 'car', 'bicycle']" label="Vehicle Type" />
+    <div class="profile-container" data-cy="courier-profile">
+      <v-row>
+        <!-- Left Column: Profile Info -->
+        <v-col cols="12" md="4">
+          <v-card class="glass-card mb-6 text-center pa-6">
+            <v-avatar size="150" class="mx-auto mb-4 elevation-4 border-avatar">
+              <v-img :src="profilePhotoUrl" cover>
+                <template v-slot:placeholder>
+                  <v-icon size="64" color="grey">mdi-account</v-icon>
+                </template>
+              </v-img>
+            </v-avatar>
+            <h2 class="text-h5 font-weight-bold mb-1">{{ user?.name }}</h2>
+            <p class="text-subtitle-2 text-grey mb-4">{{ t('auth.roles.courier') }}</p>
+            
+            <v-file-input
+              v-model="photoFile"
+              accept="image/*"
+              variant="outlined"
+              density="compact"
+              prepend-icon="mdi-camera"
+              :label="t('courier.profile.choose_photo')"
+              hide-details
+              class="mb-4"
+              @change="uploadPhoto"
+            ></v-file-input>
+          </v-card>
 
-          <v-btn color="primary" @click="saveProfile" :loading="saving" class="mt-4">
-            Save
-          </v-btn>
-        </v-card-text>
-      </v-card>
-
-      <v-alert v-if="successMessage" type="success" class="mt-4">
-        {{ successMessage }}
-      </v-alert>
-
-      <v-divider class="my-6" />
-
-      <h2>Additional Roles</h2>
-      <v-card class="mt-4">
-        <v-card-text>
-          <p>
-            <a href="/customer/dashboard">Access as Customer</a>
-          </p>
-          <v-divider class="my-4" />
-          <div v-if="!isPartner">
-            <p>Want to become a partner?</p>
-            <v-btn color="primary" variant="outlined" class="mt-2" @click="showPartnerForm = true">
-              Become a Partner
+          <!-- Additional Roles Card -->
+          <v-card class="glass-card pa-6">
+            <h3 class="text-h6 font-weight-bold mb-4">{{ t('courier.profile.additional_roles') }}</h3>
+            <v-btn
+              v-if="!isPartner"
+              block
+              color="primary"
+              variant="tonal"
+              prepend-icon="mdi-store-plus"
+              class="mb-2 text-none"
+              @click="showBecomePartner = true"
+              data-cy="become-partner-btn"
+            >
+              {{ t('courier.profile.become_partner') }}
             </v-btn>
-            <v-card v-if="showPartnerForm" class="mt-2 pa-4">
-              <v-text-field v-model="partnerForm.business_name" label="Business Name" />
-              <v-select v-model="partnerForm.business_type" :items="['restaurant', 'market', 'pharmacy']" label="Business Type" />
-              <v-text-field v-model="partnerForm.tax_id" label="Tax ID" @input="partnerForm.tax_id = maskCNPJ($event.target.value)" />
-              <v-text-field v-model="partnerForm.address" label="Address" />
-              <v-btn color="primary" @click="addRole('partner')" :loading="addingRole">
-                Submit
-              </v-btn>
-            </v-card>
-          </div>
-          <div v-else>
-            <p>You are already a partner.</p>
-          </div>
-        </v-card-text>
-      </v-card>
+            <v-chip
+              v-if="isPartner"
+              color="success"
+              variant="flat"
+              block
+              class="mb-2 justify-center"
+              prepend-icon="mdi-check-circle"
+            >
+              {{ t('courier.profile.already_partner') }}
+            </v-chip>
+            <v-btn
+              block
+              variant="outlined"
+              prepend-icon="mdi-account-switch"
+              class="text-none"
+              @click="router.visit('/customer/dashboard')"
+            >
+              {{ t('courier.profile.access_as_customer') }}
+            </v-btn>
+          </v-card>
+        </v-col>
+
+        <!-- Right Column: Edit Form -->
+        <v-col cols="12" md="8">
+          <v-card class="glass-card pa-6">
+            <h3 class="text-h6 font-weight-bold mb-6">{{ t('courier.profile.title') }}</h3>
+            
+            <form @submit.prevent="updateProfile">
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.name"
+                    :label="t('courier.profile.name')"
+                    variant="outlined"
+                    density="comfortable"
+                    :error-messages="form.errors.name"
+                    data-cy="profile-name"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.email"
+                    :label="t('courier.profile.email')"
+                    variant="outlined"
+                    density="comfortable"
+                    disabled
+                    data-cy="profile-email"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.phone"
+                    :label="t('courier.profile.phone')"
+                    variant="outlined"
+                    density="comfortable"
+                    v-maska="'(##) #####-####'"
+                    :error-messages="form.errors.phone"
+                    data-cy="profile-phone"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6">
+                  <v-text-field
+                    v-model="form.license_number"
+                    :label="t('courier.profile.license_number')"
+                    variant="outlined"
+                    density="comfortable"
+                    :error-messages="form.errors.license_number"
+                    data-cy="profile-license"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12">
+                  <v-select
+                    v-model="form.vehicle_type"
+                    :items="vehicleOptions"
+                    item-title="title"
+                    item-value="value"
+                    :label="t('courier.profile.vehicle_type')"
+                    variant="outlined"
+                    density="comfortable"
+                    :error-messages="form.errors.vehicle_type"
+                    data-cy="profile-vehicle"
+                  ></v-select>
+                </v-col>
+              </v-row>
+
+              <div class="d-flex justify-end mt-4">
+                <v-btn
+                  type="submit"
+                  color="primary"
+                  size="large"
+                  class="text-none px-8 font-weight-bold"
+                  :loading="form.processing"
+                  data-cy="save-profile-btn"
+                >
+                  {{ t('courier.profile.save') }}
+                </v-btn>
+              </div>
+            </form>
+          </v-card>
+        </v-col>
+      </v-row>
+
+      <!-- Become Partner Dialog -->
+      <v-dialog v-model="showBecomePartner" max-width="600px">
+        <v-card class="glass-card pa-4">
+          <v-card-title class="text-h5 font-weight-bold">
+            {{ t('courier.profile.become_partner_title') }}
+          </v-card-title>
+          <v-card-text>
+            <v-row class="mt-2">
+              <v-col cols="12">
+                <v-text-field
+                  v-model="partnerForm.business_name"
+                  :label="t('courier.profile.business_name')"
+                  variant="outlined"
+                  density="comfortable"
+                  :error-messages="partnerForm.errors.business_name"
+                  data-cy="partner-business-name"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  v-model="partnerForm.business_type"
+                  :items="businessTypeOptions"
+                  item-title="title"
+                  item-value="value"
+                  :label="t('courier.profile.business_type')"
+                  variant="outlined"
+                  density="comfortable"
+                  :error-messages="partnerForm.errors.business_type"
+                  data-cy="partner-business-type"
+                ></v-select>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="partnerForm.tax_id"
+                  :label="t('courier.profile.tax_id')"
+                  variant="outlined"
+                  density="comfortable"
+                  v-maska="'##.###.###/####-##'"
+                  :error-messages="partnerForm.errors.tax_id"
+                  data-cy="partner-tax-id"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  v-model="partnerForm.address"
+                  :label="t('courier.profile.address')"
+                  variant="outlined"
+                  density="comfortable"
+                  :error-messages="partnerForm.errors.address"
+                  data-cy="partner-address"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-actions class="pa-4 pt-0">
+            <v-spacer></v-spacer>
+            <v-btn variant="text" @click="showBecomePartner = false">{{ t('partner.actions.cancel') }}</v-btn>
+            <v-btn
+              color="primary"
+              variant="flat"
+              class="px-6"
+              :loading="partnerForm.processing"
+              @click="submitBecomePartner"
+              data-cy="submit-partner-btn"
+            >
+              {{ t('courier.profile.submit') }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
   </CourierLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
-import { useAuthStore } from '@/stores/auth'
-import { storeToRefs } from 'pinia'
-import api from '@/services/api'
-import CourierLayout from '@/Layouts/CourierLayout.vue'
-import { useMasks } from '@/composables/useMasks'
-import { useNotificationStore } from '@/stores/notification'
+import { ref, computed } from 'vue';
+import { useForm, usePage, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
+import CourierLayout from '@/Layouts/CourierLayout.vue';
+import { useNotificationStore } from '@/stores/notification';
 
-const page = usePage()
-const authStore = useAuthStore()
-const { user } = storeToRefs(authStore)
-const { maskPhone, maskCNPJ } = useMasks()
-const notifications = useNotificationStore()
-const saving = ref(false)
-const addingRole = ref(false)
-const successMessage = ref('')
-const showPartnerForm = ref(false)
+const { t } = useI18n();
+const page = usePage();
+const notifications = useNotificationStore();
+const user = computed(() => page.props.auth.user);
 
-const form = ref({
-  name: '',
-  email: '',
-  phone: '',
-  photoUrl: '',
-  license_number: '',
-  vehicle_type: '',
-})
+const isPartner = computed(() => user.value?.type === 'partner' || user.value?.roles?.includes('partner'));
+const showBecomePartner = ref(false);
+const photoFile = ref(null);
 
-const partnerForm = ref({
+const profilePhotoUrl = computed(() => {
+  return user.value?.photo_url || `https://ui-avatars.com/api/?name=${user.value?.name || 'U'}&background=0D47A1&color=fff`;
+});
+
+const form = useForm({
+  name: user.value?.name || '',
+  email: user.value?.email || '',
+  phone: user.value?.phone || '',
+  license_number: user.value?.license_number || '',
+  vehicle_type: user.value?.vehicle_type || 'motorcycle',
+});
+
+const partnerForm = useForm({
   business_name: '',
-  business_type: '',
+  business_type: 'restaurant',
   tax_id: '',
   address: '',
-})
+  role: 'partner'
+});
 
-const allRoles = computed(() => user.value?.all_roles || [])
-const isPartner = computed(() => allRoles.value.includes('partner'))
+const vehicleOptions = [
+  { title: t('courier.profile.vehicle_type_options.motorcycle'), value: 'motorcycle' },
+  { title: t('courier.profile.vehicle_type_options.car'), value: 'car' },
+  { title: t('courier.profile.vehicle_type_options.bicycle'), value: 'bicycle' },
+];
 
-onMounted(() => {
-  const userData = page.props.user
-  if (userData) {
-    form.value.name = userData.name || ''
-    form.value.email = userData.email || ''
-    form.value.phone = userData.phone || ''
-    form.value.photoUrl = userData.photoUrl || ''
-    form.value.license_number = userData.license_number || ''
-    form.value.vehicle_type = userData.vehicle_type || ''
-  }
-})
+const businessTypeOptions = [
+  { title: t('courier.profile.business_type_options.restaurant'), value: 'restaurant' },
+  { title: t('courier.profile.business_type_options.market'), value: 'market' },
+  { title: t('courier.profile.business_type_options.pharmacy'), value: 'pharmacy' },
+];
 
-const saveProfile = async () => {
-  saving.value = true
-  successMessage.value = ''
+const updateProfile = () => {
+  form.patch(route('profile.update'), {
+    preserveScroll: true,
+    onSuccess: () => notifications.success(t('courier.profile.success.updated')),
+    onError: () => notifications.error(t('courier.profile.error.save')),
+  });
+};
+
+const uploadPhoto = async () => {
+  if (!photoFile.value) return;
+  
+  const formData = new FormData();
+  formData.append('photo', photoFile.value);
+  
   try {
-    const formData = new FormData()
-    formData.append('_method', 'PATCH')
-    formData.append('name', form.value.name)
-    formData.append('phone', form.value.phone)
-    formData.append('license_number', form.value.license_number)
-    formData.append('vehicle_type', form.value.vehicle_type)
-    
-    if (photoFile.value) {
-      formData.append('photo', photoFile.value)
-    }
-
-    const response = await api.post('/users/me', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-    
-    authStore.user = { ...authStore.user, ...response.data }
-    successMessage.value = 'Profile updated successfully'
-    photoFile.value = null
-    photoPreview.value = null
+    await router.post(route('profile.photo.update'), formData);
+    notifications.success(t('courier.profile.success.updated'));
   } catch (err) {
-    notifications.error('Failed to save profile')
-  } finally {
-    saving.value = false
+    notifications.error(t('courier.profile.error.save'));
   }
-}
+};
 
-const addRole = async (role) => {
-  addingRole.value = true
-  try {
-    const data = { role, ...partnerForm.value }
-    const response = await api.post('/users/me/roles', data)
-    authStore.user = response.data.user
-    successMessage.value = 'Role added successfully!'
-    showPartnerForm.value = false
-  } catch (err) {
-    notifications.error('Failed to add role')
-  } finally {
-    addingRole.value = false
-  }
-}
+const submitBecomePartner = () => {
+  partnerForm.post(route('profile.role.add'), {
+    onSuccess: () => {
+      showBecomePartner.value = false;
+      notifications.success(t('courier.profile.success.role_added'));
+      router.reload();
+    },
+    onError: () => notifications.error(t('courier.profile.error.role_added')),
+  });
+};
 </script>
+
+<style scoped>
+.glass-card {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.border-avatar {
+  border: 4px solid white;
+}
+
+.profile-container {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>

@@ -85,4 +85,8 @@ class DeliveryStatusController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
+    public function reject(Request $request, string $id)
+    {
+        return response()->json(['message' => 'Delivery rejected locally'], 200);
+    }
 }

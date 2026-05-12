@@ -1,6 +1,14 @@
 @import 'vuetify/styles/main.sass';
 @import '@mdi/font/css/materialdesignicons.min.css';
 
+:root {
+  --brand-primary: #FF3F33;
+  --brand-secondary: #075B5E;
+  --brand-surface: #FFFFFF;
+  --brand-background: #FFE6E1;
+  --brand-success: #9FC87E;
+}
+
 .v-toolbar__content {
   padding-right: 10px;
 }

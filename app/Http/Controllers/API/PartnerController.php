@@ -79,39 +79,27 @@ class PartnerController extends Controller
                     }),
                 ];
             }),
-            'metrics' => $partner->metrics()->count() ? $partner->metrics : null,
         ]);
     }
 
-        $products = $node->products->load('addons');
+    public function metrics(Request $request)
+    {
+        $partnerId = $request->user()->id;
+
+        $totalDeliveries = \App\Models\Delivery::where('logistics_partner_id', $partnerId)->count();
+        $averageDeliveryTime = \App\Models\Delivery::where('logistics_partner_id', $partnerId)
+            ->avg('estimated_time');
+
+        $averageRating = \App\Models\Rating::where('rated_id', $partnerId)
+            ->avg('rating');
 
         return response()->json([
-            'partner' => [
-                'id' => $node->partner->id,
-                'name' => $node->partner->business_name ?: $node->partner->name,
-                'slug' => $node->identifier,
-                'type' => $node->partner->business_type,
-            ],
-            'products' => $products->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'price' => (float) $product->price,
-                    'category' => $product->category,
-                    'image' => $product->imageUrl,
-                    'status' => $product->status,
-                    'addons' => $product->addons->map(function ($addon) {
-                        return [
-                            'id' => $addon->id,
-                            'name' => $addon->name,
-                            'description' => $addon->description,
-                            'price' => (float) $addon->price,
-                        ];
-                    }),
-                ];
-            }),
-            'metrics' => $node->partner->metrics()->count() ? $node->partner->metrics : null,
+            'data' => [
+                'totalDeliveries' => $totalDeliveries,
+                'averageDeliveryTime' => (float)($averageDeliveryTime ?? 0),
+                'averageRating' => (float)($averageRating ?? 0),
+                'deliveriesPerDay' => [] // Stub for now
+            ]
         ]);
     }
 }

@@ -198,6 +198,15 @@
         }
     },
     "partner": {
+        "nav": {
+            "dashboard": "Dashboard",
+            "orders": "Orders",
+            "products": "Products",
+            "settings": "Settings",
+            "profile": "Profile",
+            "access_as_customer": "Access as Customer"
+        },
+        "title": "Partner Portal",
         "dashboard": {
             "title": "Partner Dashboard",
             "recent_orders": "Recent Orders",
@@ -206,6 +215,56 @@
                 "preparing": "In Preparation",
                 "today_revenue": "Total Today",
                 "completed": "Completed"
+            },
+            "charts": {
+                "order_volume": "Order Volume",
+                "revenue_share": "Revenue Share",
+                "orders": "Orders",
+                "revenue": "Revenue"
+            },
+            "filters": {
+                "today": "Today",
+                "7days": "7 Days",
+                "30days": "30 Days"
+            }
+        },
+        "profile": {
+            "title": "Partner Profile",
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "profile_photo": "Profile Photo",
+            "choose_photo": "Choose a photo",
+            "business_name": "Business Name",
+            "business_type": "Business Type",
+            "business_type_options": {
+                "restaurant": "Restaurant",
+                "market": "Market",
+                "pharmacy": "Pharmacy"
+            },
+            "tax_id": "Tax ID",
+            "address": "Address",
+            "save": "Save",
+            "additional_roles": "Additional Roles",
+            "access_as_customer": "Access as Customer",
+            "become_courier": "Become a Courier",
+            "become_courier_title": "Want to become a courier?",
+            "license_number": "License Number",
+            "vehicle_type": "Vehicle Type",
+            "vehicle_type_options": {
+                "motorcycle": "Motorcycle",
+                "car": "Car",
+                "bicycle": "Bicycle"
+            },
+            "submit": "Submit",
+            "already_courier": "You are already a courier.",
+            "success": {
+                "updated": "Profile updated successfully",
+                "role_added": "Role added successfully!"
+            },
+            "error": {
+                "save": "Failed to save profile",
+                "role_added": "Failed to add role"
             }
         },
         "orders": {
@@ -226,7 +285,21 @@
             "back_to_orders": "Back to Orders",
             "accepted": "Order #{id} accepted",
             "failed_load": "Failed to load dashboard data",
-            "failed_accept": "Failed to accept order"
+            "failed_accept": "Failed to accept order",
+            "not_found": "Order not found",
+            "status_updated": "Order status updated",
+            "failed_update": "Failed to update status",
+            "request_courier": "Request Courier",
+            "courier_requested": "Courier requested successfully",
+            "courier_request_failed": "Failed to request courier",
+            "print_label": "Print Label",
+            "print_label_content": {
+                "order": "ORDER",
+                "customer": "CUSTOMER",
+                "address": "ADDRESS",
+                "phone": "PHONE",
+                "total": "TOTAL"
+            }
         },
         "products": {
             "title": "Products Management",
@@ -238,10 +311,22 @@
             "category": "Category",
             "description": "Description",
             "image_url": "Image URL",
+            "image": "Product Image",
+            "select_image": "Select Image",
             "select_addons": "Select Addons",
             "available": "Available",
             "empty": "No products found.",
             "confirm_delete": "Are you sure you want to delete {name}?",
+            "validation": {
+                "price_positive": "Price must be positive"
+            },
+            "categories": {
+                "pizza": "Pizza",
+                "burger": "Burger",
+                "dessert": "Dessert",
+                "drinks": "Drinks",
+                "sushi": "Sushi"
+            },
             "success": {
                 "created": "Product created successfully",
                 "updated": "Product updated successfully",
@@ -262,6 +347,10 @@
             "name": "Addon Name",
             "price": "Additional Price",
             "empty": "No addons found.",
+            "confirm_delete": "Are you sure you want to delete {name}?",
+            "validation": {
+                "price_non_negative": "Price must be non-negative"
+            },
             "success": {
                 "created": "Addon created successfully",
                 "updated": "Addon updated successfully",
@@ -285,6 +374,7 @@
             "create_subtitle": "Define your delivery coverage area",
             "details": "Region Details",
             "empty": "No regions found.",
+            "confirm_delete": "Are you sure you want to delete {name}?",
             "success": {
                 "created": "Region created successfully",
                 "updated": "Region updated successfully",
@@ -293,8 +383,21 @@
             "error": {
                 "load": "Failed to load regions",
                 "save": "Failed to save region",
-                "delete": "Failed to delete region"
+                "delete": "Failed to delete region",
+                "no_polygon": "Please draw a region on the map"
             }
+        },
+        "settings": {
+            "title": "Partner Settings",
+            "opening_hours": "Opening Hours",
+            "prep_time": "Average Prep Time (min)",
+            "delivery_fee": "Delivery Fee",
+            "status": "Partner Status",
+            "open": "Open",
+            "closed": "Closed",
+            "payment_methods": "Accepted Payment Methods",
+            "save_success": "Settings saved successfully",
+            "save_error": "Failed to save settings"
         },
         "actions": {
             "save": "Save",
@@ -317,6 +420,17 @@
         }
     },
     "courier": {
+        "nav": {
+            "dashboard": "Dashboard",
+            "deliveries": "Deliveries",
+            "hybrid_deliveries": "Hybrid Deliveries",
+            "service_area": "Service Area",
+            "settings": "Settings",
+            "profile": "Profile",
+            "access_as_customer": "Access as Customer",
+            "user": "User"
+        },
+        "title": "Courier Portal",
         "status": {
             "title": "CURRENT STATUS",
             "online": "Online",
@@ -366,6 +480,45 @@
             "update_success": "Status updated to {status}",
             "update_failed": "Failed to update status"
         },
+        "profile": {
+            "title": "Courier Profile",
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "profile_photo": "Profile Photo",
+            "choose_photo": "Choose a photo",
+            "license_number": "License Number",
+            "vehicle_type": "Vehicle Type",
+            "vehicle_type_options": {
+                "motorcycle": "Motorcycle",
+                "car": "Car",
+                "bicycle": "Bicycle"
+            },
+            "save": "Save",
+            "additional_roles": "Additional Roles",
+            "access_as_customer": "Access as Customer",
+            "become_partner": "Become a Partner",
+            "become_partner_title": "Want to become a partner?",
+            "business_name": "Business Name",
+            "business_type": "Business Type",
+            "business_type_options": {
+                "restaurant": "Restaurant",
+                "market": "Market",
+                "pharmacy": "Pharmacy"
+            },
+            "tax_id": "Tax ID",
+            "address": "Address",
+            "submit": "Submit",
+            "already_partner": "You are already a partner.",
+            "success": {
+                "updated": "Profile updated successfully",
+                "role_added": "Role added successfully!"
+            },
+            "error": {
+                "save": "Failed to save profile",
+                "role_added": "Failed to add role"
+            }
+        },
         "dashboard": {
             "index_title": "Courier Dashboard",
             "index_placeholder": "Courier Dashboard Index Page (Placeholder)"
@@ -373,6 +526,8 @@
         "deliveries": {
             "index_title": "Courier Deliveries",
             "index_description": "List of deliveries for couriers.",
+            "active": "Active",
+            "history": "History",
             "show_title": "Courier Delivery Details",
             "show_description": "Details for delivery: {id}"
         },
@@ -404,9 +559,23 @@
             "hint": "You need to draw a polygon on the map to define your service area.",
             "success": "Service area updated successfully",
             "error": "Failed to update service area"
+        },
+        "settings": {
+            "title": "Courier Settings",
+            "notifications": "Notification Preferences",
+            "push": "Push Notifications",
+            "email": "Email Notifications",
+            "sms": "SMS Notifications",
+            "distance_unit": "Distance Unit",
+            "km": "Kilometers (km)",
+            "mi": "Miles (mi)",
+            "language": "Preferred Language",
+            "auto_online": "Go online automatically when logging in",
+            "save_success": "Settings saved successfully",
+            "save_error": "Failed to save settings"
         }
     },
-    "admin": {
+        "admin": {
         "dashboard": {
             "title": "Admin Dashboard",
             "systemActivity": "System Activity",
@@ -464,6 +633,7 @@
         },
         "regions": {
             "title": "Regions Management",
+            "description": "Manage delivery regions and service areas",
             "add": "Add Region",
             "edit": "Edit Region",
             "new": "New Region",
@@ -527,7 +697,19 @@
             "support_email": "Support Email",
             "contact_phone": "Contact Phone",
             "save": "Save Settings",
-            "notifications": {
+            "common": {
+        "days": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday"
+        },
+        "currency_symbol": "{value}"
+    },
+    "notifications": {
                 "load_failed": "Failed to load settings",
                 "update_success": "Settings updated successfully",
                 "update_failed": "Failed to update settings"

@@ -109,10 +109,22 @@ const props = defineProps({
 });
 
 const formRef = ref(null);
+
+const parsePolygon = (polygon) => {
+  if (typeof polygon === 'string') {
+    try {
+      return JSON.parse(polygon);
+    } catch (e) {
+      return { type: 'Polygon', coordinates: [[]] };
+    }
+  }
+  return polygon || { type: 'Polygon', coordinates: [[]] };
+};
+
 const form = useForm({
   name: props.region.name,
   partner_id: props.region.partner_id,
-  polygon: typeof props.region.polygon === 'string' ? JSON.parse(props.region.polygon) : props.region.polygon,
+  polygon: parsePolygon(props.region.polygon),
   status: props.region.status
 });
 

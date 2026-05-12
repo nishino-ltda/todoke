@@ -39,29 +39,16 @@ class DeliveryStatusService
      */
     public function acceptDelivery(Delivery $delivery, string $courierId): Delivery
     {
-        if ($delivery->status !== 'pending') {
-            throw new \InvalidArgumentException('Delivery has already been accepted');
+        if ($delivery->courier_id) {
+            throw new \InvalidArgumentException('Delivery already accepted');
         }
 
-        $delivery->update([
-            'courier_id' => $courierId,
-            'status' => 'accepted'
-        ]);
+        $delivery->courier_id = $courierId;
+        $delivery->status = 'accepted';
+        $delivery->save();
 
-        // Create assignments for hybrid deliveries
-        if ($delivery->stages && count($delivery->stages) > 0) {
-            $this->createAssignments($delivery);
-        }
-
-        $this->createNotification(
-            $delivery->customer_id,
-            'delivery_updated',
-            [
-                'delivery_id' => $delivery->id,
-                'status' => 'accepted',
-                'message' => 'Your delivery has been accepted by a courier'
-            ]
-        );
+        // Fire status changed event
+        event(new \App\Events\DeliveryStatusChanged($delivery));
 
         return $delivery;
     }
@@ -115,6 +102,9 @@ class DeliveryStatusService
             'status' => $status,
             'current_position' => $position
         ]);
+
+        // Fire status changed event
+        event(new \App\Events\DeliveryStatusChanged($delivery));
 
         $this->createNotification(
             $delivery->customer_id,
@@ -193,6 +183,9 @@ class DeliveryStatusService
         }
 
         $delivery->update($updateData);
+
+        // Fire status changed event
+        event(new \App\Events\DeliveryStatusChanged($delivery));
 
         // Update the corresponding delivery assignment
         $stageIndex = array_search($stageType, array_column($stages, 'type'));

@@ -50,6 +50,13 @@ Cypress.Commands.add('loginAsPartner', () => {
   cy.get('[data-cy*="submit-btn"]').click()
 })
 
+Cypress.Commands.add('loginAsCourier', () => {
+  cy.visit('/login')
+  cy.get('[data-cy="email-input"]').type('courier@example.com')
+  cy.get('[data-cy="password-input"]').type('password123')
+  cy.get('[data-cy*="submit-btn"]').click()
+})
+
 Cypress.Commands.add('setupTestOrders', () => {
   cy.log('🔄 Setting up test orders via API')
   cy.request({

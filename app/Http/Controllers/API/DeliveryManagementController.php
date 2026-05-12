@@ -79,13 +79,8 @@ class DeliveryManagementController extends Controller
         $deliveryData = $this->prepareDeliveryData($request, $user, $value, $estimatedTime);
         $delivery = Delivery::create($deliveryData);
 
-        // Create assignments if they exist
-        if (isset($deliveryData['assignments'])) {
-            foreach ($deliveryData['assignments'] as $assignmentData) {
-                $assignmentData['delivery_id'] = $delivery->id;
-                \App\Models\DeliveryAssignment::create($assignmentData);
-            }
-        }
+        // Disparar evento de nova entrega disponível
+        event(new \App\Events\NewDeliveryAvailable($delivery));
 
         if ($delivery->logistics_partner_id) {
             Notification::create([
@@ -103,25 +98,56 @@ class DeliveryManagementController extends Controller
 
     public function show(Request $request, string $id)
     {
-        $delivery = Delivery::with(['customer', 'logisticsPartner'])->findOrFail($id);
+        $delivery = Delivery::with(['customer', 'logisticsPartner', 'courier'])->findOrFail($id);
 
         $bearerToken = $request->bearerToken();
         $user = $this->getUserFromToken($bearerToken, $request);
 
-        if ($user->id != $delivery->customer_id && $user->id != $delivery->logistics_partner_id) {
+        $isAuthorized = $user->id == $delivery->customer_id || 
+                        $user->id == $delivery->logistics_partner_id || 
+                        $user->id == $delivery->courier_id ||
+                        $user->type === 'admin';
+
+        if (!$isAuthorized) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         return response()->json([
             'id' => $delivery->id,
             'status' => $delivery->status,
-            'logistics_partner' => $delivery->courier ? [
+            'logistics_partner' => $delivery->logisticsPartner ? [
+                'id' => (string)$delivery->logisticsPartner->id,
+                'name' => $delivery->logisticsPartner->name,
+                'photoUrl' => $delivery->logisticsPartner->photo_url
+            ] : null,
+            'courier' => $delivery->courier ? [
                 'id' => (string)$delivery->courier->id,
                 'name' => $delivery->courier->name,
                 'photoUrl' => $delivery->courier->photo_url
             ] : null,
             'current_position' => $delivery->current_position,
-            'status_history' => $delivery->status_history
+            'status_history' => $delivery->status_history,
+            'origin' => $delivery->origin,
+            'destination' => $delivery->destination,
+            'item_description' => $delivery->item_description,
+            'estimated_weight' => $delivery->estimated_weight,
+            'dimensions' => $delivery->dimensions,
+            'type' => $delivery->type,
+            'value' => $delivery->value,
+            'estimated_time' => $delivery->estimated_time,
+            'stages' => $delivery->stages,
+            'is_hybrid' => $delivery->is_hybrid
         ]);
+    }
+
+    public function available(Request $request)
+    {
+        $deliveries = Delivery::whereNull('courier_id')
+            ->whereIn('status', ['pending'])
+            ->with(['customer:id,name', 'logisticsPartner:id,name'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($request->input('limit', 20));
+
+        return response()->json($deliveries);
     }
 }

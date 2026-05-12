@@ -155,9 +155,13 @@ const initMap = () => {
   
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  L.tileLayer('https://{s}.tile.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap &copy; CARTO'
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
+  
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 250);
 };
 
 const renderRegionsOnMap = () => {
@@ -170,9 +174,19 @@ const renderRegionsOnMap = () => {
   regions.value.forEach(region => {
     if (!region.polygon) return;
     try {
-      const geoJson = typeof region.polygon === 'string'
-        ? JSON.parse(region.polygon)
-        : region.polygon;
+      let geoJson = region.polygon;
+      if (typeof geoJson === 'string') {
+        try {
+          geoJson = JSON.parse(geoJson);
+        } catch (e) {
+          console.warn(`Invalid polygon JSON for region ${region.id}:`, geoJson);
+          return;
+        }
+      }
+      if (!geoJson || typeof geoJson !== 'object') {
+        console.warn(`Invalid polygon data for region ${region.id}: expected GeoJSON object`);
+        return;
+      }
 
       const layer = L.geoJSON(geoJson, {
         style: {

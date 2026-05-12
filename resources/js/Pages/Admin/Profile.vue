@@ -6,7 +6,7 @@
         <v-card-text>
           <v-text-field v-model="form.name" label="Name" />
           <v-text-field v-model="form.email" label="Email" disabled />
-          <v-text-field v-model="form.phone" label="Phone" />
+          <v-text-field v-model="form.phone" label="Phone" @input="form.phone = maskPhone($event.target.value)" />
           
           <div class="mb-4">
             <label class="v-label mb-2 d-block">Profile Photo</label>
@@ -53,6 +53,9 @@ import { storeToRefs } from 'pinia'
 import api from '@/services/api'
 import AdminLayout from '@/Layouts/AdminLayout.vue'
 import { useNotificationStore } from '@/stores/notification'
+import { useMasks } from '@/composables/useMasks'
+
+const { maskPhone } = useMasks()
 
 const page = usePage()
 const authStore = useAuthStore()

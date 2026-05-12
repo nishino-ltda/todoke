@@ -198,6 +198,15 @@
         }
     },
     "partner": {
+        "nav": {
+            "dashboard": "Painel",
+            "orders": "Pedidos",
+            "products": "Produtos",
+            "settings": "Configurações",
+            "profile": "Perfil",
+            "access_as_customer": "Acessar como Cliente"
+        },
+        "title": "Portal do Parceiro",
         "dashboard": {
             "title": "Painel do Parceiro",
             "recent_orders": "Pedidos Recentes",
@@ -217,6 +226,45 @@
                 "today": "Hoje",
                 "7days": "7 Dias",
                 "30days": "30 Dias"
+            }
+        },
+        "profile": {
+            "title": "Perfil do Parceiro",
+            "name": "Nome",
+            "email": "E-mail",
+            "phone": "Telefone",
+            "profile_photo": "Foto de Perfil",
+            "choose_photo": "Escolher uma foto",
+            "business_name": "Nome do Estabelecimento",
+            "business_type": "Tipo de Negócio",
+            "business_type_options": {
+                "restaurant": "Restaurante",
+                "market": "Mercado",
+                "pharmacy": "Farmácia"
+            },
+            "tax_id": "CNPJ",
+            "address": "Endereço",
+            "save": "Salvar",
+            "additional_roles": "Funções Adicionais",
+            "access_as_customer": "Acessar como Cliente",
+            "become_courier": "Tornar-se Entregador",
+            "become_courier_title": "Quer se tornar um entregador?",
+            "license_number": "Número da CNH",
+            "vehicle_type": "Tipo de Veículo",
+            "vehicle_type_options": {
+                "motorcycle": "Moto",
+                "car": "Carro",
+                "bicycle": "Bicicleta"
+            },
+            "submit": "Enviar",
+            "already_courier": "Você já é um entregador.",
+            "success": {
+                "updated": "Perfil atualizado com sucesso",
+                "role_added": "Função adicionada com sucesso!"
+            },
+            "error": {
+                "save": "Falha ao salvar perfil",
+                "role_added": "Falha ao adicionar função"
             }
         },
         "orders": {
@@ -245,7 +293,14 @@
             "request_courier": "Solicitar Entregador",
             "courier_requested": "Entregador solicitado com sucesso",
             "courier_request_failed": "Falha ao solicitar entregador",
-            "print_label": "Imprimir Etiqueta"
+            "print_label": "Imprimir Etiqueta",
+            "print_label_content": {
+                "order": "PEDIDO",
+                "customer": "CLIENTE",
+                "address": "ENDEREÇO",
+                "phone": "TELEFONE",
+                "total": "TOTAL"
+            }
         },
         "products": {
             "title": "Gerenciamento de Produtos",
@@ -257,10 +312,22 @@
             "category": "Categoria",
             "description": "Descrição",
             "image_url": "URL da Imagem",
+            "image": "Imagem do Produto",
+            "select_image": "Selecionar Imagem",
             "select_addons": "Selecionar Adicionais",
             "available": "Disponível",
             "empty": "Nenhum produto encontrado.",
             "confirm_delete": "Tem certeza que deseja excluir {name}?",
+            "validation": {
+                "price_positive": "O preço deve ser positivo"
+            },
+            "categories": {
+                "pizza": "Pizza",
+                "burger": "Hambúrguer",
+                "dessert": "Sobremesa",
+                "drinks": "Bebidas",
+                "sushi": "Sushi"
+            },
             "success": {
                 "created": "Produto criado com sucesso",
                 "updated": "Produto atualizado com sucesso",
@@ -281,6 +348,10 @@
             "name": "Nome do Adicional",
             "price": "Preço Adicional",
             "empty": "Nenhum adicional encontrado.",
+            "confirm_delete": "Tem certeza que deseja excluir {name}?",
+            "validation": {
+                "price_non_negative": "O preço não pode ser negativo"
+            },
             "success": {
                 "created": "Adicional criado com sucesso",
                 "updated": "Adicional atualizado com sucesso",
@@ -304,6 +375,7 @@
             "create_subtitle": "Defina sua área de cobertura de entrega",
             "details": "Detalhes da Região",
             "empty": "Nenhuma região encontrada.",
+            "confirm_delete": "Tem certeza que deseja excluir {name}?",
             "success": {
                 "created": "Região criada com sucesso",
                 "updated": "Região atualizada com sucesso",
@@ -312,8 +384,21 @@
             "error": {
                 "load": "Falha ao carregar regiões",
                 "save": "Falha ao salvar região",
-                "delete": "Falha ao excluir região"
+                "delete": "Falha ao excluir região",
+                "no_polygon": "Por favor, desenhe uma região no mapa"
             }
+        },
+        "settings": {
+            "title": "Configurações do Parceiro",
+            "opening_hours": "Horário de Funcionamento",
+            "prep_time": "Tempo Médio de Preparo (min)",
+            "delivery_fee": "Taxa de Entrega",
+            "status": "Status do Parceiro",
+            "open": "Aberto",
+            "closed": "Fechado",
+            "payment_methods": "Métodos de Pagamento Aceitos",
+            "save_success": "Configurações salvas com sucesso",
+            "save_error": "Falha ao salvar configurações"
         },
         "actions": {
             "save": "Salvar",
@@ -336,6 +421,17 @@
         }
     },
     "courier": {
+        "nav": {
+            "dashboard": "Painel",
+            "deliveries": "Entregas",
+            "hybrid_deliveries": "Entregas Híbridas",
+            "service_area": "Área de Atuação",
+            "settings": "Configurações",
+            "profile": "Perfil",
+            "access_as_customer": "Acessar como Cliente",
+            "user": "Usuário"
+        },
+        "title": "Portal do Entregador",
         "status": {
             "title": "STATUS ATUAL",
             "online": "Online",
@@ -385,13 +481,54 @@
             "update_success": "Status atualizado para {status}",
             "update_failed": "Falha ao atualizar status"
         },
+        "profile": {
+            "title": "Perfil do Entregador",
+            "name": "Nome",
+            "email": "E-mail",
+            "phone": "Telefone",
+            "profile_photo": "Foto de Perfil",
+            "choose_photo": "Escolher uma foto",
+            "license_number": "Número da CNH",
+            "vehicle_type": "Tipo de Veículo",
+            "vehicle_type_options": {
+                "motorcycle": "Moto",
+                "car": "Carro",
+                "bicycle": "Bicicleta"
+            },
+            "save": "Salvar",
+            "additional_roles": "Funções Adicionais",
+            "access_as_customer": "Acessar como Cliente",
+            "become_partner": "Tornar-se Parceiro",
+            "become_partner_title": "Quer se tornar um parceiro?",
+            "business_name": "Nome do Estabelecimento",
+            "business_type": "Tipo de Negócio",
+            "business_type_options": {
+                "restaurant": "Restaurante",
+                "market": "Mercado",
+                "pharmacy": "Farmácia"
+            },
+            "tax_id": "CNPJ",
+            "address": "Endereço",
+            "submit": "Enviar",
+            "already_partner": "Você já é um parceiro.",
+            "success": {
+                "updated": "Perfil atualizado com sucesso",
+                "role_added": "Função adicionada com sucesso!"
+            },
+            "error": {
+                "save": "Falha ao salvar perfil",
+                "role_added": "Falha ao adicionar função"
+            }
+        },
         "dashboard": {
             "index_title": "Painel do Entregador",
             "index_placeholder": "Página Inicial do Painel do Entregador (Espaço Reservado)"
         },
         "deliveries": {
-            "index_title": "Entregas do Entregador",
+            "index_title": "Minhas Entregas",
             "index_description": "Lista de entregas para entregadores.",
+            "active": "Ativas",
+            "history": "Histórico",
             "show_title": "Detalhes da Entrega",
             "show_description": "Detalhes da entrega: {id}"
         },
@@ -423,6 +560,20 @@
             "hint": "Você precisa desenhar um polígono no mapa para definir sua área de atuação.",
             "success": "Área de atuação atualizada com sucesso",
             "error": "Falha ao atualizar área de atuação"
+        },
+        "settings": {
+            "title": "Configurações do Entregador",
+            "notifications": "Preferências de Notificação",
+            "push": "Notificações Push",
+            "email": "Notificações por E-mail",
+            "sms": "Notificações por SMS",
+            "distance_unit": "Unidade de Distância",
+            "km": "Quilômetros (km)",
+            "mi": "Milhas (mi)",
+            "language": "Idioma Preferido",
+            "auto_online": "Ficar online automaticamente ao entrar",
+            "save_success": "Configurações salvas com sucesso",
+            "save_error": "Falha ao salvar configurações"
         }
     },
     "admin": {
@@ -645,6 +796,18 @@
             "cvv": "CVV",
             "holder": "Nome no Cartão"
         }
+    },
+    "common": {
+        "days": {
+            "monday": "Segunda-feira",
+            "tuesday": "Terça-feira",
+            "wednesday": "Quarta-feira",
+            "thursday": "Quinta-feira",
+            "friday": "Sexta-feira",
+            "saturday": "Sábado",
+            "sunday": "Domingo"
+        },
+        "currency_symbol": "{value}"
     },
     "notifications": {
         "new_notification": "Nova Notificação",

@@ -1,21 +1,40 @@
 <template>
   <v-app>
-    <AppHeader @toggle-drawer="drawer = !drawer" />
+    <v-app-bar app flat border color="white">
+      <v-app-bar-nav-icon @click="drawer = !drawer" data-cy="app-bar-nav-icon"></v-app-bar-nav-icon>
+      <v-app-bar-title class="text-subtitle-1 font-weight-bold d-flex align-center">
+        <v-icon size="24" color="primary" class="mr-2">mdi-store</v-icon>
+        {{ currentPageTitle }}
+      </v-app-bar-title>
+      <v-spacer></v-spacer>
+      
+      <LanguageSelector class="mr-2" />
+    </v-app-bar>
 
     <v-navigation-drawer
       v-model="drawer"
       app
       :temporary="$vuetify.display.mobile"
       :permanent="!$vuetify.display.mobile"
+      elevation="2"
     >
+      <v-list-item
+        prepend-avatar="https://ui-avatars.com/api/?name=Partner&background=0D47A1&color=fff"
+        :title="t('partner.title')"
+        subtitle="Partner Portal"
+        class="pa-4"
+      ></v-list-item>
+
+      <v-divider></v-divider>
+
       <v-list density="comfortable" nav>
         <v-list-item
           v-for="item in navItems"
           :key="item.title"
-          :active="currentRoute === item.route"
+          :active="isActive(item.route)"
           @click="navigateTo(item.route)"
           :prepend-icon="item.icon"
-          :title="item.title"
+          :title="t(item.titleKey)"
           link
           data-cy="partner-nav-item"
         ></v-list-item>
@@ -29,7 +48,7 @@
           :subtitle="user?.email"
         >
           <template v-slot:append>
-            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small"></v-btn>
+            <v-btn icon="mdi-logout" variant="text" @click="logout" size="small" data-cy="logout-btn"></v-btn>
           </template>
         </v-list-item>
       </template>
@@ -37,11 +56,6 @@
 
     <v-main class="bg-grey-lighten-4">
       <v-container fluid class="pa-8">
-        <div class="d-flex align-center mb-6">
-          <v-icon size="32" color="primary" class="mr-3">mdi-store</v-icon>
-          <h1 class="text-h4 font-weight-bold">Partner Dashboard</h1>
-        </div>
-
         <slot />
       </v-container>
       <NotificationCenter />
@@ -52,14 +66,16 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { usePage, router } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import { useAuthStore } from '@/stores/auth';
-import AppHeader from '../Components/AppHeader.vue';
 import AppFooter from '../Components/AppFooter.vue';
 import NotificationCenter from '@/Components/NotificationCenter.vue';
+import LanguageSelector from '../Components/LanguageSelector.vue';
 
+const { t } = useI18n();
 const page = usePage();
 const authStore = useAuthStore();
 const drawer = ref(true);
@@ -69,13 +85,23 @@ const { user } = storeToRefs(authStore);
 const currentRoute = computed(() => page.url);
 
 const navItems = [
-  { title: 'Dashboard', icon: 'mdi-view-dashboard', route: '/partner' },
-  { title: 'Orders', icon: 'mdi-clipboard-list', route: '/partner/orders' },
-  { title: 'Products', icon: 'mdi-package-variant-closed', route: '/partner/products' },
-  { title: 'Settings', icon: 'mdi-cog', route: '/partner/settings' },
-  { title: 'Profile', icon: 'mdi-account', route: '/partner/profile' },
-  { title: 'Access as Customer', icon: 'mdi-account-switch', route: '/customer/dashboard' },
+  { titleKey: 'partner.nav.dashboard', icon: 'mdi-view-dashboard', route: '/partner/dashboard' },
+  { titleKey: 'partner.nav.orders', icon: 'mdi-clipboard-list', route: '/partner/orders' },
+  { titleKey: 'partner.nav.products', icon: 'mdi-package-variant-closed', route: '/partner/products' },
+  { titleKey: 'partner.nav.settings', icon: 'mdi-cog', route: '/partner/settings' },
+  { titleKey: 'partner.nav.profile', icon: 'mdi-account', route: '/partner/profile' },
+  { titleKey: 'partner.nav.access_as_customer', icon: 'mdi-account-switch', route: '/customer/dashboard' },
 ];
+
+const isActive = (route) => {
+  if (route === '/partner/dashboard') return currentRoute.value === '/partner' || currentRoute.value === '/partner/dashboard';
+  return currentRoute.value.startsWith(route);
+};
+
+const currentPageTitle = computed(() => {
+  const item = navItems.find(n => isActive(n.route));
+  return item ? t(item.titleKey) : t('partner.title');
+});
 
 const navigateTo = (route) => {
   router.visit(route);
@@ -86,7 +112,6 @@ const logout = () => {
 };
 
 // Sync auth store with server-side props
-import { watch } from 'vue';
 watch(() => page.props.auth?.user, (newUser) => {
   if (newUser) {
     authStore.user = newUser;
@@ -97,5 +122,9 @@ watch(() => page.props.auth?.user, (newUser) => {
 <style scoped>
 .v-main {
   min-height: 100vh;
+}
+
+.v-navigation-drawer {
+  background: linear-gradient(180deg, #fafafa 0%, #f0f0f0 100%);
 }
 </style>

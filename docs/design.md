@@ -50,12 +50,34 @@ Este documento define os padrões visuais e de UX para a plataforma Todoke, gara
 
 ## 4. Cores e Estados
 
-- **Primary**: Utilizada para ações principais e destaques de marca.
-- **Status Colors**:
-  - `success`: Pedidos concluídos, pronto para entrega.
-  - `warning`: Pedidos pendentes ou aguardando ação.
-  - `info`: Pedidos em preparação.
-  - `error`: Pedidos cancelados ou problemas.
+### Paleta Principal
+
+| Token    | Cor       | Uso                                                    |
+| -------- | --------- | ------------------------------------------------------ |
+| primary  | `#FF3F33` | Ações principais (CTAs, botões, destaques de marca).   |
+| secondary| `#075B5E` | Elementos secundários, contraste com primary.           |
+| surface  | `#FFFFFF` | Fundo de cards, diálogos e superfícies (cards brancos). |
+| background| `#FFE6E1` | Fundo da página (tom peach acolhedor).                 |
+| success  | `#9FC87E` | Pedidos concluídos, pronto para entrega.               |
+
+### Status Colors
+
+- `success` (`#9FC87E`): Pedidos concluídos, pronto para entrega.
+- `warning`: Pedidos pendentes ou aguardando ação.
+- `info`: Pedidos em preparação.
+- `error`: Pedidos cancelados ou problemas.
+
+### CSS Custom Properties
+
+As cores da marca também estão disponíveis como variáveis CSS no `:root`:
+
+```css
+--brand-primary: #FF3F33;
+--brand-secondary: #075B5E;
+--brand-surface: #FFFFFF;
+--brand-background: #FFE6E1;
+--brand-success: #9FC87E;
+```
 
 ## 5. Micro-animações
 

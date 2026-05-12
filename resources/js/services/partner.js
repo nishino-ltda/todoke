@@ -129,7 +129,13 @@ export const partnerService = {
    */
   async requestCourier(orderId) {
     return api.post('/deliveries', { order_id: orderId });
-  }
+  },
+  
+  /**
+   * Settings
+   */
+  async getSettings() { return api.get('/partner/settings'); },
+  async updateSettings(data) { return api.put('/partner/settings', data); }
 };
 
 export default partnerService;

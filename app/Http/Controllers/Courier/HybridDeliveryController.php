@@ -19,4 +19,15 @@ class HybridDeliveryController extends Controller
             'hybridDeliveryId' => $id,
         ]);
     }
+    public function create()
+    {
+        return Inertia::render('Courier/HybridDeliveries/Create');
+    }
+
+    public function handoff($id)
+    {
+        return Inertia::render('Courier/HybridDeliveries/Handoff', [
+            'deliveryId' => $id,
+        ]);
+    }
 }

@@ -122,9 +122,11 @@ Route::prefix('v1')->group(function () {
         // Rotas de entregas
         Route::prefix('deliveries')->group(function () {
             Route::get('/', [DeliveryManagementController::class, 'index']);
+            Route::get('/available', [DeliveryManagementController::class, 'available']);
             Route::post('/', [DeliveryManagementController::class, 'store']);
             Route::get('/{id}', [DeliveryManagementController::class, 'show']);
             Route::patch('/{id}/accept', [DeliveryStatusController::class, 'accept']);
+            Route::patch('/{id}/reject', [DeliveryStatusController::class, 'reject']);
             Route::patch('/{id}/status', [DeliveryStatusController::class, 'updateStatus']);
             Route::post('/{id}/messages', [DeliveryMessagingController::class, 'storeMessage']);
             Route::get('/{id}/messages', [DeliveryMessagingController::class, 'indexMessages']);

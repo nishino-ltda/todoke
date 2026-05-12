@@ -128,7 +128,7 @@ const truncateDescription = computed(() => {
   position: absolute;
   top: 0;
   right: 0;
-  color: #1976D2 !important;
+  color: rgb(var(--v-theme-primary)) !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -151,7 +151,7 @@ const truncateDescription = computed(() => {
 }
 
 .price-container {
-    background: rgba(25, 118, 210, 0.05);
+    background: rgba(255, 63, 51, 0.08);
     padding: 2px 8px;
     border-radius: 8px;
 }

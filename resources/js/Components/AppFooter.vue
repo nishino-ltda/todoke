@@ -12,7 +12,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <v-footer app color="primary" dark class="app-footer" data-cy="app-footer">
+  <v-footer app color="secondary" dark class="app-footer" data-cy="app-footer">
     <div class="d-flex align-center w-100" v-if="!minimal">
       <div>
         <Link :href="route('terms')" class="text-white mr-2" data-cy="terms-link">{{ t('footer.terms') }}</Link>
@@ -32,7 +32,6 @@ const props = defineProps({
 .app-footer {
   font-size: 0.75rem;
   padding: 0px 16px;
-  background-color: #1a237e !important;
   opacity: 0.85;
 }
 </style>

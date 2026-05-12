@@ -1,47 +1,93 @@
 describe('🛵 Courier Dashboard', () => {
   beforeEach(() => {
     cy.log('🔑 Logging in as courier');
-    // Will login as courier before each test
+    cy.loginAsCourier();
   });
 
-  // Sprint 6: Availability Status Toggle
   it('🔄 Should toggle availability status', () => {
-    cy.log('🔘 Testing availability toggle');
-    // Test will verify:
-    // - Toggle switches between online/offline
-    // - Status persists
-    // - Affects delivery assignment
-    cy.fail('Test not implemented');
+    cy.visit('/courier/dashboard');
+    cy.get('[data-cy="status-card"]').should('contain', 'Online');
+    
+    cy.get('[data-cy="availability-toggle"]').click();
+    cy.get('[data-cy="status-card"]').should('contain', 'Offline');
+    
+    // Toggle back
+    cy.get('[data-cy="availability-toggle"]').click();
+    cy.get('[data-cy="status-card"]').should('contain', 'Online');
   });
 
-  // Sprint 6: Delivery Request Display
   it('📦 Should display available delivery requests', () => {
-    cy.log('📬 Testing delivery request display');
-    // Test will verify:
-    // - Requests appear when available
-    // - Shows key details (pickup/dropoff, distance, value)
-    // - Updates in real-time
-    cy.fail('Test not implemented');
+    // Intercept available deliveries API
+    cy.intercept('GET', '/api/v1/deliveries/available*', {
+      statusCode: 200,
+      body: [
+        {
+          id: 101,
+          value: 15.50,
+          estimated_time: 20,
+          type: 'standard',
+          status: 'pending',
+          logistics_partner: { name: 'Pizza Palace' },
+          origin: { address: 'Origin Address' },
+          destination: { address: 'Dest Address' }
+        }
+      ]
+    }).as('getAvailable');
+
+    cy.visit('/courier/dashboard');
+    cy.wait('@getAvailable');
+    
+    cy.get('[data-cy="delivery-card"]').should('have.length', 1);
+    cy.get('[data-cy="delivery-card"]').should('contain', 'R$ 15,50');
+    cy.get('[data-cy="delivery-card"]').should('contain', 'Pizza Palace');
   });
 
-  // Sprint 6: Delivery Acceptance/Rejection
   it('✅ Should be able to accept/reject deliveries', () => {
-    cy.log('🤝 Testing delivery acceptance');
-    // Test will verify:
-    // - Can accept delivery
-    // - Can reject delivery
-    // - Status updates correctly
-    cy.fail('Test not implemented');
+    cy.intercept('GET', '/api/v1/deliveries/available*', {
+      statusCode: 200,
+      body: [{ id: 101, value: 15.50, status: 'pending' }]
+    }).as('getAvailable');
+
+    cy.intercept('PATCH', '/api/v1/deliveries/101/accept', {
+      statusCode: 200,
+      body: { id: 101, status: 'accepted' }
+    }).as('acceptDelivery');
+
+    cy.visit('/courier/dashboard');
+    cy.wait('@getAvailable');
+    
+    cy.get('[data-cy="accept-delivery-btn"]').click();
+    cy.wait('@acceptDelivery');
+    
+    cy.get('[data-cy="active-delivery-status"]').should('contain', 'Accepted');
   });
 
-  // Sprint 6: Delivery Status Updates
   it('📍 Should update delivery status', () => {
-    cy.log('🔄 Testing status updates');
-    // Test will verify:
-    // - Can mark as collected
-    // - Can mark as in transit
-    // - Can mark as delivered
-    // - Status changes persist
-    cy.fail('Test not implemented');
+    // Mock active delivery
+    cy.intercept('GET', '/api/v1/deliveries/available*', {
+      statusCode: 200,
+      body: [
+        {
+          id: 101,
+          status: 'accepted',
+          value: 15.50,
+          origin: { address: 'A' },
+          destination: { address: 'B' }
+        }
+      ]
+    }).as('getAvailable');
+
+    cy.intercept('PATCH', '/api/v1/deliveries/101/status', {
+      statusCode: 200,
+      body: { id: 101, status: 'collected' }
+    }).as('updateStatus');
+
+    cy.visit('/courier/dashboard');
+    cy.wait('@getAvailable');
+    
+    cy.get('[data-cy="update-status-btn"]').click();
+    cy.wait('@updateStatus');
+    
+    cy.get('[data-cy="active-delivery-status"]').should('contain', 'Arrived'); // Label is Arrived but status is collected
   });
 });

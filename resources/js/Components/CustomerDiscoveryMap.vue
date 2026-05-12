@@ -108,8 +108,8 @@ const initMap = () => {
 
     // User marker
     L.circleMarker([userLocation.value.lat, userLocation.value.lng], {
-      color: '#1976D2',
-      fillColor: '#2196F3',
+      color: '#FF3F33',
+      fillColor: '#FF3F33',
       fillOpacity: 0.8,
       radius: 8
     }).addTo(map.value).bindPopup('Você está aqui')

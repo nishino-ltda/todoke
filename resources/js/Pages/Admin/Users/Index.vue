@@ -127,7 +127,7 @@ const fetchUsers = async () => {
   loading.value = true;
   try {
     const response = await adminService.getUsers();
-    users.value = response.data;
+    users.value = response.data?.data || [];
   } catch (err) {
     notifications.error(t('admin.users.notifications.load_failed'));
   } finally {

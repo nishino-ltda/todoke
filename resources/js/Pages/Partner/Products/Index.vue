@@ -65,86 +65,15 @@
       <AppModal
         v-model="showFormModal"
         :title="isEditing ? t('partner.products.edit') : t('partner.products.new')"
-        maxWidth="600"
+        maxWidth="700"
       >
-        <v-form ref="productForm" @submit.prevent="saveProduct">
-          <v-row>
-            <v-col cols="12">
-              <v-text-field
-                v-model="form.name"
-                :label="t('partner.products.name')"
-                required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.products.name') })]"
-                data-cy="product-name-input"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-text-field
-                v-model.number="form.price"
-                :label="t('partner.products.price')"
-                type="number"
-                prefix="$"
-                required
-                :rules="[v => !!v || t('auth.validation.required', { field: t('partner.products.price') }), v => v > 0 || 'Price must be positive']"
-                data-cy="product-price-input"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-select
-                v-model="form.category"
-                :items="categories"
-                :label="t('partner.products.category')"
-                data-cy="product-category-select"
-              ></v-select>
-            </v-col>
-            <v-col cols="12">
-              <v-textarea
-                v-model="form.description"
-                :label="t('partner.products.description')"
-                rows="3"
-                data-cy="product-description-input"
-              ></v-textarea>
-            </v-col>
-            <v-col cols="12">
-              <div class="mb-2">
-                <label class="v-label d-block mb-1">{{ t('partner.products.image') }}</label>
-                <div class="d-flex align-center gap-4">
-                  <v-avatar size="80" rounded="lg" class="elevation-1">
-                    <v-img :src="imagePreview || resolveImageUrl(form.image)" cover>
-                      <template v-slot:placeholder>
-                        <v-icon icon="mdi-food"></v-icon>
-                      </template>
-                    </v-img>
-                  </v-avatar>
-                  <v-file-input
-                    v-model="imageFile"
-                    :label="t('partner.products.select_image')"
-                    accept="image/*"
-                    prepend-icon="mdi-camera"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                    @change="handleImageChange"
-                    class="flex-grow-1"
-                    data-cy="product-image-file"
-                  ></v-file-input>
-                </div>
-              </div>
-            </v-col>
-            <v-col cols="12">
-              <v-select
-                v-model="form.addon_ids"
-                :items="availableAddons"
-                item-title="name"
-                item-value="id"
-                :label="t('partner.products.select_addons')"
-                multiple
-                chips
-                data-cy="product-addons-select"
-              ></v-select>
-            </v-col>
-          </v-row>
-        </v-form>
+        <ProductForm
+          ref="productForm"
+          v-model="form"
+          v-model:imageFile="imageFile"
+          :availableAddons="availableAddons"
+          showAvailable
+        />
         <template #actions>
           <v-btn variant="text" @click="showFormModal = false">{{ t('partner.actions.cancel') }}</v-btn>
           <v-btn color="primary" @click="saveProduct" :loading="saving" data-cy="save-product-btn">
@@ -171,7 +100,9 @@ import { useI18n } from 'vue-i18n';
 import PartnerLayout from '@/Layouts/PartnerLayout.vue';
 import DataTable from '@/Components/DataTable.vue';
 import AppModal from '@/Components/AppModal.vue';
+import ProductForm from '@/Components/ProductForm.vue';
 import partnerService from '@/services/partner';
+import api from '@/services/api';
 import { useNotificationStore } from '@/stores/notification';
 
 const { t } = useI18n();
@@ -186,27 +117,12 @@ const selectedProduct = ref(null);
 const productForm = ref(null);
 const availableAddons = ref([]);
 const imageFile = ref(null);
-const imagePreview = ref(null);
 
 const resolveImageUrl = (path) => {
   if (!path) return null;
   if (path.startsWith('http')) return path;
   return `/storage/${path}`;
 };
-
-const handleImageChange = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    imageFile.value = file;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imagePreview.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-};
-
-const categories = ['Pizza', 'Burger', 'Dessert', 'Drinks', 'Sushi'];
 
 const headers = computed(() => [
   { title: '', key: 'image', sortable: false, width: '60px' },
@@ -303,7 +219,6 @@ const saveProduct = async () => {
     }
     showFormModal.value = false;
     imageFile.value = null;
-    imagePreview.value = null;
     fetchProducts();
   } catch (err) {
     notifications.error(t('partner.products.error.save'));

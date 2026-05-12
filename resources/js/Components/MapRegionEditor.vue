@@ -83,10 +83,8 @@ const initMap = () => {
 
   L.control.zoom({ position: 'topright' }).addTo(map);
 
-  L.tileLayer('https://{s}.tile.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    subdomains: 'abcd',
-    maxZoom: 20
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
   drawnItems = new L.FeatureGroup();
@@ -96,17 +94,13 @@ const initMap = () => {
     drawControl = new L.Control.Draw({
       edit: {
         featureGroup: drawnItems,
-        poly: { allowIntersection: false },
+        poly: { allowIntersection: true },
         remove: true
       },
       draw: {
         polygon: {
-          allowIntersection: false,
+          allowIntersection: true,
           showArea: true,
-          drawError: {
-            color: '#e1e100',
-            message: '<strong>Oh no!<strong> you cannot draw that!'
-          },
           shapeOptions: {
             color: '#4F46E5',
             fillOpacity: 0.2
@@ -143,6 +137,11 @@ const initMap = () => {
   }
 
   loadInitialData();
+  
+  // Ensure the map container is correctly sized
+  setTimeout(() => {
+    if (map) map.invalidateSize();
+  }, 200);
 };
 
 const loadInitialData = () => {

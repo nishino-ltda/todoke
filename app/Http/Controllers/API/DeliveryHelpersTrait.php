@@ -35,7 +35,7 @@ trait DeliveryHelpersTrait
             'origin.lng' => 'required|numeric|between:-180,180',
             'origin.address' => 'required|string|max:255',
             'destination' => 'required|array',
-            'destination.lat' => 'required|numeric|between:-180,180',
+            'destination.lat' => 'required|numeric|between:-90,90',
             'destination.lng' => 'required|numeric|between:-180,180',
             'destination.address' => 'required|string|max:255',
             'products' => 'sometimes|array',
@@ -50,6 +50,7 @@ trait DeliveryHelpersTrait
             'type' => 'required|in:standard,express,priority',
             'courier_id' => 'sometimes|string|exists:users,id',
             'isHybrid' => 'sometimes|boolean',
+            'is_hybrid' => 'sometimes|boolean',
             'special_instructions' => 'sometimes|string|max:500',
             'payment_method' => 'required|in:credit_card,debit_card,pix,cash,voucher'
         ], [
@@ -105,8 +106,9 @@ trait DeliveryHelpersTrait
             $deliveryData['courier_id'] = $request->courier_id;
         }
 
-        if ($request->isHybrid) {
-            $deliveryData['stages'] = [
+        if ($request->isHybrid || $request->is_hybrid || $request->has('stages')) {
+            $deliveryData['is_hybrid'] = true;
+            $deliveryData['stages'] = $request->stages ?? [
                 [
                     'type' => 'delivery_point',
                     'status' => 'pending',
@@ -119,19 +121,22 @@ trait DeliveryHelpersTrait
                 ]
             ];
 
-            $deliveryData['assignments'] = [
-                [
-                    'partner_id' => null,
-                    'stage' => 1,
-                    'status' => 'pending'
-                ],
-                [
-                    'partner_id' => null,
-                    'stage' => 2,
-                    'status' => 'pending'
-                ]
-            ];
+            if (!$request->has('assignments') && !isset($deliveryData['assignments'])) {
+                $deliveryData['assignments'] = [
+                    [
+                        'partner_id' => null,
+                        'stage' => 0,
+                        'status' => 'pending'
+                    ],
+                    [
+                        'partner_id' => null,
+                        'stage' => 1,
+                        'status' => 'pending'
+                    ]
+                ];
+            }
         } else {
+            $deliveryData['is_hybrid'] = false;
             $deliveryData['stages'] = null;
         }
 
