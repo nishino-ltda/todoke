@@ -3,25 +3,43 @@ import { vi, describe, it, expect, beforeEach } from 'vitest'
 import AddressInput from '../AddressInput.vue'
 import mapService from '@/services/map'
 
-// Mock mapService
 vi.mock('@/services/map', () => ({
   default: {
-    geocode: vi.fn()
+    geocode: vi.fn(),
+    reverseGeocode: vi.fn(),
   }
 }))
 
-// Mock i18n
+vi.mock('@/services/api', () => ({
+  default: {
+    get: vi.fn().mockResolvedValue({ data: { data: [] } }),
+    post: vi.fn(),
+    put: vi.fn(),
+    delete: vi.fn(),
+    patch: vi.fn(),
+  }
+}))
+
 vi.mock('vue-i18n', () => ({
   useI18n: () => ({
     t: (key) => key
   })
 }))
 
+vi.mock('../AddressManagerModal.vue', () => ({
+  default: {
+    name: 'AddressManagerModal',
+    template: '<div class="address-manager-modal-stub" />',
+    props: ['modelValue'],
+    emits: ['update:modelValue', 'address-selected'],
+  }
+}))
+
 const VTextareaStub = {
   template: `
     <div>
-      <textarea 
-        :value="modelValue" 
+      <textarea
+        :value="modelValue"
         @input="$emit('update:modelValue', $event.target.value)"
         class="v-textarea-stub"
       ></textarea>
@@ -36,9 +54,9 @@ const VTextareaStub = {
 const VComboboxStub = {
   template: `
     <div>
-      <input 
-        class="v-combobox-stub" 
-        :value="search" 
+      <input
+        class="v-combobox-stub"
+        :value="search"
         @input="$emit('update:search', $event.target.value)"
       />
       <div v-if="loading" class="loading-spinner">Loading...</div>
@@ -112,7 +130,7 @@ describe('AddressInput', () => {
 
   it('calls mapService.geocode when typing in combobox (debounced)', async () => {
     mapService.geocode.mockResolvedValue({ data: [{ address: '123 Main St', lat: 1, lng: 2 }] })
-    
+
     const wrapper = mount(AddressInput, {
       props: {
         modelValue: '',
@@ -121,27 +139,26 @@ describe('AddressInput', () => {
       global: {
         stubs: {
           'v-textarea': VTextareaStub,
-          'v-combobox': VComboboxStub
+          'v-combobox': VComboboxStub,
+          'v-divider': { template: '<hr />' },
         }
       }
     })
 
     const input = wrapper.find('.v-combobox-stub')
     await input.setValue('123 Main')
-    
-    // Should not call immediately
+
     expect(mapService.geocode).not.toHaveBeenCalled()
-    
-    // Advance timers
+
     vi.advanceTimersByTime(300)
-    
+
     expect(mapService.geocode).toHaveBeenCalledWith('123 Main')
   })
 
   it('emits address object when selecting item from combobox', async () => {
     const mockResult = { address: '123 Main St', lat: 1, lng: 2 }
     mapService.geocode.mockResolvedValue({ data: [mockResult] })
-    
+
     const wrapper = mount(AddressInput, {
       props: {
         modelValue: '',
@@ -150,7 +167,8 @@ describe('AddressInput', () => {
       global: {
         stubs: {
           'v-textarea': VTextareaStub,
-          'v-combobox': VComboboxStub
+          'v-combobox': VComboboxStub,
+          'v-divider': { template: '<hr />' },
         }
       }
     })
@@ -159,17 +177,17 @@ describe('AddressInput', () => {
     vi.advanceTimersByTime(300)
     await vi.runAllTimersAsync()
     await wrapper.vm.$nextTick()
-    
+
     expect(wrapper.find('.item-stub').exists()).toBe(true)
     await wrapper.find('.item-stub').trigger('click')
-    
+
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
     expect(wrapper.emitted('update:modelValue')[0][0]).toEqual(mockResult)
   })
 
   it('displays loading spinner during geocoding', async () => {
-    mapService.geocode.mockReturnValue(new Promise(() => {})) // Never resolves
-    
+    mapService.geocode.mockReturnValue(new Promise(() => {}))
+
     const wrapper = mount(AddressInput, {
       props: {
         modelValue: '',
@@ -178,7 +196,8 @@ describe('AddressInput', () => {
       global: {
         stubs: {
           'v-textarea': VTextareaStub,
-          'v-combobox': VComboboxStub
+          'v-combobox': VComboboxStub,
+          'v-divider': { template: '<hr />' },
         }
       }
     })
@@ -186,7 +205,7 @@ describe('AddressInput', () => {
     await wrapper.find('.v-combobox-stub').setValue('123 Main')
     vi.advanceTimersByTime(300)
     await wrapper.vm.$nextTick()
-    
+
     expect(wrapper.find('.loading-spinner').exists()).toBe(true)
   })
 
@@ -194,7 +213,7 @@ describe('AddressInput', () => {
     const wrapper = mount(AddressInput, {
       props: {
         modelValue: '',
-        errors: {} // Non-iterable object
+        errors: {}
       },
       global: {
         stubs: {
@@ -202,7 +221,6 @@ describe('AddressInput', () => {
         }
       }
     })
-    // Should not crash and should render normally
     expect(wrapper.find('.v-textarea-stub').exists()).toBe(true)
   })
 })

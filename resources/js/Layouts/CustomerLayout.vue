@@ -73,6 +73,7 @@ const navItems = [
   { titleKey: 'customer.nav.dashboard', icon: 'mdi-view-dashboard', route: '/customer/dashboard' },
   { titleKey: 'customer.nav.menu', icon: 'mdi-menu', route: '/customer/menu' },
   { titleKey: 'customer.nav.orders', icon: 'mdi-clipboard-list', route: '/customer/orders' },
+  { titleKey: 'components.address.manage_addresses', icon: 'mdi-map-marker-radius', route: '/customer/addresses' },
   { titleKey: 'customer.nav.profile', icon: 'mdi-account', route: '/customer/profile' },
   { titleKey: 'customer.nav.support', icon: 'mdi-face-agent', route: '/support' },
 ];

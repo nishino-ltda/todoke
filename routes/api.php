@@ -14,6 +14,7 @@ use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\NotificationController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\RegionController;
+use App\Http\Controllers\API\AddressController;
 
 use App\Http\Controllers\API\VotingController;
 use App\Http\Controllers\API\AddonController;
@@ -105,6 +106,7 @@ Route::prefix('v1')->group(function () {
 
     // Rotas públicas de parceiros (public partner/menu data)
     Route::prefix('partners')->group(function () {
+        Route::get('/nearby', [\App\Http\Controllers\API\PartnerController::class, 'nearby']);
         Route::get('/{slug}', [\App\Http\Controllers\API\PartnerController::class, 'show']);
     });
 
@@ -195,6 +197,16 @@ Route::prefix('v1')->group(function () {
             Route::post('/tickets/{id}/reply', [\App\Http\Controllers\API\SupportController::class, 'reply']);
             Route::patch('/tickets/{id}/close', [\App\Http\Controllers\API\SupportController::class, 'close']);
             Route::get('/faq', [\App\Http\Controllers\API\SupportController::class, 'faq']);
+        });
+
+        // Customer Addresses
+        Route::prefix('customer/addresses')->group(function () {
+            Route::get('/', [AddressController::class, 'index']);
+            Route::post('/', [AddressController::class, 'store']);
+            Route::get('/{id}', [AddressController::class, 'show']);
+            Route::put('/{id}', [AddressController::class, 'update']);
+            Route::delete('/{id}', [AddressController::class, 'destroy']);
+            Route::patch('/{id}/default', [AddressController::class, 'setDefault']);
         });
 
         // Map

@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'deepseek' => [
+        'api_key' => env('DEEPSEEK_API_KEY'),
+    ],
+
+    'nominatim' => [
+        'user_agent' => env('NOMINIM_USER_AGENT', 'TodokeApp/1.0'),
+    ],
+
 ];

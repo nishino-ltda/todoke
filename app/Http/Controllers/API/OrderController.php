@@ -160,7 +160,11 @@ class OrderController extends Controller
         $partner = User::find($request->partner_id);
         $delivery = Delivery::create([
             'customer_id' => $request->user()->id,
-            'origin' => ['address' => $partner->address ?? 'Restaurante'],
+            'origin' => [
+                'address' => $partner->address ?? 'Restaurante',
+                'lat' => $partner->latitude,
+                'lng' => $partner->longitude,
+            ],
             'destination' => $request->delivery['destination'],
             'status' => 'pending',
             'type' => 'standard',

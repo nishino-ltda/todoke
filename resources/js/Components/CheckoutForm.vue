@@ -2,17 +2,17 @@
   <v-form @submit.prevent="handleSubmit" ref="formRef">
     <h2 class="text-h5 mb-4">{{ $t('checkout.form_title') }}</h2>
 
-    <address-input
+    <address-selector
       v-model="address"
       :errors="errors"
-      :rules="[requiredField]"
-      :geocode="true"
-      data-cy="address-input"
+      class="mb-6"
+      data-cy="address-selector"
     />
 
     <payment-method-input
       v-model="paymentMethod"
       :errors="errors"
+      class="mb-6"
       :rules="[requiredField]"
       :total="props.total"
       data-cy="payment-method-input"
@@ -40,7 +40,8 @@
 
 <script setup>
 import { ref } from 'vue'
-import AddressInput from './AddressInput.vue'
+import api from '@/services/api'
+import AddressSelector from './AddressSelector.vue'
 import PaymentMethodInput from './PaymentMethodInput.vue'
 
 const props = defineProps({
@@ -71,6 +72,23 @@ const handleSubmit = async () => {
   const valid = await formRef.value?.validate()
   if (!valid?.valid) {
     return
+  }
+
+  // Save address if marked as new
+  if (address.value?.is_new && address.value?.save_as) {
+    try {
+      await api.post('/customer/addresses', {
+        label: address.value.save_as,
+        address: address.value.address,
+        lat: address.value.lat,
+        lng: address.value.lng,
+        city: address.value.city,
+        state: address.value.state,
+        neighborhood: address.value.neighborhood
+      })
+    } catch (err) {
+      console.warn('Failed to save address, proceeding with order anyway', err)
+    }
   }
 
   emit('submit', {

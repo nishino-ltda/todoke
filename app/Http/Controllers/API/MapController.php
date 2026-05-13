@@ -3,23 +3,25 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Services\GeocodingService;
 use Illuminate\Http\Request;
 
 class MapController extends Controller
 {
+    public function __construct(
+        protected GeocodingService $geocodingService
+    ) {}
+
     public function geocode(Request $request)
     {
         $request->validate([
             'address' => 'required|string'
         ]);
 
-        // Mock geocoding response
+        $result = $this->geocodingService->geocode($request->address);
+
         return response()->json([
-            'data' => [
-                'address' => $request->address,
-                'lat' => -23.5505,
-                'lng' => -46.6333
-            ]
+            'data' => $result
         ]);
     }
 
@@ -30,13 +32,13 @@ class MapController extends Controller
             'lng' => 'required|numeric'
         ]);
 
-        // Mock reverse geocoding response
+        $result = $this->geocodingService->reverseGeocode(
+            (float) $request->lat,
+            (float) $request->lng
+        );
+
         return response()->json([
-            'data' => [
-                'address' => 'Praça da Sé, São Paulo - SP, Brazil',
-                'lat' => $request->lat,
-                'lng' => $request->lng
-            ]
+            'data' => $result
         ]);
     }
 
@@ -49,12 +51,13 @@ class MapController extends Controller
             'dest_lng' => 'required|numeric'
         ]);
 
-        // Mock distance calculation
+        $result = $this->geocodingService->getDistance(
+            ['lat' => (float) $request->origin_lat, 'lng' => (float) $request->origin_lng],
+            ['lat' => (float) $request->dest_lat, 'lng' => (float) $request->dest_lng]
+        );
+
         return response()->json([
-            'data' => [
-                'distance_km' => 2.5,
-                'duration_seconds' => 600
-            ]
+            'data' => $result
         ]);
     }
 }

@@ -39,6 +39,9 @@ class User extends Authenticatable implements CanResetPassword
         'business_type',
         'tax_id',
         'address',
+        'address_complement',
+        'latitude',
+        'longitude',
         'business_document_path',
         'slug'
     ];
@@ -76,7 +79,9 @@ class User extends Authenticatable implements CanResetPassword
             'type' => 'string',
             'locked_at' => 'datetime',
             'vehicle_type' => 'string',
-            'business_type' => 'string'
+            'business_type' => 'string',
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
         ];
     }
 
@@ -191,5 +196,10 @@ class User extends Authenticatable implements CanResetPassword
     public function supportTickets()
     {
         return $this->hasMany(SupportTicket::class);
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class);
     }
 }

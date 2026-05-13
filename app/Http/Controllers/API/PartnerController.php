@@ -61,6 +61,9 @@ class PartnerController extends Controller
                 'name' => $partner->business_name ?: $partner->name,
                 'slug' => $slug,
                 'type' => $partner->business_type,
+                'latitude' => $partner->latitude,
+                'longitude' => $partner->longitude,
+                'address' => $partner->address,
             ],
             'products' => $products->map(function ($product) {
                 return [
@@ -80,6 +83,45 @@ class PartnerController extends Controller
                 ];
             }),
         ]);
+    }
+
+    public function nearby(Request $request)
+    {
+        $request->validate([
+            'lat' => 'required|numeric|between:-90,90',
+            'lng' => 'required|numeric|between:-180,180',
+            'radius' => 'nullable|numeric|min:0.1|max:100',
+        ]);
+
+        $lat = (float) $request->lat;
+        $lng = (float) $request->lng;
+        $radius = (float) ($request->radius ?? 10);
+
+        $partners = User::where('type', 'partner')
+            ->where('status', 'active')
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get()
+            ->filter(function ($partner) use ($lat, $lng, $radius) {
+                $distance = $this->haversine($lat, $lng, (float) $partner->latitude, (float) $partner->longitude);
+                $partner->distance_km = round($distance, 2);
+                return $distance <= $radius;
+            })
+            ->values();
+
+        return response()->json(['data' => $partners]);
+    }
+
+    protected function haversine(float $lat1, float $lng1, float $lat2, float $lng2): float
+    {
+        $earthRadius = 6371;
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLng = deg2rad($lng2 - $lng1);
+        $a = sin($dLat / 2) * sin($dLat / 2)
+            + cos(deg2rad($lat1)) * cos(deg2rad($lat2))
+            * sin($dLng / 2) * sin($dLng / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+        return $earthRadius * $c;
     }
 
     public function metrics(Request $request)

@@ -24,8 +24,8 @@
           <v-list-item-content>
             <v-list-item-title data-cy="cart-item-name">
               {{ item.name }}
-              <span class="text-grey text-caption ml-1">
-                ({{ $t('cart.unit_price') }}: {{ formatPrice(item.price) }})
+              <span class="text-primary font-weight-bold ml-1">
+                {{ formatPrice(item.price) }} <span class="text-grey text-caption">x {{ item.quantity }}</span>
               </span>
             </v-list-item-title>
 
@@ -35,9 +35,6 @@
               </span>
             </v-list-item-subtitle>
 
-            <v-list-item-subtitle data-cy="cart-item-subtotal">
-              <strong>{{ $t('cart.subtotal') }}: {{ formatPrice(getItemSubtotal(item)) }}</strong>
-            </v-list-item-subtitle>
 
           </v-list-item-content>
 

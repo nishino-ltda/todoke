@@ -90,7 +90,7 @@
     },
     "home": {
         "hero": {
-            "title": "Delivery belongs to us. The future is Open Source.",
+            "title": "Delivery belongs to us.",
             "subtitle": "No abusive fees. No monopolies. A fair platform for those who deliver and those who produce.",
             "register_button": "Get Started",
             "login_button": "Sign In"
@@ -201,6 +201,7 @@
         "empty_cart_title": "Your cart is empty",
         "empty_cart_message": "Add items to your cart before proceeding to checkout.",
         "browse_menu": "Browse Menu",
+        "adjust_on_map": "Adjust on Map",
         "order_summary": "Order Summary",
         "validation": {
             "required": "This field is required"
@@ -596,7 +597,7 @@
         },
         "title": "Customer Portal"
     },
-        "admin": {
+    "admin": {
         "nav": {
             "profile": "Profile",
             "access_as_customer": "Access as Customer"
@@ -724,18 +725,18 @@
             "contact_phone": "Contact Phone",
             "save": "Save Settings",
             "common": {
-        "days": {
-            "monday": "Monday",
-            "tuesday": "Tuesday",
-            "wednesday": "Wednesday",
-            "thursday": "Thursday",
-            "friday": "Friday",
-            "saturday": "Saturday",
-            "sunday": "Sunday"
-        },
-        "currency_symbol": "{value}"
-    },
-    "notifications": {
+                "days": {
+                    "monday": "Monday",
+                    "tuesday": "Tuesday",
+                    "wednesday": "Wednesday",
+                    "thursday": "Thursday",
+                    "friday": "Friday",
+                    "saturday": "Saturday",
+                    "sunday": "Sunday"
+                },
+                "currency_symbol": "{value}"
+            },
+            "notifications": {
                 "load_failed": "Failed to load settings",
                 "update_success": "Settings updated successfully",
                 "update_failed": "Failed to update settings"
@@ -824,7 +825,37 @@
             "label": "Delivery Address",
             "placeholder": "Start typing your address...",
             "searching": "Searching for address...",
-            "error": "Failed to find address"
+            "error": "Failed to find address",
+            "use_current_location": "Use current location",
+            "geolocation_not_supported": "Geolocation is not supported by your browser",
+            "geolocation_error": "Could not get your location",
+            "saved_places": "Saved Places",
+            "manage_addresses": "Manage Addresses",
+            "set_default": "Set as Default",
+            "no_saved_addresses": "You have no saved addresses yet.",
+            "label_field": "Label",
+            "address_field": "Address",
+            "complement": "Complement",
+            "neighborhood": "Neighborhood",
+            "city": "City",
+            "state": "State",
+            "zip_code": "ZIP Code",
+            "set_as_default": "Set as default address",
+            "add_new": "Add New",
+            "cancel": "Cancel",
+            "update": "Update",
+            "create": "Create",
+            "use_coordinates": "Use coordinates",
+            "type_address": "Type address",
+            "save_this_address": "Save this address"
+        },
+        "map_pinpoint": {
+            "title": "Adjust Location",
+            "selected_address": "Selected Address",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "cancel": "Cancel",
+            "confirm": "Confirm Location"
         },
         "payment": {
             "label": "Payment Method",

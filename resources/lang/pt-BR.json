@@ -201,6 +201,7 @@
         "empty_cart_title": "Seu carrinho está vazio",
         "empty_cart_message": "Adicione itens ao carrinho antes de ir para o checkout.",
         "browse_menu": "Ver Cardápio",
+        "adjust_on_map": "Ajustar no Mapa",
         "order_summary": "Resumo do Pedido",
         "validation": {
             "required": "Este campo é obrigatório"
@@ -804,11 +805,41 @@
         }
     },
     "components": {
+        "map_pinpoint": {
+            "title": "Ajustar Localização",
+            "selected_address": "Endereço Selecionado",
+            "latitude": "Latitude",
+            "longitude": "Longitude",
+            "cancel": "Cancelar",
+            "confirm": "Confirmar Localização"
+        },
         "address": {
             "label": "Endereço de Entrega",
             "placeholder": "Comece a digitar seu endereço...",
             "searching": "Buscando endereço...",
-            "error": "Falha ao encontrar o endereço"
+            "error": "Falha ao encontrar o endereço",
+            "use_current_location": "Usar localização atual",
+            "geolocation_not_supported": "Geolocalização não é suportada pelo seu navegador",
+            "geolocation_error": "Não foi possível obter sua localização",
+            "saved_places": "Locais Salvos",
+            "manage_addresses": "Gerenciar Endereços",
+            "set_default": "Definir como Padrão",
+            "no_saved_addresses": "Você ainda não tem endereços salvos.",
+            "label_field": "Rótulo",
+            "address_field": "Endereço",
+            "complement": "Complemento",
+            "neighborhood": "Bairro",
+            "city": "Cidade",
+            "state": "Estado",
+            "zip_code": "CEP",
+            "set_as_default": "Definir como endereço padrão",
+            "add_new": "Adicionar Novo",
+            "cancel": "Cancelar",
+            "update": "Atualizar",
+            "create": "Criar",
+            "use_coordinates": "Usar coordenadas",
+            "type_address": "Digitar endereço",
+            "save_this_address": "Salvar este endereço"
         },
         "payment": {
             "label": "Método de Pagamento",

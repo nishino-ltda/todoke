@@ -50,6 +50,25 @@
             :total="cartStore.totalWithDelivery"
             @submit="handleSubmit"
           />
+
+          <v-btn
+            v-if="formData.address"
+            variant="outlined"
+            color="primary"
+            prepend-icon="mdi-map-marker-radius"
+            class="mt-2 text-none"
+            @click="showPinpoint = true"
+            data-cy="adjust-on-map-btn"
+          >
+            {{ $t('checkout.adjust_on_map') }}
+          </v-btn>
+
+          <MapPinpointModal
+            v-model="showPinpoint"
+            :lat="pinpointLat"
+            :lng="pinpointLng"
+            @confirm="onPinpointConfirm"
+          />
         </v-col>
 
         <v-col cols="12" md="5">
@@ -73,7 +92,7 @@
 
                 <v-list-item-title class="font-weight-medium">{{ item.name }}</v-list-item-title>
                 <v-list-item-subtitle class="text-primary font-weight-bold">
-                  {{ formatCurrency(getItemSubtotal(item)) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
+                  {{ formatCurrency(item.price) }} <span class="text-medium-emphasis text-caption ml-1">x {{ item.quantity }}</span>
                 </v-list-item-subtitle>
 
                 <template v-if="item.selectedAddons?.length" v-slot:append>
@@ -115,6 +134,7 @@ import { ref, computed, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import CustomerLayout from '@/Layouts/CustomerLayout.vue'
 import CheckoutForm from '@/Components/CheckoutForm.vue'
+import MapPinpointModal from '@/Components/MapPinpointModal.vue'
 import EmptyState from '@/Components/EmptyState.vue'
 import { useCartStore } from '@/stores/cart'
 import { useAuthStore } from '@/stores/auth'
@@ -128,7 +148,12 @@ const { formatCurrency } = useCurrency()
 
 const isSubmitting = ref(false)
 const errorMessage = ref('')
+const formData = ref({ address: '', lat: 0, lng: 0 })
+const showPinpoint = ref(false)
 const isAuthenticated = computed(() => authStore.isAuthenticated)
+
+const pinpointLat = computed(() => formData.value.lat || -23.5505)
+const pinpointLng = computed(() => formData.value.lng || -46.6333)
 
 const resolveImageUrl = (path) => {
   if (!path) return 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'
@@ -162,16 +187,25 @@ function goToMenu() {
   router.visit('/customer/menu')
 }
 
-async function handleSubmit(formData) {
+function onPinpointConfirm({ lat, lng, address }) {
+  formData.value.lat = lat
+  formData.value.lng = lng
+  formData.value.address = address
+}
+
+async function handleSubmit(checkoutData) {
   isSubmitting.value = true
   errorMessage.value = ''
 
   const partnerId = cartStore.items[0]?.partner_id
 
   const payment =
-    typeof formData.paymentMethod === 'string'
-      ? { method: formData.paymentMethod }
-      : formData.paymentMethod
+    typeof checkoutData.paymentMethod === 'string'
+      ? { method: checkoutData.paymentMethod }
+      : checkoutData.paymentMethod
+
+  const addressData = typeof checkoutData.address === 'object' ? checkoutData.address : formData.value
+  formData.value = typeof checkoutData.address === 'object' ? checkoutData.address : formData.value
 
   const orderPayload = {
     partner_id: partnerId,
@@ -186,9 +220,9 @@ async function handleSubmit(formData) {
     payment,
     delivery: {
       destination: {
-        lat: formData.lat || 0,
-        lng: formData.lng || 0,
-        address: formData.address || '',
+        lat: formData.value.lat || 0,
+        lng: formData.value.lng || 0,
+        address: formData.value.address || '',
       },
     },
   }

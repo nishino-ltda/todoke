@@ -56,34 +56,26 @@ const startGeolocation = () => {
       (err) => {
         console.warn('Geolocation failed:', err)
         locating.value = false
-        // Default to a central point (mock)
-        userLocation.value = { lat: -23.5505, lng: -46.6333 } // São Paulo
+        userLocation.value = { lat: -23.5505, lng: -46.6333 }
         initMap()
       }
     )
   }
 }
 
-const fetchPartners = async () => {
+const fetchNearbyPartners = async () => {
+  if (!userLocation.value) return
   try {
-    // In a real app, this would be filtered by proximity
-    const response = await api.get('/products') // Using products as a proxy for partners for now
-    // Group products by partner to show partner markers
-    const seen = new Set()
-    partners.value = (response.data.products || []).filter(p => {
-        if (!seen.has(p.partner)) {
-            seen.add(p.partner)
-            return true
-        }
-        return false
-    }).map(p => ({
-        name: p.partner,
-        // Mocking coordinates near the user if available
-        lat: userLocation.value ? userLocation.value.lat + (Math.random() - 0.5) * 0.02 : -23.5505 + (Math.random() - 0.5) * 0.02,
-        lng: userLocation.value ? userLocation.value.lng + (Math.random() - 0.5) * 0.02 : -46.6333 + (Math.random() - 0.5) * 0.02,
-    }))
+    const response = await api.get('/partners/nearby', {
+      params: {
+        lat: userLocation.value.lat,
+        lng: userLocation.value.lng,
+        radius: 10,
+      }
+    })
+    partners.value = response.data.data || []
   } catch (err) {
-    console.error('Failed to fetch partners:', err)
+    console.error('Failed to fetch nearby partners:', err)
   }
 }
 
@@ -91,14 +83,13 @@ const initMap = () => {
   if (map.value) {
     map.value.remove()
   }
-  
+
   if (mapElement.value && userLocation.value) {
     map.value = L.map(mapElement.value).setView([userLocation.value.lat, userLocation.value.lng], 14)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map.value)
 
-    // Fix for default marker icon issues
     delete L.Icon.Default.prototype._getIconUrl
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
@@ -106,7 +97,6 @@ const initMap = () => {
       shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
     })
 
-    // User marker
     L.circleMarker([userLocation.value.lat, userLocation.value.lng], {
       color: '#FF3F33',
       fillColor: '#FF3F33',
@@ -114,11 +104,15 @@ const initMap = () => {
       radius: 8
     }).addTo(map.value).bindPopup('Você está aqui')
 
-    fetchPartners().then(() => {
+    fetchNearbyPartners().then(() => {
         partners.value.forEach(partner => {
-            L.marker([partner.lat, partner.lng])
+          const lat = parseFloat(partner.latitude)
+          const lng = parseFloat(partner.longitude)
+          if (lat && lng) {
+            L.marker([lat, lng])
                 .addTo(map.value)
-                .bindPopup(partner.name)
+                .bindPopup(partner.business_name || partner.name)
+          }
         })
     })
   }
